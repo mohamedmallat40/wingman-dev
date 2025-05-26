@@ -1,0 +1,152 @@
+'use client';
+
+import { useState } from 'react';
+
+import { Avatar } from '@heroui/avatar';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown';
+import { Link } from '@heroui/link';
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenu,
+  NavbarMenuItem,
+  NavbarMenuToggle
+} from '@heroui/navbar';
+import { Badge, Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
+import { Icon } from '@iconify/react/dist/iconify.js';
+
+import { WingmanIcon } from '@/components/icons/wingman';
+
+import NotificationsCard from './notifications/notifications-card';
+import { LanguageSwitcher } from './ui/language-switcher';
+import ThemeToggle from './ui/theme-toggle';
+
+export default function PrivateNavBar() {
+  const [locale, setLocale] = useState('nl');
+
+  const handleLocaleChange = (newLocale: string) => {
+    setLocale(newLocale);
+  };
+
+  return (
+    <Navbar isBordered>
+      <NavbarContent justify='start'>
+        <NavbarBrand className='mr-4'>
+          <NavbarMenuToggle className='mr-2 h-6 sm:hidden' />
+          <WingmanIcon />
+          <div className='hidden flex-col sm:flex'>
+            <p className='font-bold leading-tight tracking-[0.4em] text-inherit'>WINGMAN</p>
+            <p className='text-xs leading-tight text-inherit opacity-70'>BY EXTRAEXPERTISE</p>
+          </div>
+        </NavbarBrand>
+        <NavbarContent
+          className='ml-4 hidden h-12 w-full max-w-fit gap-8 rounded-medium bg-content2 px-4 dark:bg-content1 sm:flex'
+          justify='start'
+        >
+          <NavbarItem>
+            <Link className='flex gap-2 text-inherit' href='#'>
+              Dashboard
+            </Link>
+          </NavbarItem>
+          <NavbarItem isActive>
+            <Link aria-current='page' className='flex gap-2 text-inherit' href='#'>
+              Challenges
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link className='flex gap-2 text-inherit' href='#'>
+              Talent Pool
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link className='flex gap-2 text-inherit' href='#'>
+              Documents
+            </Link>
+          </NavbarItem>
+        </NavbarContent>
+      </NavbarContent>
+      <NavbarContent as='div' className='items-center' justify='end'>
+        <LanguageSwitcher onChange={handleLocaleChange} />
+        <ThemeToggle />
+        <NavbarItem className='flex'>
+          <Popover offset={12} placement='bottom-end'>
+            <PopoverTrigger>
+              <Button
+                disableRipple
+                isIconOnly
+                className='overflow-visible'
+                radius='full'
+                variant='light'
+              >
+                <Badge color='danger' content='5' showOutline={false} size='md'>
+                  <Icon className='text-default-500' icon='solar:bell-linear' width={22} />
+                </Badge>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className='max-w-[90vw] p-0 sm:max-w-[380px]'>
+              <NotificationsCard className='w-full shadow-none' />
+            </PopoverContent>
+          </Popover>
+        </NavbarItem>
+        <Dropdown placement='bottom-end'>
+          <DropdownTrigger>
+            <Avatar
+              isBordered
+              as='button'
+              className='transition-transform'
+              color='secondary'
+              name='Jason Hughes'
+              size='sm'
+              src='https://i.pravatar.cc/150?u=a042581f4e29026704d'
+            />
+          </DropdownTrigger>
+          <DropdownMenu aria-label='Profile Actions' variant='flat'>
+            <DropdownItem key='profile' className='h-14 gap-2'>
+              <p className='font-semibold'>Signed in as</p>
+              <p className='font-semibold'>zoey@example.com</p>
+            </DropdownItem>
+            <DropdownItem key='settings'>My Settings</DropdownItem>
+            <DropdownItem key='team_settings'>Team Settings</DropdownItem>
+            <DropdownItem key='analytics'>Analytics</DropdownItem>
+            <DropdownItem key='system'>System</DropdownItem>
+            <DropdownItem key='configurations'>Configurations</DropdownItem>
+            <DropdownItem key='help_and_feedback'>Help & Feedback</DropdownItem>
+            <DropdownItem key='logout' color='danger'>
+              Log Out
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </NavbarContent>
+      {/* Mobile Menu */}
+      <NavbarMenu>
+        <NavbarMenuItem>
+          <Link className='w-full' color='foreground' href='#'>
+            Dashboard
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem isActive>
+          <Link aria-current='page' className='w-full' color='primary' href='#'>
+            Deployments
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link className='w-full' color='foreground' href='#'>
+            Analytics
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link className='w-full' color='foreground' href='#'>
+            Team
+          </Link>
+        </NavbarMenuItem>
+        <NavbarMenuItem>
+          <Link className='w-full' color='foreground' href='#'>
+            Settings
+          </Link>
+        </NavbarMenuItem>
+      </NavbarMenu>
+    </Navbar>
+  );
+}
