@@ -12,6 +12,8 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENT_VAR: z.string(),
   },
+
+
   /**
    * Specify your server-side environment variables schema here.
    * This way you can ensure the app isn't built with invalid env vars.

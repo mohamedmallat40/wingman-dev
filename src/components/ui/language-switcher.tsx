@@ -1,29 +1,26 @@
+'use client'
 import React, { useEffect, useState } from 'react';
 
-import type { Language } from '@/i18n/transaltions';
 
 import { Select, SelectItem } from '@heroui/select';
 import { Icon } from '@iconify/react';
-import { useLocale } from '@react-aria/i18n';
-
+import { useLocale } from 'next-intl';
+import {Language}from'@/i18n/config'
+import { setUserLocale } from '@/i18n/locale';
 const languages: { key: Language; label: string; icon: string }[] = [
   { key: 'en', label: 'English', icon: 'twemoji:flag-united-kingdom' },
   { key: 'fr', label: 'Français', icon: 'twemoji:flag-france' },
   { key: 'nl', label: 'Nederlands', icon: 'twemoji:flag-netherlands' }
 ];
 
-interface LanguageSwitcherProps {
-  onChange: (lang: Language) => void;
-}
 
-export function LanguageSwitcher({ onChange }: LanguageSwitcherProps) {
-  const { locale } = useLocale();
-  const currentLang = (locale?.slice(0, 2) as Language) || 'en';
-  const [selectedKey, setSelectedKey] = useState<Language>(currentLang);
 
-  useEffect(() => {
-    setSelectedKey(currentLang);
-  }, [currentLang]);
+
+export function LanguageSwitcher() {
+  const locale= useLocale();
+  const currentLang = locale || 'en';
+  const [selectedKey, setSelectedKey] = useState<string>(currentLang);
+
 
   return (
     <Select
@@ -46,7 +43,7 @@ export function LanguageSwitcher({ onChange }: LanguageSwitcherProps) {
         const key = Array.from(keys)[0] as Language;
 
         setSelectedKey(key);
-        onChange(key);
+        setUserLocale(key)
       }}
     >
       {languages.map((lang) => (

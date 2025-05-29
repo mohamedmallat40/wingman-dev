@@ -1,25 +1,18 @@
-'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 
-import type { NavbarProps } from '@heroui/react';
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, type NavbarProps } from '@heroui/navbar';
 
-import {
-  Button,
-  cn,
-  Divider,
-  Link,
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle
-} from '@heroui/react';
+
 import { Icon } from '@iconify/react';
 
-import { AcmeIcon } from './social';
+import { WingmanIcon } from '@/components/icons/wingman';
+import { Link } from '@heroui/link';
+import { Button } from '@heroui/button';
+import { Divider } from '@heroui/divider';
+import { cn } from '@heroui/theme';
+import { LanguageSwitcher } from '@/components/ui/language-switcher';
+import Login from '@/app/(public)/components/login';
 
 const menuItems = [
   'About',
@@ -32,32 +25,31 @@ const menuItems = [
   'Contact Us'
 ];
 
-const BasicNavbar = React.forwardRef<HTMLElement, NavbarProps>(
-  ({ classNames = {}, ...props }, ref) => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+const BasicNavbar =
+  ({ classNames = {}, ...props }) => {
 
     return (
       <Navbar
-        ref={ref}
+
         {...props}
         classNames={{
           base: cn('border-default-100 bg-transparent', {
-            'bg-default-200/50 dark:bg-default-100/50': isMenuOpen
           }),
           wrapper: 'w-full justify-center',
           item: 'hidden md:flex',
           ...classNames
         }}
         height='60px'
-        isMenuOpen={isMenuOpen}
-        onMenuOpenChange={setIsMenuOpen}
+
       >
         {/* Left Content */}
-        <NavbarBrand>
-          <div className='rounded-full bg-default-foreground text-background'>
-            <AcmeIcon size={34} />
+        <NavbarBrand className='mr-4'>
+          <NavbarMenuToggle className='mr-2 h-6 sm:hidden' />
+          <WingmanIcon />
+          <div className='hidden flex-col sm:flex'>
+            <p className='font-bold leading-tight tracking-[0.4em] text-inherit'> WINGMAN</p>
+            <p className='text-xs leading-tight text-inherit opacity-70'> BY EXTRAEXPERTISE</p>
           </div>
-          <span className='ml-2 text-small font-medium text-default-foreground'>WINGMAN</span>
         </NavbarBrand>
 
         {/* Center Content */}
@@ -92,21 +84,22 @@ const BasicNavbar = React.forwardRef<HTMLElement, NavbarProps>(
         {/* Right Content */}
         <NavbarContent className='hidden md:flex' justify='end'>
           <NavbarItem className='ml-2 !flex gap-2'>
-            <Button className='text-default-500' radius='full' variant='light'>
-              Login
-            </Button>
+            <Login />
             <Button
-              className='bg-default-foreground font-medium text-background'
-              color='secondary'
+              className='font-medium'
+              color='primary'
               endContent={<Icon icon='solar:alt-arrow-right-linear' />}
               radius='full'
-              variant='flat'
+         
             >
               Get Started
             </Button>
           </NavbarItem>
         </NavbarContent>
+        <NavbarItem>
+          <LanguageSwitcher />
 
+        </NavbarItem>
         <NavbarMenuToggle className='text-default-400 md:hidden' />
 
         <NavbarMenu
@@ -121,9 +114,11 @@ const BasicNavbar = React.forwardRef<HTMLElement, NavbarProps>(
             }
           }}
         >
+
+
           <NavbarMenuItem>
             <Button fullWidth as={Link} href='/#' variant='faded'>
-              Sign In
+              Sign Ins
             </Button>
           </NavbarMenuItem>
           <NavbarMenuItem className='mb-4'>
@@ -140,10 +135,10 @@ const BasicNavbar = React.forwardRef<HTMLElement, NavbarProps>(
             </NavbarMenuItem>
           ))}
         </NavbarMenu>
+
       </Navbar>
     );
   }
-);
 
 BasicNavbar.displayName = 'BasicNavbar';
 

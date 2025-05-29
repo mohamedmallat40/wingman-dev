@@ -1,0 +1,17 @@
+{
+  "HomePage": {
+    "title": "Hello baar"
+  },
+  "AuthPage": {
+    "title": "Inloggen",
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "loginButton": "Inloggen",
+    "logoutButton": "Uitloggen",
+    "continueWithGoogle": "Doorgaan met Google",
+    "continueWithLinkedin": "Doorgaan met LinkedIn"
+  },
+  "ERRORS": {
+    "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet"
+  }
+}

@@ -1,9 +1,4 @@
-'use client';
 
-import { useState } from 'react';
-
-import { Avatar } from '@heroui/avatar';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown';
 import { Link } from '@heroui/link';
 import {
   Navbar,
@@ -14,21 +9,21 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle
 } from '@heroui/navbar';
-import { Badge, Button, Popover, PopoverContent, PopoverTrigger } from '@heroui/react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 
 import { WingmanIcon } from '@/components/icons/wingman';
 
-import NotificationsCard from './notifications/notifications-card';
-import { LanguageSwitcher } from './ui/language-switcher';
-import ThemeToggle from './ui/theme-toggle';
+import NotificationsCard from '../../components/notifications/notifications-card';
+import { LanguageSwitcher } from '../../components/ui/language-switcher';
+import ThemeToggle from '../../components/ui/theme-toggle';
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
+import { Button } from '@heroui/button';
+import { Badge } from '@heroui/badge';
+import Avatar from '@/app/dashboard/components/Avatar';
 
 export default function PrivateNavBar() {
-  const [locale, setLocale] = useState('nl');
 
-  const handleLocaleChange = (newLocale: string) => {
-    setLocale(newLocale);
-  };
+ 
 
   return (
     <Navbar isBordered>
@@ -68,7 +63,7 @@ export default function PrivateNavBar() {
         </NavbarContent>
       </NavbarContent>
       <NavbarContent as='div' className='items-center' justify='end'>
-        <LanguageSwitcher onChange={handleLocaleChange} />
+        <LanguageSwitcher  />
         <ThemeToggle />
         <NavbarItem className='flex'>
           <Popover offset={12} placement='bottom-end'>
@@ -90,34 +85,7 @@ export default function PrivateNavBar() {
             </PopoverContent>
           </Popover>
         </NavbarItem>
-        <Dropdown placement='bottom-end'>
-          <DropdownTrigger>
-            <Avatar
-              isBordered
-              as='button'
-              className='transition-transform'
-              color='secondary'
-              name='Jason Hughes'
-              size='sm'
-              src='https://i.pravatar.cc/150?u=a042581f4e29026704d'
-            />
-          </DropdownTrigger>
-          <DropdownMenu aria-label='Profile Actions' variant='flat'>
-            <DropdownItem key='profile' className='h-14 gap-2'>
-              <p className='font-semibold'>Signed in as</p>
-              <p className='font-semibold'>zoey@example.com</p>
-            </DropdownItem>
-            <DropdownItem key='settings'>My Settings</DropdownItem>
-            <DropdownItem key='team_settings'>Team Settings</DropdownItem>
-            <DropdownItem key='analytics'>Analytics</DropdownItem>
-            <DropdownItem key='system'>System</DropdownItem>
-            <DropdownItem key='configurations'>Configurations</DropdownItem>
-            <DropdownItem key='help_and_feedback'>Help & Feedback</DropdownItem>
-            <DropdownItem key='logout' color='danger'>
-              Log Out
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+      <Avatar/>
       </NavbarContent>
       {/* Mobile Menu */}
       <NavbarMenu>

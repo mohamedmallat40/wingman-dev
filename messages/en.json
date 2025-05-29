@@ -1,0 +1,17 @@
+{
+  "HomePage": {
+    "title": "Hello world!"
+  },
+"AuthPage": {
+    "title": "Sign in to your account",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Login",
+    "logoutButton": "Logout",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithLinkedin": "Continue with LinkedIn"
+  },
+  "ERRORS": {
+    "USER_DOES_NOT_EXIST": "User Does Not Exist"
+  }
+}
