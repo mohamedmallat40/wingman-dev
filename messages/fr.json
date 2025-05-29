@@ -1,0 +1,19 @@
+{
+    "HomePage": {
+      "title": "Hello world!"
+    },
+    "AuthPage": {
+      "title": "Connexion",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "loginButton": "Se connecter",
+      "logoutButton": "Se déconnecter",
+      "continueWithGoogle": "Continuer avec Google",
+      "continueWithLinkedin": "Continuer avec LinkedIn"
+
+
+    },
+    "ERRORS": {
+        "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"
+      }
+  }

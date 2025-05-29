@@ -8,13 +8,10 @@ import type { PropsWithChildren } from 'react';
 
 import config from '_config';
 
-import HeaderContainer from '@/components/header-container/header-container';
-import PrivateNavBar from '@/components/private-navbar';
 import RootProvider from '@/components/providers/root';
-import SecondNavBar from '@/components/public-navbar';
-import QuickActions from '@/components/quick-actions/quick-actions';
+import {NextIntlClientProvider} from 'next-intl';
 
-import PublicLayout from './public/layout';
+import {getLocale} from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: config.metadata.title,
@@ -29,18 +26,16 @@ export const viewport: Viewport = {
 
 type TRootLayout = PropsWithChildren;
 
-export default function RootLayout({ children }: Readonly<TRootLayout>) {
+export default async function RootLayout({ children }: Readonly<TRootLayout>) {
+  const locale = await getLocale();
+
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body>
         <RootProvider>
-          <div className='grid min-h-[100dvh] grid-rows-[auto_1fr_auto]'>
-            <PublicLayout />
-            <PrivateNavBar />
-            {/* <SecondNavBar /> */}
-            {/* <HeaderContainer /> */}
-            {children}
-          </div>
+     
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+
         </RootProvider>
       </body>
     </html>
