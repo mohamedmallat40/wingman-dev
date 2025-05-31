@@ -1,55 +1,114 @@
-import { getUserLocale } from '@/i18n/locale';
+import type {
+  AxiosError,
+  AxiosInstance,
+  AxiosResponse,
+  CreateAxiosDefaults,
+  InternalAxiosRequestConfig
+} from 'axios';
+
 import { addToast } from '@heroui/react';
-import axios, { AxiosInstance } from 'axios'
-import { ERRORS as en } from 'messages/en.json'
-import { ERRORS as fr } from 'messages/fr.json'
-import { ERRORS as nl } from 'messages/nl.json'
+import axios from 'axios';
+import { ERRORS as en } from 'messages/en.json';
+import { ERRORS as fr } from 'messages/fr.json';
+import { ERRORS as nl } from 'messages/nl.json';
 
-const locales = {
-    en,
-    fr,
-    nl,
-}
-const resolveKey = (obj: any, key: string): string | undefined => {
-    return obj[key]
-}
-export const t = (key: string, currentLocale: "en" | "fr" | "nl"): string => {
-    const dictionary = locales[currentLocale] || {}
-    return resolveKey(dictionary, key) ?? key
-}
+import { env } from '@/env';
+import { getUserLocale } from '@/i18n/locale';
 
-const wingManApi: AxiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
-})
-wingManApi.interceptors.request.use(config => {
-    if (typeof window !== 'undefined') {
-        const token = localStorage.getItem('token')
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`
-        }
-    }
-    return config
-})
-wingManApi.interceptors.response.use(
-    response => response,
-    async (error: any) => {
-        try {
-            const locale: any = await getUserLocale();
+// ===== TYPES =====
+type SupportedLocale = 'en' | 'fr' | 'nl';
+type ErrorMessages = Record<string, string>;
+type ApiErrorResponse = {
+  status?: string;
+  message?: string;
+  code?: string;
+  details?: Record<string, unknown>;
+};
 
-            addToast({
-                title: error.response?.data?.status ?? error?.status,
-                description: t(error.response?.data?.message, locale) ?? error?.message,
-                color: 'danger'
+// ===== CONSTANTS =====
+const LOCALIZED_ERRORS: Record<SupportedLocale, ErrorMessages> = {
+  en,
+  fr,
+  nl
+};
 
-            });
-            return Promise.reject(error)
+const DEFAULT_CONFIG: CreateAxiosDefaults = {
+  baseURL: env.NEXT_PUBLIC_API_BASE_URL,
+  timeout: 30_000,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+};
 
-        } catch (error) {
-            console.log(error, "ddddd");
+// ===== UTILITIES =====
+const translateError = (key: string, locale: SupportedLocale): string => {
+  return LOCALIZED_ERRORS[locale][key] ?? key;
+};
 
-        }
+const getStoredToken = (): string | null => {
+  //   if (typeof window === 'undefined') return null;
+  return localStorage.getItem('token');
+};
 
-    }
-)
+const extractErrorData = (error: AxiosError): ApiErrorResponse => {
+  const data = error.response?.data as ApiErrorResponse | undefined;
+  return {
+    status: data?.status ?? 'Error',
+    message: data?.message ?? 'unknown_error',
+    code: data?.code,
+    details: data?.details
+  };
+};
 
-export default wingManApi
+const showErrorToast = async (errorData: ApiErrorResponse): Promise<void> => {
+  const locale = (await getUserLocale()) as SupportedLocale;
+
+  addToast({
+    title: errorData.status,
+    description: translateError(errorData.message ?? '', locale),
+    color: 'danger'
+  });
+};
+
+// ===== REQUEST INTERCEPTOR =====
+const attachAuthToken = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+  const token = getStoredToken();
+
+  if (token) {
+    config.headers.set('Authorization', `Bearer ${token}`);
+  }
+
+  return config;
+};
+
+// ===== RESPONSE INTERCEPTOR =====
+const handleSuccessResponse = (response: AxiosResponse): AxiosResponse => response;
+
+const handleErrorResponse = async (error: AxiosError): Promise<never> => {
+  const errorData = extractErrorData(error);
+  await showErrorToast(errorData);
+
+  throw error;
+};
+
+// ===== API INSTANCE =====
+const createWingManApi = (): AxiosInstance => {
+  const instance = axios.create(DEFAULT_CONFIG);
+
+  // Request interceptor
+  instance.interceptors.request.use(attachAuthToken, () =>
+    Promise.reject(new Error('Request error'))
+  );
+
+  // Response interceptor
+  instance.interceptors.response.use(handleSuccessResponse, handleErrorResponse);
+
+  return instance;
+};
+
+// ===== EXPORTS =====
+export const wingManApi = createWingManApi();
+export default wingManApi;
+
+// Type exports for consumers
+export type { ApiErrorResponse, SupportedLocale };

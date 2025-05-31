@@ -1,7 +1,8 @@
-import { API_ROUTES } from "@/lib/api-routes"
-import wingManApi from "@/lib/axios"
+import { type AxiosRequestConfig } from 'axios';
 
-export const getMyProfile = async (data: any) => {
-     return wingManApi.get(API_ROUTES.profile.me, data)
- 
-  }
+import { API_ROUTES } from '@/lib/api-routes';
+import wingManApi from '@/lib/axios';
+
+export const getMyProfile = async (config?: AxiosRequestConfig) => {
+  return wingManApi.get(API_ROUTES.profile.me, config);
+};

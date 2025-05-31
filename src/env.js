@@ -1,5 +1,4 @@
 /* eslint-disable unicorn/prevent-abbreviations */
-
 import { createEnv } from '@t3-oss/env-nextjs';
 import { z } from 'zod';
 
@@ -10,9 +9,8 @@ export const env = createEnv({
    * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENT_VAR: z.string(),
+    NEXT_PUBLIC_API_BASE_URL: z.string().url().default('https://dev.extraexpertise.be/api')
   },
-
 
   /**
    * Specify your server-side environment variables schema here.
@@ -27,16 +25,17 @@ export const env = createEnv({
    * (e.g. middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    NODE_ENV: process.env.NODE_ENV
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.
    * This is especially useful for Docker builds.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION
   /**
    * Makes it so that empty strings are treated as undefined.
    * `SOME_VAR: z.string()` and `SOME_VAR=''` will throw an error.
-   */
-  emptyStringAsUndefined: true
+  emptyStringAsUndefined: true,
+  **/
 });
