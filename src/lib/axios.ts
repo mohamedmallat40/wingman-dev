@@ -6,7 +6,7 @@ import type {
   InternalAxiosRequestConfig
 } from 'axios';
 
-import { addToast } from '@heroui/react';
+import { addToast } from '@heroui/toast';
 import axios from 'axios';
 import { ERRORS as en } from 'messages/en.json';
 import { ERRORS as fr } from 'messages/fr.json';
@@ -19,10 +19,11 @@ import { getUserLocale } from '@/i18n/locale';
 type SupportedLocale = 'en' | 'fr' | 'nl';
 type ErrorMessages = Record<string, string>;
 type ApiErrorResponse = {
-  status?: string;
+  status?: string | number;
   message?: string;
   code?: string;
   details?: Record<string, unknown>;
+  statusCode?: number;
 };
 
 // ===== CONSTANTS =====
@@ -51,9 +52,14 @@ const getStoredToken = (): string | null => {
 };
 
 const extractErrorData = (error: AxiosError): ApiErrorResponse => {
-  const data = error.response?.data as ApiErrorResponse | undefined;
+  const data = error.response?.data as ApiErrorResponse | undefined; 
+  if(data?.statusCode === 403) {
+    window.location.href = '/';
+    localStorage.removeItem('token');
+    return { status: 'Unauthorized', message: 'Please log in again.' };
+  }
   return {
-    status: data?.status ?? 'Error',
+    status: data?.status ?? data?.statusCode ?? 'Error',
     message: data?.message ?? 'unknown_error',
     code: data?.code,
     details: data?.details
