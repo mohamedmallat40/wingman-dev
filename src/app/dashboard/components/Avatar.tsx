@@ -6,8 +6,7 @@ import useProfile from '@root/modules/profile/hooks/useProfile'
 import React from 'react'
 
 const Avatar = () => {
-    const {profile}=useProfile()
-    console.log(profile)
+    const {profile,logout}=useProfile()
     return (
         <Dropdown placement='bottom-end'>
             <DropdownTrigger>
@@ -37,7 +36,7 @@ const Avatar = () => {
                 <DropdownItem key='system'>System</DropdownItem>
                 <DropdownItem key='configurations'>Configurations</DropdownItem>
                 <DropdownItem key='help_and_feedback'>Help & Feedback</DropdownItem>
-                <DropdownItem key='logout' color='danger'>
+                <DropdownItem key='logout' color='danger' onClick={logout}>
                     Log Out
                 </DropdownItem>
             </DropdownMenu>

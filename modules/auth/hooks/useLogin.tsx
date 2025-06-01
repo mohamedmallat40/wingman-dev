@@ -31,9 +31,8 @@ useEffect(() => {
         if (isSuccess) {
             onClose();
            localStorage.setItem('token', data?.data?.token);
+           router.push('/dashboard');
             setUser(data?.data?.user);
-            addToast({ title: 'Login successful', color: 'success' });
-            router.push('/dashboard');
         }
 
 }, [isSuccess, onClose])

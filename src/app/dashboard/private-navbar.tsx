@@ -20,10 +20,14 @@ import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Button } from '@heroui/button';
 import { Badge } from '@heroui/badge';
 import Avatar from '@/app/dashboard/components/Avatar';
+import { getQueryClient } from '@/components/providers/client/queryClient';
+import { profileOptions } from '@root/modules/profile/hooks/profile.server';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 export default function PrivateNavBar() {
-
+const queryClient = getQueryClient()
  
+  void queryClient.prefetchQuery(profileOptions)
 
   return (
     <Navbar isBordered>
@@ -85,7 +89,10 @@ export default function PrivateNavBar() {
             </PopoverContent>
           </Popover>
         </NavbarItem>
+        <HydrationBoundary state={dehydrate(queryClient)}>
+
       <Avatar/>
+      </HydrationBoundary>
       </NavbarContent>
       {/* Mobile Menu */}
       <NavbarMenu>
