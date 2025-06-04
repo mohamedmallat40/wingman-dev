@@ -67,7 +67,7 @@ const extractErrorData = (error: AxiosError): ApiErrorResponse => {
 };
 
 const showErrorToast = async (errorData: ApiErrorResponse): Promise<void> => {
-  const locale = (await getUserLocale()) as SupportedLocale;
+  const locale ="en"
 
   addToast({
     title: errorData.status,
