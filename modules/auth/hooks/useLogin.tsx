@@ -31,7 +31,7 @@ useEffect(() => {
         if (isSuccess) {
             onClose();
            localStorage.setItem('token', data?.data?.token);
-           router.push('/dashboard');
+           router.push('/private/dashboard');
             setUser(data?.data?.user);
         }
 

@@ -19,16 +19,12 @@ import ThemeToggle from '../../components/ui/theme-toggle';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Button } from '@heroui/button';
 import { Badge } from '@heroui/badge';
-import Avatar from '@/app/dashboard/components/Avatar';
+import Avatar from '@/app/private/components/Avatar';
 import { getQueryClient } from '@/components/providers/client/queryClient';
 import { profileOptions } from '@root/modules/profile/hooks/profile.server';
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 
 export default function PrivateNavBar() {
-const queryClient = getQueryClient()
- 
-  void queryClient.prefetchQuery(profileOptions)
-
   return (
     <Navbar isBordered>
       <NavbarContent justify='start'>
@@ -45,29 +41,29 @@ const queryClient = getQueryClient()
           justify='start'
         >
           <NavbarItem>
-            <Link className='flex gap-2 text-inherit' href='#'>
+            <Link href="/private/dashboard" className='flex gap-2 text-inherit' >
               Dashboard
             </Link>
           </NavbarItem>
           <NavbarItem isActive>
-            <Link aria-current='page' className='flex gap-2 text-inherit' href='#'>
+            <Link aria-current='page' className='flex gap-2 text-inherit' href='/private/challenges'>
               Challenges
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link className='flex gap-2 text-inherit' href='#'>
+            <Link className='flex gap-2 text-inherit' href='/private/talent-pool'>
               Talent Pool
             </Link>
           </NavbarItem>
           <NavbarItem>
-            <Link className='flex gap-2 text-inherit' href='#'>
+            <Link className='flex gap-2 text-inherit' href='/private/documents'>
               Documents
             </Link>
           </NavbarItem>
         </NavbarContent>
       </NavbarContent>
       <NavbarContent as='div' className='items-center' justify='end'>
-        <LanguageSwitcher  />
+        <LanguageSwitcher />
         <ThemeToggle />
         <NavbarItem className='flex'>
           <Popover offset={12} placement='bottom-end'>
@@ -89,10 +85,8 @@ const queryClient = getQueryClient()
             </PopoverContent>
           </Popover>
         </NavbarItem>
-        <HydrationBoundary state={dehydrate(queryClient)}>
 
-      <Avatar/>
-      </HydrationBoundary>
+        <Avatar />
       </NavbarContent>
       {/* Mobile Menu */}
       <NavbarMenu>

@@ -8,7 +8,7 @@ export default function PublicGuard({ children }: { children: React.ReactNode })
     useEffect(() => {
         const token = localStorage.getItem('token')
         if (token) {
-            router.replace('/dashboard')
+            router.replace('/private/dashboard')
         }
     }, [router])
 
