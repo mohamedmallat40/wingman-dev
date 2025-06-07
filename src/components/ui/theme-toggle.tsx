@@ -14,7 +14,7 @@ export default function ThemeToggle() {
     <Dropdown className='min-w-32'>
       <DropdownTrigger>
         <Button data-testid='theme-toggle' isIconOnly>
-          <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0' />
+          <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all text-foreground' />
           <MoonStar className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
           <span className='sr-only'>Toggle theme</span>
         </Button>
@@ -28,7 +28,7 @@ export default function ThemeToggle() {
           }}
         >
           <div className='flex items-center'>
-            <Sun className='mr-2 h-[1.2rem] w-[1.2rem]' />
+            <Sun className='mr-2 h-[1.2rem] w-[1.2rem] ' />
             <span>Light</span>
           </div>
         </DropdownItem>
