@@ -1,10 +1,10 @@
 
+'use client';
 import HeaderContainer from '@/app/private/dashboard/components/header-container/header-container';
 import QuickActions from '@/app/private/dashboard/components/quick-actions/quick-actions';
 import TabsRouting from '@/app/private/dashboard/components/tabs/tabs-routing';
 import Container from '@/components/container/container';
 import HeaderPage from '@/components/header-page/header-page';
-
 import SectionContainer from '@/components/section-container/section-container';
 import React, { PropsWithChildren } from 'react';
 

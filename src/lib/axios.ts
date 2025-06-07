@@ -53,6 +53,7 @@ const getStoredToken = (): string | null => {
 };
 
 const extractErrorData = (error: AxiosError): ApiErrorResponse => {
+
   const data = error.response?.data as ApiErrorResponse | undefined; 
   if(data?.statusCode === 403) {
     window.location.href = '/';
@@ -92,9 +93,11 @@ const attachAuthToken = (config: InternalAxiosRequestConfig): InternalAxiosReque
 const handleSuccessResponse = (response: AxiosResponse): AxiosResponse => response;
 
 const handleErrorResponse = async (error: AxiosError): Promise<never> => {
+  if(typeof window !== 'undefined'){
+
   const errorData = extractErrorData(error);
   await showErrorToast(errorData);
-
+  }
   throw error;
 };
 
@@ -103,9 +106,11 @@ const createWingManApi = (): AxiosInstance => {
   const instance = axios.create(DEFAULT_CONFIG);
 
   // Request interceptor
+  if(typeof window !== 'undefined'){
   instance.interceptors.request.use(attachAuthToken, () =>
     Promise.reject(new Error('Request error'))
   );
+}
 
   // Response interceptor
   instance.interceptors.response.use(handleSuccessResponse, handleErrorResponse);

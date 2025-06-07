@@ -20,9 +20,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Button } from '@heroui/button';
 import { Badge } from '@heroui/badge';
 import Avatar from '@/app/private/components/Avatar';
-import { getQueryClient } from '@/components/providers/client/queryClient';
-import { profileOptions } from '@root/modules/profile/hooks/profile.server';
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+
 
 export default function PrivateNavBar() {
   return (
