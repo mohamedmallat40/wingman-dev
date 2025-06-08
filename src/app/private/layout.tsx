@@ -11,11 +11,11 @@ export default function PrivateLayout({ children }: Readonly<TRootLayout>) {
   return (
     <AuthGuard>
 
-      <div className='relative flex h-dvh w-full flex-col overflow-hidden bg-background'>
+      <div className='relative flex h-dvh w-full flex-col overflow-hidden bg-background px-44'>
         <div className='grid min-h-[100vh] grid-rows-[auto_1fr_auto]'>
 
           <PrivateNavBar />
-          <main className='px-16 flex flex-1 flex-col items-center justify-center overflow-hidden '>
+          <main className=' flex flex-1 flex-col items-center justify-center overflow-hidden '>
             
             {children}
           </main>

@@ -20,16 +20,14 @@ import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Button } from '@heroui/button';
 import { Badge } from '@heroui/badge';
 import Avatar from '@/app/private/components/Avatar';
-import { getQueryClient } from '@/components/providers/client/queryClient';
-import { profileOptions } from '@root/modules/profile/hooks/profile.server';
-import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+
 
 export default function PrivateNavBar() {
   return (
-    <Navbar isBordered>
+    <Navbar className='justify-start' isBordered>
       <NavbarContent justify='start'>
-        <NavbarBrand className='mr-4'>
-          <NavbarMenuToggle className='mr-2 h-6 sm:hidden' />
+        <NavbarBrand className=''>
+          <NavbarMenuToggle className=' h-6 sm:hidden' />
           <WingmanIcon />
           <div className='hidden flex-col sm:flex'>
             <p className='font-bold leading-tight tracking-[0.4em] text-inherit'>WINGMAN</p>
@@ -37,7 +35,7 @@ export default function PrivateNavBar() {
           </div>
         </NavbarBrand>
         <NavbarContent
-          className='ml-4 hidden h-12 w-full max-w-fit gap-8 rounded-medium bg-content2 px-4 dark:bg-content1 sm:flex'
+          className='mx-12 hidden h-12 w-full max-w-fit gap-8 rounded-medium bg-content2 px-4 dark:bg-content1 sm:flex'
           justify='start'
         >
           <NavbarItem>

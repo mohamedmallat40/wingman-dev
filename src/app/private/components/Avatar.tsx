@@ -12,25 +12,21 @@ const Avatar = () => {
         <Dropdown placement='bottom-end'>
             <DropdownTrigger>
                 <div className='flex gap-4 ml-2'>
-                    <Skeleton className='rounded-lg  min-w-20' isLoaded={!isLoading}>
 
-                        <span className='whitespace-nowrap min-w-16 font-semibold capitalize'>
-                            {profile?.firstName}  {profile?.lastName}
-                        </span>
-                    </Skeleton>
+                    <span className='whitespace-nowrap min-w-16 font-semibold capitalize'>
+                        {profile?.firstName}  {profile?.lastName}
+                    </span>
 
-                    <Skeleton className='rounded-full' isLoaded={!isLoading}>
 
-                        <HerouiAvatar
-                            isBordered
-                            as='button'
-                            className='transition-transform'
-                            color='secondary'
-                            name={`${profile?.firstName}  ${profile?.lastName}` || 'Zoey'}
-                            size='sm'
-                            src={API_ROUTES.profile.image(profile?.profileImage)}
-                        />
-                    </Skeleton>
+                    <HerouiAvatar
+                        isBordered
+                        as='button'
+                        className='transition-transform'
+                        color='secondary'
+                        name={`${profile?.firstName}  ${profile?.lastName}` || 'Zoey'}
+                        size='sm'
+                        src={API_ROUTES.profile.image(profile?.profileImage)}
+                    />
 
                 </div>
             </DropdownTrigger>
