@@ -49,7 +49,7 @@ const Avatar = () => {
                         showFallback
                         fallback={
                             <Icon
-                                icon='solar:user-bold'
+                                icon='solar:user-linear'
                                 className='text-primary-500'
                                 width={16}
                             />
@@ -87,42 +87,42 @@ const Avatar = () => {
 
                 <DropdownItem
                     key='settings'
-                    startContent={<Icon icon='solar:settings-bold' className='text-lg' />}
+                    startContent={<Icon icon='solar:settings-linear' className='text-lg' />}
                 >
                     My Settings
                 </DropdownItem>
 
                 <DropdownItem
                     key='team_settings'
-                    startContent={<Icon icon='solar:users-group-rounded-bold' className='text-lg' />}
+                    startContent={<Icon icon='solar:users-group-rounded-linear' className='text-lg' />}
                 >
                     Team Settings
                 </DropdownItem>
 
                 <DropdownItem
                     key='analytics'
-                    startContent={<Icon icon='solar:chart-2-bold' className='text-lg' />}
+                    startContent={<Icon icon='solar:chart-2-linear' className='text-lg' />}
                 >
                     Analytics
                 </DropdownItem>
 
                 <DropdownItem
                     key='system'
-                    startContent={<Icon icon='solar:server-bold' className='text-lg' />}
+                    startContent={<Icon icon='solar:server-linear' className='text-lg' />}
                 >
                     System
                 </DropdownItem>
 
                 <DropdownItem
                     key='configurations'
-                    startContent={<Icon icon='solar:widget-add-bold' className='text-lg' />}
+                    startContent={<Icon icon='solar:widget-add-linear' className='text-lg' />}
                 >
                     Configurations
                 </DropdownItem>
 
                 <DropdownItem
                     key='help_and_feedback'
-                    startContent={<Icon icon='solar:help-bold' className='text-lg' />}
+                    startContent={<Icon icon='solar:question-circle-linear' className='text-lg' />}
                 >
                     Help & Feedback
                 </DropdownItem>
@@ -131,7 +131,7 @@ const Avatar = () => {
                     key='logout'
                     color='danger'
                     className='text-danger'
-                    startContent={<Icon icon='solar:logout-2-bold' className='text-lg' />}
+                    startContent={<Icon icon='solar:logout-2-linear' className='text-lg' />}
                     onClick={logout}
                 >
                     Log Out
