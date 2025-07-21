@@ -167,12 +167,12 @@ export default function PrivateNavBar() {
                   variant='light'
                 >
                   <motion.div
-                    animate={{ 
+                    animate={{
                       rotate: notificationCount > 0 ? [0, -10, 10, -5, 5, 0] : 0
                     }}
-                    transition={{ 
+                    transition={{
                       duration: 0.6,
-                      repeat: notificationCount > 0 ? Infinity,
+                      repeat: notificationCount > 0 ? Number.POSITIVE_INFINITY : 0,
                       repeatDelay: 3
                     }}
                   >
