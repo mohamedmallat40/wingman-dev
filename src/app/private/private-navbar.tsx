@@ -137,21 +137,25 @@ export default function PrivateNavBar() {
         </NavbarContent>
       </NavbarContent>
       
-      <NavbarContent as='div' className='items-center gap-3' justify='end'>
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <LanguageSwitcher />
-        </motion.div>
-        
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <ThemeToggle />
-        </motion.div>
-        
+      <NavbarContent as='div' className='items-center gap-6' justify='end'>
+        <div className='flex items-center gap-4'>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <LanguageSwitcher />
+          </motion.div>
+
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <ThemeToggle />
+          </motion.div>
+        </div>
+
+        <div className='h-6 w-px bg-divider' />
+
         <NavbarItem className='flex'>
           <Popover offset={12} placement='bottom-end'>
             <PopoverTrigger>
@@ -165,6 +169,7 @@ export default function PrivateNavBar() {
                   className='overflow-visible hover:bg-primary-50 dark:hover:bg-primary-100/10'
                   radius='full'
                   variant='light'
+                  aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
                 >
                   <motion.div
                     animate={{
@@ -176,10 +181,10 @@ export default function PrivateNavBar() {
                       repeatDelay: 3
                     }}
                   >
-                    <Badge 
-                      color='danger' 
-                      content={notificationCount > 0 ? notificationCount : ''} 
-                      showOutline={false} 
+                    <Badge
+                      color='danger'
+                      content={notificationCount > 0 ? notificationCount : ''}
+                      showOutline={false}
                       size='md'
                       className={notificationCount > 0 ? 'animate-pulse' : ''}
                     >
