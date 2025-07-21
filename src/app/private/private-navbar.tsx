@@ -30,25 +30,25 @@ const navItems = [
   {
     href: '/private/dashboard',
     label: 'Dashboard',
-    icon: 'solar:widget-2-linear',
+    icon: 'solar:chart-square-linear',
     description: 'Overview & Analytics'
   },
   {
     href: '/private/challenges',
     label: 'Challenges',
-    icon: 'solar:target-linear',
+    icon: 'solar:cup-star-linear',
     description: 'Programming Challenges'
   },
   {
     href: '/private/talent-pool',
     label: 'Talent Pool',
-    icon: 'solar:users-group-two-rounded-linear',
+    icon: 'solar:users-group-rounded-linear',
     description: 'Find Developers'
   },
   {
     href: '/private/documents',
     label: 'Documents',
-    icon: 'solar:documents-linear',
+    icon: 'solar:folder-open-linear',
     description: 'Files & Resources'
   }
 ];
