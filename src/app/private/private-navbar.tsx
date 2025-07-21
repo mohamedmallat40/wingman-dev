@@ -30,25 +30,25 @@ const navItems = [
   {
     href: '/private/dashboard',
     label: 'Dashboard',
-    icon: 'solar:widget-2-bold-duotone',
+    icon: 'solar:widget-2-linear',
     description: 'Overview & Analytics'
   },
   {
     href: '/private/challenges',
     label: 'Challenges',
-    icon: 'solar:target-bold-duotone',
+    icon: 'solar:target-linear',
     description: 'Programming Challenges'
   },
   {
     href: '/private/talent-pool',
     label: 'Talent Pool',
-    icon: 'solar:users-group-two-rounded-bold-duotone',
+    icon: 'solar:users-group-two-rounded-linear',
     description: 'Find Developers'
   },
   {
     href: '/private/documents',
     label: 'Documents',
-    icon: 'solar:documents-bold-duotone',
+    icon: 'solar:documents-linear',
     description: 'Files & Resources'
   }
 ];
@@ -183,12 +183,12 @@ export default function PrivateNavBar() {
                       size='md'
                       className={notificationCount > 0 ? 'animate-pulse' : ''}
                     >
-                      <Icon 
+                      <Icon
                         className={`transition-colors ${
                           notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
-                        }`} 
-                        icon='solar:bell-bold-duotone' 
-                        width={22} 
+                        }`}
+                        icon='solar:bell-linear'
+                        width={22}
                       />
                     </Badge>
                   </motion.div>
