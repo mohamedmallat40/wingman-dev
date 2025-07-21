@@ -159,46 +159,44 @@ export default function PrivateNavBar() {
         <NavbarItem className='flex'>
           <Popover offset={12} placement='bottom-end'>
             <PopoverTrigger>
-              <motion.div
+              <Button
+                disableRipple
+                isIconOnly
+                className='overflow-visible hover:bg-primary-50 dark:hover:bg-primary-100/10'
+                radius='full'
+                variant='light'
+                aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
+                as={motion.button}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <Button
-                  disableRipple
-                  isIconOnly
-                  className='overflow-visible hover:bg-primary-50 dark:hover:bg-primary-100/10'
-                  radius='full'
-                  variant='light'
-                  aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
+                <motion.div
+                  animate={{
+                    rotate: notificationCount > 0 ? [0, -10, 10, -5, 5, 0] : 0
+                  }}
+                  transition={{
+                    duration: 0.6,
+                    repeat: notificationCount > 0 ? Number.POSITIVE_INFINITY : 0,
+                    repeatDelay: 3
+                  }}
                 >
-                  <motion.div
-                    animate={{
-                      rotate: notificationCount > 0 ? [0, -10, 10, -5, 5, 0] : 0
-                    }}
-                    transition={{
-                      duration: 0.6,
-                      repeat: notificationCount > 0 ? Number.POSITIVE_INFINITY : 0,
-                      repeatDelay: 3
-                    }}
+                  <Badge
+                    color='danger'
+                    content={notificationCount > 0 ? notificationCount : ''}
+                    showOutline={false}
+                    size='md'
+                    className={notificationCount > 0 ? 'animate-pulse' : ''}
                   >
-                    <Badge
-                      color='danger'
-                      content={notificationCount > 0 ? notificationCount : ''}
-                      showOutline={false}
-                      size='md'
-                      className={notificationCount > 0 ? 'animate-pulse' : ''}
-                    >
-                      <Icon
-                        className={`transition-colors ${
-                          notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
-                        }`}
-                        icon='solar:bell-linear'
-                        width={22}
-                      />
-                    </Badge>
-                  </motion.div>
-                </Button>
-              </motion.div>
+                    <Icon
+                      className={`transition-colors ${
+                        notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
+                      }`}
+                      icon='solar:bell-linear'
+                      width={22}
+                    />
+                  </Badge>
+                </motion.div>
+              </Button>
             </PopoverTrigger>
             <PopoverContent className='max-w-[90vw] p-0 sm:max-w-[380px]'>
               <motion.div
