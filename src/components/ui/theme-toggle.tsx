@@ -13,7 +13,13 @@ export default function ThemeToggle() {
   return (
     <Dropdown className='min-w-32'>
       <DropdownTrigger>
-        <Button data-testid='theme-toggle' isIconOnly>
+        <Button
+          data-testid='theme-toggle'
+          isIconOnly
+          variant='light'
+          radius='full'
+          className='hover:bg-content2'
+        >
           <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all text-foreground' />
           <MoonStar className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
           <span className='sr-only'>Toggle theme</span>
