@@ -1,7 +1,0 @@
-onlyBuiltDependencies:
-  - '@parcel/watcher'
-  - sharp
-  - unrs-resolver
-
-ignoredBuiltDependencies:
-  - '@heroui/shared-utils'
