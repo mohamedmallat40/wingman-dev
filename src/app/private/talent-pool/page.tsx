@@ -88,25 +88,27 @@ const Page = () => {
         title='Talent Pool'
         description='Find and connect with the right experts for your projects.'
       />
-      <SearchInput
-        onSearch={setSearchQuery}
-        onFilterChange={setFilters}
-        onSortChange={setSortBy}
-        totalExperts={filteredAndSortedTalent.length}
-      />
-      <div className='grid w-full grid-cols-1 justify-center gap-4 py-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4'>
-        {filteredAndSortedTalent.length > 0 ? (
-          filteredAndSortedTalent.map((talent) => (
-            <TalentPoolCard
-              key={talent.id}
-              talent={{ ...talent, isTeam: talent.isTeam ?? false }}
-            />
-          ))
-        ) : (
-          <div className='text-muted-foreground col-span-full text-center'>
-            No experts found matching your criteria.
-          </div>
-        )}
+      <div className='flex flex-col gap-4 px-4 sm:px-6 lg:px-8'>
+        <SearchInput
+          onSearch={setSearchQuery}
+          onFilterChange={setFilters}
+          onSortChange={setSortBy}
+          totalExperts={filteredAndSortedTalent.length}
+        />
+        <div className='grid w-full grid-cols-1 justify-center gap-4 py-3 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:grid-cols-4'>
+          {filteredAndSortedTalent.length > 0 ? (
+            filteredAndSortedTalent.map((talent) => (
+              <TalentPoolCard
+                key={talent.id}
+                talent={{ ...talent, isTeam: talent.isTeam ?? false }}
+              />
+            ))
+          ) : (
+            <div className='text-muted-foreground col-span-full text-center'>
+              No experts found matching your criteria.
+            </div>
+          )}
+        </div>
       </div>
     </Container>
   );

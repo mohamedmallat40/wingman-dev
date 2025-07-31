@@ -1,4 +1,5 @@
-'use-client'
+'use-client';
+
 import type {
   AxiosError,
   AxiosInstance,
@@ -14,7 +15,6 @@ import { ERRORS as fr } from 'messages/fr.json';
 import { ERRORS as nl } from 'messages/nl.json';
 
 import { env } from '@/env';
-import { getUserLocale } from '@/i18n/locale';
 
 // ===== TYPES =====
 type SupportedLocale = 'en' | 'fr' | 'nl';
@@ -53,10 +53,9 @@ const getStoredToken = (): string | null => {
 };
 
 const extractErrorData = (error: AxiosError): ApiErrorResponse => {
-
-  const data = error.response?.data as ApiErrorResponse | undefined; 
-  if(data?.statusCode === 403) {
-    window.location.href = '/';
+  const data = error.response?.data as ApiErrorResponse | undefined;
+  if (data?.statusCode === 403) {
+    globalThis.location.href = '/';
     localStorage.removeItem('token');
     return { status: 'Unauthorized', message: 'Please log in again.' };
   }
@@ -69,7 +68,7 @@ const extractErrorData = (error: AxiosError): ApiErrorResponse => {
 };
 
 const showErrorToast = async (errorData: ApiErrorResponse): Promise<void> => {
-  const locale ="en"
+  const locale = 'en';
 
   addToast({
     title: errorData.status,
@@ -93,11 +92,9 @@ const attachAuthToken = (config: InternalAxiosRequestConfig): InternalAxiosReque
 const handleSuccessResponse = (response: AxiosResponse): AxiosResponse => response;
 
 const handleErrorResponse = async (error: AxiosError): Promise<never> => {
-  if(typeof window !== 'undefined'){
-
   const errorData = extractErrorData(error);
   await showErrorToast(errorData);
-  }
+
   throw error;
 };
 
@@ -106,11 +103,9 @@ const createWingManApi = (): AxiosInstance => {
   const instance = axios.create(DEFAULT_CONFIG);
 
   // Request interceptor
-  if(typeof window !== 'undefined'){
   instance.interceptors.request.use(attachAuthToken, () =>
     Promise.reject(new Error('Request error'))
   );
-}
 
   // Response interceptor
   instance.interceptors.response.use(handleSuccessResponse, handleErrorResponse);

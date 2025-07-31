@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+
+import { Badge } from '@heroui/badge';
+import { Button } from '@heroui/button';
 import { Link } from '@heroui/link';
 import {
   Navbar,
@@ -12,19 +14,18 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle
 } from '@heroui/navbar';
+import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
+import { Tooltip } from '@heroui/tooltip';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
+import Avatar from '@/app/private/components/avatar';
 import { WingmanIcon } from '@/components/icons/wingman';
 
 import NotificationsCard from '../../components/notifications/notifications-card';
 import { LanguageSwitcher } from '../../components/ui/language-switcher';
 import ThemeToggle from '../../components/ui/theme-toggle';
-import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
-import { Button } from '@heroui/button';
-import { Badge } from '@heroui/badge';
-import { Tooltip } from '@heroui/tooltip';
-import Avatar from '@/app/private/components/Avatar';
 
 const navItems = [
   {
@@ -59,8 +60,8 @@ export default function PrivateNavBar() {
   const [notificationCount] = useState(5);
 
   return (
-    <Navbar 
-      className='justify-start backdrop-blur-md bg-background/60 border-b border-divider' 
+    <Navbar
+      className='border-divider grid w-full grid-cols-1 border-b bg-transparent'
       isBordered
       maxWidth='full'
       position='sticky'
@@ -68,8 +69,8 @@ export default function PrivateNavBar() {
     >
       <NavbarContent justify='start'>
         <NavbarBrand className='gap-2'>
-          <NavbarMenuToggle 
-            className='h-6 sm:hidden text-foreground hover:text-primary transition-colors' 
+          <NavbarMenuToggle
+            className='text-foreground hover:text-primary h-6 transition-colors sm:hidden'
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           />
           <motion.div
@@ -79,21 +80,21 @@ export default function PrivateNavBar() {
           >
             <WingmanIcon />
           </motion.div>
-          <motion.div 
+          <motion.div
             className='hidden flex-col sm:flex'
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <p className='font-bold leading-tight tracking-[0.4em] text-inherit bg-gradient-to-r from-primary-500 to-secondary-500 bg-clip-text text-transparent'>
+            <p className='from-primary-500 to-secondary-500 bg-gradient-to-r bg-clip-text leading-tight font-bold tracking-[0.4em] text-inherit'>
               WINGMAN
             </p>
             <p className='text-xs leading-tight text-inherit opacity-70'>BY EXTRAEXPERTISE</p>
           </motion.div>
         </NavbarBrand>
-        
+
         <NavbarContent
-          className='mx-8 hidden h-12 w-full max-w-fit gap-2 rounded-xl bg-content2/50 px-3 shadow-sm backdrop-blur-sm dark:bg-content1/50 sm:flex'
+          className='mx-8 hidden h-12 w-full max-w-full gap-2 rounded-xl bg-transparent px-3 backdrop-blur-sm sm:flex dark:bg-transparent'
           justify='start'
         >
           {navItems.map((item) => {
@@ -108,22 +109,22 @@ export default function PrivateNavBar() {
                 >
                   <Link
                     href={item.href}
-                    className={`relative flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
+                    className={`relative flex items-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 ${
                       isActive
                         ? 'text-primary-500 bg-primary-50 dark:bg-primary-100/10'
                         : 'text-foreground-600 hover:text-primary-500 hover:bg-primary-50/50 dark:hover:bg-primary-100/5'
                     }`}
                   >
-                    <Icon 
-                      icon={item.icon} 
+                    <Icon
+                      icon={item.icon}
                       className={`text-lg transition-colors ${
                         isActive ? 'text-primary-500' : 'text-foreground-500'
-                      }`} 
+                      }`}
                     />
-                    <span className='font-medium text-sm'>{item.label}</span>
+                    <span className='text-sm font-medium'>{item.label}</span>
                     {isActive && (
                       <motion.div
-                        className='absolute inset-0 bg-primary-100/20 rounded-lg border border-primary-200/50'
+                        className='bg-primary-100/20 border-primary-200/50 absolute inset-0 rounded-lg border'
                         layoutId='navbar-active'
                         initial={false}
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -136,25 +137,19 @@ export default function PrivateNavBar() {
           })}
         </NavbarContent>
       </NavbarContent>
-      
+
       <NavbarContent as='div' className='items-center gap-6' justify='end'>
         <div className='flex items-center gap-4'>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <LanguageSwitcher />
           </motion.div>
 
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ThemeToggle />
           </motion.div>
         </div>
 
-        <div className='h-6 w-px bg-divider' />
+        <div className='bg-divider h-6 w-px' />
 
         <NavbarItem className='flex'>
           <Popover offset={12} placement='bottom-end'>
@@ -162,7 +157,7 @@ export default function PrivateNavBar() {
               <Button
                 disableRipple
                 isIconOnly
-                className='overflow-visible hover:bg-primary-50 dark:hover:bg-primary-100/10'
+                className='hover:bg-primary-50 dark:hover:bg-primary-100/10 overflow-visible'
                 radius='full'
                 variant='light'
                 aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
@@ -219,9 +214,9 @@ export default function PrivateNavBar() {
           <Avatar />
         </motion.div>
       </NavbarContent>
-      
+
       {/* Enhanced Mobile Menu */}
-      <NavbarMenu className='pt-6 bg-background/95 backdrop-blur-md'>
+      <NavbarMenu className='bg-background/95 pt-6 backdrop-blur-md'>
         <div className='flex flex-col gap-2'>
           {navItems.map((item, index) => {
             const isActive = pathname === item.href;
@@ -234,7 +229,7 @@ export default function PrivateNavBar() {
                 >
                   <Link
                     href={item.href}
-                    className={`flex items-center gap-3 p-3 rounded-lg transition-all w-full ${
+                    className={`flex w-full items-center gap-3 rounded-lg p-3 transition-all ${
                       isActive
                         ? 'bg-primary-50 text-primary-600 dark:bg-primary-100/10'
                         : 'text-foreground hover:bg-content2'
@@ -250,16 +245,16 @@ export default function PrivateNavBar() {
               </NavbarMenuItem>
             );
           })}
-          
+
           {/* Mobile Settings Section */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.5 }}
-            className='mt-6 pt-4 border-t border-divider'
+            className='border-divider mt-6 border-t pt-4'
           >
             <div className='flex items-center justify-between px-3 py-2'>
-              <span className='text-sm font-medium text-foreground-600'>Preferences</span>
+              <span className='text-foreground-600 text-sm font-medium'>Preferences</span>
               <div className='flex items-center gap-2'>
                 <LanguageSwitcher />
                 <ThemeToggle />

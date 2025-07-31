@@ -1,74 +1,133 @@
-interface Address {
-    id: string;
-    city: string;
-    country: string;
-    postalCode: string;
-    VATNumber: string;
-    street: string;
-    countryCode: string | null;
-    houseNumber: string;
-    companyName: string;
-    type: string;
-  }
-  
-  interface NotificationSetting {
-    id: string;
-    type: 'JOB_RECOMMENDATION' | 'CHAT_ALERT' | 'APPLICATION_STATUS';
-    preferences: ('EMAIL' | 'WEB')[];
-  }
-  
-  export interface IUserProfile {
-    id: string;
-    email: string;
-    kind: 'FREELANCER' | string;
-    isMailVerified: boolean;
-    userName: string | null;
-    firstName: string;
-    lastName: string;
-    resume: string;
-    aboutMe: string;
-    profileImage: string;
-    profileCover: string | null;
-    statusAviability: 'OPEN_FOR_PROJECT' | string;
-    phoneNumber: string;
-    birthDate: string | null;
-    lastUpdatedDateStatus: string | null;
-    hourlyRate: number;
-    linkedinProfile: string;
-    category: string | null;
-    profileWebsite: string;
-    dailyRate: number;
-    experienceYears: number;
-    extraInfo: string;
-    workType: 'REMOTE' | string;
-    stepper: boolean;
-    profession: string | null;
-    city: string | null;
-    amount: number;
-    currency: string;
-    shouldBeVisible: boolean;
-    paymentType: 'DAILY_BASED' | string;
-    region: string | null;
-    workingTime: 'PART_TIME' | string;
-    cid: string;
-    isCompleted: boolean;
-    addedBy: string | null;
-    isDeleted: boolean;
-    dateDeleted: string | null;
-    acceptChatWarning: boolean;
-    language: string;
-    completedSteps: string[];
-    stripeCustomerId: string;
-    stripeSubscriptionId: string;
-    created_at: string;
-    updated_at: string;
-    address: Address[];
-    position: string | null;
-    skills: string[];
-    notes: string[];
-    portfolio: string | null;
-    tags: string[];
-    savedMissions: string[];
-    notificationSettings: NotificationSetting[];
-  }
-  
+import { type AddressDetails } from '@/lib/types/auth';
+
+interface NotificationSetting {
+  id: string;
+  type: 'JOB_RECOMMENDATION' | 'CHAT_ALERT' | 'APPLICATION_STATUS';
+  preferences: ('EMAIL' | 'WEB')[];
+}
+
+export interface IUserProfile {
+  experience:
+    | (
+        | {
+            id: number | undefined;
+            position: string | undefined;
+            company: string | undefined;
+            startDate: string | undefined;
+            endDate: string | null | undefined;
+          }
+        | undefined
+      )[]
+    | undefined;
+  services:
+    | ({
+        type: 'HOURLY_BASED' | 'DAILY_BASED' | 'PROJECT_BASED' | null;
+        id: string | null;
+        name: string | null;
+        description: string | null;
+        price: number | null;
+        skills?:
+          | ({
+              type?: 'NORMAL' | 'SOFT' | 'TECHNICAL' | null;
+              id?: string | null;
+              key?: string | null;
+            } | null)[]
+          | null;
+      } | null)[]
+    | null;
+  id: string;
+  email: string;
+  kind: 'FREELANCER' | 'COMPANY' | 'ADMIN' | 'AGENCY';
+  isMailVerified: boolean;
+  userName: string | null;
+  firstName: string;
+  lastName: string;
+  resume: string;
+  aboutMe: string;
+  profileImage: string;
+  profileCover: string | null;
+  statusAviability: 'OPEN_FOR_PROJECT' | 'AVAILABLE' | 'NOT_AVAILABLE';
+  phoneNumber: string;
+  birthDate: string | null;
+  lastUpdatedDateStatus: string | null;
+  hourlyRate: number;
+  linkedinProfile: string;
+  category: string | null;
+  profileWebsite: string;
+  dailyRate: number;
+  experienceYears: number;
+  extraInfo: string;
+  workType: 'REMOTE' | 'ON_SITE';
+  stepper: boolean;
+  profession: string | null;
+  city: string | null;
+  amount: number;
+  currency: string;
+  shouldBeVisible: boolean;
+  paymentType: 'DAILY_BASED' | 'HOURLY_BASED' | 'PROJECT';
+  region: string | null;
+  workingTime: 'PART_TIME' | 'FULL_TIME';
+  cid: string;
+  isCompleted: boolean;
+  addedBy: string | null;
+  isDeleted: boolean;
+  dateDeleted: string | null;
+  acceptChatWarning: boolean;
+  language: string;
+  completedSteps: string[];
+  stripeCustomerId: string;
+  stripeSubscriptionId: string;
+  created_at: string;
+  updated_at: string;
+  address: AddressDetails[];
+  position: string | null;
+  skills: Skill[];
+  notes: string[];
+  portfolio: string | null;
+  tags: string[];
+  savedMissions: string[];
+  notificationSettings: NotificationSetting[];
+}
+
+export interface IEducation {
+  id: string;
+  university: string;
+  degree: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface IExperience {
+  id: string;
+  company: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  position: string;
+  title: string | null;
+  link: string | null;
+  image: string | null;
+  screenShots: string | null;
+  videoUrl: string | null;
+}
+export interface IService {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  type: 'HOURLY_BASED' | 'DAILY_BASED' | 'PROJECT_BASED';
+  createdAt: string;
+  skills: Skill[];
+}
+export interface ILanguage {
+  id: string;
+  key: string;
+  level: string;
+}
+
+export interface Skill {
+  id: string;
+  key: string;
+  type: 'NORMAL' | 'SOFT';
+}

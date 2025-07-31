@@ -6,8 +6,8 @@ import type { PropsWithChildren } from 'react';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { getQueryClient } from '@/components/providers/client/queryClient';
 
+import { getQueryClient } from '@/components/providers/client/query-client';
 
 type TTanstackQueryProvider = PropsWithChildren;
 

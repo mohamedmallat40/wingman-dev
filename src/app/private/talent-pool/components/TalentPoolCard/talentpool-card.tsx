@@ -44,12 +44,12 @@ export const TalentPoolCard: React.FC<TalentPoolCardProperties> = ({ talent }) =
           <div className='mb-4 flex items-center gap-3'>
             <Avatar src={avatarSrc} name={initials ?? name} size='md' />
             <div className='flex-1'>
-              <h3 className='flex items-center gap-2 text-lg font-semibold'>
+              <h3 className='flex items-center justify-between gap-2 text-lg font-semibold'>
                 {name}
                 {talent.isTeam && (
-                  <Badge variant='flat' color='secondary' size='sm'>
+                  <div className='bg-primary flex items-center gap-1 rounded-md px-3 py-1 text-sm text-white'>
                     Team
-                  </Badge>
+                  </div>
                 )}
               </h3>
               <p className='text-default-500 text-sm'>{title}</p>
@@ -58,7 +58,7 @@ export const TalentPoolCard: React.FC<TalentPoolCardProperties> = ({ talent }) =
           <p className='text-default-700 mb-4 line-clamp-3 text-sm'>{description}</p>
           <div className='mb-4 flex flex-wrap gap-2'>
             {tags.map((tag, index) => (
-              <Badge key={index} variant='flat' size='sm'>
+              <Badge key={index} variant='flat' size='md' color='success'>
                 {tag}
               </Badge>
             ))}

@@ -129,7 +129,7 @@ export default function Component(props: CardProps) {
       <CardHeader className='flex flex-col px-0 pb-0'>
         <div className='flex w-full items-center justify-between px-5 py-2'>
           <div className='inline-flex items-center gap-1'>
-            <h4 className='inline-block align-middle text-large font-medium'>Notifications</h4>
+            <h4 className='text-large inline-block align-middle font-medium'>Notifications</h4>
             <Chip size='sm' variant='flat'>
               12
             </Chip>

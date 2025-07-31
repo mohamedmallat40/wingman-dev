@@ -11,7 +11,7 @@ const animationVariants = {
   visible: { opacity: 1 }
 };
 
-export const FadeInImage = (props: ImgHTMLAttributes<HTMLImageElement>) => {
+export const FadeInImage = (properties: ImgHTMLAttributes<HTMLImageElement>) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const animationControls = useAnimation();
 
@@ -49,7 +49,13 @@ export const FadeInImage = (props: ImgHTMLAttributes<HTMLImageElement>) => {
          * ```
          */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img {...props} onLoad={() => setIsLoaded(true)} />
+        <img
+          {...properties}
+          onLoad={() => {
+            setIsLoaded(true);
+          }}
+          alt=''
+        />
       </m.div>
     </LazyMotion>
   );

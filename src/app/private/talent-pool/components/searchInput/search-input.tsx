@@ -147,7 +147,7 @@ export const SearchInput: React.FC<SearchInputProperties> = ({
         </div>
       )}
 
-      <div className='text-default-500 flex items-center justify-between pt-4 text-sm'>
+      <div className='text-default-500 flex items-center justify-between pt-4 pl-4 text-sm'>
         <span>Showing {totalExperts} experts</span>
         {/* <Button variant='light' startContent={<Icon icon='lucide:layout-grid' />}>
           Grid View

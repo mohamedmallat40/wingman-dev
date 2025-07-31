@@ -20,8 +20,8 @@ export default function ThemeToggle() {
           radius='full'
           className='hover:bg-content2'
         >
-          <Sun className='h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all text-foreground' />
-          <MoonStar className='absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100' />
+          <Sun className='text-foreground h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all' />
+          <MoonStar className='absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0' />
           <span className='sr-only'>Toggle theme</span>
         </Button>
       </DropdownTrigger>
@@ -34,7 +34,7 @@ export default function ThemeToggle() {
           }}
         >
           <div className='flex items-center'>
-            <Sun className='mr-2 h-[1.2rem] w-[1.2rem] ' />
+            <Sun className='mr-2 h-[1.2rem] w-[1.2rem]' />
             <span>Light</span>
           </div>
         </DropdownItem>
