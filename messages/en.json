@@ -9,7 +9,8 @@
     "loginButton": "Login",
     "logoutButton": "Logout",
     "continueWithGoogle": "Continue with Google",
-    "continueWithLinkedin": "Continue with LinkedIn"
+    "continueWithLinkedin": "Continue with LinkedIn",
+    "or": "Or"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"

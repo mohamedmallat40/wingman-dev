@@ -30,11 +30,15 @@ const messages = [
 
 const QuickActions: FC = () => {
   return (
-    <div className='grid gap-4 sm:grid-cols-2 md:grid-cols-4 w-full mt-4'>
+    <div className='xs:grid-cols-1 mt-4 grid w-full gap-4 sm:mx-4 sm:grid-cols-2 md:grid-cols-4'>
       {messages.map((message) => (
-        <Card key={message.key} className='h-auto w-full bg-default-100 px-[10px] py-[10px]' shadow='none'>
+        <Card
+          key={message.key}
+          className='border-light border-default-500 h-30 w-full border-1 px-[10px] py-[10px]'
+          shadow='none'
+        >
           <CardHeader className='p-0 pb-[9px]'>{message.icon}</CardHeader>
-          <CardBody className='p-0 text-small text-default-400'>{message.description}</CardBody>
+          <CardBody className='text-small text-default-400 p-0'>{message.description}</CardBody>
         </Card>
       ))}
     </div>

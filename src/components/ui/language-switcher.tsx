@@ -1,13 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/dropdown';
+
 import { Button } from '@heroui/button';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown';
 import { Icon } from '@iconify/react';
-import { useLocale } from 'next-intl';
-import { Language } from '@/i18n/config';
-import { setUserLocale } from '@/i18n/locale';
 import { motion } from 'framer-motion';
+import { useLocale } from 'next-intl';
+
+import { type Language } from '@/i18n/config';
+import { setUserLocale } from '@/i18n/locale';
 
 const languages: { key: Language; label: string; icon: string }[] = [
   { key: 'en', label: 'English', icon: 'twemoji:flag-united-kingdom' },
@@ -30,21 +32,18 @@ export function LanguageSwitcher() {
           size='sm'
           variant='light'
           radius='full'
-          className='min-w-8 w-8 h-8 hover:bg-content2 transition-colors'
-          aria-label={`Current language: ${currentLanguage?.label}`}
+          className='hover:bg-content2 h-8 w-8 min-w-8 transition-colors'
+          aria-label={`Current language: ${currentLanguage?.label ?? 'English'}`}
         >
-          <motion.div
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Icon 
-              icon={currentLanguage?.icon || 'twemoji:flag-united-kingdom'} 
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+            <Icon
+              icon={currentLanguage?.icon ?? 'twemoji:flag-united-kingdom'}
               className='text-lg'
             />
           </motion.div>
         </Button>
       </DropdownTrigger>
-      
+
       <DropdownMenu
         aria-label='Language selection'
         variant='flat'
@@ -52,7 +51,7 @@ export function LanguageSwitcher() {
         selectionMode='single'
         selectedKeys={new Set([selectedKey])}
         onSelectionChange={(keys) => {
-          const key = Array.from(keys)[0] as Language;
+          const key = [...keys][0] as Language;
           setSelectedKey(key);
           setUserLocale(key);
         }}
@@ -60,12 +59,7 @@ export function LanguageSwitcher() {
         {languages.map((lang) => (
           <DropdownItem
             key={lang.key}
-            startContent={
-              <Icon 
-                icon={lang.icon} 
-                className='text-lg'
-              />
-            }
+            startContent={<Icon icon={lang.icon} className='text-lg' />}
             className={selectedKey === lang.key ? 'bg-primary-50 text-primary-600' : ''}
           >
             {lang.label}

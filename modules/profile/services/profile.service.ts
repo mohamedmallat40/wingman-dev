@@ -6,3 +6,19 @@ import wingManApi from '@/lib/axios';
 export const getMyProfile = async (config?: AxiosRequestConfig) => {
   return wingManApi.get(API_ROUTES.profile.me, config);
 };
+
+export const getUserExperience = async (userId: string, config?: AxiosRequestConfig) => {
+  return wingManApi.get(`${API_ROUTES.profile.experience}${userId}`, config);
+};
+
+export const getUserEducation = async (userId: string, config?: AxiosRequestConfig) => {
+  return wingManApi.get(`${API_ROUTES.profile.education}${userId}`, config);
+};
+
+export const getUserService = async (userId: string, config?: AxiosRequestConfig) => {
+  return wingManApi.get(`${API_ROUTES.profile.services}${userId}`, config);
+};
+
+export const getUserLanguages = async (userId: string, config?: AxiosRequestConfig) => {
+  return wingManApi.get(`${API_ROUTES.profile.languages}${userId}`, config);
+};

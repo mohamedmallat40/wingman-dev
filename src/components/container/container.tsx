@@ -1,13 +1,12 @@
-import React, { FC } from 'react'
+import React, { FC } from 'react';
 
-interface IContainerProps {
-    children: React.ReactNode
+interface IContainerProperties {
+  children: React.ReactNode;
 }
-const Container: FC<IContainerProps> = ({ children }) => {
-    return (
-        <main className='flex h-full w-full flex-col items-center justify-start'>
-            {children}
-        </main>)
-}
+const Container: FC<IContainerProperties> = ({ children }) => {
+  return (
+    <main className='flex h-full w-full flex-col items-center justify-start px-2'>{children}</main>
+  );
+};
 
-export default Container
+export default Container;

@@ -51,7 +51,7 @@ const NotificationItem = React.forwardRef<HTMLDivElement, NotificationItemProps>
       <div
         ref={ref}
         className={cn(
-          'flex gap-3 border-b border-divider px-6 py-4',
+          'border-divider flex gap-3 border-b px-6 py-4',
           {
             'bg-primary-50/50': !isRead
           },

@@ -7,11 +7,10 @@ import type { Metadata, Viewport } from 'next';
 import type { PropsWithChildren } from 'react';
 
 import config from '_config';
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale } from 'next-intl/server';
 
 import RootProvider from '@/components/providers/root';
-import { NextIntlClientProvider } from 'next-intl';
-
-import { getLocale } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: config.metadata.title,
@@ -33,10 +32,7 @@ export default async function RootLayout({ children }: Readonly<TRootLayout>) {
     <html lang={locale} suppressHydrationWarning>
       <body>
         <RootProvider>
-
-          <NextIntlClientProvider>
-            {children}</NextIntlClientProvider>
-
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
         </RootProvider>
       </body>
     </html>

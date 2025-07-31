@@ -1,75 +1,71 @@
+import { Button } from '@heroui/button';
+import { ArrowRight } from 'lucide-react';
+
 import FadeInImage from '@/components/fade-in-image';
-import { Button } from '@heroui/button'
-import { Icon } from '@iconify/react';
-import { useTranslations } from 'next-intl';
-import React from 'react'
 
 const page = () => {
-    const t = useTranslations('HomePage');
-
-    return (
-        <>
-    <section className='z-20 flex flex-col items-center justify-center gap-[18px] sm:gap-6'>
-       <h1 className='text-'>
-        Samen bereik je meer.
-
-       </h1>
-          <div className='text-center text-[clamp(40px,10vw,44px)] font-bold leading-[1.2] tracking-tighter sm:text-[64px]'>
-           
-            <div className='bg-hero-section-title bg-clip-text text-transparent'>
-              Easiest way to <br /> power global teams.
-            </div>
-          </div>
-          <p className='text-center font-normal leading-7 text-default-500 sm:w-[466px] sm:text-[18px]'>
-            Acme makes running global teams simple. HR, Payroll, International Employment,
-            contractor management and more.
-          </p>
-          <div className='flex flex-col items-center justify-center gap-6 sm:flex-row'>
-            <Button
-              className='h-10 w-[163px]  px-[16px] py-[10px] text-small leading-5'
-              radius='full'
-              color="primary"
-            >
-              Get Started
-            </Button>
-            <Button
-              className='h-10 w-[163px] border-1 border-default-100 px-[16px] py-[10px] text-small font-medium leading-5'
-              endContent={
-                <span className='pointer-events-none flex h-[22px] w-[22px] items-center justify-center rounded-full bg-default-100'>
-                  <Icon
-                    className='text-default-500 [&>path]:stroke-[1.5]'
-                    icon='solar:arrow-right-linear'
-                    width={16}
-                  />
-                </span>
-              }
-              radius='full'
-              variant='bordered'
-            >
-              See our planss
-              {t('title')}
-            </Button>
-          </div>
-        </section>
-        <div className='pointer-events-none absolute inset-0 top-[-25%] z-10 scale-150 select-none sm:scale-125'>
-          {/**
-           * If using in a nextjs project, use next/image instead of <img> in <FadeInImage>.
-           * Also pass the following additional props to <FadeInImage>.
-           *
-           * ```tsx
-           * <FadeInImage
-           *   fill
-           *   priority
-           *   // existing code...
-           * />
-           * ```
-           */}
-          <FadeInImage
-            alt='Gradient background'
-            src='https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/backgrounds/bg-gradient.png'
-          />
+  return (
+    <>
+      <section className='mx-auto flex max-w-5xl flex-col items-center justify-center gap-8 px-4 py-6'>
+        {/* Main Headline */}
+        <div className='text-center'>
+          <h1 className='mb-3 text-4xl leading-tight font-bold tracking-tight sm:text-4xl lg:text-5xl'>
+            Vind binnen 2 dagen <span className='text-red-400'>gescreende digitale experts</span> en
+            zet digitale uitdagingen om in groeikansen
+          </h1>
         </div>
-        </>)
-}
 
-export default page
+        {/* Subtitle */}
+        <p className='text-default-500 max-w-3xl text-center text-lg leading-relaxed'>
+          Van e-commerce pieken, marketing automation of het verhogen van jullie ROI via social
+          media – uw persoonlijke Success Manager matcht u met 650+ flexibele, vooraf gescreende,
+          beschikbare freelancers uit de Benelux
+        </p>
+
+        {/* Statistics */}
+        <div className='my-8 grid w-full max-w-4xl grid-cols-2 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-20'>
+          <div className='text-center'>
+            <div className='mb-2 text-4xl font-bold text-red-400 lg:text-5xl'>48u</div>
+            <div className='text-sm text-gray-600 lg:text-base'>Shortlist klaar</div>
+          </div>
+          <div className='text-center'>
+            <div className='mb-2 text-4xl font-bold text-red-400 lg:text-5xl'>+85%</div>
+            <div className='text-sm text-gray-600 lg:text-base'>Tevredenheid</div>
+          </div>
+          <div className='text-center'>
+            <div className='mb-2 text-4xl font-bold text-red-400 lg:text-5xl'>90%</div>
+            <div className='text-sm text-gray-600 lg:text-base'>Match succes</div>
+          </div>
+          <div className='text-center'>
+            <div className='mb-2 text-4xl font-bold text-red-400 lg:text-5xl'>650+</div>
+            <div className='text-sm text-gray-600 lg:text-base'>Gescreende experts</div>
+          </div>
+        </div>
+
+        {/* Call to Action Buttons */}
+        <div className='flex flex-col items-center justify-center gap-4 sm:flex-row'>
+          <Button className='min-w-[200px] rounded-full bg-red-500 px-8 py-3 text-base font-medium text-white hover:bg-red-600'>
+            Boek gratis strategiesessie
+          </Button>
+          <Button
+            variant='bordered'
+            className='flex min-w-[200px] items-center gap-2 rounded-full border-red-500 px-8 py-3 text-base font-medium text-red-400 hover:bg-red-50'
+          >
+            Bekijk talentpool
+            <ArrowRight className='h-4 w-4' />
+          </Button>
+        </div>
+      </section>
+
+      {/* Background Gradient */}
+      <div className='pointer-events-none absolute inset-0 top-[-25%] z-[-1] scale-150 select-none sm:scale-125'>
+        <FadeInImage
+          alt='Gradient background'
+          src='https://nextuipro.nyc3.cdn.digitaloceanspaces.com/components-images/backgrounds/bg-gradient.png'
+        />
+      </div>
+    </>
+  );
+};
+
+export default page;
