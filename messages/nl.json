@@ -9,7 +9,196 @@
     "loginButton": "Inloggen",
     "logoutButton": "Uitloggen",
     "continueWithGoogle": "Doorgaan met Google",
-    "continueWithLinkedin": "Doorgaan met LinkedIn"
+    "continueWithLinkedin": "Doorgaan met LinkedIn",
+    "or": "Of"
+  },
+  "registration": {
+    "continue": "Doorgaan",
+    "back": "Terug",
+    "createAccount": "Account aanmaken",
+    "creatingAccount": "Account aanmaken...",
+    "connecting": "Verbinden...",
+    "continueWithGoogle": "Doorgaan met Google",
+    "continueWithLinkedIn": "Doorgaan met LinkedIn",
+    "or": "OF",
+    "firstName": "Voornaam",
+    "lastName": "Achternaam",
+    "emailAddress": "E-mailadres",
+    "passwordPlaceholder": "Wachtwoord (8+ tekens)",
+    "confirmPassword": "Bevestig wachtwoord",
+    "firstNameRequired": "Voornaam is verplicht",
+    "lastNameRequired": "Achternaam is verplicht",
+    "emailRequired": "E-mailadres is verplicht",
+    "emailInvalid": "Voer een geldig e-mailadres in",
+    "passwordRequired": "Wachtwoord is verplicht",
+    "passwordMinLength": "Wachtwoord moet minstens 8 tekens lang zijn",
+    "confirmPasswordRequired": "Bevestig uw wachtwoord",
+    "passwordsDoNotMatch": "Wachtwoorden komen niet overeen",
+    "hidePassword": "Wachtwoord verbergen",
+    "showPassword": "Wachtwoord tonen",
+    "passwordRequirements": "Wachtwoordvereisten",
+    "atLeast8Characters": "Minstens 8 tekens",
+    "passwordsMustMatch": "Wachtwoorden moeten overeenkomen",
+    "freelancerDescription": "Perfect voor onafhankelijke professionals en solo-ondernemers",
+    "companyDescription": "Ideaal voor gevestigde bedrijven en ondernemingen",
+    "agencyDescription": "Geweldig voor marketingbureaus en dienstverleners",
+    "defaultCategoryDescription": "Kies deze optie als deze u het beste beschrijft",
+    "selectThisOption": "Selecteer deze optie",
+    "free": "Gratis",
+    "popular": "Populair",
+    "month": "mnd",
+    "moreFeatures": "meer functies",
+    "selectThisPlan": "Selecteer dit plan",
+    "agreeToTermsPrefix": "Ik heb de",
+    "termsOfService": "Servicevoorwaarden",
+    "and": "en het",
+    "privacyPolicy": "Privacybeleid",
+    "personalInformation": "Persoonlijke informatie",
+    "createAccountDetails": "Maak uw accountgegevens aan",
+    "chooseYourCategory": "Kies uw categorie",
+    "selectWhatDescribesYou": "Selecteer wat u het beste beschrijft",
+    "chooseYourPlan": "Kies uw plan",
+    "selectPlanThatFitsYou": "Selecteer het plan dat bij uw behoeften past",
+    "billingInformation": "Factuurgegevens",
+    "completeYourDetails": "Voltooi uw gegevens",
+    "joinWingman": "Word lid van Wingman",
+    "createYourAccount": "Maak uw account aan",
+    "step": "Stap",
+    "of": "van",
+    "notApplicable": "Niet van toepassing",
+    "completed": "✓ Voltooid",
+    "verifyingInformation": "Uw informatie verifiëren...",
+    "secureEncrypted": "Veilig & versleuteld",
+    "alreadyHaveAccount": "Heeft u al een account?",
+    "signIn": "Inloggen"
+  },
+  "billing": {
+    "vatNumber": "BTW-nummer (optioneel)",
+    "companyName": "Bedrijfsnaam (optioneel)",
+    "streetAddress": "Straatnaam",
+    "houseNumber": "Huisnummer",
+    "city": "Stad",
+    "postalCode": "Postcode"
+  },
+  "landing": {
+    "hero": {
+      "headline": "Vind binnen 2 dagen",
+      "headlineHighlight": "gescreende digitale experts",
+      "headlineEnd": "en zet digitale uitdagingen om in groeikansen",
+      "subtitle": "Van e-commerce pieken, marketing automation of het verhogen van jullie ROI via social media – uw persoonlijke Success Manager matcht u met 650+ flexibele, vooraf gescreende, beschikbare freelancers uit de Benelux",
+      "ctaPrimary": "Boek gratis strategiesessie",
+      "ctaSecondary": "Bekijk talentpool"
+    },
+    "stats": {
+      "stat1Label": "Shortlist klaar",
+      "stat1Value": "48u",
+      "stat2Label": "Tevredenheid",
+      "stat2Value": "+85%",
+      "stat3Label": "Match succes",
+      "stat3Value": "90%",
+      "stat4Label": "Gescreende experts",
+      "stat4Value": "650+"
+    },
+    "features": {
+      "title": "Waarom kiezen voor Wingman?",
+      "subtitle": "Ons platform combineert snelheid, kwaliteit en persoonlijke service voor optimale resultaten",
+      "feature1Title": "Gescreende Experts",
+      "feature1Description": "Alle freelancers zijn vooraf gescreend op kwaliteit en betrouwbaarheid",
+      "feature2Title": "Snelle Matching",
+      "feature2Description": "Binnen 48 uur een shortlist van de beste kandidaten voor uw project",
+      "feature3Title": "Persoonlijke Support",
+      "feature3Description": "Uw eigen Success Manager begeleidt u door het hele proces"
+    },
+    "pricing": {
+      "title": "Eenvoudige, transparante prijzen",
+      "subtitle": "Kies het plan dat past bij uw bedrijfsbehoeften",
+      "monthly": "Maandelijks",
+      "yearly": "Jaarlijks",
+      "yearlyDiscount": "Bespaar 20%",
+      "getStarted": "Aan de slag",
+      "contactSales": "Contact Sales",
+      "mostPopular": "Meest Populair",
+      "perMonth": "per maand",
+      "perYear": "per jaar"
+    },
+    "testimonials": {
+      "title": "Vertrouwd door 500+ bedrijven",
+      "subtitle": "Zie wat onze klanten zeggen over werken met Wingman"
+    },
+    "faq": {
+      "title": "Veelgestelde Vragen",
+      "subtitle": "Alles wat u moet weten over ons platform"
+    },
+    "cta": {
+      "title": "Klaar om je perfecte digitale expert te vinden?",
+      "subtitle": "Sluit je aan bij 500+ bedrijven die Wingman vertrouwen om hen te verbinden met toptalent.",
+      "primaryButton": "Vandaag Starten",
+      "secondaryButton": "Plan een Gesprek"
+    },
+    "footer": {
+      "description": "Wingman verbindt bedrijven met topkwaliteit digitaal talent in de Benelux regio.",
+      "product": "Product",
+      "company": "Bedrijf",
+      "support": "Ondersteuning",
+      "legal": "Juridisch",
+      "allRightsReserved": "Alle rechten voorbehouden."
+    }
+  },
+  "dashboard": {
+    "pageTitle": "Welkom terug! 👋",
+    "pageDescription": "Hier is een overzicht van uw projecten en activiteiten",
+    "refreshButton": "Vernieuwen",
+    "newProjectButton": "Nieuw Project",
+    "quickActions": "Snelle Acties",
+    "stats": {
+      "activeProjects": "Actieve Projecten",
+      "freelancersFound": "Freelancers Gevonden",
+      "averageRating": "Gemiddelde Rating",
+      "completedProjects": "Voltooide Projecten"
+    },
+    "quickActionItems": {
+      "findTalent": {
+        "title": "Zoek Talent",
+        "description": "Vind de perfecte freelancer voor uw project"
+      },
+      "myChallenges": {
+        "title": "Mijn Uitdagingen",
+        "description": "Volg uw programmeer uitdagingen en verbeter uw vaardigheden"
+      },
+      "postProject": {
+        "title": "Project Plaatsen",
+        "description": "Plaats een nieuw project en ontvang offertes"
+      },
+      "documents": {
+        "title": "Documenten",
+        "description": "Bekijk en beheer uw documenten"
+      },
+      "goTo": "Ga naar"
+    },
+    "recentProjects": {
+      "title": "Recente Projecten",
+      "viewAll": "Alle projecten",
+      "progress": "Voortgang",
+      "due": "Vervaldatum"
+    },
+    "recentActivity": {
+      "title": "Recente Activiteit"
+    },
+    "myChallenges": {
+      "title": "Mijn Uitdagingen",
+      "viewAll": "Alles Bekijken",
+      "progress": "Voortgang",
+      "difficulty": {
+        "easy": "Gemakkelijk",
+        "medium": "Gemiddeld",
+        "hard": "Moeilijk"
+      },
+      "status": {
+        "started": "Gestart",
+        "inProgress": "Bezig",
+        "completed": "Voltooid"
+      }
+    }
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet"

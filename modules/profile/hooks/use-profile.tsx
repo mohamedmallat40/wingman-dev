@@ -11,29 +11,25 @@ import { useQuery } from '@tanstack/react-query';
 
 const useProfile = (userId: string) => {
   const { data, error, isLoading } = useQuery(profileOptions);
+
+  // Only make these queries if userId is provided and valid
+  const shouldFetchUserData = Boolean(userId && userId.trim() !== '');
+
   const experienceQuery = useQuery({
     ...experienceOptions(userId),
-    enabled: !!userId
+    enabled: shouldFetchUserData
   });
-
   const educationQuery = useQuery({
     ...educationOptions(userId),
-    enabled: !!userId
+    enabled: shouldFetchUserData
   });
-
   const serviceQuery = useQuery({
     ...serviceOptions(userId),
-    enabled: !!userId
+    enabled: shouldFetchUserData
   });
-
   const languageQuery = useQuery({
     ...languageOptions(userId),
-    enabled: !!userId
-  });
-
-  const reviewsQuery = useQuery({
-    ...reviewsOptions(userId),
-    enabled: !!userId
+    enabled: shouldFetchUserData
   });
 
   // eslint-disable-next-line unicorn/consistent-function-scoping
@@ -50,7 +46,7 @@ const useProfile = (userId: string) => {
     : languageQuery.data?.data.map((lang) => {
         return {
           ...lang,
-          key: new Intl.DisplayNames(['en'], { type: 'language' }).of(lang.key ?? '')
+          key: new Intl.DisplayNames(['en'], { type: 'language' }).of(lang.key) || lang.key
         };
       });
   return {

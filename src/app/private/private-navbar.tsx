@@ -35,22 +35,28 @@ const navItems = [
     description: 'Overview & Analytics'
   },
   {
-    href: '/private/challenges',
-    label: 'Challenges',
+    href: '/private/my-challenges',
+    label: 'My Challenges',
     icon: 'solar:cup-star-linear',
-    description: 'Programming Challenges'
+    description: 'Your Programming Challenges'
+  },
+  {
+    href: '/private/solutions',
+    label: 'Solutions',
+    icon: 'solar:code-square-linear',
+    description: 'Code Solutions & Reviews'
   },
   {
     href: '/private/talent-pool',
     label: 'Talent Pool',
     icon: 'solar:users-group-rounded-linear',
-    description: 'Find Developers'
+    description: 'Find Skilled Freelancers'
   },
   {
     href: '/private/documents',
     label: 'Documents',
-    icon: 'solar:folder-open-linear',
-    description: 'Files & Resources'
+    icon: 'solar:document-text-linear',
+    description: 'Manage Your Documents'
   }
 ];
 

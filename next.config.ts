@@ -4,24 +4,34 @@
  */
 import './src/env.js';
 
+import type { NextConfig } from 'next';
+
 import createNextIntlPlugin from 'next-intl/plugin';
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
   eslint: {
     ignoreDuringBuilds: true
   },
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: 'dev.extraexpertise.be',
         pathname: '/api/upload/**'
+      },
+      {
+        protocol: 'https' as const,
+        hostname: 'i.pravatar.cc'
+      },
+      {
+        protocol: 'https' as const,
+        hostname: 'nextuipro.nyc3.cdn.digitaloceanspaces.com'
       }
     ]
   }
 };
 
-const withNextIntl = createNextIntlPlugin();
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 export default withNextIntl(nextConfig);

@@ -6,14 +6,14 @@ import { Avatar as HerouiAvatar } from '@heroui/avatar';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown';
 import { Skeleton } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import useProfile from '@root/modules/profile/hooks/use-profile';
+import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
 import { API_ROUTES } from '@/lib/api-routes';
 
 const Avatar = () => {
-  const { profile, logout, isLoading } = useProfile('');
+  const { profile, logout, isLoading } = useBasicProfile();
   const router = useRouter();
   if (isLoading) {
     return (

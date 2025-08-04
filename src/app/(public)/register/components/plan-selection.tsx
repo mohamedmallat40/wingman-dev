@@ -4,6 +4,8 @@ import type { Plan } from '@/lib/types/auth';
 
 import { Card, CardBody, Chip, Radio, RadioGroup } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 interface PlanSelectionProperties {
   selectedPlan?: Plan;
@@ -16,17 +18,15 @@ export default function PlanSelection({
   onPlanChange,
   plans
 }: Readonly<PlanSelectionProperties>) {
-  return (
-    <div className='space-y-3'>
-      <div>
-        <h2 className='mb-1 text-lg font-semibold text-gray-900 dark:text-white'>
-          Choose Your Plan
-        </h2>
-        <p className='text-sm text-gray-600 dark:text-gray-400'>
-          Select the plan that fits your needs
-        </p>
-      </div>
+  const t = useTranslations('registration');
 
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className='space-y-6'
+    >
       <RadioGroup
         value={selectedPlan?.id ?? ''}
         onValueChange={(value: string) => {
@@ -34,78 +34,94 @@ export default function PlanSelection({
           if (plan) onPlanChange(plan);
         }}
         classNames={{
-          wrapper: 'grid grid-cols-2 gap-2'
+          wrapper: 'grid grid-cols-1 lg:grid-cols-2 gap-6'
         }}
       >
-        {plans.map((plan) => (
-          <Radio
+        {plans.map((plan, index) => (
+          <motion.div
             key={plan.id}
-            value={plan.id}
-            classNames={{
-              base: 'inline-flex m-0 bg-transparent items-start justify-start flex-row-reverse cursor-pointer rounded-lg border-2 border-default-200 p-0 hover:border-primary-500 data-[selected=true]:border-primary-500',
-              control: 'hidden',
-              wrapper: 'hidden',
-              labelWrapper: 'm-0 w-full'
-            }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1, duration: 0.4 }}
+            className='relative z-10 hover:z-20'
           >
-            <Card className='w-full bg-transparent shadow-none'>
-              <CardBody className='p-3'>
-                <div className='mb-3 flex items-start justify-between'>
-                  <div>
-                    <h3 className='mb-1 text-base font-semibold text-gray-900 dark:text-white'>
-                      {plan.name}
-                    </h3>
-                    <p className='mb-2 text-xs text-gray-600 dark:text-gray-400'>{plan.subTitle}</p>
-                  </div>
-                  <div className='flex items-center gap-1 text-right'>
-                    <Chip
-                      color={plan.price === 0 ? 'success' : 'danger'}
-                      variant='flat'
-                      size='sm'
-                      className='mt-1'
-                    >
-                      {plan.price === 0 ? 'Free' : 'Popular'}
-                    </Chip>
-
-                    <div className='text-primary text-xl font-bold'>
-                      €{plan.price}
-                      {plan.price > 0 && (
-                        <span className='text-sm font-normal text-gray-500'>/mo</span>
-                      )}
+            <Radio
+              value={plan.id}
+              classNames={{
+                base: 'group inline-flex m-0 bg-transparent items-start justify-start flex-row-reverse cursor-pointer rounded-[24px] border-2 border-default-200 p-0 hover:border-primary hover:bg-primary/5 hover:shadow-xl hover:scale-105 data-[selected=true]:border-primary data-[selected=true]:bg-gradient-to-br data-[selected=true]:from-primary/15 data-[selected=true]:to-primary/5 data-[selected=true]:shadow-2xl data-[selected=true]:scale-105 transition-all duration-300 ease-out',
+                control: 'hidden',
+                wrapper: 'hidden',
+                labelWrapper: 'm-0 w-full'
+              }}
+            >
+              <Card className='h-full w-full border-none bg-transparent shadow-none'>
+                <CardBody className='flex h-full flex-col p-6'>
+                  <div className='mb-4 flex items-start justify-between'>
+                    <div className='flex-1'>
+                      <h3 className='text-foreground mb-1 text-lg font-bold tracking-[0.02em]'>
+                        {plan.name}
+                      </h3>
+                      <p className='text-default-600 text-sm'>{plan.subTitle}</p>
+                    </div>
+                    <div className='text-right'>
+                      <Chip
+                        color={plan.price === 0 ? 'success' : 'primary'}
+                        variant='flat'
+                        size='sm'
+                        className='mb-2 text-xs font-medium'
+                      >
+                        {plan.price === 0 ? t('free') : t('popular')}
+                      </Chip>
+                      <div className='text-primary text-2xl font-bold'>
+                        €{plan.price}
+                        {plan.price > 0 && (
+                          <span className='text-default-500 text-sm font-normal'>
+                            /{t('month')}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <p className='mb-3 line-clamp-2 text-xs text-gray-600 dark:text-gray-400'>
-                  {plan.description}
-                </p>
-
-                <div className='space-y-1'>
-                  {plan.features.slice(0, 3).map((feature, index) => (
-                    <div
-                      key={index}
-                      className='flex items-start gap-2 text-xs text-gray-600 dark:text-gray-400'
-                    >
-                      <Icon
-                        icon='solar:check-circle-outline'
-                        className='text-success mt-0.5 flex-shrink-0'
-                        width={14}
-                      />
-                      <span>{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {plan.features.length > 3 && (
-                  <p className='mt-2 text-xs text-gray-500 dark:text-gray-500'>
-                    +{plan.features.length - 3} more features
+                  <p className='text-default-700 mb-4 text-sm leading-relaxed'>
+                    {plan.description}
                   </p>
-                )}
-              </CardBody>
-            </Card>
-          </Radio>
+
+                  <div className='flex-1 space-y-2'>
+                    {plan.features.slice(0, 4).map((feature, featureIndex) => (
+                      <div
+                        key={featureIndex}
+                        className='text-default-700 flex items-start gap-2 text-sm'
+                      >
+                        <Icon
+                          icon='solar:check-circle-bold-duotone'
+                          className='text-success mt-0.5 h-4 w-4 flex-shrink-0'
+                        />
+                        <span className='leading-relaxed'>{feature}</span>
+                      </div>
+                    ))}
+                    {plan.features.length > 4 && (
+                      <div className='text-primary flex items-start gap-2 text-sm font-medium'>
+                        <Icon icon='solar:add-circle-bold' className='mt-0.5 h-4 w-4' />
+                        <span>
+                          +{plan.features.length - 4} {t('moreFeatures')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className='border-default-200 mt-4 border-t pt-3'>
+                    <div className='text-primary flex items-center justify-center gap-2 text-sm font-medium opacity-0 transition-opacity duration-300 group-hover:opacity-100'>
+                      <span>{t('selectThisPlan')}</span>
+                      <Icon icon='solar:alt-arrow-right-linear' className='h-4 w-4' />
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </Radio>
+          </motion.div>
         ))}
       </RadioGroup>
-    </div>
+    </motion.div>
   );
 }

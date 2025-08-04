@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import type { PropsWithChildren } from 'react';
 
-import { ToastProvider } from '@heroui/react';
 import { HeroUIProvider } from '@heroui/system';
+import { ToastProvider } from '@heroui/toast';
 import { useRouter } from 'next/navigation';
 
 type THeroUiProvider = PropsWithChildren;
@@ -13,16 +13,12 @@ type THeroUiProvider = PropsWithChildren;
 export default function HeroUiProvider({ children }: Readonly<THeroUiProvider>) {
   const router = useRouter();
 
-  return (
-    <HeroUIProvider navigate={router.push}>
-      <ToastProvider
-        placement='top-center'
-        toastProps={{
-          timeout: 3000
-        }}
-      />
-
-      {children}
-    </HeroUIProvider>
+  const navigate = useCallback(
+    (path: string) => {
+      router.push(path);
+    },
+    [router]
   );
+
+  return <HeroUIProvider navigate={navigate}>{children}</HeroUIProvider>;
 }
