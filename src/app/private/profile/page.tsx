@@ -8,6 +8,7 @@ import EducationSection from './components/education';
 import ExperienceSection from './components/experience';
 import GeneralInfoSection from './components/general-info';
 import ProjectsSection from './components/projects';
+import ReviewsSection from './components/reviews';
 import ServicesSection from './components/services';
 
 export default function ProfilePage() {
@@ -20,6 +21,7 @@ export default function ProfilePage() {
     education,
     services,
     languages,
+    reviews,
     isLoading,
     error
   } = useProfile(userId);
@@ -60,6 +62,9 @@ export default function ProfilePage() {
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
             <ExperienceSection experience={experience} />
             <EducationSection education={education} />
+          </div>
+          <div>
+            <ReviewsSection reviews={reviews} />
           </div>
         </div>
       </div>

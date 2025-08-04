@@ -3,6 +3,8 @@
 import { useState } from 'react';
 
 import { Card, CardBody, Spinner, Tab, Tabs } from '@heroui/react';
+import { profileOptions } from '@root/modules/profile/hooks/profile.server';
+import useProfile from '@root/modules/profile/hooks/use-profile';
 import { useQuery } from '@tanstack/react-query';
 import { Briefcase, GraduationCap, Settings, User } from 'lucide-react';
 
@@ -11,115 +13,32 @@ import ExperienceProjectsTab from './components/experience-projects-tab';
 import GeneralInfoTab from './components/general-info-tab';
 import ServicesTab from './components/services-tab';
 
-// Mock API function - replace with your actual API call
-async function fetchUserSettings() {
-  // Simulate API delay
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
-  return {
-    id: '1',
-    firstName: 'Sarah',
-    lastName: 'Johnson',
-    avatar: '/placeholder.svg?height=120&width=120',
-    address: {
-      street: 'Oak Street',
-      houseNumber: '123',
-      city: 'San Francisco',
-      country: 'USA'
-    },
-    aboutMe:
-      'Passionate full-stack developer with expertise in modern web technologies. I love creating scalable applications and solving complex problems.',
-    experienceYears: 5,
-    hourlyRate: 85,
-    paymentType: 'hourly' as const,
-    skills: [
-      { id: 1, key: 'React' },
-      { id: 2, key: 'Node.js' },
-      { id: 3, key: 'TypeScript' },
-      { id: 4, key: 'Python' },
-      { id: 5, key: 'AWS' }
-    ],
-    languages: [
-      { id: 1, key: 'EN', level: 'Native' as const },
-      { id: 2, key: 'ES', level: 'Intermediate' as const },
-      { id: 3, key: 'FR', level: 'Basic' as const }
-    ],
-    projects: [
-      {
-        id: 1,
-        name: 'E-commerce Platform',
-        company: 'TechCorp',
-        image: '/placeholder.svg?height=200&width=300'
-      },
-      {
-        id: 2,
-        name: 'Mobile Banking App',
-        company: 'FinanceInc',
-        image: '/placeholder.svg?height=200&width=300'
-      }
-    ],
-    experience: [
-      {
-        id: 1,
-        position: 'Senior Full Stack Developer',
-        company: 'TechCorp',
-        startDate: '2022-01-15',
-        endDate: undefined
-      },
-      {
-        id: 2,
-        position: 'Frontend Developer',
-        company: 'StartupXYZ',
-        startDate: '2020-06-01',
-        endDate: '2021-12-31'
-      }
-    ],
-    education: [
-      {
-        id: 1,
-        degree: 'Master of Computer Science',
-        university: 'Stanford University',
-        startDate: '2018-09-01',
-        endDate: '2020-05-15',
-        description: 'Specialized in Machine Learning and Software Engineering'
-      }
-    ],
-    services: [
-      {
-        id: '0792cf4a-1f25-4a40-aa56-98fcbad24a09',
-        name: 'Web Design',
-        description:
-          'We build dynamic websites with modern technologies and responsive design principles',
-        price: 2500,
-        type: 'DAILY_BASED' as const,
-        skills: [
-          {
-            id: 'f23e9dd1-7adf-46fe-9683-5f12c5c7bc79',
-            key: 'A/B Testing for Emails',
-            type: 'NORMAL' as const
-          },
-          {
-            id: 'ba260616-0137-47dd-b319-cdb3b1da7364',
-            key: 'Active Listening',
-            type: 'SOFT' as const
-          }
-        ]
-      }
-    ]
-  };
+interface SettingsPageProperties {
+  userId?: string;
 }
 
-export default function SettingsPage() {
+export default function SettingsPage({ userId }: Readonly<SettingsPageProperties>) {
   const [selectedTab, setSelectedTab] = useState('general');
 
+  // Get profile data first to extract userId if not provided
+  const { data: profileData } = useQuery({
+    ...profileOptions,
+    staleTime: Infinity // Use cached data if available
+  });
+
+  // Use provided userId or extract from profile data
+  const currentUserId = userId ?? profileData?.data?.id ?? '';
+
   const {
-    data: user,
+    profile: user,
+    projects,
+    experience,
+    education,
+    services,
+    languages,
     isLoading,
     error
-  } = useQuery({
-    queryKey: ['user-settings'],
-    queryFn: fetchUserSettings
-  });
+  } = useProfile(currentUserId);
 
   if (isLoading) {
     return (
@@ -178,7 +97,7 @@ export default function SettingsPage() {
                 }
               >
                 <div className='p-6'>
-                  <GeneralInfoTab user={user} />
+                  <GeneralInfoTab user={user} languages={languages} />
                 </div>
               </Tab>
 
@@ -192,7 +111,7 @@ export default function SettingsPage() {
                 }
               >
                 <div className='p-6'>
-                  <ExperienceProjectsTab user={user} />
+                  <ExperienceProjectsTab user={user} projects={projects} experiences={experience} />
                 </div>
               </Tab>
 
@@ -206,7 +125,7 @@ export default function SettingsPage() {
                 }
               >
                 <div className='p-6'>
-                  <EducationTab user={user} />
+                  <EducationTab user={user} educations={education} />
                 </div>
               </Tab>
 
@@ -220,7 +139,7 @@ export default function SettingsPage() {
                 }
               >
                 <div className='p-6'>
-                  <ServicesTab user={user} />
+                  <ServicesTab user={user} services={services} />
                 </div>
               </Tab>
             </Tabs>

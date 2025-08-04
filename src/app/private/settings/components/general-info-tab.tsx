@@ -1,7 +1,3 @@
-'use client';
-
-import { useState } from 'react';
-
 import type {
   GeneralInfoFormData,
   LanguagesFormData,
@@ -20,7 +16,8 @@ import {
   Textarea
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type IUserProfile } from '@root/modules/profile/types';
+import { type ILanguage, type IUserProfile } from '@root/modules/profile/types';
+import useSettings from '@root/modules/settings/hooks/use-settings';
 import {
   generalInfoSchema,
   languagesSchema,
@@ -31,38 +28,24 @@ import { useFieldArray, useForm } from 'react-hook-form';
 
 interface GeneralInfoTabProperties {
   user: IUserProfile;
+  languages: ILanguage[];
 }
 
-const languageOptions = [
-  { key: 'EN', label: 'English' },
-  { key: 'ES', label: 'Spanish' },
-  { key: 'FR', label: 'French' },
-  { key: 'AR', label: 'Arabic' },
-  { key: 'DE', label: 'German' }
+const levelOptions = [
+  { value: 'BEGINNER', label: 'Beginner' },
+  { value: 'INTERMEDIATE', label: 'Intermediate' },
+  { value: 'ADVANCED', label: 'Advanced' },
+  { value: 'NATIVE', label: 'Native' }
 ];
 
-const levelOptions = ['Basic', 'Intermediate', 'Advanced', 'Native'];
+export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfoTabProperties>) {
+  const { updateGeneralInfo, updateLanguages, isUpdatingGeneralInfo, isUpdatingLanguages } =
+    useSettings(user.id);
 
-export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperties>) {
-  const [isLoading, setIsLoading] = useState(false);
-
-  // General Info Form
   const generalForm = useForm<GeneralInfoFormData>({
     resolver: zodResolver(generalInfoSchema),
     defaultValues: {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      profileImage: user.profileImage,
-      address: {
-        street: user.address[0]?.street ?? '',
-        houseNumber: user.address[0]?.houseNumber ?? '',
-        city: user.address[0]?.city ?? '',
-        country: user.address[0]?.country ?? ''
-      },
-      aboutMe: user.aboutMe,
-      experienceYears: user.experienceYears,
-      hourlyRate: user.hourlyRate,
-      paymentType: user.paymentType
+      ...user
     }
   });
 
@@ -70,7 +53,7 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
   const skillsForm = useForm<SkillsFormData>({
     resolver: zodResolver(skillsSchema),
     defaultValues: {
-      skills: []
+      skills: user.skills
     }
   });
 
@@ -87,7 +70,7 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
   const languagesForm = useForm<LanguagesFormData>({
     resolver: zodResolver(languagesSchema),
     defaultValues: {
-      languages: []
+      languages: languages
     }
   });
 
@@ -101,40 +84,19 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
   });
 
   const onSubmitGeneral = async (data: GeneralInfoFormData) => {
-    setIsLoading(true);
-    try {
-      // API call to update general info
-      console.log('Updating general info:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Error updating general info:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    updateGeneralInfo(data);
   };
 
   const onSubmitSkills = async (data: SkillsFormData) => {
-    setIsLoading(true);
-    try {
-      console.log('Updating skills:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Error updating skills:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    const requestData = {
+      ...user,
+      skills: data
+    };
+    updateGeneralInfo(requestData);
   };
 
   const onSubmitLanguages = async (data: LanguagesFormData) => {
-    setIsLoading(true);
-    try {
-      console.log('Updating languages:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Error updating languages:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    updateLanguages(data);
   };
 
   return (
@@ -255,7 +217,7 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
             <Button
               type='submit'
               color='primary'
-              isLoading={isLoading}
+              isLoading={isUpdatingGeneralInfo}
               startContent={<Save size={18} />}
             >
               Save Personal Information
@@ -302,7 +264,7 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
                 variant='flat'
                 startContent={<Plus size={18} />}
                 onPress={() => {
-                  appendSkill({ id: Date.now(), key: '' });
+                  appendSkill({ id: Date.now().toString(), key: '' });
                 }}
               >
                 Add Skill
@@ -310,7 +272,7 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
               <Button
                 type='submit'
                 color='primary'
-                isLoading={isLoading}
+                isLoading={isUpdatingGeneralInfo}
                 startContent={<Save size={18} />}
               >
                 Save Skills
@@ -333,6 +295,7 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
                   <Select
                     {...languagesForm.register(`languages.${index}.key`)}
                     placeholder='Select language'
+                    aria-label='selected language'
                     selectedKeys={[languagesForm.watch(`languages.${index}.key`)]}
                     onSelectionChange={(keys) => {
                       const value = [...keys][0] as string;
@@ -340,25 +303,26 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
                     }}
                     className='flex-1'
                   >
-                    {languageOptions.map((lang) => (
-                      <SelectItem key={lang.key}>{lang.label}</SelectItem>
+                    {languages.map((lang) => (
+                      <SelectItem key={lang.key}>{lang.key}</SelectItem>
                     ))}
                   </Select>
                   <Select
                     {...languagesForm.register(`languages.${index}.level`)}
                     placeholder='Select level'
                     selectedKeys={[languagesForm.watch(`languages.${index}.level`)]}
+                    aria-label='langauge'
                     onSelectionChange={(keys) => {
                       const value = [...keys][0] as string;
                       languagesForm.setValue(
                         `languages.${index}.level`,
-                        value as 'Basic' | 'Intermediate' | 'Advanced' | 'Native'
+                        value as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'NATIVE'
                       );
                     }}
                     className='flex-1'
                   >
-                    {levelOptions.map((level) => (
-                      <SelectItem key={level}>{level}</SelectItem>
+                    {levelOptions.map(({ value, label }) => (
+                      <SelectItem key={value}>{label}</SelectItem>
                     ))}
                   </Select>
                   <Button
@@ -382,7 +346,7 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
                 variant='flat'
                 startContent={<Plus size={18} />}
                 onPress={() => {
-                  appendLanguage({ id: Date.now(), key: '', level: 'Basic' });
+                  appendLanguage({ id: Date.now().toString(), key: '', level: 'BEGINNER' });
                 }}
               >
                 Add Language
@@ -390,7 +354,7 @@ export default function GeneralInfoTab({ user }: Readonly<GeneralInfoTabProperti
               <Button
                 type='submit'
                 color='primary'
-                isLoading={isLoading}
+                isLoading={isUpdatingLanguages}
                 startContent={<Save size={18} />}
               >
                 Save Languages

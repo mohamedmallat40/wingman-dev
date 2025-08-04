@@ -1,7 +1,4 @@
-'use client';
-
-import { useState } from 'react';
-
+import type { IUserProfile } from '@root/modules/profile/types';
 import type {
   ExperienceFormData,
   ProjectsFormData
@@ -9,23 +6,30 @@ import type {
 
 import { Button, Card, CardBody, CardHeader, Input } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type IUserProfile } from '@root/modules/profile/types';
-import { experienceSchema, projectsSchema } from '@root/modules/settings/schema/settings.schema';
+import { type IExperience } from '@root/modules/profile/types';
+import useSettings from '@root/modules/settings/hooks/use-settings';
+import { experienceSchema } from '@root/modules/settings/schema/settings.schema';
 import { Plus, Save, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 interface ExperienceProjectsTabProperties {
   user: IUserProfile;
+  projects: IExperience[];
+  experiences: IExperience[];
 }
 
-export default function ExperienceProjectsTab({ user }: Readonly<ExperienceProjectsTabProperties>) {
-  const [isLoading, setIsLoading] = useState(false);
-
+export default function ExperienceProjectsTab({
+  user,
+  projects,
+  experiences
+}: Readonly<ExperienceProjectsTabProperties>) {
+  const { updateExperience, updateProjects, isUpdatingExperience, isUpdatingProjects } =
+    useSettings(user.id);
   // Experience Form
   const experienceForm = useForm<ExperienceFormData>({
     resolver: zodResolver(experienceSchema),
     defaultValues: {
-      experience: []
+      experience: experiences
     }
   });
 
@@ -39,10 +43,10 @@ export default function ExperienceProjectsTab({ user }: Readonly<ExperienceProje
   });
 
   // Projects Form
-  const projectsForm = useForm<ProjectsFormData>({
-    resolver: zodResolver(projectsSchema),
+  const projectsForm = useForm<ExperienceFormData>({
+    resolver: zodResolver(experienceSchema),
     defaultValues: {
-      projects: []
+      project: projects
     }
   });
 
@@ -56,27 +60,11 @@ export default function ExperienceProjectsTab({ user }: Readonly<ExperienceProje
   });
 
   const onSubmitExperience = async (data: ExperienceFormData) => {
-    setIsLoading(true);
-    try {
-      console.log('Updating experience:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Error updating experience:', error);
-    } finally {
-      setIsLoading(false);
-    }
+    updateExperience(data);
   };
 
-  const onSubmitProjects = async (data: ProjectsFormData) => {
-    setIsLoading(true);
-    try {
-      console.log('Updating projects:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Error updating projects:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const onSubmitProjects = async (data: ExperienceFormData) => {
+    updateProjects(data);
   };
 
   return (
@@ -161,7 +149,7 @@ export default function ExperienceProjectsTab({ user }: Readonly<ExperienceProje
                 startContent={<Plus size={18} />}
                 onPress={() => {
                   appendExperience({
-                    id: Date.now(),
+                    id: Date.now().toString(),
                     position: '',
                     company: '',
                     startDate: '',
@@ -174,7 +162,7 @@ export default function ExperienceProjectsTab({ user }: Readonly<ExperienceProje
               <Button
                 type='submit'
                 color='primary'
-                isLoading={isLoading}
+                isLoading={isUpdatingExperience}
                 startContent={<Save size={18} />}
               >
                 Save Experience
@@ -249,7 +237,7 @@ export default function ExperienceProjectsTab({ user }: Readonly<ExperienceProje
                 startContent={<Plus size={18} />}
                 onPress={() => {
                   appendProject({
-                    id: Date.now(),
+                    id: Date.now().toString(),
                     name: '',
                     company: '',
                     image: ''
@@ -261,7 +249,7 @@ export default function ExperienceProjectsTab({ user }: Readonly<ExperienceProje
               <Button
                 type='submit'
                 color='primary'
-                isLoading={isLoading}
+                isLoading={isUpdatingProjects}
                 startContent={<Save size={18} />}
               >
                 Save Projects

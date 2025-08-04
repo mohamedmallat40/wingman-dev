@@ -1,27 +1,29 @@
-'use client';
-
 import { useState } from 'react';
 
+import type { IEducation } from '@root/modules/profile/types';
 import type { EducationFormData } from '@root/modules/settings/schema/settings.schema';
 
 import { Button, Card, CardBody, CardHeader, Input, Textarea } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
+// Adjust import path
 import { type IUserProfile } from '@root/modules/profile/types';
+import useSettings from '@root/modules/settings/hooks/use-settings';
 import { educationSchema } from '@root/modules/settings/schema/settings.schema';
-import { Plus, Save, X } from 'lucide-react';
+import { Plus, Save, Trash2, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 interface EducationTabProperties {
   user: IUserProfile;
+  educations: IEducation[];
 }
 
-export default function EducationTab({ user }: Readonly<EducationTabProperties>) {
+export default function EducationTab({ user, educations }: Readonly<EducationTabProperties>) {
   const [isLoading, setIsLoading] = useState(false);
-
+  const { createEducation, deleteEducation, isDeletingEducation } = useSettings();
   const form = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
     defaultValues: {
-      education: []
+      education: educations
     }
   });
 
@@ -34,11 +36,30 @@ export default function EducationTab({ user }: Readonly<EducationTabProperties>)
     name: 'education'
   });
 
+  console.log(educationFields);
+
+  const handleCreateEducation = (data: EducationFormData) => {
+    createEducation(data);
+  };
+
+  const handleDeleteEducation = (educationId: string, fieldIndex: number) => {
+    const educationData = form.getValues(`education.${fieldIndex}`);
+    const actualEducationId = educationData.id;
+    try {
+      // If it's an existing education (has a real ID), delete from server
+      if (educationId) {
+        deleteEducation(actualEducationId);
+      }
+      removeEducation(fieldIndex);
+    } catch (error) {
+      console.error('Error deleting education:', error);
+    }
+  };
+
   const onSubmit = async (data: EducationFormData) => {
     setIsLoading(true);
     try {
-      console.log('Updating education:', data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      handleCreateEducation({ ...data.education[0] });
     } catch (error) {
       console.error('Error updating education:', error);
     } finally {
@@ -61,17 +82,37 @@ export default function EducationTab({ user }: Readonly<EducationTabProperties>)
               >
                 <div className='flex items-center justify-between'>
                   <h4 className='font-medium'>Education {index + 1}</h4>
-                  <Button
-                    isIconOnly
-                    color='danger'
-                    variant='light'
-                    size='sm'
-                    onPress={() => {
-                      removeEducation(index);
-                    }}
-                  >
-                    <X size={16} />
-                  </Button>
+                  <div className='flex gap-2'>
+                    {/* Delete individual education */}
+                    {field.id && (
+                      <Button
+                        isIconOnly
+                        color='danger'
+                        variant='light'
+                        size='sm'
+                        isLoading={isDeletingEducation}
+                        onPress={() => {
+                          handleDeleteEducation(form.getValues(`education.${index}`).id, index);
+                        }}
+                        title='Delete this education permanently'
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    )}
+                    {/* Remove from form (without server deletion) */}
+                    <Button
+                      isIconOnly
+                      color='danger'
+                      variant='light'
+                      size='sm'
+                      onPress={() => {
+                        handleDeleteEducation(field.id, index);
+                      }}
+                      title='Remove from form'
+                    >
+                      <X size={16} />
+                    </Button>
+                  </div>
                 </div>
 
                 <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -127,7 +168,7 @@ export default function EducationTab({ user }: Readonly<EducationTabProperties>)
               startContent={<Plus size={18} />}
               onPress={() => {
                 appendEducation({
-                  id: Date.now(),
+                  id: `temp_${Date.now()}`, // Temporary ID for new entries
                   degree: '',
                   university: '',
                   startDate: '',

@@ -17,7 +17,6 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'dev.extraexpertise.be',
-        port: '',
         pathname: '/api/upload/**'
       }
     ]

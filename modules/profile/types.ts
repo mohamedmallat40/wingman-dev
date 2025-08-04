@@ -7,34 +7,6 @@ interface NotificationSetting {
 }
 
 export interface IUserProfile {
-  experience:
-    | (
-        | {
-            id: number | undefined;
-            position: string | undefined;
-            company: string | undefined;
-            startDate: string | undefined;
-            endDate: string | null | undefined;
-          }
-        | undefined
-      )[]
-    | undefined;
-  services:
-    | ({
-        type: 'HOURLY_BASED' | 'DAILY_BASED' | 'PROJECT_BASED' | null;
-        id: string | null;
-        name: string | null;
-        description: string | null;
-        price: number | null;
-        skills?:
-          | ({
-              type?: 'NORMAL' | 'SOFT' | 'TECHNICAL' | null;
-              id?: string | null;
-              key?: string | null;
-            } | null)[]
-          | null;
-      } | null)[]
-    | null;
   id: string;
   email: string;
   kind: 'FREELANCER' | 'COMPANY' | 'ADMIN' | 'AGENCY';
@@ -107,7 +79,7 @@ export interface IExperience {
   position: string;
   title: string | null;
   link: string | null;
-  image: string | null;
+  image: string;
   screenShots: string | null;
   videoUrl: string | null;
 }
@@ -122,12 +94,23 @@ export interface IService {
 }
 export interface ILanguage {
   id: string;
-  key: string;
-  level: string;
+  key?: string;
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'NATIVE';
 }
 
 export interface Skill {
   id: string;
   key: string;
   type: 'NORMAL' | 'SOFT';
+}
+export interface IReview {
+  id: string;
+  stars: number;
+  testimony: string;
+  status: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+  name: string;
+  email: string;
+  companyName: string;
+  position: string;
+  createdAt: string;
 }

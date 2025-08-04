@@ -12,7 +12,7 @@ export const getUserExperience = async (userId: string, config?: AxiosRequestCon
 };
 
 export const getUserEducation = async (userId: string, config?: AxiosRequestConfig) => {
-  return wingManApi.get(`${API_ROUTES.profile.education}${userId}`, config);
+  return wingManApi.get(`${API_ROUTES.profile.educationByUser}${userId}`, config);
 };
 
 export const getUserService = async (userId: string, config?: AxiosRequestConfig) => {
@@ -21,4 +21,8 @@ export const getUserService = async (userId: string, config?: AxiosRequestConfig
 
 export const getUserLanguages = async (userId: string, config?: AxiosRequestConfig) => {
   return wingManApi.get(`${API_ROUTES.profile.languages}${userId}`, config);
+};
+
+export const getUserReviews = async (userId: string, config?: AxiosRequestConfig) => {
+  return wingManApi.get(`${API_ROUTES.profile.reviews}${userId}/active`, config);
 };

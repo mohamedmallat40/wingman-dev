@@ -1,10 +1,9 @@
-'use-client';
-
 import {
   educationOptions,
   experienceOptions,
   languageOptions,
   profileOptions,
+  reviewsOptions,
   serviceOptions
 } from '@root/modules/profile/hooks/profile.server';
 import { type IExperience, type IUserProfile } from '@root/modules/profile/types';
@@ -12,10 +11,30 @@ import { useQuery } from '@tanstack/react-query';
 
 const useProfile = (userId: string) => {
   const { data, error, isLoading } = useQuery(profileOptions);
-  const experienceQuery = useQuery(experienceOptions(userId));
-  const educationQuery = useQuery(educationOptions(userId));
-  const serviceQuery = useQuery(serviceOptions(userId));
-  const languageQuery = useQuery(languageOptions(userId));
+  const experienceQuery = useQuery({
+    ...experienceOptions(userId),
+    enabled: !!userId
+  });
+
+  const educationQuery = useQuery({
+    ...educationOptions(userId),
+    enabled: !!userId
+  });
+
+  const serviceQuery = useQuery({
+    ...serviceOptions(userId),
+    enabled: !!userId
+  });
+
+  const languageQuery = useQuery({
+    ...languageOptions(userId),
+    enabled: !!userId
+  });
+
+  const reviewsQuery = useQuery({
+    ...reviewsOptions(userId),
+    enabled: !!userId
+  });
 
   // eslint-disable-next-line unicorn/consistent-function-scoping
   const logout = () => {
@@ -31,10 +50,9 @@ const useProfile = (userId: string) => {
     : languageQuery.data?.data.map((lang) => {
         return {
           ...lang,
-          key: new Intl.DisplayNames(['en'], { type: 'language' }).of(lang.key)
+          key: new Intl.DisplayNames(['en'], { type: 'language' }).of(lang.key ?? '')
         };
       });
-  console.log(languages);
   return {
     profile: data?.data as IUserProfile,
     projects,
@@ -42,6 +60,7 @@ const useProfile = (userId: string) => {
     services: serviceQuery.error ? [] : (serviceQuery.data?.data ?? []),
     education: educationQuery.error ? [] : (educationQuery.data?.data ?? []),
     languages: languages,
+    reviews: reviewsQuery.error ? [] : (reviewsQuery.data?.data ?? []),
     isLoading: isLoading || experienceQuery.isLoading || educationQuery.isLoading,
     error: error,
     logout
