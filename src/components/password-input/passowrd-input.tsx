@@ -3,45 +3,76 @@ import React from 'react';
 import type { InputProps } from '@heroui/input';
 import type { FC } from 'react';
 
-import { Input } from '@heroui/input';
+import { Button, Input } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { type FieldError } from 'react-hook-form';
 
 import usePasswordVisibility from '@/components/password-input/usePasswordVisibility';
 
-interface PassowrdInput extends InputProps {
+interface PasswordInput extends InputProps {
   error?: FieldError;
 }
-const PassowrdInput: FC<PassowrdInput> = ({ error, ...properties }) => {
+
+const PasswordInput: FC<PasswordInput> = ({ error, ...properties }) => {
   const { isVisible, toggleVisibility } = usePasswordVisibility();
+
   return (
-    <div className='w-full space-y-1'>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className='w-full space-y-2'
+    >
       <Input
         endContent={
-          <button type='button' onClick={toggleVisibility}>
+          <Button
+            isIconOnly
+            aria-label={isVisible ? 'Hide password' : 'Show password'}
+            className='text-default-400 hover:text-primary h-6 min-w-6 flex-shrink-0 transition-colors'
+            size='sm'
+            type='button'
+            variant='light'
+            onPress={toggleVisibility}
+          >
             {isVisible ? (
-              <Icon
-                className='text-default-400 pointer-events-none text-2xl'
-                icon='solar:eye-closed-linear'
-              />
+              <Icon className='pointer-events-none text-xl' icon='solar:eye-closed-linear' />
             ) : (
-              <Icon
-                className='text-default-400 pointer-events-none text-2xl'
-                icon='solar:eye-bold'
-              />
+              <Icon className='pointer-events-none text-xl' icon='solar:eye-bold' />
             )}
-          </button>
+          </Button>
         }
         isInvalid={error?.message ? true : false}
         label='Password'
         placeholder='Enter your password'
         type={isVisible ? 'text' : 'password'}
         variant='bordered'
+        classNames={{
+          base: 'w-full',
+          mainWrapper: 'w-full',
+          inputWrapper:
+            'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] h-14 bg-white dark:bg-background transition-all duration-300',
+          input:
+            'text-foreground font-normal tracking-[0.02em] placeholder:text-default-400 text-base'
+        }}
         {...properties}
       />
-      {error && <p className='text-sm text-red-600'>{error.message}</p>}
-    </div>
+      <AnimatePresence>
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, y: -10 }}
+            animate={{ opacity: 1, height: 'auto', y: 0 }}
+            exit={{ opacity: 0, height: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className='flex items-center gap-2 px-1'
+          >
+            <Icon icon='solar:danger-triangle-bold' className='text-danger h-4 w-4 flex-shrink-0' />
+            <p className='text-danger text-sm font-medium tracking-[0.02em]'>{error.message}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
-export default PassowrdInput;
+export default PasswordInput;

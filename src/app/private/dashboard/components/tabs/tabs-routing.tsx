@@ -50,34 +50,23 @@ const TabsRouting = () => {
           }
         />
         <Tab
-          key='/private/dashboard/community'
+          key='/private/talent-pool'
           title={
-            <Link href='/private/dashboard/community'>
+            <Link href='/private/talent-pool'>
               <div className='flex items-center gap-2'>
-                <p>Community</p>
-                <Chip size='sm'>3</Chip>
+                <p>Talent Pool</p>
+                <Chip size='sm'>12</Chip>
               </div>
             </Link>
           }
         />
         <Tab
-          key='/private/dashboard/contracts'
+          key='/private/dashboard/documents'
           title={
-            <Link href='/private/dashboard/contracts'>
+            <Link href='/private/dashboard/documents'>
               <div className='flex items-center gap-2'>
-                <p>Contracts</p>
+                <p>Documents</p>
                 <Chip size='sm'>5</Chip>
-              </div>
-            </Link>
-          }
-        />
-        <Tab
-          key='/private/dashboard/reputation'
-          title={
-            <Link href='/private/dashboard/reputation'>
-              <div className='flex items-center gap-2'>
-                <p>Reputation</p>
-                <Chip size='sm'>2</Chip>
               </div>
             </Link>
           }

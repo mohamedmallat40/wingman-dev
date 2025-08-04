@@ -6,6 +6,7 @@ import { addToast } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { register as registerService } from '@root/modules/auth/services/auth.service';
 import useUserStore from '@root/modules/auth/store/use-user-store';
+import { type IUserProfile } from '@root/modules/profile/types';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -107,7 +108,7 @@ const useRegister = () => {
 
       // Set user data
       if (data.data.user) {
-        setUser(data.data.user);
+        setUser(data.data.user as IUserProfile);
       }
     }
   }, [isSuccess, data, setUser, router]);

@@ -2,7 +2,7 @@
   "HomePage": {
     "title": "Hello world!"
   },
-"AuthPage": {
+  "AuthPage": {
     "title": "Sign in to your account",
     "email": "Email",
     "password": "Password",
@@ -11,6 +11,194 @@
     "continueWithGoogle": "Continue with Google",
     "continueWithLinkedin": "Continue with LinkedIn",
     "or": "Or"
+  },
+  "registration": {
+    "continue": "Continue",
+    "back": "Back",
+    "createAccount": "Create Account",
+    "creatingAccount": "Creating Account...",
+    "connecting": "Connecting...",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithLinkedIn": "Continue with LinkedIn",
+    "or": "OR",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "emailAddress": "Email address",
+    "passwordPlaceholder": "Password (8+ characters)",
+    "confirmPassword": "Confirm password",
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordMinLength": "Password must be at least 8 characters long",
+    "confirmPasswordRequired": "Please confirm your password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password",
+    "passwordRequirements": "Password Requirements",
+    "atLeast8Characters": "At least 8 characters",
+    "passwordsMustMatch": "Passwords must match",
+    "freelancerDescription": "Perfect for independent professionals and solo entrepreneurs",
+    "companyDescription": "Ideal for established businesses and corporations",
+    "agencyDescription": "Great for marketing agencies and service providers",
+    "defaultCategoryDescription": "Choose this option if it best describes you",
+    "selectThisOption": "Select this option",
+    "free": "Free",
+    "popular": "Popular",
+    "month": "mo",
+    "moreFeatures": "more features",
+    "selectThisPlan": "Select this plan",
+    "agreeToTermsPrefix": "I read and agree to the",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy",
+    "personalInformation": "Personal Information",
+    "createAccountDetails": "Create your account details",
+    "chooseYourCategory": "Choose Your Category",
+    "selectWhatDescribesYou": "Select what best describes you",
+    "chooseYourPlan": "Choose Your Plan",
+    "selectPlanThatFitsYou": "Select the plan that fits your needs",
+    "billingInformation": "Billing Information",
+    "completeYourDetails": "Complete your details",
+    "joinWingman": "Join Wingman",
+    "createYourAccount": "Create your account",
+    "step": "Step",
+    "of": "of",
+    "notApplicable": "Not applicable",
+    "completed": "✓ Completed",
+    "verifyingInformation": "Verifying your information...",
+    "secureEncrypted": "Secure & encrypted",
+    "alreadyHaveAccount": "Already have an account?",
+    "signIn": "Sign in"
+  },
+  "billing": {
+    "vatNumber": "VAT Number (optional)",
+    "companyName": "Company Name (optional)",
+    "streetAddress": "Street Address",
+    "houseNumber": "House Number",
+    "city": "City",
+    "postalCode": "Postal Code"
+  },
+  "landing": {
+    "hero": {
+      "headline": "Find vetted digital experts in 2 days",
+      "headlineHighlight": "screened digital experts",
+      "headlineEnd": "and turn digital challenges into growth opportunities",
+      "subtitle": "From e-commerce peaks, marketing automation or increasing your ROI via social media – your personal Success Manager matches you with 650+ flexible, pre-screened, available freelancers from the Benelux",
+      "ctaPrimary": "Book free strategy session",
+      "ctaSecondary": "View talent pool"
+    },
+    "stats": {
+      "stat1Label": "Shortlist ready",
+      "stat1Value": "48h",
+      "stat2Label": "Satisfaction",
+      "stat2Value": "+85%",
+      "stat3Label": "Match success",
+      "stat3Value": "90%",
+      "stat4Label": "Screened experts",
+      "stat4Value": "650+"
+    },
+    "features": {
+      "title": "Why choose Wingman?",
+      "subtitle": "Our platform combines speed, quality and personal service for optimal results",
+      "feature1Title": "Screened Experts",
+      "feature1Description": "All freelancers are pre-screened for quality and reliability",
+      "feature2Title": "Fast Matching",
+      "feature2Description": "Within 48 hours a shortlist of the best candidates for your project",
+      "feature3Title": "Personal Support",
+      "feature3Description": "Your own Success Manager guides you through the entire process"
+    },
+    "pricing": {
+      "title": "Simple, transparent pricing",
+      "subtitle": "Choose the plan that fits your business needs",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "yearlyDiscount": "Save 20%",
+      "getStarted": "Get Started",
+      "contactSales": "Contact Sales",
+      "mostPopular": "Most Popular",
+      "perMonth": "per month",
+      "perYear": "per year"
+    },
+    "testimonials": {
+      "title": "Trusted by 500+ companies",
+      "subtitle": "See what our clients say about working with Wingman"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Everything you need to know about our platform"
+    },
+    "cta": {
+      "title": "Ready to find your perfect digital expert?",
+      "subtitle": "Join 500+ companies who trust Wingman to connect them with top-tier talent.",
+      "primaryButton": "Get Started Today",
+      "secondaryButton": "Schedule a Call"
+    },
+    "footer": {
+      "description": "Wingman connects businesses with top-tier digital talent across the Benelux region.",
+      "product": "Product",
+      "company": "Company",
+      "support": "Support",
+      "legal": "Legal",
+      "allRightsReserved": "All rights reserved."
+    }
+  },
+  "dashboard": {
+    "pageTitle": "Welcome back! 👋",
+    "pageDescription": "Here's an overview of your projects and activities",
+    "refreshButton": "Refresh",
+    "newProjectButton": "New Project",
+    "quickActions": "Quick Actions",
+    "stats": {
+      "activeProjects": "Active Projects",
+      "freelancersFound": "Freelancers Found",
+      "averageRating": "Average Rating",
+      "completedProjects": "Completed Projects"
+    },
+    "quickActionItems": {
+      "findTalent": {
+        "title": "Find Talent",
+        "description": "Find the perfect freelancer for your project"
+      },
+      "myChallenges": {
+        "title": "My Challenges",
+        "description": "Track your programming challenges and improve your skills"
+      },
+      "postProject": {
+        "title": "Post Project",
+        "description": "Post a new project and receive quotes"
+      },
+      "documents": {
+        "title": "Documents",
+        "description": "View and manage your documents"
+      },
+      "goTo": "Go to"
+    },
+    "recentProjects": {
+      "title": "Recent Projects",
+      "viewAll": "All projects",
+      "progress": "Progress",
+      "due": "Due"
+    },
+    "recentActivity": {
+      "title": "Recent Activity"
+    },
+    "myChallenges": {
+      "title": "My Challenges",
+      "viewAll": "View All",
+      "progress": "Progress",
+      "difficulty": {
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+      },
+      "status": {
+        "started": "Started",
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      }
+    }
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"

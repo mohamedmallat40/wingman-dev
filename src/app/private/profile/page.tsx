@@ -1,8 +1,11 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { Spinner } from '@heroui/react';
+import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import useProfile from '@root/modules/profile/hooks/use-profile';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import EducationSection from './components/education';
 import ExperienceSection from './components/experience';
@@ -12,7 +15,17 @@ import ServicesSection from './components/services';
 
 export default function ProfilePage() {
   const parameters = useSearchParams();
+  const router = useRouter();
   const userId = parameters.get('id') ?? '';
+  const { profile: currentUserProfile } = useBasicProfile();
+
+  // If no userId is provided, redirect to current user's profile
+  useEffect(() => {
+    if (!userId && currentUserProfile?.id) {
+      router.replace(`/private/profile?id=${currentUserProfile.id}`);
+    }
+  }, [userId, currentUserProfile?.id, router]);
+
   const {
     profile: user,
     projects,
@@ -24,7 +37,8 @@ export default function ProfilePage() {
     error
   } = useProfile(userId);
 
-  if (isLoading) {
+  // Show loading if we're redirecting or if data is loading
+  if ((!userId && !currentUserProfile?.id) || isLoading) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <Spinner size='lg' />

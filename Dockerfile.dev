@@ -1,0 +1,44 @@
+# Development Dockerfile
+FROM node:20-alpine AS base
+
+# Install dependencies
+FROM base AS deps
+RUN apk add --no-cache libc6-compat git
+WORKDIR /app
+
+# Install all dependencies including devDependencies
+COPY package.json pnpm-lock.yaml* ./
+RUN corepack enable pnpm && pnpm i
+
+# Development image
+FROM base AS development
+WORKDIR /app
+
+# Install curl for healthchecks
+RUN apk add --no-cache curl
+
+ENV NODE_ENV=development
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy dependencies
+COPY --from=deps --chown=nextjs:nodejs /app/node_modules ./node_modules
+
+# Copy source code
+COPY --chown=nextjs:nodejs . .
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/api/health || exit 1
+
+CMD ["pnpm", "dev"]

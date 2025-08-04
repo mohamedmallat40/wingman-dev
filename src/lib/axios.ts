@@ -1,4 +1,4 @@
-'use-client';
+'use client';
 
 import type {
   AxiosError,
@@ -10,9 +10,9 @@ import type {
 
 import { addToast } from '@heroui/toast';
 import axios from 'axios';
-import { ERRORS as en } from 'messages/en.json';
-import { ERRORS as fr } from 'messages/fr.json';
-import { ERRORS as nl } from 'messages/nl.json';
+import enMessages from 'messages/en.json';
+import frMessages from 'messages/fr.json';
+import nlMessages from 'messages/nl.json';
 
 import { env } from '@/env';
 
@@ -29,9 +29,9 @@ type ApiErrorResponse = {
 
 // ===== CONSTANTS =====
 const LOCALIZED_ERRORS: Record<SupportedLocale, ErrorMessages> = {
-  en,
-  fr,
-  nl
+  en: enMessages.ERRORS,
+  fr: frMessages.ERRORS,
+  nl: nlMessages.ERRORS
 };
 
 const DEFAULT_CONFIG: CreateAxiosDefaults = {

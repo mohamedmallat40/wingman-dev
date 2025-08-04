@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button } from '@heroui/button';
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown';
@@ -8,7 +8,28 @@ import { Laptop, MoonStar, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
 export default function ThemeToggle() {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Button
+        data-testid='theme-toggle'
+        isIconOnly
+        variant='light'
+        radius='full'
+        className='text-default-600 hover:!bg-primary data-[hover=true]:!bg-primary transition-all duration-300 hover:!text-white data-[hover=true]:!text-white'
+      >
+        <Sun className='h-[1.2rem] w-[1.2rem]' />
+        <span className='sr-only'>Toggle theme</span>
+      </Button>
+    );
+  }
 
   return (
     <Dropdown className='min-w-32'>
@@ -18,14 +39,22 @@ export default function ThemeToggle() {
           isIconOnly
           variant='light'
           radius='full'
-          className='hover:bg-content2'
+          className='text-default-600 hover:!bg-primary data-[hover=true]:!bg-primary transition-all duration-300 hover:!text-white data-[hover=true]:!text-white'
         >
-          <Sun className='text-foreground h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all' />
-          <MoonStar className='absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0' />
+          {theme === 'dark' ? (
+            <MoonStar className='h-[1.2rem] w-[1.2rem] transition-all duration-300' />
+          ) : (
+            <Sun className='h-[1.2rem] w-[1.2rem] transition-all duration-300' />
+          )}
           <span className='sr-only'>Toggle theme</span>
         </Button>
       </DropdownTrigger>
-      <DropdownMenu data-testid='theme-dropdown-content'>
+      <DropdownMenu
+        data-testid='theme-dropdown-content'
+        itemClasses={{
+          base: 'text-default-700 hover:!bg-primary hover:!text-white data-[hover=true]:!bg-primary data-[hover=true]:!text-white transition-all duration-300'
+        }}
+      >
         <DropdownItem
           key='theme-light'
           data-testid='theme-light'

@@ -178,7 +178,7 @@ export default function SettingsPage() {
                 }
               >
                 <div className='p-6'>
-                  <GeneralInfoTab user={user} />
+                  <GeneralInfoTab user={user as any} />
                 </div>
               </Tab>
 
@@ -192,7 +192,7 @@ export default function SettingsPage() {
                 }
               >
                 <div className='p-6'>
-                  <ExperienceProjectsTab user={user} />
+                  <ExperienceProjectsTab user={user as any} />
                 </div>
               </Tab>
 
@@ -206,7 +206,7 @@ export default function SettingsPage() {
                 }
               >
                 <div className='p-6'>
-                  <EducationTab user={user} />
+                  <EducationTab user={user as any} />
                 </div>
               </Tab>
 
@@ -220,7 +220,7 @@ export default function SettingsPage() {
                 }
               >
                 <div className='p-6'>
-                  <ServicesTab user={user} />
+                  <ServicesTab user={user as any} />
                 </div>
               </Tab>
             </Tabs>

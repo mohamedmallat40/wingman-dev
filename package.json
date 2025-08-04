@@ -26,6 +26,7 @@
     "@heroui/card": "^2.2.22",
     "@heroui/chip": "^2.2.19",
     "@heroui/dropdown": "2.3.23",
+    "@heroui/modal": "^2.2.21",
     "@heroui/navbar": "^2.2.21",
     "@heroui/react": "^2.8.1",
     "@heroui/spacer": "^2.2.17",
