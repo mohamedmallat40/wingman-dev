@@ -31,6 +31,10 @@ const useProfile = (userId: string) => {
     ...languageOptions(userId),
     enabled: shouldFetchUserData
   });
+  const reviewsQuery = useQuery({
+    ...reviewsOptions(userId),
+    enabled: shouldFetchUserData
+  });
 
   // eslint-disable-next-line unicorn/consistent-function-scoping
   const logout = () => {
