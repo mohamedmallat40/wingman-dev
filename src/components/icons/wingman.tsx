@@ -1,4 +1,8 @@
-export const WingmanIcon = () => {
+interface WingmanIconProps {
+  className?: string;
+}
+
+export const WingmanIcon = ({ className }: WingmanIconProps) => {
   return (
     <svg
       width='36'
@@ -6,7 +10,7 @@ export const WingmanIcon = () => {
       viewBox='0 0 64 32'
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
-      className='acme-logo-flying'
+      className={`acme-logo-flying ${className || ''}`}
     >
       <style>{`
           @keyframes wing-flap-left {

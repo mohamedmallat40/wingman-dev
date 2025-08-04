@@ -1,19 +1,206 @@
 {
-    "HomePage": {
-      "title": "Hello world!"
+  "HomePage": {
+    "title": "Hello world!"
+  },
+  "AuthPage": {
+    "title": "Connexion",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "loginButton": "Se connecter",
+    "logoutButton": "Se déconnecter",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithLinkedin": "Continuer avec LinkedIn",
+    "or": "Ou"
+  },
+  "registration": {
+    "continue": "Continuer",
+    "back": "Retour",
+    "createAccount": "Créer un compte",
+    "creatingAccount": "Création du compte...",
+    "connecting": "Connexion...",
+    "continueWithGoogle": "Continuer avec Google",
+    "continueWithLinkedIn": "Continuer avec LinkedIn",
+    "or": "OU",
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "emailAddress": "Adresse e-mail",
+    "passwordPlaceholder": "Mot de passe (8+ caractères)",
+    "confirmPassword": "Confirmer le mot de passe",
+    "firstNameRequired": "Le prénom est requis",
+    "lastNameRequired": "Le nom de famille est requis",
+    "emailRequired": "L'adresse e-mail est requise",
+    "emailInvalid": "Veuillez entrer une adresse e-mail valide",
+    "passwordRequired": "Le mot de passe est requis",
+    "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
+    "confirmPasswordRequired": "Veuillez confirmer votre mot de passe",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "hidePassword": "Masquer le mot de passe",
+    "showPassword": "Afficher le mot de passe",
+    "passwordRequirements": "Exigences du mot de passe",
+    "atLeast8Characters": "Au moins 8 caractères",
+    "passwordsMustMatch": "Les mots de passe doivent correspondre",
+    "freelancerDescription": "Parfait pour les professionnels indépendants et les entrepreneurs individuels",
+    "companyDescription": "Idéal pour les entreprises établies et les corporations",
+    "agencyDescription": "Parfait pour les agences de marketing et les prestataires de services",
+    "defaultCategoryDescription": "Choisissez cette option si elle vous décrit le mieux",
+    "selectThisOption": "Sélectionner cette option",
+    "free": "Gratuit",
+    "popular": "Populaire",
+    "month": "mois",
+    "moreFeatures": "fonctionnalités supplémentaires",
+    "selectThisPlan": "Sélectionner ce plan",
+    "agreeToTermsPrefix": "J'ai lu et j'accepte les",
+    "termsOfService": "Conditions d'utilisation",
+    "and": "et la",
+    "privacyPolicy": "Politique de confidentialité",
+    "personalInformation": "Informations personnelles",
+    "createAccountDetails": "Créez les détails de votre compte",
+    "chooseYourCategory": "Choisissez votre catégorie",
+    "selectWhatDescribesYou": "Sélectionnez ce qui vous décrit le mieux",
+    "chooseYourPlan": "Choisissez votre plan",
+    "selectPlanThatFitsYou": "Sélectionnez le plan qui correspond à vos besoins",
+    "billingInformation": "Informations de facturation",
+    "completeYourDetails": "Complétez vos détails",
+    "joinWingman": "Rejoindre Wingman",
+    "createYourAccount": "Créez votre compte",
+    "step": "Étape",
+    "of": "sur",
+    "notApplicable": "Non applicable",
+    "completed": "✓ Terminé",
+    "verifyingInformation": "Vérification de vos informations...",
+    "secureEncrypted": "Sécurisé et crypté",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "signIn": "Se connecter"
+  },
+  "billing": {
+    "vatNumber": "Numéro de TVA (optionnel)",
+    "companyName": "Nom de l'entreprise (optionnel)",
+    "streetAddress": "Adresse de la rue",
+    "houseNumber": "Numéro de maison",
+    "city": "Ville",
+    "postalCode": "Code postal"
+  },
+  "landing": {
+    "hero": {
+      "headline": "Trouvez des experts numériques vérifiés en 2 jours",
+      "headlineHighlight": "experts numériques présélectionnés",
+      "headlineEnd": "et transformez les défis numériques en opportunités de croissance",
+      "subtitle": "Des pics e-commerce, l'automatisation marketing ou l'augmentation de votre ROI via les médias sociaux – votre Success Manager personnel vous met en relation avec 650+ freelancers flexibles, pré-sélectionnés et disponibles du Benelux",
+      "ctaPrimary": "Réserver une session stratégie gratuite",
+      "ctaSecondary": "Voir le pool de talents"
     },
-    "AuthPage": {
-      "title": "Connexion",
-      "email": "Adresse e-mail",
-      "password": "Mot de passe",
-      "loginButton": "Se connecter",
-      "logoutButton": "Se déconnecter",
-      "continueWithGoogle": "Continuer avec Google",
-      "continueWithLinkedin": "Continuer avec LinkedIn"
-
-
+    "stats": {
+      "stat1Label": "Liste restreinte prête",
+      "stat1Value": "48h",
+      "stat2Label": "Satisfaction",
+      "stat2Value": "+85%",
+      "stat3Label": "Succès des matches",
+      "stat3Value": "90%",
+      "stat4Label": "Experts vérifiés",
+      "stat4Value": "650+"
     },
-    "ERRORS": {
-        "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"
+    "features": {
+      "title": "Pourquoi choisir Wingman ?",
+      "subtitle": "Notre plateforme combine rapidité, qualité et service personnel pour des résultats optimaux",
+      "feature1Title": "Experts Vérifiés",
+      "feature1Description": "Tous les freelancers sont pré-sélectionnés pour la qualité et la fiabilité",
+      "feature2Title": "Matching Rapide",
+      "feature2Description": "En 48 heures, une liste restreinte des meilleurs candidats pour votre projet",
+      "feature3Title": "Support Personnel",
+      "feature3Description": "Votre propre Success Manager vous guide tout au long du processus"
+    },
+    "pricing": {
+      "title": "Tarification simple et transparente",
+      "subtitle": "Choisissez le plan qui correspond aux besoins de votre entreprise",
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "yearlyDiscount": "Économisez 20%",
+      "getStarted": "Commencer",
+      "contactSales": "Contacter les Ventes",
+      "mostPopular": "Le Plus Populaire",
+      "perMonth": "par mois",
+      "perYear": "par an"
+    },
+    "testimonials": {
+      "title": "Approuvé par 500+ entreprises",
+      "subtitle": "Découvrez ce que nos clients disent de leur collaboration avec Wingman"
+    },
+    "faq": {
+      "title": "Questions Fréquemment Posées",
+      "subtitle": "Tout ce que vous devez savoir sur notre plateforme"
+    },
+    "cta": {
+      "title": "Prêt à trouver votre expert numérique parfait?",
+      "subtitle": "Rejoignez 500+ entreprises qui font confiance à Wingman pour les connecter avec des talents de premier plan.",
+      "primaryButton": "Commencer Aujourd'hui",
+      "secondaryButton": "Planifier un Appel"
+    },
+    "footer": {
+      "description": "Wingman connecte les entreprises avec les meilleurs talents numériques de la région du Benelux.",
+      "product": "Produit",
+      "company": "Entreprise",
+      "support": "Support",
+      "legal": "Légal",
+      "allRightsReserved": "Tous droits réservés."
+    }
+  },
+  "dashboard": {
+    "pageTitle": "Bon retour ! 👋",
+    "pageDescription": "Voici un aperçu de vos projets et activités",
+    "refreshButton": "Actualiser",
+    "newProjectButton": "Nouveau Projet",
+    "quickActions": "Actions Rapides",
+    "stats": {
+      "activeProjects": "Projets Actifs",
+      "freelancersFound": "Freelancers Trouvés",
+      "averageRating": "Note Moyenne",
+      "completedProjects": "Projets Terminés"
+    },
+    "quickActionItems": {
+      "findTalent": {
+        "title": "Trouver des Talents",
+        "description": "Trouvez le freelancer parfait pour votre projet"
+      },
+      "myChallenges": {
+        "title": "Mes Défis",
+        "description": "Suivez vos défis de programmation et améliorez vos compétences"
+      },
+      "postProject": {
+        "title": "Publier un Projet",
+        "description": "Publiez un nouveau projet et recevez des devis"
+      },
+      "documents": {
+        "title": "Documents",
+        "description": "Visualisez et gérez vos documents"
+      },
+      "goTo": "Aller à"
+    },
+    "recentProjects": {
+      "title": "Projets Récents",
+      "viewAll": "Tous les projets",
+      "progress": "Progrès",
+      "due": "Échéance"
+    },
+    "recentActivity": {
+      "title": "Activité Récente"
+    },
+    "myChallenges": {
+      "title": "Mes Défis",
+      "viewAll": "Voir Tout",
+      "progress": "Progrès",
+      "difficulty": {
+        "easy": "Facile",
+        "medium": "Moyen",
+        "hard": "Difficile"
+      },
+      "status": {
+        "started": "Commencé",
+        "inProgress": "En Cours",
+        "completed": "Terminé"
       }
+    }
+  },
+  "ERRORS": {
+    "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"
   }
+}

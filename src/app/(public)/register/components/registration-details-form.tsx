@@ -195,16 +195,16 @@ export default function RegistrationDetailsForm({
 
       <TermsCheckbox checked={termsAccepted} onChange={setTermsAccepted} />
 
-      <div className='flex gap-4'>
+      <div className='flex gap-4 pt-4'>
         <Button
           color='primary'
-          size='lg'
-          className='flex-1 font-medium'
+          className='h-14 flex-1 rounded-[16px] text-lg font-semibold tracking-[0.02em] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] transition-all duration-300 hover:shadow-[0px_12px_24px_rgba(59,130,246,0.2)]'
           isDisabled={!isFormValid() || isLoading}
+          isLoading={isLoading}
           onPress={handleSubmit}
+          endContent={!isLoading && <Icon icon='solar:user-plus-bold' className='h-5 w-5' />}
         >
-          Create Account
-          <Icon icon='solar:user-plus-outline' width={20} />
+          {isLoading ? 'Creating Account...' : 'Create Account'}
         </Button>
       </div>
     </div>
