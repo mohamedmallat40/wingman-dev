@@ -173,174 +173,239 @@ export default function AssistantSidebar({
   }
 
   return (
-    <motion.div
-      initial={{ width: 0, opacity: 0 }}
-      animate={{ width: 400, opacity: 1 }}
-      exit={{ width: 0, opacity: 0 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-      className={`flex h-full flex-col ${className}`}
-    >
-      <Card className='border-divider/50 bg-background/95 flex h-full flex-col rounded-3xl border shadow-xl backdrop-blur-xl'>
-        {/* Header */}
-        <CardHeader className='flex items-center justify-between p-6 pb-4'>
-          <div className='flex items-center gap-3'>
-            <div className='relative'>
-              <Avatar
-                src='https://i.pravatar.cc/150?u=assistant'
-                size='sm'
-                className='ring-primary/20 ring-2'
-              />
-              <div className='bg-success ring-background absolute -right-1 -bottom-1 h-3 w-3 rounded-full ring-2' />
-            </div>
-            <div>
-              <h3 className='text-foreground text-lg font-semibold'>Success Manager</h3>
-              <Chip
-                size='sm'
-                color='success'
-                variant='flat'
-                startContent={<div className='bg-success h-2 w-2 animate-pulse rounded-full' />}
-              >
-                Online
-              </Chip>
-            </div>
+    <div className={`flex h-full flex-col ${className}`}>
+      {/* Enhanced Chat Header */}
+      <div className='flex items-center justify-between p-6 pb-4 border-b border-default-200'>
+        <div className='flex items-center gap-4'>
+          <div className='relative'>
+            <Avatar
+              src='https://i.pravatar.cc/150?u=assistant'
+              size='lg'
+              className='ring-2 ring-primary/20 shadow-medium'
+            />
+            <div className='bg-success ring-background absolute -right-1 -bottom-1 h-4 w-4 rounded-full ring-2' />
           </div>
-          <Button isIconOnly variant='light' size='sm' onPress={onToggleCollapse}>
-            <Icon icon='solar:minimize-linear' className='h-4 w-4' />
-          </Button>
-        </CardHeader>
-
-        <Divider />
-
-        {/* Quick Actions */}
-        <div className='p-4'>
-          <p className='text-foreground mb-3 text-sm font-medium'>Snelle Acties</p>
-          <div className='grid grid-cols-2 gap-2'>
-            {quickActions.map((action, index) => (
-              <motion.div
-                key={action.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Button
-                  size='sm'
-                  variant='flat'
-                  color={action.color}
-                  startContent={<Icon icon={action.icon} className='h-4 w-4' />}
-                  className='h-auto min-h-0 flex-col gap-1 p-3 text-xs'
-                  onPress={() => handleQuickAction(action.action)}
-                >
-                  {action.label}
-                </Button>
-              </motion.div>
-            ))}
+          <div>
+            <h3 className='text-foreground text-xl font-bold tracking-tight'>Success Manager</h3>
+            <div className='flex items-center gap-2 mt-1'>
+              <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
+              <span className='text-sm text-foreground-600 font-medium'>Online • Response time: ~30s</span>
+            </div>
           </div>
         </div>
+        <Button 
+          isIconOnly 
+          variant='light' 
+          size='sm' 
+          onPress={onToggleCollapse}
+          className='hover:bg-default-100'
+        >
+          <Icon icon='solar:minimize-linear' className='h-4 w-4' />
+        </Button>
+      </div>
 
-        <Divider />
+      {/* Enhanced Quick Actions */}
+      <div className='p-6 pb-4 bg-default-50/50'>
+        <div className='flex items-center justify-between mb-4'>
+          <h4 className='text-foreground font-semibold'>Quick Actions</h4>
+          <Chip size='sm' variant='flat' color='primary'>Most Popular</Chip>
+        </div>
+        <div className='grid grid-cols-2 gap-3'>
+          {quickActions.map((action, index) => (
+            <motion.div
+              key={action.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Button
+                variant='flat'
+                color={action.color}
+                className='w-full h-auto p-4 flex-col gap-2 bg-background hover:bg-default-100 border border-default-200 shadow-small'
+                onPress={() => handleQuickAction(action.action)}
+              >
+                <Icon icon={action.icon} className='h-6 w-6' />
+                <span className='text-sm font-medium'>{action.label}</span>
+              </Button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
 
-        {/* Messages */}
-        <CardBody className='flex-1 p-0'>
-          <ScrollShadow className='flex-1 p-4'>
-            <div className='space-y-4'>
-              <AnimatePresence>
-                {messages.map((message) => (
-                  <motion.div
-                    key={message.id}
-                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    transition={{ duration: 0.3 }}
-                    className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                  >
+      {/* Enhanced Messages Area */}
+      <div className='flex-1 flex flex-col min-h-0'>
+        <ScrollShadow className='flex-1 p-6 pt-4'>
+          <div className='space-y-6'>
+            <AnimatePresence>
+              {messages.map((message) => (
+                <motion.div
+                  key={message.id}
+                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                  transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div className={`flex items-start gap-3 max-w-[85%] ${message.type === 'user' ? 'flex-row-reverse' : ''}`}>
+                    {message.type === 'assistant' && (
+                      <Avatar
+                        src='https://i.pravatar.cc/150?u=assistant'
+                        size='sm'
+                        className='ring-1 ring-primary/20 flex-shrink-0'
+                      />
+                    )}
                     <div
-                      className={`max-w-[85%] rounded-2xl px-4 py-3 ${
+                      className={`rounded-2xl px-5 py-4 shadow-small ${
                         message.type === 'user'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-default-100 text-foreground'
+                          ? 'bg-gradient-to-r from-primary to-primary-600 text-primary-foreground'
+                          : 'bg-background border border-default-200'
                       }`}
                     >
-                      <p className='text-sm leading-relaxed'>{message.content}</p>
-                      <p className={`mt-1 text-xs opacity-70`}>{formatTime(message.timestamp)}</p>
-
-                      {/* Suggestions */}
-                      {message.suggestions && message.suggestions.length > 0 && (
-                        <div className='mt-3 flex flex-wrap gap-2'>
-                          {message.suggestions.map((suggestion, index) => (
+                      <p className='text-sm leading-relaxed whitespace-pre-wrap'>{message.content}</p>
+                      <div className='flex items-center justify-between mt-3'>
+                        <p className={`text-xs ${message.type === 'user' ? 'text-primary-200' : 'text-foreground-500'}`}>
+                          {formatTime(message.timestamp)}
+                        </p>
+                        {message.type === 'assistant' && (
+                          <div className='flex items-center gap-1'>
                             <Button
-                              key={index}
+                              isIconOnly
                               size='sm'
-                              variant='bordered'
-                              className='h-6 min-h-0 px-2 text-xs'
-                              onPress={() => setInputValue(suggestion)}
+                              variant='light'
+                              className='h-6 w-6 min-w-6'
                             >
-                              {suggestion}
+                              <Icon icon='solar:copy-linear' className='h-3 w-3' />
                             </Button>
-                          ))}
+                            <Button
+                              isIconOnly
+                              size='sm'
+                              variant='light'
+                              className='h-6 w-6 min-w-6'
+                            >
+                              <Icon icon='solar:like-linear' className='h-3 w-3' />
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Enhanced Suggestions */}
+                      {message.suggestions && message.suggestions.length > 0 && (
+                        <div className='mt-4 space-y-2'>
+                          <p className='text-xs font-medium text-foreground-600'>Suggested actions:</p>
+                          <div className='flex flex-wrap gap-2'>
+                            {message.suggestions.map((suggestion, index) => (
+                              <Button
+                                key={index}
+                                size='sm'
+                                variant='bordered'
+                                className='h-8 px-3 text-xs hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors'
+                                onPress={() => setInputValue(suggestion)}
+                              >
+                                {suggestion}
+                              </Button>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-
-              {/* Typing indicator */}
-              {isTyping && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className='flex justify-start'
-                >
-                  <div className='bg-default-100 rounded-2xl px-4 py-3'>
-                    <div className='flex items-center gap-1'>
-                      <div className='bg-default-400 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]' />
-                      <div className='bg-default-400 h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]' />
-                      <div className='bg-default-400 h-2 w-2 animate-bounce rounded-full' />
-                    </div>
                   </div>
                 </motion.div>
-              )}
+              ))}
+            </AnimatePresence>
 
-              <div ref={messagesEndRef} />
-            </div>
-          </ScrollShadow>
-
-          {/* Input */}
-          <div className='border-divider/50 border-t p-4'>
-            <div className='flex gap-2'>
-              <Input
-                ref={inputRef}
-                placeholder='Stel een vraag...'
-                value={inputValue}
-                onValueChange={setInputValue}
-                classNames={{
-                  input: 'text-sm',
-                  inputWrapper: 'h-12 border-default-300'
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSendMessage();
-                  }
-                }}
-                endContent={
-                  <Button
-                    isIconOnly
+            {/* Enhanced Typing indicator */}
+            {isTyping && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className='flex justify-start'
+              >
+                <div className='flex items-start gap-3'>
+                  <Avatar
+                    src='https://i.pravatar.cc/150?u=assistant'
                     size='sm'
-                    color='primary'
-                    variant={inputValue.trim() ? 'solid' : 'light'}
-                    isDisabled={!inputValue.trim()}
-                    onPress={handleSendMessage}
-                  >
-                    <Icon icon='solar:arrow-up-linear' className='h-4 w-4' />
-                  </Button>
-                }
-              />
+                    className='ring-1 ring-primary/20'
+                  />
+                  <div className='bg-background border border-default-200 rounded-2xl px-5 py-4 shadow-small'>
+                    <div className='flex items-center gap-2'>
+                      <div className='flex items-center gap-1'>
+                        <div className='bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]' />
+                        <div className='bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:-0.15s]' />
+                        <div className='bg-primary h-2 w-2 animate-bounce rounded-full' />
+                      </div>
+                      <span className='text-xs text-foreground-500'>Success Manager is typing...</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+        </ScrollShadow>
+
+        {/* Enhanced Input Area */}
+        <div className='border-t border-default-200 p-6 bg-background'>
+          <div className='space-y-3'>
+            {/* Input Field */}
+            <div className='flex gap-3 items-end'>
+              <div className='flex-1'>
+                <Input
+                  ref={inputRef}
+                  placeholder='Type your message here...'
+                  value={inputValue}
+                  onValueChange={setInputValue}
+                  variant='bordered'
+                  size='lg'
+                  classNames={{
+                    input: 'text-sm',
+                    inputWrapper: 'min-h-14 border-default-300 hover:border-primary focus-within:border-primary shadow-small'
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                  startContent={
+                    <Button
+                      isIconOnly
+                      size='sm'
+                      variant='light'
+                      className='text-default-400 hover:text-foreground'
+                    >
+                      <Icon icon='solar:paperclip-linear' className='h-4 w-4' />
+                    </Button>
+                  }
+                />
+              </div>
+              <Button
+                size='lg'
+                color='primary'
+                isIconOnly
+                className='h-14 w-14 shadow-medium hover:shadow-large transition-shadow'
+                variant={inputValue.trim() ? 'solid' : 'flat'}
+                isDisabled={!inputValue.trim()}
+                onPress={handleSendMessage}
+              >
+                <Icon icon='solar:arrow-up-bold' className='h-5 w-5' />
+              </Button>
+            </div>
+            
+            {/* Helper Text */}
+            <div className='flex items-center justify-between text-xs text-foreground-500'>
+              <span>Press Enter to send, Shift + Enter for new line</span>
+              <div className='flex items-center gap-2'>
+                <Icon icon='solar:shield-check-linear' className='h-3 w-3' />
+                <span>Secure & Private</span>
+              </div>
             </div>
           </div>
-        </CardBody>
-      </Card>
-    </motion.div>
+        </div>
+      </div>
+    </div>
   );
 }
