@@ -3,106 +3,32 @@
 import React from 'react';
 
 import {
-  Avatar,
   Button,
   Card,
   CardBody,
   CardHeader,
   Chip,
-  Divider,
-  Progress,
   Tooltip
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import { type TalentCardProps } from '../types';
+import {
+  getAvailabilityConfig,
+  getWorkTypeConfig,
+  formatRate,
+  getCountryFlag,
+  mapUserType,
+  getUserInitials,
+  truncateText,
+  stripHtml
+} from '../utils/talent-utils';
 
-const getAvailabilityConfig = (status: string) => {
-  switch (status) {
-    case 'OPEN_FOR_PROJECT':
-      return {
-        color: 'success' as const,
-        label: 'Available for Projects',
-        icon: 'solar:check-circle-bold'
-      };
-    case 'OPEN_FOR_PART_TIME':
-      return {
-        color: 'warning' as const,
-        label: 'Part-time Available',
-        icon: 'solar:clock-circle-bold'
-      };
-    case 'BUSY':
-      return { color: 'danger' as const, label: 'Busy', icon: 'solar:close-circle-bold' };
-    default:
-      return { color: 'success' as const, label: 'Available', icon: 'solar:check-circle-bold' };
-  }
-};
-
-const getWorkTypeConfig = (workType: string) => {
-  switch (workType) {
-    case 'REMOTE':
-      return {
-        icon: 'solar:home-wifi-linear',
-        color: 'success' as const,
-        label: 'remote'
-      };
-    case 'ON_LOCATION':
-      return {
-        icon: 'solar:buildings-linear',
-        color: 'warning' as const,
-        label: 'on location'
-      };
-    case 'HYBRID':
-      return {
-        icon: 'solar:laptop-linear',
-        color: 'secondary' as const,
-        label: 'hybrid'
-      };
-    default:
-      return {
-        icon: 'solar:case-linear',
-        color: 'default' as const,
-        label: workType?.toLowerCase() || 'unknown'
-      };
-  }
-};
-
-const formatRate = (amount: number, currency: string, paymentType: string): string => {
-  const currencySymbol = currency === 'EUR' ? '€' : '$';
-  const period = paymentType === 'HOURLY_BASED' ? '/hour' : '/day';
-  const rateAmount = amount || 0;
-  return `${currencySymbol}${rateAmount}${period}`;
-};
-
-const getCountryFlag = (region: string | null): string => {
-  if (!region) return '🌍';
-  const flags: Record<string, string> = {
-    BE: '🇧🇪',
-    NL: '🇳🇱',
-    FR: '🇫🇷',
-    DE: '🇩🇪',
-    US: '🇺🇸',
-    UK: '🇬🇧',
-    CA: '🇨🇦',
-    AU: '🇦🇺',
-    CH: '🇨🇭',
-    AT: '🇦🇹'
-  };
-  return flags[region] || '🌍';
-};
-
-const mapUserType = (userType: string): string => {
-  const typeMap: Record<string, string> = {
-    FULL_TIME_FREELANCER: 'Freelancer',
-    STUDENT: 'Freelancer',
-    FREELANCER: 'Freelancer',
-    AGENCY: 'Agency'
-  };
-  return typeMap[userType] || userType.toLowerCase().replace(/_/g, ' ');
-};
 
 const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect }) => {
+  const t = useTranslations();
   const {
     id,
     firstName,
@@ -126,9 +52,10 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
   } = user;
 
   const availabilityConfig = getAvailabilityConfig(statusAviability);
+  const workTypeConfig = getWorkTypeConfig(workType || '');
   const displaySkills = skills.slice(0, 4);
   const hasMoreSkills = skills.length > 4;
-  const rate = formatRate(amount || 0, currency || 'EUR', paymentType || 'DAILY_BASED');
+  const rate = formatRate(amount || 0, currency || 'EUR', paymentType || 'DAILY_BASED', t);
   const hasReviews = reviewCount && parseInt(reviewCount) > 0;
 
   return (
@@ -154,15 +81,14 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                       e.currentTarget.style.display = 'none';
                       const parent = e.currentTarget.parentElement;
                       if (parent) {
-                        parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xl font-bold text-primary-800">${firstName?.charAt(0)?.toUpperCase() || ''}${lastName?.charAt(0)?.toUpperCase() || ''}</div>`;
+                        parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xl font-bold text-primary-800">${getUserInitials(firstName, lastName)}</div>`;
                       }
                     }}
                   />
                 </div>
               ) : (
                 <div className='ring-primary/10 shadow-medium from-primary-200 to-secondary-200 text-primary-800 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br text-xl font-bold ring-2'>
-                  {firstName?.charAt(0)?.toUpperCase()}
-                  {lastName?.charAt(0)?.toUpperCase()}
+                  {getUserInitials(firstName, lastName)}
                 </div>
               )}
               <div className='absolute -right-1 -bottom-1'>
@@ -195,13 +121,13 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                         profession
                       )
                         ? profession
-                        : mapUserType(profession || user.kind || 'FREELANCER')}
+                        : mapUserType(profession || user.kind || 'FREELANCER', t)}
                     </p>
                   </div>
                 </div>
 
                 <div className='ml-2 flex items-center gap-1'>
-                  <Tooltip content='View Profile' placement='bottom'>
+                  <Tooltip content={t('talentPool.cards.viewProfile')} placement='bottom'>
                     <Button
                       isIconOnly
                       variant='light'
@@ -213,7 +139,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                     </Button>
                   </Tooltip>
 
-                  <Tooltip content='More options' placement='bottom'>
+                  <Tooltip content={t('talentPool.cards.moreOptions')} placement='bottom'>
                     <Button
                       isIconOnly
                       variant='light'
@@ -245,14 +171,14 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   {workType && (
                     <Chip
                       startContent={
-                        <Icon icon={getWorkTypeConfig(workType).icon} className='h-3 w-3' />
+                        <Icon icon={workTypeConfig.icon} className='h-3 w-3' />
                       }
                       variant='flat'
-                      color={getWorkTypeConfig(workType).color}
+                      color={workTypeConfig.color}
                       size='sm'
                       className='text-tiny font-medium'
                     >
-                      {getWorkTypeConfig(workType).label}
+                      {t(workTypeConfig.labelKey)}
                     </Chip>
                   )}
                   {workingTime && (
@@ -278,10 +204,10 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
             <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-4 backdrop-blur-sm'>
               <h3 className='text-medium text-foreground mb-2 flex items-center gap-2 font-semibold'>
                 <Icon icon='solar:user-speak-linear' className='text-primary h-4 w-4' />
-                About
+                {t('talentPool.cards.about')}
               </h3>
               <p className='text-small text-foreground-700 line-clamp-5 leading-relaxed'>
-                {aboutMe.replace(/<[^>]*>/g, '')}
+                {stripHtml(aboutMe)}
               </p>
             </div>
           )}
@@ -290,7 +216,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
           <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-4 backdrop-blur-sm'>
             <h3 className='text-medium text-foreground mb-3 flex items-center gap-2 font-semibold'>
               <Icon icon='solar:verified-check-linear' className='text-primary h-4 w-4' />
-              Top Skills
+              {t('talentPool.cards.topSkills')}
             </h3>
             {displaySkills.length > 0 ? (
               <div className='flex flex-wrap gap-2'>
@@ -303,7 +229,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                     className='max-w-full cursor-pointer font-medium transition-transform hover:scale-105'
                   >
                     <span className='block max-w-[120px] truncate'>
-                      {skill.key.length > 70 ? `${skill.key.substring(0, 70)}...` : skill.key}
+                      {truncateText(skill.key, 70)}
                     </span>
                   </Chip>
                 ))}
@@ -313,13 +239,13 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                     size='sm'
                     className='text-foreground-500 border-dashed font-medium'
                   >
-                    +{skills.length - 4} more
+                    +{skills.length - 4} {t('talentPool.cards.moreSkills')}
                   </Chip>
                 )}
               </div>
             ) : (
               <div className='py-4 text-center'>
-                <p className='text-small text-foreground-500'>No skills listed</p>
+                <p className='text-small text-foreground-500'>{t('talentPool.cards.noSkillsListed')}</p>
               </div>
             )}
           </div>
@@ -332,8 +258,8 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   <Icon icon='solar:calendar-linear' className='text-primary h-4 w-4' />
                 </div>
               </div>
-              <p className='text-tiny text-foreground-500 font-medium'>Experience</p>
-              <p className='text-small text-foreground font-bold'>{experienceYears || 0} years</p>
+              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.experience')}</p>
+              <p className='text-small text-foreground font-bold'>{experienceYears || 0} {t('talentPool.cards.yearsExperience')}</p>
             </div>
 
             <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-3 text-center backdrop-blur-sm'>
@@ -342,7 +268,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   <Icon icon='solar:dollar-minimalistic-linear' className='text-success h-4 w-4' />
                 </div>
               </div>
-              <p className='text-tiny text-foreground-500 font-medium'>Rate</p>
+              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.rate')}</p>
               <p className='text-small text-foreground font-bold'>{rate}</p>
             </div>
 
@@ -352,8 +278,8 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   <Icon icon='solar:verified-check-linear' className='text-secondary h-4 w-4' />
                 </div>
               </div>
-              <p className='text-tiny text-foreground-500 font-medium'>Skills</p>
-              <p className='text-small text-foreground font-bold'>{skills?.length || 0} skills</p>
+              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.skills')}</p>
+              <p className='text-small text-foreground font-bold'>{skills?.length || 0} {t('talentPool.cards.skillsCount')}</p>
             </div>
           </div>
         </CardBody>

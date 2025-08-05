@@ -4,12 +4,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button, Skeleton, Spinner } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 import wingManApi from '@/lib/axios';
 
+import { useTranslations } from 'next-intl';
+
 import { type TalentPoolFilters, type User, type UserResponse } from '../types';
 import TalentCard from './TalentCard';
+import { EmptyState, ErrorState } from './shared';
 
 interface FreelancerListProps {
   filters?: TalentPoolFilters;
@@ -104,54 +107,6 @@ const LoadingSkeleton: React.FC = () => (
   </div>
 );
 
-const EmptyState: React.FC<{ onReset: () => void }> = ({ onReset }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className='py-16 text-center'
-  >
-    <div className='mb-6'>
-      <Icon icon='solar:user-search-linear' className='text-default-300 mx-auto mb-4 h-24 w-24' />
-      <h3 className='text-default-700 mb-2 text-xl font-semibold'>No freelancers found</h3>
-      <p className='text-default-500 mx-auto max-w-md'>
-        We couldn't find any freelancers matching your criteria. Try adjusting your filters or
-        search query.
-      </p>
-    </div>
-    <Button
-      color='primary'
-      variant='flat'
-      startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-      onPress={onReset}
-    >
-      Reset Filters
-    </Button>
-  </motion.div>
-);
-
-const ErrorState: React.FC<{ onRetry: () => void }> = ({ onRetry }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className='py-16 text-center'
-  >
-    <div className='mb-6'>
-      <Icon icon='solar:danger-circle-linear' className='text-danger-300 mx-auto mb-4 h-24 w-24' />
-      <h3 className='text-default-700 mb-2 text-xl font-semibold'>Something went wrong</h3>
-      <p className='text-default-500 mx-auto max-w-md'>
-        We couldn't load the freelancers. Please try again.
-      </p>
-    </div>
-    <Button
-      color='danger'
-      variant='flat'
-      startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-      onPress={onRetry}
-    >
-      Try Again
-    </Button>
-  </motion.div>
-);
 
 const FreelancerList: React.FC<FreelancerListProps> = ({
   filters,
@@ -159,6 +114,7 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
   onConnect,
   onCountChange
 }) => {
+  const t = useTranslations();
   const [freelancers, setFreelancers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -313,7 +269,13 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
   };
 
   if (error) {
-    return <ErrorState onRetry={handleRetry} />;
+    return (
+      <ErrorState 
+        titleKey="talentPool.errorStates.freelancers.title"
+        descriptionKey="talentPool.errorStates.freelancers.description"
+        onRetry={handleRetry} 
+      />
+    );
   }
 
   if (isLoading) {
@@ -321,7 +283,14 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
   }
 
   if (freelancers.length === 0) {
-    return <EmptyState onReset={handleResetFilters} />;
+    return (
+      <EmptyState 
+        icon="solar:user-search-linear"
+        titleKey="talentPool.emptyStates.freelancers.title"
+        descriptionKey="talentPool.emptyStates.freelancers.description"
+        onReset={handleResetFilters} 
+      />
+    );
   }
 
   return (
@@ -353,11 +322,11 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
           {isLoadingMore ? (
             <div className='text-foreground-500 flex items-center gap-2'>
               <Spinner size='sm' color='primary' />
-              <span className='text-small'>Loading more freelancers...</span>
+              <span className='text-small'>{t('talentPool.loadingStates.loadingMoreFreelancers')}</span>
             </div>
           ) : (
             <div className='text-foreground-400 text-center'>
-              <span className='text-small'>Scroll to load more...</span>
+              <span className='text-small'>{t('talentPool.loadingStates.scrollToLoadMore')}</span>
             </div>
           )}
         </div>

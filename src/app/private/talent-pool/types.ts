@@ -7,10 +7,16 @@ export interface Skill {
   type?: 'NORMAL' | 'SOFT';
 }
 
+export type UserKind = 'FREELANCER' | 'AGENCY' | 'FULL_TIME_FREELANCER' | 'STUDENT';
+export type WorkType = 'REMOTE' | 'ON_LOCATION' | 'HYBRID';
+export type PaymentType = 'HOURLY_BASED' | 'DAILY_BASED';
+export type AvailabilityStatus = 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | 'BUSY';
+export type Currency = 'EUR' | 'USD';
+
 export interface User {
   id: string;
   email: string;
-  kind: 'FREELANCER' | 'AGENCY' | 'FULL_TIME_FREELANCER' | 'STUDENT';
+  kind: UserKind;
   firstName: string;
   lastName: string;
   profileImage: string | null;
@@ -19,16 +25,16 @@ export interface User {
   skills: Skill[];
   hourlyRate: number;
   dailyRate: number;
-  statusAviability: string;
+  statusAviability: AvailabilityStatus;
   isConnected: boolean;
   isCompleted: boolean;
   aboutMe?: string;
   experienceYears?: number;
-  workType?: string;
+  workType?: WorkType;
   workingTime?: string;
-  paymentType?: string;
+  paymentType?: PaymentType;
   amount?: number;
-  currency?: string;
+  currency?: Currency;
   city?: string;
   reviewCount?: string;
   averageRating?: number;
