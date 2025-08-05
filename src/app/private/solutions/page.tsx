@@ -10,7 +10,7 @@ import DashboardLayout from '@/components/layouts/dashboard-layout';
 export default function SolutionsPage() {
   const handleSubmitSolution = async () => {
     // Simulate solution submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     console.log('Solution submitted!');
   };
 
@@ -27,7 +27,7 @@ export default function SolutionsPage() {
       variant: 'solid' as const,
       priority: 'primary' as const,
       tooltip: 'Submit a new code solution',
-      onClick: handleSubmitSolution,
+      onClick: handleSubmitSolution
     },
     {
       key: 'saved',
@@ -37,7 +37,7 @@ export default function SolutionsPage() {
       variant: 'flat' as const,
       priority: 'secondary' as const,
       tooltip: 'View your saved solutions',
-      onClick: handleViewSaved,
+      onClick: handleViewSaved
     },
     {
       key: 'filter',
@@ -47,8 +47,8 @@ export default function SolutionsPage() {
       variant: 'light' as const,
       priority: 'tertiary' as const,
       tooltip: 'Filter solutions',
-      onClick: () => console.log('Opening filters...'),
-    },
+      onClick: () => console.log('Opening filters...')
+    }
   ];
 
   return (
@@ -69,9 +69,11 @@ export default function SolutionsPage() {
               color={action.color}
               variant={action.variant}
               size='sm'
-              startContent={action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined}
+              startContent={
+                action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
+              }
               onClick={() => action.onClick?.()}
-              className="transition-all duration-200 hover:shadow-md"
+              className='transition-all duration-200 hover:shadow-md'
             >
               {action.label}
             </Button>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Button, Skeleton, Spinner } from '@heroui/react';
 import { Icon } from '@iconify/react';
@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 import wingManApi from '@/lib/axios';
 
-import { type Group, type TeamResponse, type TalentPoolFilters } from '../types';
+import { type Group, type TalentPoolFilters, type TeamResponse } from '../types';
 import GroupCard from './GroupCard';
 
 interface TeamListProps {
@@ -19,10 +19,10 @@ interface TeamListProps {
 }
 
 const LoadingSkeleton: React.FC = () => (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
     {Array.from({ length: 12 }).map((_, index) => (
-      <div key={index} className="space-y-3">
-        <Skeleton className="w-full h-96 rounded-lg" />
+      <div key={index} className='space-y-3'>
+        <Skeleton className='h-96 w-full rounded-lg' />
       </div>
     ))}
   </div>
@@ -32,24 +32,23 @@ const EmptyState: React.FC<{ onReset: () => void }> = ({ onReset }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="text-center py-16"
+    className='py-16 text-center'
   >
-    <div className="mb-6">
-      <Icon 
-        icon="solar:users-group-rounded-linear" 
-        className="h-24 w-24 text-default-300 mx-auto mb-4" 
+    <div className='mb-6'>
+      <Icon
+        icon='solar:users-group-rounded-linear'
+        className='text-default-300 mx-auto mb-4 h-24 w-24'
       />
-      <h3 className="text-xl font-semibold text-default-700 mb-2">
-        No teams found
-      </h3>
-      <p className="text-default-500 max-w-md mx-auto">
-        We couldn't find any teams matching your criteria. Try adjusting your filters or search query.
+      <h3 className='text-default-700 mb-2 text-xl font-semibold'>No teams found</h3>
+      <p className='text-default-500 mx-auto max-w-md'>
+        We couldn't find any teams matching your criteria. Try adjusting your filters or search
+        query.
       </p>
     </div>
     <Button
-      color="primary"
-      variant="flat"
-      startContent={<Icon icon="solar:refresh-linear" className="h-4 w-4" />}
+      color='primary'
+      variant='flat'
+      startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
       onPress={onReset}
     >
       Reset Filters
@@ -61,24 +60,19 @@ const ErrorState: React.FC<{ onRetry: () => void }> = ({ onRetry }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="text-center py-16"
+    className='py-16 text-center'
   >
-    <div className="mb-6">
-      <Icon 
-        icon="solar:danger-circle-linear" 
-        className="h-24 w-24 text-danger-300 mx-auto mb-4" 
-      />
-      <h3 className="text-xl font-semibold text-default-700 mb-2">
-        Something went wrong
-      </h3>
-      <p className="text-default-500 max-w-md mx-auto">
+    <div className='mb-6'>
+      <Icon icon='solar:danger-circle-linear' className='text-danger-300 mx-auto mb-4 h-24 w-24' />
+      <h3 className='text-default-700 mb-2 text-xl font-semibold'>Something went wrong</h3>
+      <p className='text-default-500 mx-auto max-w-md'>
         We couldn't load the teams. Please try again.
       </p>
     </div>
     <Button
-      color="danger"
-      variant="flat"
-      startContent={<Icon icon="solar:refresh-linear" className="h-4 w-4" />}
+      color='danger'
+      variant='flat'
+      startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
       onPress={onRetry}
     >
       Try Again
@@ -86,12 +80,7 @@ const ErrorState: React.FC<{ onRetry: () => void }> = ({ onRetry }) => (
   </motion.div>
 );
 
-const TeamList: React.FC<TeamListProps> = ({
-  filters,
-  onViewTeam,
-  onJoinTeam,
-  onCountChange
-}) => {
+const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, onCountChange }) => {
   const [teams, setTeams] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -99,6 +88,8 @@ const TeamList: React.FC<TeamListProps> = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
+  const [previousCount, setPreviousCount] = useState(0);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const itemsPerPage = 12; // 3x4 grid layout for better visual impact
 
@@ -126,19 +117,21 @@ const TeamList: React.FC<TeamListProps> = ({
 
       const response = await wingManApi.get('/groups/allgroups', { params });
       const data = response.data as TeamResponse;
-      
+
       if (append) {
-        setTeams(prev => [...prev, ...data.items]);
+        setPreviousCount(teams.length);
+        setTeams((prev) => [...prev, ...data.items]);
+        setIsInitialLoad(false);
       } else {
+        setPreviousCount(0);
         setTeams(data.items);
         // Only notify parent of count change on initial load
         onCountChange?.(data.meta.totalItems);
       }
-      
+
       setTotalItems(data.meta.totalItems);
       setCurrentPage(data.meta.currentPage);
       setHasNextPage(data.meta.currentPage < data.meta.totalPages);
-      
     } catch (err) {
       console.error('Error fetching teams:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch teams');
@@ -154,6 +147,8 @@ const TeamList: React.FC<TeamListProps> = ({
   useEffect(() => {
     setCurrentPage(1);
     setHasNextPage(true);
+    setPreviousCount(0);
+    setIsInitialLoad(true);
     fetchTeams(1);
   }, [filters]);
 
@@ -170,13 +165,21 @@ const TeamList: React.FC<TeamListProps> = ({
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        console.log('Team sentinel intersecting:', entry.isIntersecting, 'hasNextPage:', hasNextPage, 'isLoadingMore:', isLoadingMore);
+        if (!entry) return;
+        console.log(
+          'Team sentinel intersecting:',
+          entry.isIntersecting,
+          'hasNextPage:',
+          hasNextPage,
+          'isLoadingMore:',
+          isLoadingMore
+        );
         if (entry.isIntersecting && hasNextPage && !isLoadingMore && !isLoading) {
           console.log('Loading more teams...');
           loadMore();
         }
       },
-      { 
+      {
         threshold: 0.1,
         rootMargin: '100px'
       }
@@ -213,7 +216,7 @@ const TeamList: React.FC<TeamListProps> = ({
       // Simulate API call
       console.log('Joining team:', teamId);
       onJoinTeam?.(teamId);
-      
+
       // You could update local state here if needed
       // For example, increment member count or show joined state
     } catch (err) {
@@ -234,46 +237,35 @@ const TeamList: React.FC<TeamListProps> = ({
   }
 
   return (
-    <div className="space-y-6">
-
+    <div className='space-y-6'>
       {/* Teams Grid */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={`teams-${currentPage}`}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.2 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {teams.map((team, index) => (
-            <motion.div
-              key={team.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2, delay: index * 0.02 }}
-            >
-              <GroupCard
-                group={team}
-                onViewTeam={handleViewTeam}
-                onJoinTeam={handleJoinTeam}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
-      </AnimatePresence>
+      <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+        {teams.map((team, index) => (
+          <motion.div
+            key={team.id}
+            initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ 
+              duration: 0.2, 
+              delay: isInitialLoad ? index * 0.02 : (index >= previousCount ? (index - previousCount) * 0.02 : 0) 
+            }}
+          >
+            <GroupCard group={team} onViewTeam={handleViewTeam} onJoinTeam={handleJoinTeam} />
+          </motion.div>
+        ))}
+      </div>
 
       {/* Infinite Scroll Sentinel */}
       {hasNextPage && (
-        <div id="team-sentinel" className="h-20 flex items-center justify-center mt-8">
+        <div id='team-sentinel' className='mt-8 flex h-20 items-center justify-center'>
           {isLoadingMore ? (
-            <div className="flex items-center gap-2 text-foreground-500">
-              <Spinner size="sm" color="primary" />
-              <span className="text-small">Loading more teams...</span>
+            <div className='text-foreground-500 flex items-center gap-2'>
+              <Spinner size='sm' color='primary' />
+              <span className='text-small'>Loading more teams...</span>
             </div>
           ) : (
-            <div className="text-center text-foreground-400">
-              <span className="text-small">Scroll to load more...</span>
+            <div className='text-foreground-400 text-center'>
+              <span className='text-small'>Scroll to load more...</span>
             </div>
           )}
         </div>

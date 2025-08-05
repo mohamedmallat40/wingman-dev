@@ -79,15 +79,15 @@ const TalentPoolPage: React.FC = () => {
   };
 
   const handleFreelancerCountChange = useCallback((count: number) => {
-    setTabCounts(prev => ({ ...prev, freelancers: count }));
+    setTabCounts((prev) => ({ ...prev, freelancers: count }));
   }, []);
 
   const handleAgencyCountChange = useCallback((count: number) => {
-    setTabCounts(prev => ({ ...prev, agencies: count }));
+    setTabCounts((prev) => ({ ...prev, agencies: count }));
   }, []);
 
   const handleTeamCountChange = useCallback((count: number) => {
-    setTabCounts(prev => ({ ...prev, teams: count }));
+    setTabCounts((prev) => ({ ...prev, teams: count }));
   }, []);
 
   // Handle escape key to close Success Manager
@@ -118,9 +118,9 @@ const TalentPoolPage: React.FC = () => {
         return <AgencyList {...commonProps} onCountChange={handleAgencyCountChange} />;
       case 'teams':
         return (
-          <TeamList 
-            filters={filters} 
-            onViewTeam={handleViewTeam} 
+          <TeamList
+            filters={filters}
+            onViewTeam={handleViewTeam}
             onJoinTeam={handleJoinTeam}
             onCountChange={handleTeamCountChange}
           />
