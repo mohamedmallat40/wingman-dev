@@ -143,8 +143,8 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className='min-h-screen w-full bg-transparent py-8 dark:bg-transparent'>
-      <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
+    <div className='mx-auto w-[70%] space-y-8 py-6'>
+      <div>
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-gray-900 dark:text-white'>Profile Settings</h1>
           <p className='mt-2 text-gray-600 dark:text-gray-400'>
