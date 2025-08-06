@@ -12,5 +12,10 @@ export const API_ROUTES = {
     education: '/education/byUser/',
     services: '/services/user/',
     languages: '/languages/byUser/'
+  },
+  documents: {
+    personal: '/documents',
+    shared: '/documents/shared',
+    types: '/documents/types'
   }
 };
