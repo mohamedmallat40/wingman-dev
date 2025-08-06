@@ -232,7 +232,8 @@
       "skillsCount": "compétences",
       "membersCount": "membres",
       "noSkillsListed": "Aucune compétence répertoriée",
-      "moreSkills": "plus"
+      "moreSkills": "plus",
+      "noAboutAvailable": "Aucune description disponible"
     },
     "availability": {
       "available": "Disponible",

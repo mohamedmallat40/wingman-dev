@@ -232,7 +232,8 @@
       "skillsCount": "vaardigheden",
       "membersCount": "leden",
       "noSkillsListed": "Geen vaardigheden vermeld",
-      "moreSkills": "meer"
+      "moreSkills": "meer",
+      "noAboutAvailable": "Geen beschrijving beschikbaar"
     },
     "availability": {
       "available": "Beschikbaar",

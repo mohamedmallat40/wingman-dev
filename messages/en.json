@@ -232,7 +232,8 @@
       "skillsCount": "skills",
       "membersCount": "members",
       "noSkillsListed": "No skills listed",
-      "moreSkills": "more"
+      "moreSkills": "more",
+      "noAboutAvailable": "No description available"
     },
     "availability": {
       "available": "Available",

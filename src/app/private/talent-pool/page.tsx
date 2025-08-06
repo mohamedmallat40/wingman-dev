@@ -19,6 +19,7 @@ const TalentPoolPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TalentType>('freelancers');
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<TalentPoolFilters>({});
+  const [showFilters, setShowFilters] = useState(false);
 
   // Dynamic counts from API
   const [tabCounts, setTabCounts] = useState({
@@ -79,6 +80,18 @@ const TalentPoolPage: React.FC = () => {
     setTabCounts((prev) => ({ ...prev, teams: count }));
   }, []);
 
+  const handleToggleFilters = useCallback(() => {
+    setShowFilters(!showFilters);
+  }, [showFilters]);
+
+  const getActiveFiltersCount = useCallback(() => {
+    return Object.keys(filters).filter(key => {
+      const value = filters[key as keyof TalentPoolFilters];
+      return value !== undefined && value !== null && 
+             (Array.isArray(value) ? value.length > 0 : true);
+    }).length;
+  }, [filters]);
+
 
   const renderActiveTabContent = () => {
     const commonProps = {
@@ -108,16 +121,6 @@ const TalentPoolPage: React.FC = () => {
 
   const actionItems = [
     {
-      key: 'saved',
-      label: 'Saved',
-      icon: 'solar:bookmark-linear',
-      color: 'default' as const,
-      variant: 'flat' as const,
-      priority: 'secondary' as const,
-      tooltip: 'View saved profiles',
-      onClick: () => console.log('View saved profiles')
-    },
-    {
       key: 'invite',
       label: 'Invite',
       icon: 'solar:user-plus-linear',
@@ -126,6 +129,16 @@ const TalentPoolPage: React.FC = () => {
       priority: 'primary' as const,
       tooltip: 'Invite new talent',
       onClick: () => console.log('Invite talent')
+    },
+    {
+      key: 'create-team',
+      label: 'Create Team',
+      icon: 'solar:users-group-rounded-linear',
+      color: 'secondary' as const,
+      variant: 'flat' as const,
+      priority: 'secondary' as const,
+      tooltip: 'Create new team',
+      onClick: handleCreateTeam
     }
   ];
 
@@ -159,37 +172,44 @@ const TalentPoolPage: React.FC = () => {
       }
     >
       <div className='mx-auto w-[70%] space-y-8 py-6'>
-        {/* Search and Filters Section */}
-        <SearchAndFilters
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          filters={filters}
-          onFiltersChange={handleFiltersChange}
-          activeTab={activeTab}
-          onSearch={handleSearch}
-        />
-
-        {/* Tabs Navigation */}
+        {/* Enhanced Tabs Navigation with Integrated Search */}
         <div className='space-y-6'>
           <HeroTabs
             activeTab={activeTab}
             onTabChange={handleTabChange}
             counts={tabCounts}
             onCreateTeam={handleCreateTeam}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onSearch={handleSearch}
+            showFilters={showFilters}
+            onToggleFilters={handleToggleFilters}
+            filtersCount={getActiveFiltersCount()}
           />
 
-          {/* Tab Content */}
-          <AnimatePresence mode='wait'>
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-            >
-              {renderActiveTabContent()}
-            </motion.div>
-          </AnimatePresence>
+          {/* Search and Filters - Active filters always visible, controls only show when panel is open */}
+          <SearchAndFilters
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            filters={filters}
+            onFiltersChange={handleFiltersChange}
+            activeTab={activeTab}
+            onSearch={handleSearch}
+            showFiltersPanel={showFilters}
+          >
+            {/* Tab Content - Cards as children to follow filter animations */}
+            <AnimatePresence mode='wait'>
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+              >
+                {renderActiveTabContent()}
+              </motion.div>
+            </AnimatePresence>
+          </SearchAndFilters>
         </div>
       </div>
     </DashboardLayout>
