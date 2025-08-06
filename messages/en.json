@@ -200,6 +200,98 @@
       }
     }
   },
+  "talentPool": {
+    "title": "Talent Pool",
+    "description": "Discover and connect with top freelancers, agencies, and teams",
+    "tabs": {
+      "freelancers": "Freelancers",
+      "agencies": "Agencies", 
+      "teams": "Teams"
+    },
+    "search": {
+      "placeholder": "Search by name, skills, or location...",
+      "noResults": "No results found",
+      "filters": "Filters",
+      "reset": "Reset Filters",
+      "apply": "Apply Filters"
+    },
+    "cards": {
+      "viewProfile": "View Profile",
+      "moreOptions": "More options",
+      "connect": "Connect",
+      "joinTeam": "Join Team",
+      "viewTeam": "View Team",
+      "about": "About",
+      "topSkills": "Top Skills",
+      "experience": "Experience",
+      "rate": "Rate",
+      "skills": "Skills",
+      "members": "Members",
+      "tools": "Tools",
+      "yearsExperience": "years",
+      "skillsCount": "skills",
+      "membersCount": "members",
+      "noSkillsListed": "No skills listed",
+      "moreSkills": "more"
+    },
+    "availability": {
+      "available": "Available",
+      "availableForProjects": "Available for Projects", 
+      "partTimeAvailable": "Part-time Available",
+      "busy": "Busy"
+    },
+    "workType": {
+      "remote": "remote",
+      "onLocation": "on location", 
+      "hybrid": "hybrid",
+      "unknown": "unknown"
+    },
+    "userTypes": {
+      "freelancer": "Freelancer",
+      "agency": "Agency",
+      "student": "Student"
+    },
+    "paymentTypes": {
+      "hourly": "/hour",
+      "daily": "/day"
+    },
+    "emptyStates": {
+      "freelancers": {
+        "title": "No freelancers found",
+        "description": "We couldn't find any freelancers matching your criteria. Try adjusting your filters or search query."
+      },
+      "agencies": {
+        "title": "No agencies found", 
+        "description": "We couldn't find any agencies matching your criteria. Try adjusting your filters or search query."
+      },
+      "teams": {
+        "title": "No teams found",
+        "description": "We couldn't find any teams matching your criteria. Try adjusting your filters or search query."
+      }
+    },
+    "errorStates": {
+      "freelancers": {
+        "title": "Something went wrong",
+        "description": "We couldn't load the freelancers. Please try again."
+      },
+      "agencies": {
+        "title": "Something went wrong",
+        "description": "We couldn't load the agencies. Please try again."
+      },
+      "teams": {
+        "title": "Something went wrong", 
+        "description": "We couldn't load the teams. Please try again."
+      },
+      "tryAgain": "Try Again"
+    },
+    "loadingStates": {
+      "loadingMore": "Loading more...",
+      "loadingMoreFreelancers": "Loading more freelancers...",
+      "loadingMoreAgencies": "Loading more agencies...",
+      "loadingMoreTeams": "Loading more teams...",
+      "scrollToLoadMore": "Scroll to load more..."
+    }
+  },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"
   }

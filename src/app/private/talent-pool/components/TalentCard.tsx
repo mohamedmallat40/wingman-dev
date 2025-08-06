@@ -3,94 +3,32 @@
 import React from 'react';
 
 import {
-  Avatar,
   Button,
   Card,
   CardBody,
   CardHeader,
   Chip,
-  Divider,
-  Progress,
   Tooltip
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import { type TalentCardProps } from '../types';
+import {
+  getAvailabilityConfig,
+  getWorkTypeConfig,
+  formatRate,
+  getCountryFlag,
+  mapUserType,
+  getUserInitials,
+  truncateText,
+  stripHtml
+} from '../utils/talent-utils';
 
-const getAvailabilityConfig = (status: string) => {
-  switch (status) {
-    case 'OPEN_FOR_PROJECT':
-      return { color: 'success' as const, label: 'Available for Projects', icon: 'solar:check-circle-bold' };
-    case 'OPEN_FOR_PART_TIME':
-      return { color: 'warning' as const, label: 'Part-time Available', icon: 'solar:clock-circle-bold' };
-    case 'BUSY':
-      return { color: 'danger' as const, label: 'Busy', icon: 'solar:close-circle-bold' };
-    default:
-      return { color: 'success' as const, label: 'Available', icon: 'solar:check-circle-bold' };
-  }
-};
 
-const getWorkTypeConfig = (workType: string) => {
-  switch (workType) {
-    case 'REMOTE':
-      return { 
-        icon: 'solar:home-wifi-linear', 
-        color: 'success' as const,
-        label: 'remote'
-      };
-    case 'ON_LOCATION':
-      return { 
-        icon: 'solar:buildings-linear', 
-        color: 'warning' as const,
-        label: 'on location'
-      };
-    case 'HYBRID':
-      return { 
-        icon: 'solar:laptop-linear', 
-        color: 'secondary' as const,
-        label: 'hybrid'
-      };
-    default:
-      return { 
-        icon: 'solar:case-linear', 
-        color: 'default' as const,
-        label: workType?.toLowerCase() || 'unknown'
-      };
-  }
-};
-
-const formatRate = (amount: number, currency: string, paymentType: string): string => {
-  const currencySymbol = currency === 'EUR' ? '€' : '$';
-  const period = paymentType === 'HOURLY_BASED' ? '/hour' : '/day';
-  const rateAmount = amount || 0;
-  return `${currencySymbol}${rateAmount}${period}`;
-};
-
-const getCountryFlag = (region: string | null): string => {
-  if (!region) return '🌍';
-  const flags: Record<string, string> = {
-    BE: '🇧🇪', NL: '🇳🇱', FR: '🇫🇷', DE: '🇩🇪', US: '🇺🇸', 
-    UK: '🇬🇧', CA: '🇨🇦', AU: '🇦🇺', CH: '🇨🇭', AT: '🇦🇹'
-  };
-  return flags[region] || '🌍';
-};
-
-const mapUserType = (userType: string): string => {
-  const typeMap: Record<string, string> = {
-    'FULL_TIME_FREELANCER': 'Freelancer',
-    'STUDENT': 'Freelancer',
-    'FREELANCER': 'Freelancer',
-    'AGENCY': 'Agency'
-  };
-  return typeMap[userType] || userType.toLowerCase().replace(/_/g, ' ');
-};
-
-const TalentCard: React.FC<TalentCardProps> = ({
-  user,
-  onViewProfile,
-  onConnect
-}) => {
+const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect }) => {
+  const t = useTranslations();
   const {
     id,
     firstName,
@@ -114,125 +52,142 @@ const TalentCard: React.FC<TalentCardProps> = ({
   } = user;
 
   const availabilityConfig = getAvailabilityConfig(statusAviability);
+  const workTypeConfig = getWorkTypeConfig(workType || '');
   const displaySkills = skills.slice(0, 4);
   const hasMoreSkills = skills.length > 4;
-  const rate = formatRate(amount || 0, currency || 'EUR', paymentType || 'DAILY_BASED');
+  const rate = formatRate(amount || 0, currency || 'EUR', paymentType || 'DAILY_BASED', t);
   const hasReviews = reviewCount && parseInt(reviewCount) > 0;
 
   return (
     <motion.div
       whileHover={{ y: -4, scale: 1.01 }}
       transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="h-full w-full"
+      className='h-full w-full'
     >
-      <Card className="w-full h-full shadow-soft hover:shadow-medium transition-all duration-300 border border-default-200 bg-gradient-to-br from-background via-background/95 to-background overflow-hidden relative group">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full filter blur-xl transform translate-x-1/2 -translate-y-1/2 group-hover:bg-primary/10 transition-colors duration-300"></div>
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/5 rounded-full filter blur-xl transform -translate-x-1/2 translate-y-1/2 group-hover:bg-secondary/10 transition-colors duration-300"></div>
-        
-        <CardHeader className="relative pb-0">
-          <div className="flex w-full items-start gap-4">
-            <div className="relative">
+      <Card className='shadow-soft hover:shadow-medium border-default-200 from-background via-background/95 to-background group relative h-full w-full overflow-hidden border bg-gradient-to-br transition-all duration-300'>
+        <div className='bg-primary/5 group-hover:bg-primary/10 absolute top-0 right-0 h-24 w-24 translate-x-1/2 -translate-y-1/2 transform rounded-full blur-xl filter transition-colors duration-300'></div>
+        <div className='bg-secondary/5 group-hover:bg-secondary/10 absolute bottom-0 left-0 h-24 w-24 -translate-x-1/2 translate-y-1/2 transform rounded-full blur-xl filter transition-colors duration-300'></div>
+
+        <CardHeader className='relative pb-0'>
+          <div className='flex w-full items-start gap-4'>
+            <div className='relative'>
               {profileImage && profileImage.trim() ? (
-                <div className="h-20 w-20 rounded-full ring-2 ring-primary/10 shadow-medium overflow-hidden bg-gradient-to-br from-primary-200 to-secondary-200">
+                <div className='ring-primary/10 shadow-medium from-primary-200 to-secondary-200 h-20 w-20 overflow-hidden rounded-full bg-gradient-to-br ring-2'>
                   <img
                     src={`https://app.extraexpertise.be/api/upload/${profileImage}`}
                     alt={`${firstName} ${lastName}`}
-                    className="w-full h-full object-cover"
+                    className='h-full w-full object-cover'
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
-                      e.currentTarget.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xl font-bold text-primary-800">${firstName?.charAt(0)?.toUpperCase() || ''}${lastName?.charAt(0)?.toUpperCase() || ''}</div>`;
+                      const parent = e.currentTarget.parentElement;
+                      if (parent) {
+                        parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xl font-bold text-primary-800">${getUserInitials(firstName, lastName)}</div>`;
+                      }
                     }}
                   />
                 </div>
               ) : (
-                <div className="h-20 w-20 rounded-full flex items-center justify-center text-xl font-bold ring-2 ring-primary/10 shadow-medium bg-gradient-to-br from-primary-200 to-secondary-200 text-primary-800">
-                  {firstName?.charAt(0)?.toUpperCase()}{lastName?.charAt(0)?.toUpperCase()}
+                <div className='ring-primary/10 shadow-medium from-primary-200 to-secondary-200 text-primary-800 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br text-xl font-bold ring-2'>
+                  {getUserInitials(firstName, lastName)}
                 </div>
               )}
-              <div className="absolute -bottom-1 -right-1">
-                <div className={`w-6 h-6 rounded-full border-2 border-background shadow-medium flex items-center justify-center ${
-                  availabilityConfig.color === 'success' ? 'bg-success' : 
-                  availabilityConfig.color === 'warning' ? 'bg-warning' : 
-                  availabilityConfig.color === 'danger' ? 'bg-danger' : 'bg-success'
-                }`}>
-                  <Icon icon={availabilityConfig.icon} className="w-3 h-3 text-white" />
+              <div className='absolute -right-1 -bottom-1'>
+                <div
+                  className={`border-background shadow-medium flex h-6 w-6 items-center justify-center rounded-full border-2 ${
+                    availabilityConfig.color === 'success'
+                      ? 'bg-success'
+                      : availabilityConfig.color === 'warning'
+                        ? 'bg-warning'
+                        : availabilityConfig.color === 'danger'
+                          ? 'bg-danger'
+                          : 'bg-success'
+                  }`}
+                >
+                  <Icon icon={availabilityConfig.icon} className='h-3 w-3 text-white' />
                 </div>
               </div>
             </div>
-            
-            <div className="flex flex-col gap-1 flex-grow min-w-0">
-              <div className="flex items-start justify-between">
-                <div className="flex-grow min-w-0">
-                  <h2 className="text-xl font-bold text-foreground tracking-tight truncate">
+
+            <div className='flex min-w-0 flex-grow flex-col gap-1'>
+              <div className='flex items-start justify-between'>
+                <div className='min-w-0 flex-grow'>
+                  <h2 className='text-foreground truncate text-xl font-bold tracking-tight'>
                     {firstName} {lastName}
                   </h2>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-medium text-foreground-600 font-medium truncate">
-                      {profession && !['FULL_TIME_FREELANCER', 'STUDENT', 'FREELANCER', 'AGENCY'].includes(profession) 
-                        ? profession 
-                        : mapUserType(profession || user.kind || 'FREELANCER')}
+                  <div className='flex flex-wrap items-center gap-2'>
+                    <p className='text-medium text-foreground-600 truncate font-medium'>
+                      {profession &&
+                      !['FULL_TIME_FREELANCER', 'STUDENT', 'FREELANCER', 'AGENCY'].includes(
+                        profession
+                      )
+                        ? profession
+                        : mapUserType(profession || user.kind || 'FREELANCER', t)}
                     </p>
                   </div>
                 </div>
-                
-                <div className="flex items-center gap-1 ml-2">
-                  <Tooltip content="View Profile" placement="bottom">
+
+                <div className='ml-2 flex items-center gap-1'>
+                  <Tooltip content={t('talentPool.cards.viewProfile')} placement='bottom'>
                     <Button
                       isIconOnly
-                      variant="light"
-                      size="sm"
-                      className="hover:scale-105 transition-transform text-foreground-500 hover:text-foreground"
+                      variant='light'
+                      size='sm'
+                      className='text-foreground-500 hover:text-foreground transition-transform hover:scale-105'
                       onPress={() => onViewProfile?.(id)}
                     >
-                      <Icon icon="solar:eye-linear" className="w-4 h-4" />
+                      <Icon icon='solar:eye-linear' className='h-4 w-4' />
                     </Button>
                   </Tooltip>
-                  
-                  <Tooltip content="More options" placement="bottom">
+
+                  <Tooltip content={t('talentPool.cards.moreOptions')} placement='bottom'>
                     <Button
                       isIconOnly
-                      variant="light"
-                      size="sm"
-                      className="text-foreground-400 hover:text-foreground"
+                      variant='light'
+                      size='sm'
+                      className='text-foreground-400 hover:text-foreground'
                     >
-                      <Icon icon="solar:menu-dots-linear" className="w-4 h-4" />
+                      <Icon icon='solar:menu-dots-linear' className='h-4 w-4' />
                     </Button>
                   </Tooltip>
                 </div>
               </div>
-              
-              <div className="flex flex-col gap-1 mt-1">
+
+              <div className='mt-1 flex flex-col gap-1'>
                 {region && (
-                  <div className="flex items-center gap-1.5">
-                    <Icon icon="solar:map-point-linear" className="w-3.5 h-3.5 text-foreground-400" />
-                    <span className="text-small text-foreground-500 font-medium">
+                  <div className='flex items-center gap-1.5'>
+                    <Icon
+                      icon='solar:map-point-linear'
+                      className='text-foreground-400 h-3.5 w-3.5'
+                    />
+                    <span className='text-small text-foreground-500 font-medium'>
                       {city}, {region} {getCountryFlag(region)}
                     </span>
                   </div>
                 )}
-                
               </div>
-              
-              <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center gap-2 flex-wrap">
+
+              <div className='mt-2 flex items-center justify-between'>
+                <div className='flex flex-wrap items-center gap-2'>
                   {workType && (
                     <Chip
-                      startContent={<Icon icon={getWorkTypeConfig(workType).icon} className="w-3 h-3" />}
-                      variant="flat"
-                      color={getWorkTypeConfig(workType).color}
-                      size="sm"
-                      className="text-tiny font-medium"
+                      startContent={
+                        <Icon icon={workTypeConfig.icon} className='h-3 w-3' />
+                      }
+                      variant='flat'
+                      color={workTypeConfig.color}
+                      size='sm'
+                      className='text-tiny font-medium'
                     >
-                      {getWorkTypeConfig(workType).label}
+                      {t(workTypeConfig.labelKey)}
                     </Chip>
                   )}
                   {workingTime && (
                     <Chip
-                      startContent={<Icon icon="solar:clock-circle-linear" className="w-3 h-3" />}
-                      variant="flat"
-                      color="primary"
-                      size="sm"
-                      className="text-tiny font-bold"
+                      startContent={<Icon icon='solar:clock-circle-linear' className='h-3 w-3' />}
+                      variant='flat'
+                      color='primary'
+                      size='sm'
+                      className='text-tiny font-bold'
                     >
                       {workingTime.replace('_', ' ').toLowerCase()}
                     </Chip>
@@ -243,87 +198,90 @@ const TalentCard: React.FC<TalentCardProps> = ({
           </div>
         </CardHeader>
 
-        <CardBody className="gap-4 pt-2 px-6 pb-6 relative z-10">
+        <CardBody className='relative z-10 gap-4 px-6 pt-2 pb-6'>
           {/* About Section */}
           {aboutMe && (
-            <div className="bg-background/80 backdrop-blur-sm rounded-large p-4 shadow-small border border-default-200/50">
-              <h3 className="text-medium font-semibold mb-2 text-foreground flex items-center gap-2">
-                <Icon icon="solar:user-speak-linear" className="w-4 h-4 text-primary" />
-                About
+            <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-4 backdrop-blur-sm'>
+              <h3 className='text-medium text-foreground mb-2 flex items-center gap-2 font-semibold'>
+                <Icon icon='solar:user-speak-linear' className='text-primary h-4 w-4' />
+                {t('talentPool.cards.about')}
               </h3>
-              <p className="text-small text-foreground-700 leading-relaxed line-clamp-5">
-                {aboutMe.replace(/<[^>]*>/g, '')}
+              <p className='text-small text-foreground-700 line-clamp-5 leading-relaxed'>
+                {stripHtml(aboutMe)}
               </p>
             </div>
           )}
 
           {/* Skills Section */}
-          <div className="bg-background/80 backdrop-blur-sm rounded-large p-4 shadow-small border border-default-200/50">
-            <h3 className="text-medium font-semibold mb-3 text-foreground flex items-center gap-2">
-              <Icon icon="solar:verified-check-linear" className="w-4 h-4 text-primary" />
-              Top Skills
+          <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-4 backdrop-blur-sm'>
+            <h3 className='text-medium text-foreground mb-3 flex items-center gap-2 font-semibold'>
+              <Icon icon='solar:verified-check-linear' className='text-primary h-4 w-4' />
+              {t('talentPool.cards.topSkills')}
             </h3>
             {displaySkills.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
+              <div className='flex flex-wrap gap-2'>
                 {displaySkills.map((skill, index) => (
                   <Chip
                     key={`${skill.key}-${index}`}
-                    size="sm"
+                    size='sm'
                     color={skill.type === 'SOFT' ? 'secondary' : 'primary'}
                     variant={skill.type === 'SOFT' ? 'flat' : 'flat'}
-                    className="hover:scale-105 transition-transform cursor-pointer font-medium max-w-full"
+                    className='max-w-full cursor-pointer font-medium transition-transform hover:scale-105'
                   >
-                    <span className="truncate max-w-[120px] block">
-                      {skill.key.length > 70 ? `${skill.key.substring(0, 70)}...` : skill.key}
+                    <span className='block max-w-[120px] truncate'>
+                      {truncateText(skill.key, 70)}
                     </span>
                   </Chip>
                 ))}
                 {hasMoreSkills && (
-                  <Chip variant="bordered" size="sm" className="border-dashed text-foreground-500 font-medium">
-                    +{skills.length - 4} more
+                  <Chip
+                    variant='bordered'
+                    size='sm'
+                    className='text-foreground-500 border-dashed font-medium'
+                  >
+                    +{skills.length - 4} {t('talentPool.cards.moreSkills')}
                   </Chip>
                 )}
               </div>
             ) : (
-              <div className="text-center py-4">
-                <p className="text-small text-foreground-500">No skills listed</p>
+              <div className='py-4 text-center'>
+                <p className='text-small text-foreground-500'>{t('talentPool.cards.noSkillsListed')}</p>
               </div>
             )}
           </div>
 
           {/* Stats Section */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-background/80 backdrop-blur-sm rounded-large p-3 shadow-small border border-default-200/50 text-center">
-              <div className="flex justify-center mb-2">
-                <div className="p-2 rounded-full bg-primary/10">
-                  <Icon icon="solar:calendar-linear" className="w-4 h-4 text-primary" />
+          <div className='grid grid-cols-3 gap-3'>
+            <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-3 text-center backdrop-blur-sm'>
+              <div className='mb-2 flex justify-center'>
+                <div className='bg-primary/10 rounded-full p-2'>
+                  <Icon icon='solar:calendar-linear' className='text-primary h-4 w-4' />
                 </div>
               </div>
-              <p className="text-tiny font-medium text-foreground-500">Experience</p>
-              <p className="text-small font-bold text-foreground">{experienceYears || 0} years</p>
+              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.experience')}</p>
+              <p className='text-small text-foreground font-bold'>{experienceYears || 0} {t('talentPool.cards.yearsExperience')}</p>
             </div>
-            
-            <div className="bg-background/80 backdrop-blur-sm rounded-large p-3 shadow-small border border-default-200/50 text-center">
-              <div className="flex justify-center mb-2">
-                <div className="p-2 rounded-full bg-success/10">
-                  <Icon icon="solar:dollar-minimalistic-linear" className="w-4 h-4 text-success" />
+
+            <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-3 text-center backdrop-blur-sm'>
+              <div className='mb-2 flex justify-center'>
+                <div className='bg-success/10 rounded-full p-2'>
+                  <Icon icon='solar:dollar-minimalistic-linear' className='text-success h-4 w-4' />
                 </div>
               </div>
-              <p className="text-tiny font-medium text-foreground-500">Rate</p>
-              <p className="text-small font-bold text-foreground">{rate}</p>
+              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.rate')}</p>
+              <p className='text-small text-foreground font-bold'>{rate}</p>
             </div>
-            
-            <div className="bg-background/80 backdrop-blur-sm rounded-large p-3 shadow-small border border-default-200/50 text-center">
-              <div className="flex justify-center mb-2">
-                <div className="p-2 rounded-full bg-secondary/10">
-                  <Icon icon="solar:verified-check-linear" className="w-4 h-4 text-secondary" />
+
+            <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-3 text-center backdrop-blur-sm'>
+              <div className='mb-2 flex justify-center'>
+                <div className='bg-secondary/10 rounded-full p-2'>
+                  <Icon icon='solar:verified-check-linear' className='text-secondary h-4 w-4' />
                 </div>
               </div>
-              <p className="text-tiny font-medium text-foreground-500">Skills</p>
-              <p className="text-small font-bold text-foreground">{skills?.length || 0} skills</p>
+              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.skills')}</p>
+              <p className='text-small text-foreground font-bold'>{skills?.length || 0} {t('talentPool.cards.skillsCount')}</p>
             </div>
           </div>
-
         </CardBody>
       </Card>
     </motion.div>
