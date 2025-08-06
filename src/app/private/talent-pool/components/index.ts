@@ -7,6 +7,9 @@ export { default as FreelancerList } from './FreelancerList';
 export { default as AgencyList } from './AgencyList';
 export { default as TeamList } from './TeamList';
 
+// Export shared components
+export * from './shared';
+
 // Re-export types for convenience
 export type {
   User,
@@ -17,5 +20,13 @@ export type {
   TeamCardProps,
   UserResponse,
   TeamResponse,
-  PaginationMeta
+  PaginationMeta,
+  UserKind,
+  WorkType,
+  PaymentType,
+  AvailabilityStatus,
+  Currency
 } from '../types';
+
+// Re-export utilities
+export * from '../utils/talent-utils';
