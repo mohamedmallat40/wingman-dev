@@ -41,7 +41,7 @@ export const checkValidEUVAT = async (countryCode: string, vatNumber: string) =>
 };
 export const handleOAuth = (provider: 'google' | 'linkedin'): Promise<unknown> => {
   return new Promise((resolve, reject) => {
-    const authUrl = `${getBaseUrl()}/api/auth/${provider}`;
+    const authUrl = `https://dev.extraexpertise.be/api/auth/${provider}`;
     const authWindow = window.open(
       authUrl,
       `${provider}AuthPopup`,

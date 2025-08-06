@@ -2,25 +2,36 @@ import type {
   EducationFormData,
   GeneralInfoFormData,
   LanguagesFormData,
-  ProjectsFormData,
+  ProjectsExpFormData,
+  serviceItemFormData,
   ServicesFormData,
   SkillsFormData
 } from '@root/modules/settings/schema/settings.schema';
 
 import { addToast } from '@heroui/react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  createExperienceMutationOptions,
+  createLanguageMutationOptions,
+  createProjectMutationOptions,
+  createServiceMutationOptions,
   deleteEducationMutationOptions,
+  deleteExperienceMutationOptions,
+  deleteLanguageMutationOptions,
+  deleteProjectMutationOptions,
+  deleteServiceMutationOptions,
   educationMutationOptions,
   experienceMutationOptions,
   generalInfoMutationOptions,
   languagesMutationOptions,
+  projectsMutationOptions,
   servicesMutationOptions,
-  skillsMutationOptions
+  skillsMutationOptions,
+  skillsOptions,
+  updateEducationMutationOptions
 } from './settings.server';
 
-// Helper function to invalidate related queries and show success toast
 const handleSuccess = (message: string) => {
   addToast({
     title: 'Success',
@@ -29,21 +40,21 @@ const handleSuccess = (message: string) => {
     timeout: 3000
   });
 };
+
 const handleError = (error: any, defaultMessage: string) => {
-  const errorMessage = error?.response?.data?.message || defaultMessage;
+  const errorMessage = error?.response?.data?.message ?? defaultMessage;
   addToast({
     title: 'Error',
-    description: `Successfully logged in with ${errorMessage}!`,
+    description: errorMessage,
     color: 'danger',
     timeout: 3000
   });
   console.error(error);
 };
+
 const useSettings = (userId?: string) => {
-
-  // Helper function to show error toast
-
-  // General Info Mutation
+  const queryClient = useQueryClient();
+  // General Info Mutations
   const updateGeneralInfoMutation = useMutation({
     ...generalInfoMutationOptions,
     onSuccess: () => {
@@ -54,7 +65,6 @@ const useSettings = (userId?: string) => {
     }
   });
 
-  // Skills Mutation
   const updateSkillsMutation = useMutation({
     ...skillsMutationOptions,
     onSuccess: () => {
@@ -65,7 +75,17 @@ const useSettings = (userId?: string) => {
     }
   });
 
-  // Languages Mutation
+  // Language Mutations
+  const createLanguageMutation = useMutation({
+    ...createLanguageMutationOptions,
+    onSuccess: () => {
+      handleSuccess('Language created successfully!');
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to create language');
+    }
+  });
+
   const updateLanguagesMutation = useMutation({
     ...languagesMutationOptions,
     onSuccess: () => {
@@ -76,55 +96,155 @@ const useSettings = (userId?: string) => {
     }
   });
 
-  // Experience Mutation
+  const deleteLanguageMutation = useMutation({
+    ...deleteLanguageMutationOptions,
+    onSuccess: () => {
+      handleSuccess('Language deleted successfully!');
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to delete language');
+    }
+  });
+
+  const createExperienceMutation = useMutation({
+    ...createExperienceMutationOptions,
+    onSuccess: async (data) => {
+      console.log(data);
+      handleSuccess('Experience created successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['experiences', userId]
+      });
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to create experience');
+    }
+  });
+
   const updateExperienceMutation = useMutation({
     ...experienceMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Experience updated successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['experiences', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to update experience');
     }
   });
 
-  // Projects Mutation
+  const deleteExperienceMutation = useMutation({
+    ...deleteExperienceMutationOptions,
+    onSuccess: async () => {
+      handleSuccess('Experience deleted successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['experiences', userId]
+      });
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to delete experience');
+    }
+  });
+
+  // Project Mutations
+  const createProjectMutation = useMutation({
+    ...createProjectMutationOptions,
+    onSuccess: async () => {
+      handleSuccess('Project created successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['experiences', userId]
+      });
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to create project');
+    }
+  });
+
   const updateProjectsMutation = useMutation({
-    ...experienceMutationOptions,
-    onSuccess: () => {
+    ...projectsMutationOptions,
+    onSuccess: async () => {
       handleSuccess('Projects updated successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['experiences', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to update projects');
     }
   });
 
-  // create education mutation
+  const deleteProjectMutation = useMutation({
+    ...deleteProjectMutationOptions,
+    onSuccess: async () => {
+      handleSuccess('Project deleted successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['experiences', userId]
+      });
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to delete project');
+    }
+  });
+
+  // Education Mutations
   const createEducationMutation = useMutation({
     ...educationMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
+      console.log('success');
       handleSuccess('Education created successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['educations', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to create education');
     }
   });
 
-  // Delete education mutation
+  const updateEducationMutation = useMutation({
+    ...updateEducationMutationOptions,
+    onSuccess: async () => {
+      console.log('success');
+      handleSuccess('Education updated successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['educations', userId]
+      });
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to updated education');
+    }
+  });
+
   const deleteEducationMutation = useMutation({
     ...deleteEducationMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
+      console.log('success');
       handleSuccess('Education deleted successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['educations', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to delete education');
     }
   });
 
-  const deleteEducation = (id: string) => {
-    deleteEducationMutation.mutate(id);
-  };
+  // Service Mutations
+  const createServiceMutation = useMutation({
+    ...createServiceMutationOptions,
+    onSuccess: async () => {
+      console.log('success');
+      handleSuccess('Service created successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['services', userId]
+      });
+    },
+    onError: (error) => {
+      console.log('error');
+      handleError(error, 'Failed to create service');
+    }
+  });
 
-  // Services Mutation
   const updateServicesMutation = useMutation({
     ...servicesMutationOptions,
     onSuccess: () => {
@@ -135,72 +255,126 @@ const useSettings = (userId?: string) => {
     }
   });
 
-  // Wrapper functions for easier usage
+  const deleteServiceMutation = useMutation({
+    ...deleteServiceMutationOptions,
+    onSuccess: () => {
+      handleSuccess('Service deleted successfully!');
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to delete service');
+    }
+  });
+
+  // Wrapper functions
   const updateGeneralInfo = (data: GeneralInfoFormData) => {
     updateGeneralInfoMutation.mutate(data);
   };
-
   const updateSkills = (data: SkillsFormData) => {
     updateSkillsMutation.mutate(data);
   };
 
+  const createLanguage = (data: LanguagesFormData) => {
+    createLanguageMutation.mutate(data);
+  };
   const updateLanguages = (data: LanguagesFormData) => {
     updateLanguagesMutation.mutate(data);
   };
-
-  const updateExperience = (data: ProjectsFormData) => {
-    updateExperienceMutation.mutate(data);
+  const deleteLanguage = (id: string) => {
+    deleteLanguageMutation.mutate(id);
   };
 
-  const updateProjects = (data: ProjectsFormData) => {
+  const createExperience = (data: ProjectsExpFormData) => {
+    createExperienceMutation.mutate(data);
+  };
+  const updateExperience = (data: ProjectsExpFormData) => {
+    updateExperienceMutation.mutate(data);
+  };
+  const deleteExperience = (id: string) => {
+    deleteExperienceMutation.mutate(id);
+  };
+
+  const createProject = (data: ProjectsExpFormData) => {
+    createProjectMutation.mutate(data);
+  };
+  const updateProjects = (data: ProjectsExpFormData) => {
     updateProjectsMutation.mutate(data);
+  };
+  const deleteProject = (id: string) => {
+    deleteProjectMutation.mutate(id);
   };
 
   const createEducation = (data: EducationFormData) => {
     createEducationMutation.mutate(data);
   };
 
+  const updateEducation = (data: EducationFormData) => {
+    updateEducationMutation.mutate(data);
+  };
+  const deleteEducation = (id: string) => {
+    deleteEducationMutation.mutate(id);
+  };
+
+  const createService = (data: serviceItemFormData) => {
+    console.log(data);
+    createServiceMutation.mutate(data);
+  };
   const updateServices = (data: ServicesFormData) => {
     updateServicesMutation.mutate(data);
   };
+  const deleteService = (id: string) => {
+    deleteServiceMutation.mutate(id);
+  };
+  const useAllSkills = useQuery({
+    ...skillsOptions()
+  });
 
   return {
+    // Create functions
+    createLanguage,
+    createExperience,
+    createProject,
+    createEducation,
+    updateEducation,
+    createService,
+    useAllSkills,
+
     // Update functions
     updateGeneralInfo,
     updateSkills,
     updateLanguages,
     updateExperience,
     updateProjects,
-    createEducation,
-    deleteEducation,
     updateServices,
 
-    // Loading states
-    isUpdatingGeneralInfo: updateGeneralInfoMutation.isPending,
-    isUpdatingSkills: updateSkillsMutation.isPending,
-    isUpdatingLanguages: updateLanguagesMutation.isPending,
-    isUpdatingExperience: updateExperienceMutation.isPending,
-    isUpdatingProjects: updateProjectsMutation.isPending,
-    isUpdatingEducation: createEducationMutation.isPending,
-    isUpdatingServices: updateServicesMutation.isPending,
-    isDeletingEducation: deleteEducationMutation.isPending,
-    // Error states
-    generalInfoError: updateGeneralInfoMutation.error,
-    skillsError: updateSkillsMutation.error,
-    languagesError: updateLanguagesMutation.error,
-    experienceError: updateExperienceMutation.error,
-    projectsError: updateProjectsMutation.error,
-    educationError: createEducationMutation.error,
-    servicesError: updateServicesMutation.error,
+    // Delete functions
+    deleteLanguage,
+    deleteExperience,
+    deleteProject,
+    deleteEducation,
+    deleteService,
 
-    // Reset functions
-    resetGeneralInfo: updateGeneralInfoMutation.reset,
-    resetSkills: updateSkillsMutation.reset,
-    resetLanguages: updateLanguagesMutation.reset,
-    resetExperience: updateExperienceMutation.reset,
-    resetProjects: updateProjectsMutation.reset,
-    resetEducation: createEducationMutation.reset,
-    resetServices: updateServicesMutation.reset
+    // Loading states
+    isCreatingLanguage: createLanguageMutation.isPending,
+    isUpdatingLanguages: updateLanguagesMutation.isPending,
+    isDeletingLanguage: deleteLanguageMutation.isPending,
+
+    isCreatingExperience: createExperienceMutation.isPending,
+    isUpdatingExperience: updateExperienceMutation.isPending,
+    isDeletingExperience: deleteExperienceMutation.isPending,
+
+    isCreatingProject: createProjectMutation.isPending,
+    isUpdatingProjects: updateProjectsMutation.isPending,
+    isDeletingProject: deleteProjectMutation.isPending,
+
+    isUpdatingEducation: createEducationMutation.isPending,
+    isDeletingEducation: deleteEducationMutation.isPending,
+
+    isCreatingService: createServiceMutation.isPending,
+    isUpdatingServices: updateServicesMutation.isPending,
+    isDeletingService: deleteServiceMutation.isPending,
+
+    isUpdatingGeneralInfo: updateGeneralInfoMutation.isPending,
+    isUpdatingSkills: updateSkillsMutation.isPending
   };
 };
 

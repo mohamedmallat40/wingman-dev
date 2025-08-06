@@ -63,7 +63,7 @@ export default function GeneralInfoSection({
               <div className='flex items-center gap-2'>
                 <DollarSign size={16} className='text-green-500' />
                 <span>
-                  {`${user.hourlyRate}/{user.paymentType === 'HOURLY_BASED' ? 'HOURLY_BASED' : 'DAILY_BASED'}`}
+                  {`${user.hourlyRate}/${user.paymentType === 'HOURLY_BASED' ? 'hour' : 'day'}`}
                 </span>
               </div>
             </div>

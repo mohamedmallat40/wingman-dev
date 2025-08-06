@@ -22,10 +22,10 @@ export default function ProfilePage() {
 
   // If no userId is provided, redirect to current user's profile
   useEffect(() => {
-    if (!userId && currentUserProfile?.id) {
+    if (!userId && currentUserProfile.id) {
       router.replace(`/private/profile?id=${currentUserProfile.id}`);
     }
-  }, [userId, currentUserProfile?.id, router]);
+  }, [userId, currentUserProfile.id, router]);
 
   const {
     profile: user,
@@ -64,7 +64,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className='min-h-screen w-full bg-transparent py-4'>
+    <div className='h-screen w-full bg-transparent py-4'>
       <div className='mx-auto px-3 md:mx-auto'>
         <div className='space-y-8'>
           <GeneralInfoSection user={user} languages={languages} />

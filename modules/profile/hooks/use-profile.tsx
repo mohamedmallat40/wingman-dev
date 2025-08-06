@@ -12,7 +12,6 @@ import { useQuery } from '@tanstack/react-query';
 const useProfile = (userId: string) => {
   const { data, error, isLoading } = useQuery(profileOptions);
 
-  // Only make these queries if userId is provided and valid
   const shouldFetchUserData = Boolean(userId && userId.trim() !== '');
 
   const experienceQuery = useQuery({

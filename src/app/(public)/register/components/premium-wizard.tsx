@@ -106,14 +106,18 @@ export default function PremiumWizard() {
 
     switch (stepId) {
       case 'credentials':
-      case 'category':
+      case 'category': {
         return true;
-      case 'plan':
+      }
+      case 'plan': {
         return kind === 'FREELANCER';
-      case 'billing':
+      }
+      case 'billing': {
         return selectedPlan?.type === 'FREELANCER_EXPERT';
-      default:
+      }
+      default: {
         return true;
+      }
     }
   };
 
@@ -153,8 +157,8 @@ export default function PremiumWizard() {
     const kind = registrationData.kind;
     const selectedPlan = registrationData.selectedPlan;
 
-    for (let i = currentIndex + 1; i < steps.length; i++) {
-      const stepId = steps[i]?.id;
+    for (let index = currentIndex + 1; index < steps.length; index++) {
+      const stepId = steps[index]?.id;
 
       // Skip plan step for non-freelancers
       if (stepId === 'plan' && kind !== 'FREELANCER') {
@@ -166,26 +170,26 @@ export default function PremiumWizard() {
         continue;
       }
 
-      return i;
+      return index;
     }
 
     return -1; // No more valid steps
   };
 
-  const prevStep = () => {
-    const prevStepIndex = getPrevValidStep(currentStep);
-    if (prevStepIndex !== -1) {
+  const previousStep = () => {
+    const previousStepIndex = getPreviousValidStep(currentStep);
+    if (previousStepIndex !== -1) {
       setDirection(-1);
-      setCurrentStep(prevStepIndex);
+      setCurrentStep(previousStepIndex);
     }
   };
 
-  const getPrevValidStep = (currentIndex: number): number => {
+  const getPreviousValidStep = (currentIndex: number): number => {
     const kind = registrationData.kind;
     const selectedPlan = registrationData.selectedPlan;
 
-    for (let i = currentIndex - 1; i >= 0; i--) {
-      const stepId = steps[i]?.id;
+    for (let index = currentIndex - 1; index >= 0; index--) {
+      const stepId = steps[index]?.id;
 
       // Skip plan step for non-freelancers
       if (stepId === 'plan' && kind !== 'FREELANCER') {
@@ -197,7 +201,7 @@ export default function PremiumWizard() {
         continue;
       }
 
-      return i;
+      return index;
     }
 
     return -1; // No more valid steps
@@ -223,12 +227,12 @@ export default function PremiumWizard() {
 
     // Check if there are more valid steps after updating data
     const nextStepIndex = getNextValidStepWithData(currentStep, updatedData);
-    if (nextStepIndex !== -1) {
-      setDirection(1);
-      setCurrentStep(nextStepIndex);
-    } else {
+    if (nextStepIndex === -1) {
       // No more valid steps, complete registration
       handleStepComplete(data);
+    } else {
+      setDirection(1);
+      setCurrentStep(nextStepIndex);
     }
   };
 
@@ -239,8 +243,8 @@ export default function PremiumWizard() {
     const kind = data.kind;
     const selectedPlan = data.selectedPlan;
 
-    for (let i = currentIndex + 1; i < steps.length; i++) {
-      const stepId = steps[i]?.id;
+    for (let index = currentIndex + 1; index < steps.length; index++) {
+      const stepId = steps[index]?.id;
 
       // Skip plan step for non-freelancers
       if (stepId === 'plan' && kind !== 'FREELANCER') {
@@ -252,7 +256,7 @@ export default function PremiumWizard() {
         continue;
       }
 
-      return i;
+      return index;
     }
 
     return -1; // No more valid steps
@@ -283,7 +287,7 @@ export default function PremiumWizard() {
     const stepId = steps[currentStep]?.id;
 
     switch (stepId) {
-      case 'credentials':
+      case 'credentials': {
         return (
           <EmailPasswordForm
             onComplete={handleStepOneComplete}
@@ -297,12 +301,13 @@ export default function PremiumWizard() {
             onFormDataChange={setCurrentFormData}
           />
         );
-      case 'category':
+      }
+      case 'category': {
         return (
           <CategorySelectionForm
             onComplete={handleStepComplete}
             onNext={handleStepNext}
-            onBack={prevStep}
+            onBack={previousStep}
             initialData={{
               ...registrationData,
               subscriptionTypeFromUrl
@@ -312,31 +317,35 @@ export default function PremiumWizard() {
             onFormDataChange={setCurrentFormData}
           />
         );
-      case 'plan':
+      }
+      case 'plan': {
         return (
           <PlanSelectionForm
             onComplete={handleStepComplete}
             onNext={handleStepNext}
-            onBack={prevStep}
+            onBack={previousStep}
             initialData={registrationData}
             isLoading={mutation.isLoading}
             showButtons={false}
             onFormDataChange={setCurrentFormData}
           />
         );
-      case 'billing':
+      }
+      case 'billing': {
         return (
           <BillingForm
             onComplete={handleStepComplete}
-            onBack={prevStep}
+            onBack={previousStep}
             initialData={registrationData}
             isLoading={mutation.isLoading}
             showButtons={false}
             onFormDataChange={setCurrentFormData}
           />
         );
-      default:
+      }
+      default: {
         return null;
+      }
     }
   };
 
@@ -344,7 +353,7 @@ export default function PremiumWizard() {
     const stepId = steps[currentStep]?.id;
 
     switch (stepId) {
-      case 'credentials':
+      case 'credentials': {
         const isStep1Valid = Boolean(
           currentFormData.firstName &&
             currentFormData.lastName &&
@@ -375,7 +384,8 @@ export default function PremiumWizard() {
             {t('continue')}
           </Button>
         );
-      case 'category':
+      }
+      case 'category': {
         const kind = currentFormData.kind || registrationData.kind;
         return (
           <Button
@@ -408,7 +418,8 @@ export default function PremiumWizard() {
                 : t('createAccount')}
           </Button>
         );
-      case 'plan':
+      }
+      case 'plan': {
         const selectedPlan = currentFormData.selectedPlan || registrationData.selectedPlan;
         return (
           <Button
@@ -445,7 +456,8 @@ export default function PremiumWizard() {
                 : t('createAccount')}
           </Button>
         );
-      case 'billing':
+      }
+      case 'billing': {
         const isFormValid = Boolean(
           (currentFormData.addressDetails?.street || registrationData.addressDetails?.street) &&
             (currentFormData.addressDetails?.city || registrationData.addressDetails?.city) &&
@@ -461,19 +473,21 @@ export default function PremiumWizard() {
             className='rounded-[18px] px-10 font-semibold tracking-[0.02em] shadow-lg transition-all duration-300 hover:shadow-xl'
             isDisabled={!isFormValid || mutation.isLoading}
             isLoading={mutation.isLoading}
-            onPress={() =>
+            onPress={() => {
               handleStepComplete({
                 addressDetails: currentFormData.addressDetails || registrationData.addressDetails,
                 termsAccepted: currentFormData.termsAccepted || registrationData.termsAccepted
-              })
-            }
+              });
+            }}
             endContent={<Icon icon='solar:user-plus-bold' className='h-5 w-5' />}
           >
             {mutation.isLoading ? t('creatingAccount') : t('createAccount')}
           </Button>
         );
-      default:
+      }
+      default: {
         return null;
+      }
     }
   };
 
@@ -550,12 +564,12 @@ export default function PremiumWizard() {
                         className={`flex items-center gap-4 rounded-[16px] p-4 transition-all duration-500 ${
                           isCurrentStep
                             ? 'bg-primary/10 border-primary/20 border'
-                            : isStepCompleted
+                            : (isStepCompleted
                               ? 'from-primary/5 to-primary/10 border-primary/15 border bg-gradient-to-r'
-                              : 'bg-default-50 dark:bg-default-100/20'
+                              : 'bg-default-50 dark:bg-default-100/20')
                         }`}
                         animate={{
-                          scale: isCurrentStep ? 1.02 : isStepCompleted ? 1.01 : 1,
+                          scale: isCurrentStep ? 1.02 : (isStepCompleted ? 1.01 : 1),
                           opacity: isCurrentStep || isStepCompleted ? 1 : 0.6
                         }}
                         transition={{
@@ -570,9 +584,9 @@ export default function PremiumWizard() {
                           className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-[14px] font-bold transition-all duration-500 ${
                             isCurrentStep
                               ? 'bg-primary text-white shadow-lg'
-                              : isStepCompleted
+                              : (isStepCompleted
                                 ? 'from-primary to-primary-600 bg-gradient-to-br text-white shadow-lg'
-                                : 'bg-default-100 text-default-500'
+                                : 'bg-default-100 text-default-500')
                           }`}
                           animate={{
                             scale: isStepCompleted ? 1.05 : 1
@@ -622,9 +636,9 @@ export default function PremiumWizard() {
                             className={`font-semibold tracking-[0.02em] transition-all duration-500 ${
                               isCurrentStep
                                 ? 'text-primary'
-                                : isStepCompleted
+                                : (isStepCompleted
                                   ? 'text-primary font-bold'
-                                  : 'text-foreground'
+                                  : 'text-foreground')
                             }`}
                           >
                             {t(step.titleKey)}
@@ -633,9 +647,9 @@ export default function PremiumWizard() {
                             className={`text-sm transition-all duration-500 ${
                               isCurrentStep
                                 ? 'text-primary/80'
-                                : isStepCompleted
+                                : (isStepCompleted
                                   ? 'text-primary/70 font-medium'
-                                  : 'text-default-500'
+                                  : 'text-default-500')
                             }`}
                           >
                             {isStepCompleted ? t('completed') : t(step.subtitleKey)}
@@ -759,7 +773,7 @@ export default function PremiumWizard() {
                           startContent={
                             <Icon icon='solar:alt-arrow-left-linear' className='h-5 w-5' />
                           }
-                          onPress={prevStep}
+                          onPress={previousStep}
                         >
                           {t('back')}
                         </Button>

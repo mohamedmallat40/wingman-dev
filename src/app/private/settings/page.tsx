@@ -6,11 +6,12 @@ import { Card, CardBody, Spinner, Tab, Tabs } from '@heroui/react';
 import { profileOptions } from '@root/modules/profile/hooks/profile.server';
 import useProfile from '@root/modules/profile/hooks/use-profile';
 import { useQuery } from '@tanstack/react-query';
-import { Briefcase, GraduationCap, Settings, User } from 'lucide-react';
+import { Briefcase, FolderKanban, GraduationCap, Settings, User } from 'lucide-react';
 
 import EducationTab from './components/education-tab';
-import ExperienceProjectsTab from './components/experience-projects-tab';
+import ExperienceTab from './components/experience-tab';
 import GeneralInfoTab from './components/general-info-tab';
+import ProjectsTab from './components/projects-tab';
 import ServicesTab from './components/services-tab';
 
 interface SettingsPageProperties {
@@ -38,7 +39,7 @@ export default function SettingsPage({ userId }: Readonly<SettingsPageProperties
     languages,
     isLoading,
     error
-  } = useProfile(currentUserId);
+  } = useProfile(currentUserId as string);
 
   if (isLoading) {
     return (
@@ -48,7 +49,7 @@ export default function SettingsPage({ userId }: Readonly<SettingsPageProperties
     );
   }
 
-  if (error || !user) {
+  if (error) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <div className='text-center'>
@@ -106,12 +107,25 @@ export default function SettingsPage({ userId }: Readonly<SettingsPageProperties
                 title={
                   <div className='flex items-center space-x-2'>
                     <Briefcase size={18} />
-                    <span>Experience & Projects</span>
+                    <span>Experiences</span>
                   </div>
                 }
               >
                 <div className='p-6'>
-                  <ExperienceProjectsTab user={user} projects={projects} experiences={experience} />
+                  <ExperienceTab user={user} experiences={experience} />
+                </div>
+              </Tab>
+              <Tab
+                key='projects'
+                title={
+                  <div className='flex items-center space-x-2'>
+                    <FolderKanban />
+                    <span>Projects</span>
+                  </div>
+                }
+              >
+                <div className='p-6'>
+                  <ProjectsTab user={user} projects={projects} />
                 </div>
               </Tab>
 

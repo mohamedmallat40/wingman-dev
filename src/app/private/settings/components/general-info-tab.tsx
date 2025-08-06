@@ -23,7 +23,7 @@ import {
   languagesSchema,
   skillsSchema
 } from '@root/modules/settings/schema/settings.schema';
-import { Plus, Save, X } from 'lucide-react';
+import { Plus, Save, Trash2, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
 
 interface GeneralInfoTabProperties {
@@ -39,22 +39,23 @@ const levelOptions = [
 ];
 
 export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfoTabProperties>) {
-  const { updateGeneralInfo, updateLanguages, isUpdatingGeneralInfo, isUpdatingLanguages } =
-    useSettings(user.id);
+  const {
+    updateGeneralInfo,
+    createLanguage,
+    deleteLanguage,
+    isUpdatingGeneralInfo,
+    isCreatingLanguage,
+    isDeletingLanguage
+  } = useSettings(user.id);
 
   const generalForm = useForm<GeneralInfoFormData>({
     resolver: zodResolver(generalInfoSchema),
-    defaultValues: {
-      ...user
-    }
+    defaultValues: { ...user }
   });
 
-  // Skills Form
   const skillsForm = useForm<SkillsFormData>({
     resolver: zodResolver(skillsSchema),
-    defaultValues: {
-      skills: user.skills
-    }
+    defaultValues: { skills: user.skills }
   });
 
   const {
@@ -66,12 +67,9 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
     name: 'skills'
   });
 
-  // Languages Form
   const languagesForm = useForm<LanguagesFormData>({
     resolver: zodResolver(languagesSchema),
-    defaultValues: {
-      languages: languages
-    }
+    defaultValues: { languages: languages }
   });
 
   const {
@@ -88,15 +86,22 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
   };
 
   const onSubmitSkills = async (data: SkillsFormData) => {
-    const requestData = {
-      ...user,
-      skills: data
-    };
+    const requestData = { ...user, skills: data };
     updateGeneralInfo(requestData);
   };
 
   const onSubmitLanguages = async (data: LanguagesFormData) => {
-    updateLanguages(data);
+    createLanguage(data);
+  };
+
+  const handleDeleteLanguage = (languageId: string, fieldIndex: number) => {
+    const languageData = languagesForm.getValues(`languages.${fieldIndex}`);
+    const actualLanguageId = languageData.id;
+
+    if (actualLanguageId && !actualLanguageId.startsWith('temp_')) {
+      deleteLanguage(actualLanguageId);
+    }
+    removeLanguage(fieldIndex);
   };
 
   return (
@@ -210,7 +215,7 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
               >
                 <SelectItem key='HOURLY_BASED'>Hourly</SelectItem>
                 <SelectItem key='DAILY_BASED'>Daily</SelectItem>
-                <SelectItem key='PROJECT'>Daily</SelectItem>
+                <SelectItem key='PROJECT'>Project</SelectItem>
               </Select>
             </div>
 
@@ -247,9 +252,7 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
                     isIconOnly
                     color='danger'
                     variant='light'
-                    onPress={() => {
-                      removeSkill(index);
-                    }}
+                    onPress={() => removeSkill(index)}
                     isDisabled={skillFields.length === 1}
                   >
                     <X size={18} />
@@ -263,9 +266,7 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
                 color='secondary'
                 variant='flat'
                 startContent={<Plus size={18} />}
-                onPress={() => {
-                  appendSkill({ id: Date.now().toString(), key: '' });
-                }}
+                onPress={() => appendSkill({ id: Date.now().toString(), key: '' })}
               >
                 Add Skill
               </Button>
@@ -288,54 +289,67 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
           <h3 className='text-xl font-semibold'>Languages</h3>
         </CardHeader>
         <CardBody>
-          <form onSubmit={languagesForm.handleSubmit(onSubmitLanguages)} className='space-y-4'>
-            <div className='space-y-3'>
-              {languageFields.map((field, index: number) => (
-                <div key={field.id} className='flex gap-2'>
-                  <Select
-                    {...languagesForm.register(`languages.${index}.key`)}
-                    placeholder='Select language'
-                    aria-label='selected language'
-                    selectedKeys={[languagesForm.watch(`languages.${index}.key`)]}
-                    onSelectionChange={(keys) => {
-                      const value = [...keys][0] as string;
-                      languagesForm.setValue(`languages.${index}.key`, value);
-                    }}
-                    className='flex-1'
-                  >
-                    {languages.map((lang) => (
-                      <SelectItem key={lang.key}>{lang.key}</SelectItem>
-                    ))}
-                  </Select>
-                  <Select
-                    {...languagesForm.register(`languages.${index}.level`)}
-                    placeholder='Select level'
-                    selectedKeys={[languagesForm.watch(`languages.${index}.level`)]}
-                    aria-label='langauge'
-                    onSelectionChange={(keys) => {
-                      const value = [...keys][0] as string;
-                      languagesForm.setValue(
-                        `languages.${index}.level`,
-                        value as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'NATIVE'
-                      );
-                    }}
-                    className='flex-1'
-                  >
-                    {levelOptions.map(({ value, label }) => (
-                      <SelectItem key={value}>{label}</SelectItem>
-                    ))}
-                  </Select>
-                  <Button
-                    isIconOnly
-                    color='danger'
-                    variant='light'
-                    onPress={() => {
-                      removeLanguage(index);
-                    }}
-                    isDisabled={languageFields.length === 1}
-                  >
-                    <X size={18} />
-                  </Button>
+          <form onSubmit={languagesForm.handleSubmit(onSubmitLanguages)} className='space-y-6'>
+            <div className='space-y-4'>
+              {languageFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className='space-y-4 rounded-lg border border-gray-200 p-4 dark:border-gray-700'
+                >
+                  <div className='flex items-center justify-between'>
+                    <h4 className='font-medium'>Language {index + 1}</h4>
+                    <div className='flex gap-2'>
+                      {field.id && !field.id.startsWith('temp_') && (
+                        <Button
+                          isIconOnly
+                          color='danger'
+                          variant='light'
+                          size='sm'
+                          isLoading={isDeletingLanguage}
+                          onPress={() => handleDeleteLanguage(field.id, index)}
+                          title='Delete this language permanently'
+                        >
+                          <Trash2 size={16} />
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className='flex gap-2'>
+                    <Select
+                      {...languagesForm.register(`languages.${index}.key`)}
+                      placeholder='Select language'
+                      aria-label='selected language'
+                      selectedKeys={[languagesForm.watch(`languages.${index}.key`)]}
+                      onSelectionChange={(keys) => {
+                        const value = [...keys][0] as string;
+                        languagesForm.setValue(`languages.${index}.key`, value);
+                      }}
+                      className='flex-1'
+                    >
+                      {languages.map((lang) => (
+                        <SelectItem key={lang.key}>{lang.key}</SelectItem>
+                      ))}
+                    </Select>
+                    <Select
+                      {...languagesForm.register(`languages.${index}.level`)}
+                      placeholder='Select level'
+                      selectedKeys={[languagesForm.watch(`languages.${index}.level`)]}
+                      aria-label='language level'
+                      onSelectionChange={(keys) => {
+                        const value = [...keys][0] as string;
+                        languagesForm.setValue(
+                          `languages.${index}.level`,
+                          value as 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'NATIVE'
+                        );
+                      }}
+                      className='flex-1'
+                    >
+                      {levelOptions.map(({ value, label }) => (
+                        <SelectItem key={value}>{label}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
                 </div>
               ))}
             </div>
@@ -346,7 +360,11 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
                 variant='flat'
                 startContent={<Plus size={18} />}
                 onPress={() => {
-                  appendLanguage({ id: Date.now().toString(), key: '', level: 'BEGINNER' });
+                  appendLanguage({
+                    id: `temp_${Date.now()}`,
+                    key: '',
+                    level: 'BEGINNER'
+                  });
                 }}
               >
                 Add Language
@@ -354,7 +372,7 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
               <Button
                 type='submit'
                 color='primary'
-                isLoading={isUpdatingLanguages}
+                isLoading={isCreatingLanguage}
                 startContent={<Save size={18} />}
               >
                 Save Languages

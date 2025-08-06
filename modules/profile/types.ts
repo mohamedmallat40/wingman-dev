@@ -90,7 +90,7 @@ export interface IService {
   price: number;
   type: 'HOURLY_BASED' | 'DAILY_BASED' | 'PROJECT_BASED';
   createdAt: string;
-  skills: Skill[];
+  skills: string[];
 }
 export interface ILanguage {
   id: string;
