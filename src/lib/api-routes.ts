@@ -19,5 +19,10 @@ export const API_ROUTES = {
     reviews: '/public-reviews/',
     skills: '/skills',
     address: '/address'
+  },
+  documents: {
+    personal: '/documents',
+    shared: '/documents/shared',
+    types: '/documents/types'
   }
 };
