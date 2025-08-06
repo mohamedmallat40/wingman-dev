@@ -31,29 +31,20 @@ const FloatingSuccessManager: React.FC<FloatingSuccessManagerProps> = ({ classNa
   const [activeTab, setActiveTab] = useState('chat');
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
 
-  // Show initial pulse animation only on first visit (stored in localStorage)
+  // Show welcome message on every page refresh
   useEffect(() => {
-    // For testing: uncomment the next line to reset the welcome message
-    // localStorage.removeItem('wingman-success-manager-seen');
+    // Always show the welcome message on page load
+    console.log('Showing welcome message on page load'); // Debug log
+    setShowPulse(true);
+    setShowWelcomeMessage(true);
     
-    const hasSeenMessage = localStorage.getItem('wingman-success-manager-seen');
-    console.log('Has seen message:', hasSeenMessage); // Debug log
-    
-    if (!hasSeenMessage) {
-      // First time visitor
-      console.log('Showing welcome message for first time'); // Debug log
-      setShowPulse(true);
-      setShowWelcomeMessage(true);
-      localStorage.setItem('wingman-success-manager-seen', 'true');
-      
-      const timer = setTimeout(() => {
-        setShowPulse(false);
-        setShowWelcomeMessage(false);
-        console.log('Auto-hiding welcome message'); // Debug log
-      }, 10000); // Show for 10 seconds on first visit
+    const timer = setTimeout(() => {
+      setShowPulse(false);
+      setShowWelcomeMessage(false);
+      console.log('Auto-hiding welcome message'); // Debug log
+    }, 8000); // Show for 8 seconds on every visit
 
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, []);
 
   // Simulate periodic new messages
@@ -151,67 +142,75 @@ const FloatingSuccessManager: React.FC<FloatingSuccessManagerProps> = ({ classNa
             )}
           </AnimatePresence>
 
-          {/* Enhanced Welcome Message */}
+          {/* Horizontal Welcome Message */}
           <AnimatePresence>
             {!isOpen && showWelcomeMessage && (
               <motion.div
-                initial={{ opacity: 0, x: 30, scale: 0.9 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 30, scale: 0.9 }}
+                initial={{ opacity: 0, x: 20, y: 10 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                exit={{ opacity: 0, x: 20, y: 10 }}
                 transition={{ delay: 1.5, duration: 0.5, ease: "easeOut" }}
-                className="absolute right-28 top-1/2 -translate-y-1/2 z-10"
+                className="absolute right-24 top-0 z-10"
               >
-                <div className="bg-background/98 backdrop-blur-xl rounded-2xl px-5 py-4 max-w-sm border border-divider/50 shadow-2xl ring-1 ring-primary/10">
-                  {/* Header */}
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-primary/20">
-                      <img
-                        src="/mr_success_manager.png"
-                        alt="Mr. Lode Schoors"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-foreground font-bold text-sm">Mr. Lode Schoors</p>
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                        <p className="text-success text-xs font-medium">Success Manager • Online</p>
+                <div className="bg-gradient-to-r from-primary-50 via-background/95 to-secondary-50 backdrop-blur-xl rounded-2xl px-8 py-5 min-w-[500px] w-[500px] border border-primary/20 shadow-2xl ring-1 ring-primary/10">
+                  
+                  {/* Enhanced Horizontal Layout */}
+                  <div className="flex gap-4">
+                    {/* Avatar */}
+                    <div className="flex-shrink-0">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden ring-2 ring-primary/30 ring-offset-1 ring-offset-background">
+                        <img
+                          src="/mr_success_manager.png"
+                          alt="Mr. Lode Schoors"
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     </div>
-                  </div>
-
-                  {/* Message */}
-                  <div className="space-y-2">
-                    <p className="text-sm text-foreground font-medium">
-                      👋 Welcome to Wingman!
-                    </p>
-                    <p className="text-sm text-default-600 leading-relaxed">
-                      I'm here to help you find the perfect talent and ensure your project success. Click to start chatting!
-                    </p>
-                  </div>
-
-                  {/* Call to Action */}
-                  <div className="mt-3 pt-3 border-t border-divider/30">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-default-500">~30s response time</span>
-                      <div className="flex items-center gap-2">
+                    
+                    {/* Main Content Area */}
+                    <div className="flex-1 min-w-0">
+                      {/* Top Row: Name + Green Dot + Response Time + Close Button */}
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2">
+                          <p className="text-foreground font-bold text-base">Mr. Lode Schoors</p>
+                          <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
+                          <span className="text-default-500 text-sm font-medium">~30s response time</span>
+                        </div>
                         <button
                           onClick={handleDismissMessage}
-                          className="text-xs text-default-400 hover:text-default-600 transition-colors"
+                          className="text-default-400 hover:text-danger transition-colors p-1 hover:bg-danger/10 rounded-lg ml-2"
                         >
-                          ✕
+                          <Icon icon="solar:close-circle-linear" className="h-4 w-4" />
                         </button>
-                        <div className="flex items-center gap-1 text-xs text-primary font-medium">
-                          <Icon icon="solar:chat-round-money-linear" className="h-3 w-3" />
-                          Start Chat
-                        </div>
+                      </div>
+                      
+                      {/* Title Row */}
+                      <p className="text-sm font-medium text-primary mb-3">Success Manager</p>
+                      
+                      {/* Welcome Message */}
+                      <p className="text-base text-foreground mb-3 font-semibold">
+                        👋 <span className="text-primary">Welcome to Wingman!</span>
+                      </p>
+                      
+                      {/* Description + Action Button */}
+                      <div className="flex items-end justify-between">
+                        <p className="text-sm text-default-600 leading-relaxed flex-1 mr-4">
+                          I'm here to help you find the perfect talent and ensure your project success.
+                        </p>
+                        <button
+                          onClick={handleToggle}
+                          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-xl hover:bg-primary/90 transition-colors shadow-md flex-shrink-0"
+                        >
+                          <Icon icon="solar:chat-round-linear" className="h-4 w-4" />
+                          <span>Start Chat</span>
+                        </button>
                       </div>
                     </div>
                   </div>
                   
                   {/* Speech bubble arrow - positioned on the right */}
-                  <div className="absolute left-full top-1/2 -translate-y-1/2 -ml-1">
-                    <div className="w-0 h-0 border-l-8 border-l-background/98 border-t-6 border-t-transparent border-b-6 border-b-transparent drop-shadow-sm" />
+                  <div className="absolute left-full top-6 -ml-1">
+                    <div className="w-0 h-0 border-l-8 border-l-primary-50 border-t-4 border-t-transparent border-b-4 border-b-transparent drop-shadow-sm" />
                   </div>
                 </div>
               </motion.div>

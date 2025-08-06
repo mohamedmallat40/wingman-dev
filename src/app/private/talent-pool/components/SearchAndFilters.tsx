@@ -24,6 +24,8 @@ interface SearchAndFiltersProps {
   onFiltersChange: (filters: TalentPoolFilters) => void;
   activeTab: TalentType;
   onSearch: () => void;
+  showFiltersPanel?: boolean;
+  children?: React.ReactNode;
 }
 
 const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
@@ -32,10 +34,12 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
   filters,
   onFiltersChange,
   activeTab,
-  onSearch
+  onSearch,
+  showFiltersPanel = false,
+  children
 }) => {
   const t = useTranslations();
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(true);
 
   const handleSearchKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -136,94 +140,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Main Search Bar - Matches existing search design */}
-      <div className="flex flex-col gap-4 sm:flex-row">
-        <div className="flex-1">
-          <Input
-            placeholder={t('talentPool.search.placeholder')}
-            value={searchQuery}
-            onChange={(e) => onSearchChange(e.target.value)}
-            onKeyPress={handleSearchKeyPress}
-            startContent={
-              <Icon icon="solar:magnifer-linear" className="text-default-400 h-5 w-5" />
-            }
-            endContent={
-              searchQuery && (
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  onPress={handleClearSearch}
-                  className="h-6 w-6 min-w-6"
-                >
-                  <Icon icon="solar:close-circle-linear" className="h-4 w-4" />
-                </Button>
-              )
-            }
-            size="lg"
-            className="w-full"
-          />
-        </div>
-        <Button
-          color="primary"
-          size="lg"
-          startContent={<Icon icon="solar:magnifer-linear" className="h-5 w-5" />}
-          onPress={onSearch}
-          className="sm:min-w-32"
-        >
-          {t('talentPool.search.apply')}
-        </Button>
-      </div>
-
-      {/* Quick Filters & Advanced Toggle */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        {/* Quick Filters */}
-        <div className="flex flex-wrap items-center gap-2">
-          {quickFilters.map((filter) => (
-            <Tooltip key={filter.key} content={filter.label} placement="bottom">
-              <Button
-                variant={filter.isActive ? "solid" : "bordered"}
-                color={filter.isActive ? "primary" : "default"}
-                size="sm"
-                startContent={<Icon icon={filter.icon} className="h-4 w-4" />}
-                onClick={filter.onClick}
-                className="transition-all duration-200 hover:scale-105"
-              >
-                <span className="hidden sm:inline">{filter.label}</span>
-              </Button>
-            </Tooltip>
-          ))}
-        </div>
-
-        {/* Advanced Filters Toggle */}
-        <div className="flex items-center gap-2">
-          <Button
-            variant={showAdvancedFilters ? "solid" : "bordered"}
-            color={showAdvancedFilters ? "primary" : "default"}
-            size="sm"
-            startContent={<Icon icon="solar:filter-linear" className="h-4 w-4" />}
-            endContent={
-              <div className="flex items-center gap-1">
-                {getActiveFiltersCount() > 0 && (
-                  <Chip size="sm" color="primary" variant="solid" className="h-5 min-w-5 text-tiny">
-                    {getActiveFiltersCount()}
-                  </Chip>
-                )}
-                <Icon 
-                  icon="solar:alt-arrow-down-linear" 
-                  className={`h-3 w-3 transition-transform ${showAdvancedFilters ? 'rotate-180' : ''}`}
-                />
-              </div>
-            }
-            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
-            className="transition-all duration-200"
-          >
-            Filters
-          </Button>
-        </div>
-      </div>
-
-      {/* Active Filters */}
+      {/* Active Filters - Always visible when filters exist */}
       <AnimatePresence>
         {Object.keys(filters).length > 0 && (
           <motion.div
@@ -298,6 +215,22 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
               </Chip>
             )}
 
+            {(filters.workType || filters.minRating || filters.experienceLevel) && (
+              <Chip
+                size="sm"
+                variant="flat"
+                color="primary"
+                onClose={() => {
+                  removeFilter('workType');
+                  removeFilter('minRating');
+                  removeFilter('experienceLevel');
+                }}
+                startContent={<Icon icon="solar:settings-linear" className="h-3 w-3" />}
+              >
+                Other filters
+              </Chip>
+            )}
+
             <Button
               size="sm"
               variant="light"
@@ -312,181 +245,230 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Advanced Filters Panel */}
+      {/* Filter Controls Panel - Only show when panel is open */}
       <AnimatePresence>
-        {showAdvancedFilters && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="border-divider/50 bg-background/95 relative rounded-lg border backdrop-blur-xl"
+        {showFiltersPanel && (
+          <motion.div 
+            layoutId="filter-panel"
+            className="space-y-6 overflow-hidden"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ 
+              duration: 0.35,
+              ease: [0.25, 0.46, 0.45, 0.94],
+              opacity: { duration: 0.2 }
+            }}
           >
-            {/* Background gradient */}
-            <div className="from-primary/5 to-secondary/5 absolute inset-0 rounded-lg bg-gradient-to-r via-transparent opacity-60" />
-            
-            <div className="relative p-6">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="bg-primary/10 ring-primary/20 flex h-10 w-10 items-center justify-center rounded-xl ring-1">
-                    <Icon icon="solar:filter-linear" className="text-primary h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="text-foreground text-lg font-semibold">Advanced Filters</h3>
-                    <p className="text-default-600 text-sm">Refine your search criteria</p>
-                  </div>
-                </div>
+          {/* Quick Filters */}
+          <div className="flex flex-wrap items-center gap-2">
+            {quickFilters.map((filter) => (
+              <Tooltip key={filter.key} content={filter.label} placement="bottom">
                 <Button
-                  isIconOnly
+                  variant={filter.isActive ? "solid" : "bordered"}
+                  color={filter.isActive ? "primary" : "default"}
                   size="sm"
-                  variant="light"
-                  onClick={() => setShowAdvancedFilters(false)}
-                  className="transition-all duration-200 hover:bg-default-100"
+                  startContent={<Icon icon={filter.icon} className="h-4 w-4" />}
+                  onClick={filter.onClick}
+                  className="transition-colors duration-150"
                 >
-                  <Icon icon="solar:close-linear" className="h-4 w-4" />
+                  <span className="hidden sm:inline">{filter.label}</span>
                 </Button>
-              </div>
+              </Tooltip>
+            ))}
+          </div>
 
-              {/* Filter Grid */}
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
-                {/* Region Filter */}
-                <div className="space-y-3">
-                  <label className="text-foreground flex items-center gap-2 text-sm font-medium">
-                    <Icon icon="solar:map-point-linear" className="h-4 w-4 text-primary" />
-                    Location
-                  </label>
-                  <Select
-                    placeholder="Select region"
-                    selectedKeys={filters.region ? [filters.region] : []}
-                    onSelectionChange={(keys) => {
-                      const selectedKey = Array.from(keys)[0] as string;
-                      handleRegionChange(selectedKey);
-                    }}
-                    size="sm"
-                    variant="bordered"
-                  >
-                    {regions.map((region) => (
-                      <SelectItem key={region.key}>
-                        {region.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* Availability Filter */}
-                <div className="space-y-3">
-                  <label className="text-foreground flex items-center gap-2 text-sm font-medium">
-                    <Icon icon="solar:check-circle-linear" className="h-4 w-4 text-primary" />
-                    Availability
-                  </label>
-                  <Select
-                    placeholder="Select availability"
-                    selectedKeys={filters.availability ? [filters.availability] : []}
-                    onSelectionChange={(keys) => {
-                      const selectedKey = Array.from(keys)[0] as string;
-                      handleAvailabilityChange(selectedKey);
-                    }}
-                    size="sm"
-                    variant="bordered"
-                  >
-                    {availabilityOptions.map((option) => (
-                      <SelectItem key={option.key}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </Select>
-                </div>
-
-                {/* Rate Range Filter */}
-                <div className="space-y-3">
-                  <label className="text-foreground flex items-center gap-2 text-sm font-medium">
-                    <Icon icon="solar:dollar-minimalistic-linear" className="h-4 w-4 text-primary" />
-                    Rate Range (€/day)
-                  </label>
-                  <div className="px-3 py-2">
-                    <Slider
-                      step={50}
-                      minValue={0}
-                      maxValue={1000}
-                      value={[filters.minRate || 0, filters.maxRate || 1000]}
-                      onChange={(value) => handleRateRangeChange(value as number[])}
-                      className="max-w-md"
-                      color="primary"
-                      size="sm"
-                      formatOptions={{
-                        style: "currency",
-                        currency: "EUR",
-                        minimumFractionDigits: 0
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Experience Level for Freelancers */}
-              {activeTab === 'freelancers' && (
-                <div className="space-y-3 mb-6">
-                  <label className="text-foreground flex items-center gap-2 text-sm font-medium">
-                    <Icon icon="solar:medal-ribbons-star-linear" className="h-4 w-4 text-primary" />
-                    Experience Level
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {['Junior', 'Mid-level', 'Senior', 'Lead'].map((level) => (
-                      <Chip
-                        key={level}
-                        variant={filters.experienceLevel === level ? "solid" : "bordered"}
-                        color={filters.experienceLevel === level ? "primary" : "default"}
-                        className="cursor-pointer transition-all duration-200 hover:scale-105"
-                        onClick={() => onFiltersChange({
-                          ...filters,
-                          experienceLevel: filters.experienceLevel === level ? undefined : level
-                        })}
-                      >
-                        {level}
-                      </Chip>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-4 border-t border-divider/50">
-                <Button
-                  variant="light"
-                  color="danger"
-                  startContent={<Icon icon="solar:refresh-linear" className="h-4 w-4" />}
-                  onClick={handleClearAllFilters}
-                  className="transition-all duration-200 hover:scale-105"
-                >
-                  Reset All
-                </Button>
+          {/* Advanced Filters Panel */}
+          <AnimatePresence>
+            {showAdvancedFilters && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                className="border-divider/50 bg-background/95 relative rounded-lg border backdrop-blur-xl"
+              >
+                {/* Background gradient */}
+                <div className="from-primary/5 to-secondary/5 absolute inset-0 rounded-lg bg-gradient-to-r via-transparent opacity-60" />
                 
-                <div className="flex gap-3">
-                  <Button
-                    variant="bordered"
-                    onClick={() => setShowAdvancedFilters(false)}
-                    className="transition-all duration-200"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    color="primary"
-                    startContent={<Icon icon="solar:magnifer-linear" className="h-4 w-4" />}
-                    onClick={() => {
-                      onSearch();
-                      setShowAdvancedFilters(false);
-                    }}
-                    className="transition-all duration-200 hover:shadow-md"
-                  >
-                    Apply Filters
-                  </Button>
+                <div className="relative p-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 ring-primary/20 flex h-10 w-10 items-center justify-center rounded-xl ring-1">
+                        <Icon icon="solar:filter-linear" className="text-primary h-5 w-5" />
+                      </div>
+                      <div>
+                        <h3 className="text-foreground text-lg font-semibold">Advanced Filters</h3>
+                        <p className="text-default-600 text-sm">Refine your search criteria</p>
+                      </div>
+                    </div>
+                    <Button
+                      isIconOnly
+                      size="sm"
+                      variant="light"
+                      onClick={() => setShowAdvancedFilters(false)}
+                      className="transition-all duration-200 hover:bg-default-100"
+                    >
+                      <Icon icon="solar:close-linear" className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Filter Grid */}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
+                    {/* Region Filter */}
+                    <div className="space-y-3">
+                      <label className="text-foreground flex items-center gap-2 text-sm font-medium">
+                        <Icon icon="solar:map-point-linear" className="h-4 w-4 text-primary" />
+                        Location
+                      </label>
+                      <Select
+                        placeholder="Select region"
+                        selectedKeys={filters.region ? [filters.region] : []}
+                        onSelectionChange={(keys) => {
+                          const selectedKey = Array.from(keys)[0] as string;
+                          handleRegionChange(selectedKey);
+                        }}
+                        size="sm"
+                        variant="bordered"
+                      >
+                        {regions.map((region) => (
+                          <SelectItem key={region.key}>
+                            {region.label}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    </div>
+
+                    {/* Availability Filter */}
+                    <div className="space-y-3">
+                      <label className="text-foreground flex items-center gap-2 text-sm font-medium">
+                        <Icon icon="solar:check-circle-linear" className="h-4 w-4 text-primary" />
+                        Availability
+                      </label>
+                      <Select
+                        placeholder="Select availability"
+                        selectedKeys={filters.availability ? [filters.availability] : []}
+                        onSelectionChange={(keys) => {
+                          const selectedKey = Array.from(keys)[0] as string;
+                          handleAvailabilityChange(selectedKey);
+                        }}
+                        size="sm"
+                        variant="bordered"
+                      >
+                        {availabilityOptions.map((option) => (
+                          <SelectItem key={option.key}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </Select>
+                    </div>
+
+                    {/* Rate Range Filter */}
+                    <div className="space-y-3">
+                      <label className="text-foreground flex items-center gap-2 text-sm font-medium">
+                        <Icon icon="solar:dollar-minimalistic-linear" className="h-4 w-4 text-primary" />
+                        Rate Range (€/day)
+                      </label>
+                      <div className="px-3 py-2">
+                        <Slider
+                          step={50}
+                          minValue={0}
+                          maxValue={1000}
+                          value={[filters.minRate || 0, filters.maxRate || 1000]}
+                          onChange={(value) => handleRateRangeChange(value as number[])}
+                          className="max-w-md"
+                          color="primary"
+                          size="sm"
+                          formatOptions={{
+                            style: "currency",
+                            currency: "EUR",
+                            minimumFractionDigits: 0
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Experience Level for Freelancers */}
+                  {activeTab === 'freelancers' && (
+                    <div className="space-y-3 mb-6">
+                      <label className="text-foreground flex items-center gap-2 text-sm font-medium">
+                        <Icon icon="solar:medal-ribbons-star-linear" className="h-4 w-4 text-primary" />
+                        Experience Level
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {['Junior', 'Mid-level', 'Senior', 'Lead'].map((level) => (
+                          <Chip
+                            key={level}
+                            variant={filters.experienceLevel === level ? "solid" : "bordered"}
+                            color={filters.experienceLevel === level ? "primary" : "default"}
+                            className="cursor-pointer transition-colors duration-150"
+                            onClick={() => onFiltersChange({
+                              ...filters,
+                              experienceLevel: filters.experienceLevel === level ? undefined : level
+                            })}
+                          >
+                            {level}
+                          </Chip>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center justify-between pt-4 border-t border-divider/50">
+                    <Button
+                      variant="light"
+                      color="danger"
+                      startContent={<Icon icon="solar:refresh-linear" className="h-4 w-4" />}
+                      onClick={handleClearAllFilters}
+                      className="transition-colors duration-150"
+                    >
+                      Reset All
+                    </Button>
+                    
+                    <div className="flex gap-3">
+                      <Button
+                        variant="bordered"
+                        onClick={() => setShowAdvancedFilters(false)}
+                        className="transition-all duration-200"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        color="primary"
+                        startContent={<Icon icon="solar:magnifer-linear" className="h-4 w-4" />}
+                        onClick={() => {
+                          onSearch();
+                          setShowAdvancedFilters(false);
+                        }}
+                        className="transition-all duration-200 hover:shadow-md"
+                      >
+                        Apply Filters
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Content that should follow the filter animation */}
+      {children && (
+        <motion.div
+          animate={{ y: 0 }}
+          transition={{ 
+            duration: 0.35,
+            ease: [0.25, 0.46, 0.45, 0.94]
+          }}
+        >
+          {children}
+        </motion.div>
+      )}
     </div>
   );
 };

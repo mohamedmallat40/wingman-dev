@@ -159,8 +159,28 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                       icon='solar:map-point-linear'
                       className='text-foreground-400 h-3.5 w-3.5'
                     />
-                    <span className='text-small text-foreground-500 font-medium'>
-                      {city}, {region} {getCountryFlag(region)}
+                    <span className='text-small text-foreground-500 font-medium flex items-center gap-2'>
+                      {city}
+                      {region && (
+                        <img 
+                          src={`https://flagcdn.com/16x12/${region.toLowerCase()}.png`}
+                          alt={`${region} flag`}
+                          className='h-3 w-4 rounded-sm shadow-sm'
+                          onError={(e) => {
+                            // Fallback to badge if flag image fails
+                            const target = e.currentTarget;
+                            target.style.display = 'none';
+                            const parent = target.parentElement;
+                            if (parent && !parent.querySelector('.country-badge')) {
+                              const badge = document.createElement('div');
+                              badge.className = 'country-badge inline-flex h-3 w-6 items-center justify-center rounded-sm bg-gradient-to-br from-primary-100 to-primary-200 text-xs font-bold text-primary-800 shadow-sm';
+                              badge.textContent = region.toUpperCase();
+                              badge.title = region;
+                              parent.appendChild(badge);
+                            }
+                          }}
+                        />
+                      )}
                     </span>
                   </div>
                 )}
@@ -199,18 +219,22 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
         </CardHeader>
 
         <CardBody className='relative z-10 gap-4 px-6 pt-2 pb-6'>
-          {/* About Section */}
-          {aboutMe && (
-            <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-4 backdrop-blur-sm'>
-              <h3 className='text-medium text-foreground mb-2 flex items-center gap-2 font-semibold'>
-                <Icon icon='solar:user-speak-linear' className='text-primary h-4 w-4' />
-                {t('talentPool.cards.about')}
-              </h3>
+          {/* About Section - Always visible for consistency */}
+          <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-4 backdrop-blur-sm'>
+            <h3 className='text-medium text-foreground mb-2 flex items-center gap-2 font-semibold'>
+              <Icon icon='solar:user-speak-linear' className='text-primary h-4 w-4' />
+              {t('talentPool.cards.about')}
+            </h3>
+            {aboutMe ? (
               <p className='text-small text-foreground-700 line-clamp-5 leading-relaxed'>
                 {stripHtml(aboutMe)}
               </p>
-            </div>
-          )}
+            ) : (
+              <div className='py-4 text-center'>
+                <p className='text-small text-foreground-500'>{t('talentPool.cards.noAboutAvailable')}</p>
+              </div>
+            )}
+          </div>
 
           {/* Skills Section */}
           <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-4 backdrop-blur-sm'>

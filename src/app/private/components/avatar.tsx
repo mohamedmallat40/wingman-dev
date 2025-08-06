@@ -34,9 +34,9 @@ const Avatar = () => {
         >
           <div className='hidden flex-col items-end sm:flex min-w-0'>
             <span className='text-foreground text-sm font-semibold capitalize tracking-tight'>
-              {profile.firstName} {profile.lastName}
+              {profile?.firstName || ''} {profile?.lastName || ''}
             </span>
-            <span className='text-tiny text-foreground-500 max-w-48 truncate font-medium'>{profile.email}</span>
+            <span className='text-tiny text-foreground-500 max-w-48 truncate font-medium'>{profile?.email || ''}</span>
           </div>
 
           <HerouiAvatar
@@ -44,9 +44,9 @@ const Avatar = () => {
             as='button'
             className='ring-primary/20 hover:ring-primary/40 ring-2 ring-offset-2 ring-offset-background transition-all duration-300 hover:scale-110 shadow-medium hover:shadow-large'
             color='primary'
-            name={`${profile.firstName} ${profile.lastName}` || 'User'}
+            name={`${profile?.firstName || ''} ${profile?.lastName || ''}` || 'User'}
             size='sm'
-            src={profile.profileImage ? `https://app.extraexpertise.be/api/upload/${profile.profileImage}` : undefined}
+            src={profile?.profileImage ? `https://app.extraexpertise.be/api/upload/${profile.profileImage}` : undefined}
             showFallback
             fallback={
               <div className="bg-gradient-to-br from-primary/20 to-secondary/20 w-full h-full flex items-center justify-center">
@@ -67,13 +67,13 @@ const Avatar = () => {
           className='h-16 gap-3 opacity-100 rounded-lg hover:bg-primary/10'
           textValue='Profile info'
           onPress={() => {
-            router.push(`/private/profile?id=${profile.id}`);
+            router.push(`/private/profile?id=${profile?.id}`);
           }}
         >
           <div className='flex items-center gap-3'>
             <HerouiAvatar
-              src={profile.profileImage ? `https://app.extraexpertise.be/api/upload/${profile.profileImage}` : undefined}
-              name={`${profile.firstName} ${profile.lastName}`}
+              src={profile?.profileImage ? `https://app.extraexpertise.be/api/upload/${profile.profileImage}` : undefined}
+              name={`${profile?.firstName || ''} ${profile?.lastName || ''}`}
               size='md'
               className='ring-primary/20 ring-2 ring-offset-1 ring-offset-background shadow-medium'
               showFallback
@@ -85,9 +85,9 @@ const Avatar = () => {
             />
             <div className='flex flex-col min-w-0 flex-1'>
               <p className='text-foreground font-semibold'>
-                {profile.firstName} {profile.lastName}
+                {profile?.firstName || ''} {profile?.lastName || ''}
               </p>
-              <p className='text-foreground-500 text-sm truncate'>{profile.email}</p>
+              <p className='text-foreground-500 text-sm truncate'>{profile?.email || ''}</p>
             </div>
           </div>
         </DropdownItem>
