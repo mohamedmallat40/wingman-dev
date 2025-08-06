@@ -200,6 +200,99 @@
       }
     }
   },
+  "talentPool": {
+    "title": "Pool de Talents",
+    "description": "Découvrez et connectez-vous avec les meilleurs freelancers, agences et équipes",
+    "tabs": {
+      "freelancers": "Freelancers",
+      "agencies": "Agences",
+      "teams": "Équipes"
+    },
+    "search": {
+      "placeholder": "Rechercher par nom, compétences ou localisation...",
+      "noResults": "Aucun résultat trouvé",
+      "filters": "Filtres",
+      "reset": "Réinitialiser les Filtres",
+      "apply": "Appliquer les Filtres"
+    },
+    "cards": {
+      "viewProfile": "Voir le Profil",
+      "moreOptions": "Plus d'options",
+      "connect": "Se Connecter",
+      "joinTeam": "Rejoindre l'Équipe",
+      "viewTeam": "Voir l'Équipe",
+      "about": "À propos",
+      "topSkills": "Principales Compétences",
+      "experience": "Expérience",
+      "rate": "Tarif",
+      "skills": "Compétences",
+      "members": "Membres",
+      "tools": "Outils",
+      "yearsExperience": "années",
+      "skillsCount": "compétences",
+      "membersCount": "membres",
+      "noSkillsListed": "Aucune compétence répertoriée",
+      "moreSkills": "plus",
+      "noAboutAvailable": "Aucune description disponible"
+    },
+    "availability": {
+      "available": "Disponible",
+      "availableForProjects": "Disponible pour les Projets",
+      "partTimeAvailable": "Disponible à Temps Partiel",
+      "busy": "Occupé"
+    },
+    "workType": {
+      "remote": "à distance",
+      "onLocation": "sur site",
+      "hybrid": "hybride",
+      "unknown": "inconnu"
+    },
+    "userTypes": {
+      "freelancer": "Freelancer",
+      "agency": "Agence",
+      "student": "Étudiant"
+    },
+    "paymentTypes": {
+      "hourly": "/heure",
+      "daily": "/jour"
+    },
+    "emptyStates": {
+      "freelancers": {
+        "title": "Aucun freelancer trouvé",
+        "description": "Nous n'avons trouvé aucun freelancer correspondant à vos critères. Essayez d'ajuster vos filtres ou votre requête de recherche."
+      },
+      "agencies": {
+        "title": "Aucune agence trouvée",
+        "description": "Nous n'avons trouvé aucune agence correspondant à vos critères. Essayez d'ajuster vos filtres ou votre requête de recherche."
+      },
+      "teams": {
+        "title": "Aucune équipe trouvée",
+        "description": "Nous n'avons trouvé aucune équipe correspondant à vos critères. Essayez d'ajuster vos filtres ou votre requête de recherche."
+      }
+    },
+    "errorStates": {
+      "freelancers": {
+        "title": "Une erreur s'est produite",
+        "description": "Nous n'avons pas pu charger les freelancers. Veuillez réessayer."
+      },
+      "agencies": {
+        "title": "Une erreur s'est produite",
+        "description": "Nous n'avons pas pu charger les agences. Veuillez réessayer."
+      },
+      "teams": {
+        "title": "Une erreur s'est produite",
+        "description": "Nous n'avons pas pu charger les équipes. Veuillez réessayer."
+      },
+      "tryAgain": "Réessayer"
+    },
+    "loadingStates": {
+      "loadingMore": "Chargement en cours...",
+      "loadingMoreFreelancers": "Chargement de plus de freelancers...",
+      "loadingMoreAgencies": "Chargement de plus d'agences...",
+      "loadingMoreTeams": "Chargement de plus d'équipes...",
+      "scrollToLoadMore": "Faites défiler pour charger plus..."
+    }
+  },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"
   }

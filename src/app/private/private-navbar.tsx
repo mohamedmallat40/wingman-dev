@@ -67,7 +67,7 @@ export default function PrivateNavBar() {
 
   return (
     <Navbar
-      className='border-divider grid w-full grid-cols-1 border-b bg-transparent'
+      className='border-divider/50 shadow-small backdrop-blur-2xl grid w-full grid-cols-1 border-b bg-background/80 supports-[backdrop-filter]:bg-background/60'
       isBordered
       maxWidth='full'
       position='sticky'
@@ -100,7 +100,7 @@ export default function PrivateNavBar() {
         </NavbarBrand>
 
         <NavbarContent
-          className='mx-8 hidden h-12 w-full max-w-full gap-2 rounded-xl bg-transparent px-3 backdrop-blur-sm sm:flex dark:bg-transparent'
+          className='mx-8 hidden h-12 w-full max-w-full gap-1 rounded-2xl bg-gradient-to-r from-default-100/50 to-default-50/30 px-4 backdrop-blur-md border border-divider/30 shadow-small sm:flex'
           justify='start'
         >
           {navItems.map((item) => {
@@ -115,25 +115,35 @@ export default function PrivateNavBar() {
                 >
                   <Link
                     href={item.href}
-                    className={`relative flex items-center gap-2 rounded-lg px-3 py-2 transition-all duration-200 ${
+                    className={`relative flex items-center gap-2.5 rounded-xl px-4 py-2.5 transition-all duration-300 group ${
                       isActive
-                        ? 'text-primary-500 bg-primary-50 dark:bg-primary-100/10'
-                        : 'text-foreground-600 hover:text-primary-500 hover:bg-primary-50/50 dark:hover:bg-primary-100/5'
+                        ? 'text-primary bg-background shadow-medium ring-1 ring-primary/20 ring-offset-1 ring-offset-background'
+                        : 'text-foreground-600 hover:text-primary hover:bg-background/70 hover:shadow-small hover:ring-1 hover:ring-primary/10'
                     }`}
                   >
-                    <Icon
-                      icon={item.icon}
-                      className={`text-lg transition-colors ${
-                        isActive ? 'text-primary-500' : 'text-foreground-500'
-                      }`}
-                    />
-                    <span className='text-sm font-medium'>{item.label}</span>
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{ duration: 0.1 }}
+                    >
+                      <Icon
+                        icon={item.icon}
+                        className={`text-[18px] transition-all duration-300 ${
+                          isActive ? 'text-primary' : 'text-foreground-500 group-hover:text-primary'
+                        }`}
+                      />
+                    </motion.div>
+                    <span className={`text-sm font-semibold transition-all duration-300 ${
+                      isActive ? 'text-primary' : 'text-foreground-600 group-hover:text-primary'
+                    }`}>
+                      {item.label}
+                    </span>
                     {isActive && (
                       <motion.div
-                        className='bg-primary-100/20 border-primary-200/50 absolute inset-0 rounded-lg border'
+                        className='absolute inset-0 rounded-xl'
                         layoutId='navbar-active'
                         initial={false}
-                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                       />
                     )}
                   </Link>
@@ -144,18 +154,26 @@ export default function PrivateNavBar() {
         </NavbarContent>
       </NavbarContent>
 
-      <NavbarContent as='div' className='items-center gap-6' justify='end'>
-        <div className='flex items-center gap-4'>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+      <NavbarContent as='div' className='items-center gap-3' justify='end'>
+        <div className='flex items-center gap-2 p-1 rounded-2xl bg-gradient-to-r from-default-100/40 to-default-50/20 backdrop-blur-sm border border-divider/20'>
+          <motion.div 
+            whileHover={{ scale: 1.08 }} 
+            whileTap={{ scale: 0.95 }}
+            className="p-1.5 rounded-xl hover:bg-background/60 transition-colors duration-200"
+          >
             <LanguageSwitcher />
           </motion.div>
 
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <motion.div 
+            whileHover={{ scale: 1.08 }} 
+            whileTap={{ scale: 0.95 }}
+            className="p-1.5 rounded-xl hover:bg-background/60 transition-colors duration-200"
+          >
             <ThemeToggle />
           </motion.div>
         </div>
 
-        <div className='bg-divider h-6 w-px' />
+        <div className='bg-divider/60 h-8 w-px rounded-full' />
 
         <NavbarItem className='flex'>
           <Popover offset={12} placement='bottom-end'>
@@ -163,7 +181,7 @@ export default function PrivateNavBar() {
               <Button
                 disableRipple
                 isIconOnly
-                className='hover:bg-primary-50 dark:hover:bg-primary-100/10 overflow-visible'
+                className='hover:bg-primary/10 hover:shadow-small overflow-visible transition-all duration-200'
                 radius='full'
                 variant='light'
                 aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
@@ -215,14 +233,15 @@ export default function PrivateNavBar() {
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="flex items-center"
         >
           <Avatar />
         </motion.div>
       </NavbarContent>
 
       {/* Enhanced Mobile Menu */}
-      <NavbarMenu className='bg-background/95 pt-6 backdrop-blur-md'>
+      <NavbarMenu className='bg-background/98 backdrop-blur-2xl border-r border-divider/50 pt-8 shadow-large'>
         <div className='flex flex-col gap-2'>
           {navItems.map((item, index) => {
             const isActive = pathname === item.href;
@@ -235,17 +254,28 @@ export default function PrivateNavBar() {
                 >
                   <Link
                     href={item.href}
-                    className={`flex w-full items-center gap-3 rounded-lg p-3 transition-all ${
+                    className={`flex w-full items-center gap-4 rounded-2xl p-4 transition-all duration-300 ${
                       isActive
-                        ? 'bg-primary-50 text-primary-600 dark:bg-primary-100/10'
-                        : 'text-foreground hover:bg-content2'
+                        ? 'bg-gradient-to-r from-primary/10 to-primary/5 text-primary border border-primary/20 shadow-small'
+                        : 'text-foreground hover:bg-gradient-to-r hover:from-default-100/60 hover:to-default-50/30 hover:shadow-small hover:border hover:border-divider/30'
                     }`}
                   >
-                    <Icon icon={item.icon} className='text-xl' />
-                    <div className='flex flex-col'>
-                      <span className='font-medium'>{item.label}</span>
-                      <span className='text-tiny text-foreground-500'>{item.description}</span>
+                    <div className={`p-2 rounded-xl transition-colors duration-300 ${
+                      isActive ? 'bg-primary/10' : 'bg-default-100/50'
+                    }`}>
+                      <Icon icon={item.icon} className={`text-xl ${isActive ? 'text-primary' : 'text-foreground-600'}`} />
                     </div>
+                    <div className='flex flex-col flex-1'>
+                      <span className={`font-semibold ${isActive ? 'text-primary' : 'text-foreground'}`}>
+                        {item.label}
+                      </span>
+                      <span className={`text-tiny ${isActive ? 'text-primary/70' : 'text-foreground-500'}`}>
+                        {item.description}
+                      </span>
+                    </div>
+                    {isActive && (
+                      <div className="w-1 h-8 bg-primary rounded-full" />
+                    )}
                   </Link>
                 </motion.div>
               </NavbarMenuItem>
@@ -257,13 +287,22 @@ export default function PrivateNavBar() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.5 }}
-            className='border-divider mt-6 border-t pt-4'
+            className='border-divider/50 mt-8 border-t pt-6'
           >
-            <div className='flex items-center justify-between px-3 py-2'>
-              <span className='text-foreground-600 text-sm font-medium'>Preferences</span>
-              <div className='flex items-center gap-2'>
-                <LanguageSwitcher />
-                <ThemeToggle />
+            <div className='bg-gradient-to-r from-default-100/60 to-default-50/30 backdrop-blur-sm border border-divider/30 rounded-2xl p-4 shadow-small'>
+              <div className='flex items-center justify-between'>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  <span className='text-foreground text-sm font-semibold'>Preferences</span>
+                </div>
+                <div className='flex items-center gap-3'>
+                  <div className="p-2 rounded-xl hover:bg-background/60 transition-colors">
+                    <LanguageSwitcher />
+                  </div>
+                  <div className="p-2 rounded-xl hover:bg-background/60 transition-colors">
+                    <ThemeToggle />
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

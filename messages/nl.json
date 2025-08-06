@@ -200,6 +200,99 @@
       }
     }
   },
+  "talentPool": {
+    "title": "Talentpool",
+    "description": "Ontdek en verbind met top freelancers, bureaus en teams",
+    "tabs": {
+      "freelancers": "Freelancers",
+      "agencies": "Bureaus",
+      "teams": "Teams"
+    },
+    "search": {
+      "placeholder": "Zoek op naam, vaardigheden of locatie...",
+      "noResults": "Geen resultaten gevonden",
+      "filters": "Filters",
+      "reset": "Filters Resetten",
+      "apply": "Filters Toepassen"
+    },
+    "cards": {
+      "viewProfile": "Profiel Bekijken",
+      "moreOptions": "Meer opties",
+      "connect": "Verbinden",
+      "joinTeam": "Team Aansluiten",
+      "viewTeam": "Team Bekijken",
+      "about": "Over",
+      "topSkills": "Top Vaardigheden",
+      "experience": "Ervaring",
+      "rate": "Tarief",
+      "skills": "Vaardigheden",
+      "members": "Leden",
+      "tools": "Tools",
+      "yearsExperience": "jaar",
+      "skillsCount": "vaardigheden",
+      "membersCount": "leden",
+      "noSkillsListed": "Geen vaardigheden vermeld",
+      "moreSkills": "meer",
+      "noAboutAvailable": "Geen beschrijving beschikbaar"
+    },
+    "availability": {
+      "available": "Beschikbaar",
+      "availableForProjects": "Beschikbaar voor Projecten",
+      "partTimeAvailable": "Deeltijd Beschikbaar",
+      "busy": "Bezet"
+    },
+    "workType": {
+      "remote": "op afstand",
+      "onLocation": "op locatie",
+      "hybrid": "hybride",
+      "unknown": "onbekend"
+    },
+    "userTypes": {
+      "freelancer": "Freelancer",
+      "agency": "Bureau",
+      "student": "Student"
+    },
+    "paymentTypes": {
+      "hourly": "/uur",
+      "daily": "/dag"
+    },
+    "emptyStates": {
+      "freelancers": {
+        "title": "Geen freelancers gevonden",
+        "description": "We konden geen freelancers vinden die voldoen aan uw criteria. Probeer uw filters of zoekquery aan te passen."
+      },
+      "agencies": {
+        "title": "Geen bureaus gevonden",
+        "description": "We konden geen bureaus vinden die voldoen aan uw criteria. Probeer uw filters of zoekquery aan te passen."
+      },
+      "teams": {
+        "title": "Geen teams gevonden",
+        "description": "We konden geen teams vinden die voldoen aan uw criteria. Probeer uw filters of zoekquery aan te passen."
+      }
+    },
+    "errorStates": {
+      "freelancers": {
+        "title": "Er is iets misgegaan",
+        "description": "We konden de freelancers niet laden. Probeer het opnieuw."
+      },
+      "agencies": {
+        "title": "Er is iets misgegaan",
+        "description": "We konden de bureaus niet laden. Probeer het opnieuw."
+      },
+      "teams": {
+        "title": "Er is iets misgegaan",
+        "description": "We konden de teams niet laden. Probeer het opnieuw."
+      },
+      "tryAgain": "Opnieuw Proberen"
+    },
+    "loadingStates": {
+      "loadingMore": "Meer laden...",
+      "loadingMoreFreelancers": "Meer freelancers laden...",
+      "loadingMoreAgencies": "Meer bureaus laden...",
+      "loadingMoreTeams": "Meer teams laden...",
+      "scrollToLoadMore": "Scroll om meer te laden..."
+    }
+  },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet"
   }

@@ -1,18 +1,19 @@
 // Example usage of PageHeader with advanced action features
 
 import React from 'react';
+
 import PageHeader from './page-header';
 
 export default function ExampleUsage() {
   const handleCreateProject = async () => {
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log('Project created!');
   };
 
   const handleDeleteProject = async () => {
     // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log('Project deleted!');
   };
 
@@ -25,7 +26,7 @@ export default function ExampleUsage() {
       variant: 'solid' as const,
       priority: 'primary' as const,
       tooltip: 'Create a new project',
-      onClick: handleCreateProject,
+      onClick: handleCreateProject
     },
     {
       key: 'export',
@@ -35,7 +36,7 @@ export default function ExampleUsage() {
       variant: 'flat' as const,
       priority: 'secondary' as const,
       tooltip: 'Export project data',
-      onClick: () => console.log('Exporting...'),
+      onClick: () => console.log('Exporting...')
     },
     {
       key: 'settings',
@@ -45,7 +46,7 @@ export default function ExampleUsage() {
       variant: 'light' as const,
       priority: 'tertiary' as const,
       tooltip: 'Project settings',
-      onClick: () => console.log('Opening settings...'),
+      onClick: () => console.log('Opening settings...')
     },
     {
       key: 'delete',
@@ -56,7 +57,7 @@ export default function ExampleUsage() {
       priority: 'tertiary' as const,
       tooltip: 'Delete this project',
       confirmMessage: 'Are you sure you want to delete this project?',
-      onClick: handleDeleteProject,
+      onClick: handleDeleteProject
     },
     {
       key: 'share',
@@ -66,19 +67,19 @@ export default function ExampleUsage() {
       variant: 'flat' as const,
       priority: 'secondary' as const,
       tooltip: 'Share project',
-      onClick: () => console.log('Sharing...'),
-    },
+      onClick: () => console.log('Sharing...')
+    }
   ];
 
   return (
     <PageHeader
-      title="Advanced Page Header"
-      description="Demonstrating advanced UX features for buttons and actions"
-      icon="solar:widget-linear"
+      title='Advanced Page Header'
+      description='Demonstrating advanced UX features for buttons and actions'
+      icon='solar:widget-linear'
       badge={{
-        text: "Advanced",
-        color: "success",
-        variant: "flat"
+        text: 'Advanced',
+        color: 'success',
+        variant: 'flat'
       }}
       breadcrumbs={[
         { label: 'Home', href: '/', icon: 'solar:home-linear' },

@@ -28,56 +28,66 @@ const Avatar = () => {
     <Dropdown placement='bottom-end'>
       <DropdownTrigger>
         <motion.div
-          className='hover:bg-content2/50 flex cursor-pointer items-center gap-3 rounded-lg p-1 transition-colors'
+          className='hover:bg-content2/50 hover:shadow-small flex cursor-pointer items-center gap-4 rounded-xl p-2 transition-all duration-200'
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <div className='hidden flex-col items-end sm:flex'>
-            <span className='text-foreground text-sm font-semibold capitalize'>
-              {profile.firstName} {profile.lastName}
+          <div className='hidden flex-col items-end sm:flex min-w-0'>
+            <span className='text-foreground text-sm font-semibold capitalize tracking-tight'>
+              {profile?.firstName || ''} {profile?.lastName || ''}
             </span>
-            <span className='text-tiny text-foreground-500 max-w-24 truncate'>{profile.email}</span>
+            <span className='text-tiny text-foreground-500 max-w-48 truncate font-medium'>{profile?.email || ''}</span>
           </div>
 
           <HerouiAvatar
             isBordered
             as='button'
-            className='ring-primary-100 dark:ring-primary-900 ring-2 transition-transform hover:scale-110'
+            className='ring-primary/20 hover:ring-primary/40 ring-2 ring-offset-2 ring-offset-background transition-all duration-300 hover:scale-110 shadow-medium hover:shadow-large'
             color='primary'
-            name={`${profile.firstName} ${profile.lastName}` || 'User'}
+            name={`${profile?.firstName || ''} ${profile?.lastName || ''}` || 'User'}
             size='sm'
-            src={`${API_ROUTES.profile.image}${profile.profileImage}`}
+            src={profile?.profileImage ? `https://app.extraexpertise.be/api/upload/${profile.profileImage}` : undefined}
             showFallback
-            fallback={<Icon icon='solar:user-linear' className='text-primary-500' width={16} />}
+            fallback={
+              <div className="bg-gradient-to-br from-primary/20 to-secondary/20 w-full h-full flex items-center justify-center">
+                <Icon icon='solar:user-bold' className='text-primary' width={18} />
+              </div>
+            }
           />
         </motion.div>
       </DropdownTrigger>
       <DropdownMenu
         aria-label='Profile Actions'
         variant='flat'
-        className='w-64'
+        className='w-80 p-2'
         disallowEmptySelection
       >
         <DropdownItem
           key='profile'
-          className='h-16 gap-3 opacity-100'
+          className='h-16 gap-3 opacity-100 rounded-lg hover:bg-primary/10'
           textValue='Profile info'
           onPress={() => {
-            router.push(`/private/profile?id=${profile.id}`);
+            router.push(`/private/profile?id=${profile?.id}`);
           }}
         >
           <div className='flex items-center gap-3'>
             <HerouiAvatar
-              src={`${API_ROUTES.profile.image}${profile.profileImage}`}
-              name={`${profile.firstName} ${profile.lastName}`}
+              src={profile?.profileImage ? `https://app.extraexpertise.be/api/upload/${profile.profileImage}` : undefined}
+              name={`${profile?.firstName || ''} ${profile?.lastName || ''}`}
               size='md'
-              className='ring-primary-100 ring-2'
+              className='ring-primary/20 ring-2 ring-offset-1 ring-offset-background shadow-medium'
+              showFallback
+              fallback={
+                <div className="bg-gradient-to-br from-primary/20 to-secondary/20 w-full h-full flex items-center justify-center">
+                  <Icon icon='solar:user-bold' className='text-primary' width={20} />
+                </div>
+              }
             />
-            <div className='flex flex-col'>
+            <div className='flex flex-col min-w-0 flex-1'>
               <p className='text-foreground font-semibold'>
-                {profile.firstName} {profile.lastName}
+                {profile?.firstName || ''} {profile?.lastName || ''}
               </p>
-              <p className='text-foreground-500 text-sm'>{profile.email}</p>
+              <p className='text-foreground-500 text-sm truncate'>{profile?.email || ''}</p>
             </div>
           </div>
         </DropdownItem>
