@@ -89,6 +89,9 @@ export interface TalentPoolFilters {
   availability?: string;
   minRate?: number;
   maxRate?: number;
+  workType?: WorkType;
+  minRating?: number;
+  experienceLevel?: string;
 }
 
 export interface TalentCardProps {

@@ -3,6 +3,7 @@
 import React from 'react';
 
 import PageHeader from '@/components/page-header/page-header';
+import FloatingSuccessManager from '@/components/success-manager/floating-success-manager';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -61,6 +62,9 @@ export default function DashboardLayout({
           </div>
         </div>
       </div>
+
+      {/* Global Floating Success Manager */}
+      <FloatingSuccessManager />
     </div>
   );
 }
