@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Card, CardBody, Spinner, Tab, Tabs } from '@heroui/react';
 import { profileOptions } from '@root/modules/profile/hooks/profile.server';
 import useProfile from '@root/modules/profile/hooks/use-profile';
 import { useQuery } from '@tanstack/react-query';
 import { Briefcase, FolderKanban, GraduationCap, Settings, User } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 
 import EducationTab from './components/education-tab';
 import ExperienceTab from './components/experience-tab';
@@ -20,7 +21,18 @@ interface SettingsPageProperties {
 
 export default function SettingsPage({ userId }: Readonly<SettingsPageProperties>) {
   const [selectedTab, setSelectedTab] = useState('general');
+  const searchParameters = useSearchParams();
 
+  // Handle tab query parameter
+  useEffect(() => {
+    const tabParameter = searchParameters.get('tab');
+    if (
+      tabParameter &&
+      ['general', 'experience', 'projects', 'education', 'services'].includes(tabParameter)
+    ) {
+      setSelectedTab(tabParameter);
+    }
+  }, [searchParameters]);
   // Get profile data first to extract userId if not provided
   const { data: profileData } = useQuery({
     ...profileOptions,

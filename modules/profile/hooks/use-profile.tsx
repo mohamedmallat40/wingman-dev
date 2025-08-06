@@ -49,7 +49,7 @@ const useProfile = (userId: string) => {
     : languageQuery.data?.data.map((lang) => {
         return {
           ...lang,
-          key: new Intl.DisplayNames(['en'], { type: 'language' }).of(lang.key) || lang.key
+          key: new Intl.DisplayNames(['en'], { type: 'language' }).of(lang.key)
         };
       });
   return {

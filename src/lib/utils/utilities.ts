@@ -31,3 +31,12 @@ export const formatDate = (dateString: string) => {
     month: 'short'
   });
 };
+
+export const formatCurrency = (amount: number | string) => {
+  if (typeof amount === 'string') return amount;
+
+  return new Intl.NumberFormat('nl-BE', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format(amount);
+};

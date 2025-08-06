@@ -94,8 +94,8 @@ export interface IService {
 }
 export interface ILanguage {
   id: string;
-  key?: string;
-  level: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'NATIVE';
+  key: string;
+  level: 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE';
 }
 
 export interface Skill {

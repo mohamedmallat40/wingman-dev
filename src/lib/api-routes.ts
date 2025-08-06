@@ -17,6 +17,7 @@ export const API_ROUTES = {
     languages: '/languages',
     languagesByUser: '/languages/byUser/',
     reviews: '/public-reviews/',
-    skills:'/skills'
+    skills: '/skills',
+    address: '/address'
   }
 };

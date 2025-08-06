@@ -1,24 +1,22 @@
 import { z } from 'zod';
 
+export const addressSchema = z.object({
+  street: z.string().min(5, 'Street is required'),
+  city: z.string().min(5, 'City is required'),
+  postalCode: z.string().min(5, 'Postal code is required'),
+  country: z.string().min(5, 'Country is required'),
+  countryCode: z.string().min(5, 'Country code is required'),
+  houseNumber: z.string().min(5, 'House number is required'),
+  VATNumber: z.string().optional(),
+  companyName: z.string().optional(),
+  type: z.string().default('BILLING')
+});
+
 export const generalInfoSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),
   lastName: z.string().min(2, 'Last name must be at least 2 characters'),
   profileImage: z.string().optional().nullable(),
   profileCover: z.string().url('Profile cover must be a valid URL').optional().nullable(),
-  address: z
-    .object({
-      street: z.string().min(5, 'Street is required'),
-      city: z.string().min(5, 'City is required'),
-      postalCode: z.string().min(5, 'Postal code is required'),
-      country: z.string().min(5, 'Country is required'),
-      countryCode: z.string().min(5, 'Country is required'),
-      houseNumber: z.string().min(5, 'Country is required'),
-      VATNumber: z.string(),
-      companyName: z.string(),
-      type: z.string().default('BILLING')
-    })
-    .array()
-    .min(1, 'At least one address is required'),
   aboutMe: z
     .string()
     .min(10, 'About me must be at least 10 characters')
@@ -27,15 +25,8 @@ export const generalInfoSchema = z.object({
     .number()
     .min(0, 'Experience years must be positive')
     .max(50, 'Experience years must be realistic'),
-  hourlyRate: z
-    .number()
-    .min(1, 'Hourly rate must be at least $1')
-    .max(1000, 'Hourly rate must be realistic'),
-  dailyRate: z
-    .number()
-    .min(1, 'Daily rate must be at least $1')
-    .max(10_000, 'Daily rate must be realistic')
-    .optional(),
+  hourlyRate: z.number().default(1).optional().nullable(),
+  dailyRate: z.number().default(1).optional().nullable(),
   paymentType: z.enum(['HOURLY_BASED', 'DAILY_BASED', 'PROJECT']),
   workType: z.enum(['REMOTE', 'ON_SITE']),
   workingTime: z.enum(['PART_TIME', 'FULL_TIME']),
@@ -44,20 +35,11 @@ export const generalInfoSchema = z.object({
   category: z.string().nullable().optional(),
   region: z.string().nullable(),
   city: z.string().nullable(),
-  phoneNumber: z.string().min(5, 'Phone number must be valid'),
+  phoneNumber: z.string().optional().nullable(),
   birthDate: z.string().nullable().optional(),
-  linkedinProfile: z.string().url('LinkedIn profile must be a valid URL').optional(),
-  profileWebsite: z.string().url('Profile website must be a valid URL').optional(),
+  linkedinProfile: z.string().url('LinkedIn profile must be a valid URL').optional().nullable(),
+  profileWebsite: z.string().url('Profile website must be a valid URL').optional().nullable(),
   language: z.string().min(2, 'Language code must be valid'),
-  skills: z
-    .array(
-      z.object({
-        id: z.string(),
-        name: z.string().min(1, 'Skill name is required'),
-        level: z.string().min(1, 'Skill level is required')
-      })
-    )
-    .optional(),
   tags: z.array(z.string()),
   notes: z.array(z.string()),
   shouldBeVisible: z.boolean(),
@@ -79,7 +61,7 @@ export const skillsSchema = z.object({
 export const languageSchema = z.object({
   id: z.string(),
   key: z.string().min(2, 'Language code is required'),
-  level: z.enum(['BEGINNER', 'INTERMEDIATE', 'ADVANCED', 'NATIVE'])
+  level: z.enum(['BEGINNER', 'INTERMEDIATE', 'PROFESSIONAL', 'NATIVE'])
 });
 
 export const languagesSchema = z.object({
@@ -146,3 +128,4 @@ export type ProjectsExpFormData = z.infer<typeof projectsExpSchema>;
 export type EducationFormData = z.infer<typeof educationItemSchema>;
 export type ServicesFormData = z.infer<typeof servicesSchema>;
 export type serviceItemFormData = z.infer<typeof serviceItemSchema>;
+export type AddressFormData = z.infer<typeof addressSchema>;

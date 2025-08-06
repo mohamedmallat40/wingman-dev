@@ -11,6 +11,8 @@ import type {
 import { addToast } from '@heroui/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import { type AddressDetails } from '@/lib/types/auth';
+
 import {
   createExperienceMutationOptions,
   createLanguageMutationOptions,
@@ -29,6 +31,7 @@ import {
   servicesMutationOptions,
   skillsMutationOptions,
   skillsOptions,
+  updateAddressMutationOptions,
   updateEducationMutationOptions
 } from './settings.server';
 
@@ -54,11 +57,15 @@ const handleError = (error: any, defaultMessage: string) => {
 
 const useSettings = (userId?: string) => {
   const queryClient = useQueryClient();
+
   // General Info Mutations
   const updateGeneralInfoMutation = useMutation({
     ...generalInfoMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Profile updated successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['profile']
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to update profile information');
@@ -67,8 +74,14 @@ const useSettings = (userId?: string) => {
 
   const updateSkillsMutation = useMutation({
     ...skillsMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Skills updated successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['profile']
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['all-skills']
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to update skills');
@@ -78,8 +91,11 @@ const useSettings = (userId?: string) => {
   // Language Mutations
   const createLanguageMutation = useMutation({
     ...createLanguageMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Language created successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['languages', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to create language');
@@ -88,8 +104,11 @@ const useSettings = (userId?: string) => {
 
   const updateLanguagesMutation = useMutation({
     ...languagesMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Languages updated successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['languages', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to update languages');
@@ -98,8 +117,11 @@ const useSettings = (userId?: string) => {
 
   const deleteLanguageMutation = useMutation({
     ...deleteLanguageMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Language deleted successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['languages', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to delete language');
@@ -247,8 +269,11 @@ const useSettings = (userId?: string) => {
 
   const updateServicesMutation = useMutation({
     ...servicesMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Services updated successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['services', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to update services');
@@ -257,11 +282,28 @@ const useSettings = (userId?: string) => {
 
   const deleteServiceMutation = useMutation({
     ...deleteServiceMutationOptions,
-    onSuccess: () => {
+    onSuccess: async () => {
       handleSuccess('Service deleted successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['services', userId]
+      });
     },
     onError: (error) => {
       handleError(error, 'Failed to delete service');
+    }
+  });
+
+  //address mutations
+  const updateAddressMutation = useMutation({
+    ...updateAddressMutationOptions,
+    onSuccess: async () => {
+      handleSuccess('Address updated successfully!');
+      await queryClient.invalidateQueries({
+        queryKey: ['profile']
+      });
+    },
+    onError: (error) => {
+      handleError(error, 'Failed to update address');
     }
   });
 
@@ -281,6 +323,9 @@ const useSettings = (userId?: string) => {
   };
   const deleteLanguage = (id: string) => {
     deleteLanguageMutation.mutate(id);
+  };
+  const updateAddress = (data: AddressDetails) => {
+    updateAddressMutation.mutate(data);
   };
 
   const createExperience = (data: ProjectsExpFormData) => {
@@ -315,7 +360,6 @@ const useSettings = (userId?: string) => {
   };
 
   const createService = (data: serviceItemFormData) => {
-    console.log(data);
     createServiceMutation.mutate(data);
   };
   const updateServices = (data: ServicesFormData) => {
@@ -345,6 +389,7 @@ const useSettings = (userId?: string) => {
     updateExperience,
     updateProjects,
     updateServices,
+    updateAddress,
 
     // Delete functions
     deleteLanguage,
@@ -374,7 +419,9 @@ const useSettings = (userId?: string) => {
     isDeletingService: deleteServiceMutation.isPending,
 
     isUpdatingGeneralInfo: updateGeneralInfoMutation.isPending,
-    isUpdatingSkills: updateSkillsMutation.isPending
+    isUpdatingSkills: updateSkillsMutation.isPending,
+
+    isAddressUpdating: updateAddressMutation.isPending
   };
 };
 

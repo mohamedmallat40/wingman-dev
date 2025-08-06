@@ -10,6 +10,7 @@ import { type AxiosRequestConfig } from 'axios';
 
 import { API_ROUTES } from '@/lib/api-routes';
 import wingManApi from '@/lib/axios';
+import { AddressDetails } from '@/lib/types/auth';
 
 // General Info
 export const updateGeneralInfo = async (data: GeneralInfoFormData, config?: AxiosRequestConfig) => {
@@ -82,4 +83,8 @@ export const deleteService = async (id: string, config?: AxiosRequestConfig) => 
 };
 export const getAllSkills = (config?: AxiosRequestConfig) => {
   return wingManApi.get(API_ROUTES.profile.skills, config);
+};
+
+export const updateAddress = async (data: AddressDetails, config?: AxiosRequestConfig) => {
+  return wingManApi.post(API_ROUTES.profile.address, data, config);
 };

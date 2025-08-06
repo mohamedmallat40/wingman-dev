@@ -3,6 +3,7 @@
 import { Accordion, AccordionItem, Button, Card, CardBody, CardHeader, Chip } from '@heroui/react';
 import { type IService } from '@root/modules/profile/types';
 import { Briefcase, Calendar, Clock, DollarSign, Edit } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const getSkillColor = (skillType: string) => {
   switch (skillType) {
@@ -45,6 +46,11 @@ interface ServicesSectionProperties {
 }
 
 export default function ServicesSection({ services }: Readonly<ServicesSectionProperties>) {
+  const router = useRouter();
+
+  const handleEditClick = () => {
+    router.push('/private/settings?tab=services');
+  };
   const getTypeIcon = (type: IService['type']) => {
     switch (type) {
       case 'HOURLY_BASED': {
@@ -70,6 +76,7 @@ export default function ServicesSection({ services }: Readonly<ServicesSectionPr
           isIconOnly
           variant='light'
           className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          onPress={handleEditClick}
         >
           <Edit size={20} />
         </Button>

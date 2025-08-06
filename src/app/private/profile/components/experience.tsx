@@ -3,6 +3,7 @@
 import { Button, Card, CardBody, CardHeader } from '@heroui/react';
 import { type IExperience } from '@root/modules/profile/types';
 import { Building, Edit } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { formatDate } from '@/lib/utils/utilities';
 
@@ -11,6 +12,10 @@ interface ExperienceSectionProperties {
 }
 
 export default function ExperienceSection({ experience }: Readonly<ExperienceSectionProperties>) {
+  const router = useRouter();
+  const handleEditClick = () => {
+    router.push('/private/settings?tab=experience');
+  };
   return (
     <Card className='w-full bg-transparent'>
       <CardHeader className='flex flex-row items-center justify-between'>
@@ -19,6 +24,7 @@ export default function ExperienceSection({ experience }: Readonly<ExperienceSec
           isIconOnly
           variant='light'
           className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          onPress={handleEditClick}
         >
           <Edit size={20} />
         </Button>

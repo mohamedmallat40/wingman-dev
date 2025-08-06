@@ -20,6 +20,7 @@ import {
   deleteProject,
   deleteService,
   getAllSkills,
+  updateAddress,
   updateEducation,
   updateExperience,
   updateGeneralInfo,
@@ -29,6 +30,7 @@ import {
 } from '../services/settings.services';
 import { queryOptions } from '@tanstack/react-query';
 import { Skill } from '@root/modules/profile/types';
+import { AddressDetails } from '@/lib/types/auth';
 
 // General Info mutations
 export const generalInfoMutationOptions = {
@@ -118,6 +120,11 @@ export const servicesMutationOptions = {
 export const deleteServiceMutationOptions = {
   mutationKey: ['settings', 'services', 'delete'],
   mutationFn: (id: string) => deleteService(id)
+};
+
+export const updateAddressMutationOptions = {
+  mutationKey: ['settings', 'address'],
+  mutationFn: (data: AddressDetails) => updateAddress(data)
 };
 
 export const skillsOptions = () => {

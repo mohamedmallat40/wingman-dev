@@ -5,12 +5,18 @@ import { type IEducation } from '@root/modules/profile/types';
 import { Edit, School } from 'lucide-react';
 
 import { formatDate } from '@/lib/utils/utilities';
+import { useRouter } from 'next/navigation';
 
 interface EducationSectionProperties {
   education: IEducation[];
 }
 
 export default function ExperienceSection({ education }: Readonly<EducationSectionProperties>) {
+  
+  const router = useRouter();
+  const handleEditClick = () => {
+    router.push('/private/settings?tab=education');
+  };
   return (
     <Card className='w-full bg-transparent'>
       <CardHeader className='flex flex-row items-center justify-between'>
@@ -19,6 +25,7 @@ export default function ExperienceSection({ education }: Readonly<EducationSecti
           isIconOnly
           variant='light'
           className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+        onPress={handleEditClick}
         >
           <Edit size={20} />
         </Button>

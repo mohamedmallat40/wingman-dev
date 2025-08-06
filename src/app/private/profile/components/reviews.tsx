@@ -10,6 +10,7 @@ interface ReviewsSectionProperties {
 }
 
 export default function ReviewsSection({ reviews }: Readonly<ReviewsSectionProperties>) {
+  
   const renderStars = (rating: number) => {
     const stars = [];
     const fullStars = Math.floor(rating);
@@ -80,13 +81,13 @@ export default function ReviewsSection({ reviews }: Readonly<ReviewsSectionPrope
             </div>
           )}
         </div>
-        <Button
+        {/* <Button
           isIconOnly
           variant='light'
           className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
         >
           <Edit size={20} />
-        </Button>
+        </Button> */}
       </CardHeader>
       <CardBody>
         {reviews.length === 0 ? (

@@ -4,6 +4,7 @@ import { Button, Card, CardBody, CardHeader } from '@heroui/react';
 import { type IExperience } from '@root/modules/profile/types';
 import { Edit } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import { API_ROUTES } from '@/lib/api-routes';
 
@@ -12,6 +13,11 @@ interface ProjectsSectionProperties {
 }
 
 export default function ProjectsSection({ projects }: Readonly<ProjectsSectionProperties>) {
+  const router = useRouter();
+
+  const handleEditClick = () => {
+    router.push('/private/settings?tab=projects');
+  };
   return (
     <Card className='h-auto w-full bg-transparent'>
       <CardHeader className='flex flex-row items-center justify-between'>
@@ -20,6 +26,7 @@ export default function ProjectsSection({ projects }: Readonly<ProjectsSectionPr
           isIconOnly
           variant='light'
           className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          onPress={handleEditClick}
         >
           <Edit size={20} />
         </Button>
