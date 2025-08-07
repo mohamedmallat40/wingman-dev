@@ -2,14 +2,17 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Button, Skeleton, Spinner } from '@heroui/react';
-import { Icon } from '@iconify/react';
+import { Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import wingManApi from '@/lib/axios';
 
-import { type TalentPoolFilters, type User, type UserResponse } from '../types';
 import { getCountryNameFromCode } from '../data/countries';
+import { type TalentPoolFilters, type User, type UserResponse } from '../types';
+import EmptyState from './shared/EmptyState';
+import ErrorState from './shared/ErrorState';
+import LoadingSkeleton from './shared/LoadingSkeleton';
 import TalentCard from './TalentCard';
 
 interface AgencyListProps {
@@ -19,147 +22,13 @@ interface AgencyListProps {
   onCountChange?: (count: number) => void;
 }
 
-const LoadingSkeleton: React.FC = () => (
-  <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-    {Array.from({ length: 12 }).map((_, index) => (
-      <div
-        key={index}
-        className='shadow-soft border-default-200 from-background via-background/95 to-background rounded-large h-full w-full space-y-4 border bg-gradient-to-br p-6'
-      >
-        {/* Header Section */}
-        <div className='flex w-full items-start gap-4'>
-          <div className='relative'>
-            <Skeleton className='h-20 w-20 rounded-full' />
-            <div className='absolute -right-1 -bottom-1'>
-              <Skeleton className='h-6 w-6 rounded-full' />
-            </div>
-          </div>
-          <div className='flex min-w-0 flex-grow flex-col gap-2'>
-            <div className='flex items-start justify-between'>
-              <div className='min-w-0 flex-grow space-y-2'>
-                <Skeleton className='h-6 w-32 rounded-lg' />
-                <Skeleton className='h-4 w-24 rounded-lg' />
-              </div>
-              <div className='ml-2 flex items-center gap-1'>
-                <Skeleton className='h-8 w-8 rounded-lg' />
-                <Skeleton className='h-8 w-8 rounded-lg' />
-              </div>
-            </div>
-            <div className='space-y-1'>
-              <Skeleton className='h-4 w-28 rounded-lg' />
-            </div>
-            <div className='mt-2 flex items-center gap-2'>
-              <Skeleton className='h-6 w-16 rounded-full' />
-              <Skeleton className='h-6 w-20 rounded-full' />
-            </div>
-          </div>
-        </div>
-
-        {/* About Section */}
-        <div className='bg-background/80 rounded-large border-default-200/50 space-y-2 border p-4 backdrop-blur-sm'>
-          <div className='flex items-center gap-2'>
-            <Skeleton className='h-4 w-4 rounded' />
-            <Skeleton className='h-4 w-12 rounded-lg' />
-          </div>
-          <div className='space-y-2'>
-            <Skeleton className='h-3 w-full rounded-lg' />
-            <Skeleton className='h-3 w-4/5 rounded-lg' />
-            <Skeleton className='h-3 w-3/4 rounded-lg' />
-          </div>
-        </div>
-
-        {/* Skills Section */}
-        <div className='bg-background/80 rounded-large border-default-200/50 space-y-3 border p-4 backdrop-blur-sm'>
-          <div className='flex items-center gap-2'>
-            <Skeleton className='h-4 w-4 rounded' />
-            <Skeleton className='h-4 w-16 rounded-lg' />
-          </div>
-          <div className='flex flex-wrap gap-2'>
-            <Skeleton className='h-6 w-16 rounded-full' />
-            <Skeleton className='h-6 w-12 rounded-full' />
-            <Skeleton className='h-6 w-20 rounded-full' />
-            <Skeleton className='h-6 w-14 rounded-full' />
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className='grid grid-cols-3 gap-3'>
-          <div className='bg-background/80 rounded-large border-default-200/50 space-y-2 border p-3 text-center backdrop-blur-sm'>
-            <Skeleton className='mx-auto h-8 w-8 rounded-full' />
-            <Skeleton className='mx-auto h-3 w-16 rounded-lg' />
-            <Skeleton className='mx-auto h-4 w-12 rounded-lg' />
-          </div>
-          <div className='bg-background/80 rounded-large border-default-200/50 space-y-2 border p-3 text-center backdrop-blur-sm'>
-            <Skeleton className='mx-auto h-8 w-8 rounded-full' />
-            <Skeleton className='mx-auto h-3 w-8 rounded-lg' />
-            <Skeleton className='mx-auto h-4 w-10 rounded-lg' />
-          </div>
-          <div className='bg-background/80 rounded-large border-default-200/50 space-y-2 border p-3 text-center backdrop-blur-sm'>
-            <Skeleton className='mx-auto h-8 w-8 rounded-full' />
-            <Skeleton className='mx-auto h-3 w-10 rounded-lg' />
-            <Skeleton className='mx-auto h-4 w-14 rounded-lg' />
-          </div>
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-const EmptyState: React.FC<{ onReset: () => void }> = ({ onReset }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className='py-16 text-center'
-  >
-    <div className='mb-6'>
-      <Icon icon='solar:buildings-linear' className='text-default-300 mx-auto mb-4 h-24 w-24' />
-      <h3 className='text-default-700 mb-2 text-xl font-semibold'>No agencies found</h3>
-      <p className='text-default-500 mx-auto max-w-md'>
-        We couldn't find any agencies matching your criteria. Try adjusting your filters or search
-        query.
-      </p>
-    </div>
-    <Button
-      color='primary'
-      variant='flat'
-      startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-      onPress={onReset}
-    >
-      Reset Filters
-    </Button>
-  </motion.div>
-);
-
-const ErrorState: React.FC<{ onRetry: () => void }> = ({ onRetry }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className='py-16 text-center'
-  >
-    <div className='mb-6'>
-      <Icon icon='solar:danger-circle-linear' className='text-danger-300 mx-auto mb-4 h-24 w-24' />
-      <h3 className='text-default-700 mb-2 text-xl font-semibold'>Something went wrong</h3>
-      <p className='text-default-500 mx-auto max-w-md'>
-        We couldn't load the agencies. Please try again.
-      </p>
-    </div>
-    <Button
-      color='danger'
-      variant='flat'
-      startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-      onPress={onRetry}
-    >
-      Try Again
-    </Button>
-  </motion.div>
-);
-
 const AgencyList: React.FC<AgencyListProps> = ({
   filters,
   onViewProfile,
   onConnect,
   onCountChange
 }) => {
+  const t = useTranslations();
   const [agencies, setAgencies] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -255,7 +124,6 @@ const AgencyList: React.FC<AgencyListProps> = ({
       setCurrentPage(data.meta.currentPage);
       setHasNextPage(data.meta.currentPage < data.meta.totalPages);
     } catch (err) {
-      console.error('Error fetching agencies:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch agencies');
     } finally {
       if (!append) {
@@ -288,16 +156,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
       (entries) => {
         const entry = entries[0];
         if (!entry) return;
-        console.log(
-          'Agency sentinel intersecting:',
-          entry.isIntersecting,
-          'hasNextPage:',
-          hasNextPage,
-          'isLoadingMore:',
-          isLoadingMore
-        );
         if (entry.isIntersecting && hasNextPage && !isLoadingMore && !isLoading) {
-          console.log('Loading more agencies...');
           loadMore();
         }
       },
@@ -329,14 +188,11 @@ const AgencyList: React.FC<AgencyListProps> = ({
   };
 
   const handleViewProfile = (userId: string) => {
-    console.log('View agency profile:', userId);
     onViewProfile?.(userId);
   };
 
   const handleConnect = async (userId: string) => {
     try {
-      // Simulate API call
-      console.log('Connecting to agency:', userId);
       onConnect?.(userId);
 
       // Update local state to reflect connection
@@ -344,12 +200,18 @@ const AgencyList: React.FC<AgencyListProps> = ({
         prev.map((user) => (user.id === userId ? { ...user, isConnected: true } : user))
       );
     } catch (err) {
-      console.error('Error connecting to agency:', err);
+      // Handle connection error silently
     }
   };
 
   if (error) {
-    return <ErrorState onRetry={handleRetry} />;
+    return (
+      <ErrorState
+        titleKey='talentPool.errorStates.agencies.title'
+        descriptionKey='talentPool.errorStates.agencies.description'
+        onRetry={handleRetry}
+      />
+    );
   }
 
   if (isLoading) {
@@ -357,7 +219,14 @@ const AgencyList: React.FC<AgencyListProps> = ({
   }
 
   if (agencies.length === 0) {
-    return <EmptyState onReset={handleResetFilters} />;
+    return (
+      <EmptyState
+        icon='solar:buildings-linear'
+        titleKey='talentPool.emptyStates.agencies.title'
+        descriptionKey='talentPool.emptyStates.agencies.description'
+        onReset={handleResetFilters}
+      />
+    );
   }
 
   return (
@@ -369,16 +238,16 @@ const AgencyList: React.FC<AgencyListProps> = ({
             key={agency.id}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.2, 
-              delay: isInitialLoad ? index * 0.02 : (index >= previousCount ? (index - previousCount) * 0.02 : 0) 
+            transition={{
+              duration: 0.2,
+              delay: isInitialLoad
+                ? index * 0.02
+                : index >= previousCount
+                  ? (index - previousCount) * 0.02
+                  : 0
             }}
           >
-            <TalentCard
-              user={agency}
-              onViewProfile={handleViewProfile}
-              onConnect={handleConnect}
-            />
+            <TalentCard user={agency} onViewProfile={handleViewProfile} onConnect={handleConnect} />
           </motion.div>
         ))}
       </div>
@@ -389,11 +258,11 @@ const AgencyList: React.FC<AgencyListProps> = ({
           {isLoadingMore ? (
             <div className='text-foreground-500 flex items-center gap-2'>
               <Spinner size='sm' color='primary' />
-              <span className='text-small'>Loading more agencies...</span>
+              <span className='text-small'>{t('talentPool.loading.more.agencies')}</span>
             </div>
           ) : (
             <div className='text-foreground-400 text-center'>
-              <span className='text-small'>Scroll to load more...</span>
+              <span className='text-small'>{t('talentPool.loading.scrollToLoad')}</span>
             </div>
           )}
         </div>

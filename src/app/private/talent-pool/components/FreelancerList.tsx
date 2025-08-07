@@ -2,18 +2,16 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Button, Skeleton, Spinner } from '@heroui/react';
-import { Icon } from '@iconify/react';
+import { Skeleton, Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import wingManApi from '@/lib/axios';
 
-import { useTranslations } from 'next-intl';
-
-import { type TalentPoolFilters, type User, type UserResponse } from '../types';
 import { getCountryNameFromCode } from '../data/countries';
-import TalentCard from './TalentCard';
+import { type TalentPoolFilters, type User, type UserResponse } from '../types';
 import { EmptyState, ErrorState } from './shared';
+import TalentCard from './TalentCard';
 
 interface FreelancerListProps {
   filters?: TalentPoolFilters;
@@ -107,7 +105,6 @@ const LoadingSkeleton: React.FC = () => (
     ))}
   </div>
 );
-
 
 const FreelancerList: React.FC<FreelancerListProps> = ({
   filters,
@@ -306,10 +303,10 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
 
   if (error) {
     return (
-      <ErrorState 
-        titleKey="talentPool.errorStates.freelancers.title"
-        descriptionKey="talentPool.errorStates.freelancers.description"
-        onRetry={handleRetry} 
+      <ErrorState
+        titleKey='talentPool.errorStates.freelancers.title'
+        descriptionKey='talentPool.errorStates.freelancers.description'
+        onRetry={handleRetry}
       />
     );
   }
@@ -320,11 +317,11 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
 
   if (freelancers.length === 0) {
     return (
-      <EmptyState 
-        icon="solar:user-search-linear"
-        titleKey="talentPool.emptyStates.freelancers.title"
-        descriptionKey="talentPool.emptyStates.freelancers.description"
-        onReset={handleResetFilters} 
+      <EmptyState
+        icon='solar:user-search-linear'
+        titleKey='talentPool.emptyStates.freelancers.title'
+        descriptionKey='talentPool.emptyStates.freelancers.description'
+        onReset={handleResetFilters}
       />
     );
   }
@@ -338,9 +335,13 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
             key={freelancer.id}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.2, 
-              delay: isInitialLoad ? index * 0.02 : (index >= previousCount ? (index - previousCount) * 0.02 : 0) 
+            transition={{
+              duration: 0.2,
+              delay: isInitialLoad
+                ? index * 0.02
+                : index >= previousCount
+                  ? (index - previousCount) * 0.02
+                  : 0
             }}
           >
             <TalentCard
@@ -358,7 +359,9 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
           {isLoadingMore ? (
             <div className='text-foreground-500 flex items-center gap-2'>
               <Spinner size='sm' color='primary' />
-              <span className='text-small'>{t('talentPool.loadingStates.loadingMoreFreelancers')}</span>
+              <span className='text-small'>
+                {t('talentPool.loadingStates.loadingMoreFreelancers')}
+              </span>
             </div>
           ) : (
             <div className='text-foreground-400 text-center'>

@@ -206,14 +206,61 @@
     "tabs": {
       "freelancers": "Freelancers",
       "agencies": "Agencies", 
-      "teams": "Teams"
+      "teams": "Teams",
+      "descriptions": {
+        "freelancers": "Individual professionals",
+        "agencies": "Professional agencies",
+        "teams": "Collaborative groups"
+      }
     },
     "search": {
-      "placeholder": "Search by name, skills, or location...",
-      "noResults": "No results found",
-      "filters": "Filters",
-      "reset": "Reset Filters",
-      "apply": "Apply Filters"
+      "button": "Search",
+      "placeholder": "Search by name, skills, or expertise...",
+      "tooltip": "Search now (Enter)",
+      "noResults": "No results found"
+    },
+    "filters": {
+      "button": "Filters",
+      "active": "Active:",
+      "clearAll": "Clear All",
+      "resetAll": "Reset All",
+      "cancel": "Cancel", 
+      "apply": "Apply Filters",
+      "advanced": {
+        "title": "Advanced Filters",
+        "description": "Refine your search criteria"
+      },
+      "categories": {
+        "location": "Location",
+        "profession": "Profession Type",
+        "availability": "Availability", 
+        "experience": "Experience Level"
+      },
+      "country": {
+        "placeholder": "Search countries...",
+        "selectAll": "Select all {continent}",
+        "clearAll": "Clear all",
+        "selected": "{count, plural, one {# country} other {# countries}} selected"
+      }
+    },
+    "profession": {
+      "freelancer": "Freelancer",
+      "interim": "Interim",
+      "consultant": "Consultant",
+      "studentEntrepreneur": "Student entrepreneur"
+    },
+    "experience": {
+      "junior": "Junior",
+      "midLevel": "Mid-Level",
+      "senior": "Senior", 
+      "lead": "Lead",
+      "descriptions": {
+        "junior": "0-2 years of experience",
+        "midLevel": "2-5 years of experience",
+        "senior": "5-10 years of experience",
+        "lead": "10+ years of experience"
+      },
+      "selected": "{count, plural, one {# level} other {# levels}} selected"
     },
     "cards": {
       "viewProfile": "View Profile",
@@ -236,6 +283,9 @@
       "noAboutAvailable": "No description available"
     },
     "availability": {
+      "all": "All",
+      "fullTime": "Full-Time",
+      "partTime": "Part-Time",
       "available": "Available",
       "availableForProjects": "Available for Projects", 
       "partTimeAvailable": "Part-time Available",
@@ -293,6 +343,14 @@
       "loadingMoreAgencies": "Loading more agencies...",
       "loadingMoreTeams": "Loading more teams...",
       "scrollToLoadMore": "Scroll to load more..."
+    },
+    "loading": {
+      "more": {
+        "freelancers": "Loading more freelancers...",
+        "agencies": "Loading more agencies...",
+        "teams": "Loading more teams..."
+      },
+      "scrollToLoad": "Scroll to load more..."
     }
   },
   "ERRORS": {

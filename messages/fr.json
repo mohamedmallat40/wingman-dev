@@ -206,14 +206,61 @@
     "tabs": {
       "freelancers": "Freelancers",
       "agencies": "Agences",
-      "teams": "Équipes"
+      "teams": "Équipes",
+      "descriptions": {
+        "freelancers": "Professionnels indépendants",
+        "agencies": "Agences professionnelles",
+        "teams": "Groupes collaboratifs"
+      }
     },
     "search": {
-      "placeholder": "Rechercher par nom, compétences ou localisation...",
-      "noResults": "Aucun résultat trouvé",
-      "filters": "Filtres",
-      "reset": "Réinitialiser les Filtres",
-      "apply": "Appliquer les Filtres"
+      "button": "Rechercher",
+      "placeholder": "Rechercher par nom, compétences ou expertise...",
+      "tooltip": "Rechercher maintenant (Entrée)",
+      "noResults": "Aucun résultat trouvé"
+    },
+    "filters": {
+      "button": "Filtres",
+      "active": "Actifs :",
+      "clearAll": "Tout Effacer",
+      "resetAll": "Tout Réinitialiser",
+      "cancel": "Annuler",
+      "apply": "Appliquer les Filtres",
+      "advanced": {
+        "title": "Filtres Avancés",
+        "description": "Affinez vos critères de recherche"
+      },
+      "categories": {
+        "location": "Localisation",
+        "profession": "Type de Profession",
+        "availability": "Disponibilité",
+        "experience": "Niveau d'Expérience"
+      },
+      "country": {
+        "placeholder": "Rechercher des pays...",
+        "selectAll": "Sélectionner tout {continent}",
+        "clearAll": "Tout effacer",
+        "selected": "{count, plural, one {# pays} other {# pays}} sélectionné{count, plural, one {} other {s}}"
+      }
+    },
+    "profession": {
+      "freelancer": "Freelancer",
+      "interim": "Intérimaire",
+      "consultant": "Consultant",
+      "studentEntrepreneur": "Étudiant entrepreneur"
+    },
+    "experience": {
+      "junior": "Junior",
+      "midLevel": "Niveau Intermédiaire",
+      "senior": "Senior",
+      "lead": "Lead",
+      "descriptions": {
+        "junior": "0-2 ans d'expérience",
+        "midLevel": "2-5 ans d'expérience",
+        "senior": "5-10 ans d'expérience",
+        "lead": "10+ ans d'expérience"
+      },
+      "selected": "{count, plural, one {# niveau} other {# niveaux}} sélectionné{count, plural, one {} other {s}}"
     },
     "cards": {
       "viewProfile": "Voir le Profil",
@@ -236,6 +283,9 @@
       "noAboutAvailable": "Aucune description disponible"
     },
     "availability": {
+      "all": "Tous",
+      "fullTime": "Temps Plein",
+      "partTime": "Temps Partiel",
       "available": "Disponible",
       "availableForProjects": "Disponible pour les Projets",
       "partTimeAvailable": "Disponible à Temps Partiel",
@@ -293,6 +343,14 @@
       "loadingMoreAgencies": "Chargement de plus d'agences...",
       "loadingMoreTeams": "Chargement de plus d'équipes...",
       "scrollToLoadMore": "Faites défiler pour charger plus..."
+    },
+    "loading": {
+      "more": {
+        "freelancers": "Chargement de plus de freelancers...",
+        "agencies": "Chargement de plus d'agences...",
+        "teams": "Chargement de plus d'équipes..."
+      },
+      "scrollToLoad": "Faites défiler pour charger plus..."
     }
   },
   "ERRORS": {

@@ -29,26 +29,7 @@ interface HeroTabsProps {
   filtersCount?: number;
 }
 
-const tabConfig = {
-  freelancers: {
-    label: 'Freelancers',
-    icon: 'solar:user-linear',
-    mobileIcon: 'solar:user-linear',
-    description: 'Individual professionals'
-  },
-  agencies: {
-    label: 'Agencies',
-    icon: 'solar:buildings-linear',
-    mobileIcon: 'solar:buildings-linear',
-    description: 'Professional agencies'
-  },
-  teams: {
-    label: 'Teams',
-    icon: 'solar:users-group-rounded-linear',
-    mobileIcon: 'solar:users-group-rounded-linear',
-    description: 'Collaborative groups'
-  }
-} as const;
+// tabConfig moved inside component to use translations
 
 const HeroTabs: React.FC<HeroTabsProps> = ({
   activeTab,
@@ -93,7 +74,7 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
   const handleSearchToggle = () => {
     const newState = !isSearchExpanded;
     setIsSearchExpanded(newState);
-    
+
     if (newState) {
       // Focus the input when expanding - wait for animation
       setTimeout(() => {
@@ -115,264 +96,264 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
       {/* Desktop Tabs */}
       <div className='hidden sm:block'>
         <div className='flex items-center gap-0'>
-          <div className='relative h-[80px] px-2 py-2 flex-1 flex items-center'>
+          <div className='relative flex h-[80px] flex-1 items-center px-2 py-2'>
             {/* Content Container */}
-            <AnimatePresence mode="wait">
-            {!isSearchExpanded && (
-              <motion.div
-                key="tabs"
-                initial={{ opacity: 1, x: 0 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ 
-                  opacity: 0,
-                  x: -50,
-                  transition: { duration: 0.3, ease: [0.4, 0.0, 0.2, 1] }
-                }}
-                className='flex items-center justify-between px-2 w-full'
-              >
-                <div className='flex-1'>
-                  <Tabs
-                    selectedKey={activeTab}
-                    onSelectionChange={(key) => onTabChange(key as TalentType)}
-                    variant='underlined'
-                    color='primary'
-                    size='lg'
-                    classNames={{
-                      tabList: 'gap-6 w-full relative rounded-none p-0 border-b border-divider',
-                      cursor: 'w-full bg-primary-500',
-                      tab: 'max-w-fit px-0 h-12',
-                      tabContent: 'group-data-[selected=true]:text-primary-500'
-                    }}
-                  >
-                    {Object.entries(tabConfig).map(([key, config]) => {
-                      const tabKey = key as TalentType;
-                      const count = counts?.[tabKey];
-
-                      return (
-                        <Tab
-                          key={tabKey}
-                          title={
-                            <motion.div
-                              className='flex items-center gap-3'
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                            >
-                              <Icon icon={config.icon} className='h-5 w-5' />
-                              <div className='flex flex-col items-start'>
-                                <span className='font-medium'>{config.label}</span>
-                                <div className='flex items-center gap-2'>
-                                  <span className='text-default-500 text-xs'>{config.description}</span>
-                                  {count !== undefined && !isLoading && (
-                                    <span className='bg-default-100 text-default-700 rounded-full px-2 py-0.5 text-xs font-medium'>
-                                      {count}
-                                    </span>
-                                  )}
-                                  {isLoading && (
-                                    <div className='bg-default-200 h-4 w-8 animate-pulse rounded' />
-                                  )}
-                                </div>
-                              </div>
-                            </motion.div>
-                          }
-                        />
-                      );
-                    })}
-                  </Tabs>
-                </div>
-
-                {/* Right Side Actions */}
-                <div className='ml-6 flex items-center gap-3'>
-                  {/* Search Button */}
-                  <Tooltip content='Open advanced search' placement='bottom' delay={500}>
-                    <Button
-                      variant='bordered'
-                      size='md'
-                      color='primary'
-                      onPress={handleSearchToggle}
-                      className='bg-primary-50 hover:bg-primary-100 hover:shadow-medium font-semibold transition-all duration-300'
-                      startContent={<Icon icon='solar:magnifer-linear' className='h-4 w-4' />}
-                      as={motion.button}
-                      whileHover={{ scale: 1.02, y: -1 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      Search
-                    </Button>
-                  </Tooltip>
-
-                </div>
-              </motion.div>
-            )}
-
-            {isSearchExpanded && (
-              <motion.div
-                key="search"
-                initial={{ 
-                  opacity: 0,
-                  x: 100
-                }}
-                animate={{ 
-                  opacity: 1,
-                  x: 0,
-                  transition: { 
-                    duration: 0.3,
-                    ease: [0.25, 0.46, 0.45, 0.94]
-                  }
-                }}
-                exit={{ 
-                  opacity: 0,
-                  x: 100,
-                  transition: { 
-                    duration: 0.2,
-                    ease: [0.4, 0.0, 0.2, 1]
-                  }
-                }}
-                className='w-full flex items-center justify-between px-2'
-              >
-                {/* Expanded Search Input */}
+            <AnimatePresence mode='wait'>
+              {!isSearchExpanded && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.2, delay: 0.1 }}
-                  className='flex-1 px-2'
+                  key='tabs'
+                  initial={{ opacity: 1, x: 0 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{
+                    opacity: 0,
+                    x: -50,
+                    transition: { duration: 0.3, ease: [0.4, 0.0, 0.2, 1] }
+                  }}
+                  className='flex w-full items-center justify-between px-2'
                 >
-                  <Input
-                    data-search-input
-                    placeholder={t('talentPool.search.placeholder')}
-                    value={searchQuery}
-                    onChange={(e) => onSearchChange?.(e.target.value)}
-                    onKeyPress={handleSearchKeyPress}
-                    autoFocus={false}
-                    startContent={
-                      <motion.div
-                        animate={{ 
-                          scale: [1, 1.05, 1],
-                        }}
-                        transition={{ 
-                          scale: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-                        }}
-                      >
-                        <Icon icon="solar:magnifer-linear" className="text-primary h-5 w-5" />
-                      </motion.div>
-                    }
-                    endContent={
-                      searchQuery && (
-                        <Button
-                          isIconOnly
-                          size='sm'
-                          variant='light'
-                          onPress={() => onSearchChange?.('')}
-                          className='h-6 w-6 min-w-6 transition-all hover:scale-110'
-                        >
-                          <Icon icon='solar:close-circle-linear' className='h-4 w-4' />
-                        </Button>
-                      )
-                    }
-                    size='lg'
-                    variant='bordered'
-                    className='w-full'
-                    classNames={{
-                      input: 'text-base !text-black placeholder:!text-gray-500',
-                      inputWrapper: 'border-primary/20 hover:border-primary/40 focus-within:border-primary bg-background/80 backdrop-blur-sm shadow-medium'
-                    }}
-                  />
-                </motion.div>
-
-                {/* Inline Action Buttons */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.2, delay: 0.15 }}
-                  className='ml-6 flex items-center gap-3 p-2'
-                >
-
-                  {/* Execute Search Button */}
-                  <Tooltip content='Search now (Enter)' placement='bottom'>
-                    <Button
-                      isIconOnly
+                  <div className='flex-1'>
+                    <Tabs
+                      selectedKey={activeTab}
+                      onSelectionChange={(key) => onTabChange(key as TalentType)}
+                      variant='underlined'
                       color='primary'
-                      variant='solid'
                       size='lg'
-                      onPress={() => {
-                        onSearch?.();
-                        setIsSearchExpanded(false);
+                      classNames={{
+                        tabList: 'gap-6 w-full relative rounded-none p-0 border-b border-divider',
+                        cursor: 'w-full bg-primary-500',
+                        tab: 'max-w-fit px-0 h-12',
+                        tabContent: 'group-data-[selected=true]:text-primary-500'
                       }}
-                      className='font-medium transition-all hover:shadow-medium'
-                      as={motion.button}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
                     >
-                      <Icon icon='solar:magnifer-linear' className='h-5 w-5' />
-                    </Button>
-                  </Tooltip>
+                      {Object.entries(tabConfig).map(([key, config]) => {
+                        const tabKey = key as TalentType;
+                        const count = counts?.[tabKey];
 
-                  {/* Clear Close Button */}
-                  <Tooltip 
-                    content={
-                      <div className="text-center">
-                        <div>Close search</div>
-                        <div className="text-tiny opacity-70">ESC</div>
-                      </div>
-                    } 
-                    placement='bottom'
-                  >
-                    <Button
-                      isIconOnly
-                      color='danger'
-                      variant='bordered'
-                      size='lg'
-                      onPress={handleSearchClose}
-                      className='bg-danger/5 border-danger/30 hover:bg-danger/15 hover:border-danger/60 hover:shadow-medium transition-all duration-200'
-                      as={motion.button}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      <Icon icon='solar:close-circle-bold' className='h-5 w-5 text-danger' />
-                    </Button>
-                  </Tooltip>
+                        return (
+                          <Tab
+                            key={tabKey}
+                            title={
+                              <motion.div
+                                className='flex items-center gap-3'
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                              >
+                                <Icon icon={config.icon} className='h-5 w-5' />
+                                <div className='flex flex-col items-start'>
+                                  <span className='font-medium'>{config.label}</span>
+                                  <div className='flex items-center gap-2'>
+                                    <span className='text-default-500 text-xs'>
+                                      {config.description}
+                                    </span>
+                                    {count !== undefined && !isLoading && (
+                                      <span className='bg-default-100 text-default-700 rounded-full px-2 py-0.5 text-xs font-medium'>
+                                        {count}
+                                      </span>
+                                    )}
+                                    {isLoading && (
+                                      <div className='bg-default-200 h-4 w-8 animate-pulse rounded' />
+                                    )}
+                                  </div>
+                                </div>
+                              </motion.div>
+                            }
+                          />
+                        );
+                      })}
+                    </Tabs>
+                  </div>
 
+                  {/* Right Side Actions */}
+                  <div className='ml-6 flex items-center gap-3'>
+                    {/* Search Button */}
+                    <Tooltip content='Open advanced search' placement='bottom' delay={500}>
+                      <Button
+                        variant='bordered'
+                        size='md'
+                        color='primary'
+                        onPress={handleSearchToggle}
+                        className='group tap-highlight-transparent data-[focus-visible=true]:outline-focus text-medium rounded-large transition-transform-colors-opacity bg-primary-50 hover:bg-primary-100 hover:shadow-medium border-primary/20 relative z-0 box-border inline-flex h-12 min-w-24 transform-gpu cursor-pointer appearance-none items-center justify-center gap-3 overflow-hidden px-6 font-normal whitespace-nowrap subpixel-antialiased outline-hidden select-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-offset-2 data-[pressed=true]:scale-[0.97] motion-reduce:transition-none [&>svg]:max-w-[theme(spacing.8)]'
+                        startContent={<Icon icon='solar:magnifer-linear' className='h-4 w-4' />}
+                        as={motion.button}
+                        whileHover={{ scale: 1.02, y: -1 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        Search
+                      </Button>
+                    </Tooltip>
+                  </div>
                 </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )}
+
+              {isSearchExpanded && (
+                <motion.div
+                  key='search'
+                  initial={{
+                    opacity: 0,
+                    x: 100
+                  }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    transition: {
+                      duration: 0.3,
+                      ease: [0.25, 0.46, 0.45, 0.94]
+                    }
+                  }}
+                  exit={{
+                    opacity: 0,
+                    x: 100,
+                    transition: {
+                      duration: 0.2,
+                      ease: [0.4, 0.0, 0.2, 1]
+                    }
+                  }}
+                  className='flex w-full items-center justify-between px-2'
+                >
+                  {/* Expanded Search Input */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.2, delay: 0.1 }}
+                    className='flex-1 px-2'
+                  >
+                    <div
+                      className='group relative flex w-full flex-col justify-end data-[has-label=true]:mt-[calc(var(--heroui-font-size-small)_+_12px)] data-[hidden=true]:hidden'
+                      data-slot='base'
+                      data-filled='true'
+                      data-filled-within='true'
+                    >
+                      <div data-slot='main-wrapper' className='flex h-full flex-col'>
+                        <div
+                          data-slot='input-wrapper'
+                          className='tap-highlight-transparent bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 rounded-large transition-background group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-background relative inline-flex h-12 min-h-12 w-full flex-row items-center gap-3 px-3 shadow-xs outline-hidden !duration-150 group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-offset-2 motion-reduce:transition-none'
+                          style={{ cursor: 'text' }}
+                        >
+                          <div
+                            data-slot='inner-wrapper'
+                            className='box-border inline-flex h-full w-full items-center'
+                          >
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              xmlnsXlink='http://www.w3.org/1999/xlink'
+                              aria-hidden='true'
+                              role='img'
+                              className='iconify iconify--lucide text-slate-400'
+                              width='1em'
+                              height='1em'
+                              viewBox='0 0 24 24'
+                            >
+                              <g
+                                fill='none'
+                                stroke='currentColor'
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth='2'
+                              >
+                                <path d='m21 21l-4.34-4.34'></path>
+                                <circle cx='11' cy='11' r='8'></circle>
+                              </g>
+                            </svg>
+                            <input
+                              data-search-input
+                              data-slot='input'
+                              data-has-start-content='true'
+                              className='placeholder:text-foreground-500 text-medium group-data-[has-value=true]:text-default-foreground w-full bg-transparent bg-clip-text font-normal !outline-hidden file:cursor-pointer file:border-0 file:bg-transparent autofill:bg-transparent focus-visible:outline-hidden data-[has-end-content=true]:pe-1.5 data-[has-start-content=true]:ps-1.5 data-[type=color]:rounded-none'
+                              aria-label='Search by name, skills, or expertise...'
+                              placeholder='Search by name, skills, or expertise...'
+                              tabIndex={0}
+                              type='text'
+                              value={searchQuery}
+                              onChange={(e) => onSearchChange?.(e.target.value)}
+                              onKeyPress={handleSearchKeyPress}
+                              title=''
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Inline Action Buttons */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.2, delay: 0.15 }}
+                    className='ml-6 flex items-center gap-3 p-2'
+                  >
+                    {/* Execute Search Button */}
+                    <Tooltip content='Search now (Enter)' placement='bottom'>
+                      <Button
+                        isIconOnly
+                        color='primary'
+                        variant='solid'
+                        size='lg'
+                        onPress={() => {
+                          onSearch?.();
+                          setIsSearchExpanded(false);
+                        }}
+                        className='hover:shadow-medium font-medium transition-all'
+                        as={motion.button}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Icon icon='solar:magnifer-linear' className='h-5 w-5' />
+                      </Button>
+                    </Tooltip>
+
+                    {/* Clear Close Button */}
+                    <Tooltip
+                      content={
+                        <div className='text-center'>
+                          <div>Close search</div>
+                          <div className='text-tiny opacity-70'>ESC</div>
+                        </div>
+                      }
+                      placement='bottom'
+                    >
+                      <Button
+                        isIconOnly
+                        color='danger'
+                        variant='bordered'
+                        size='lg'
+                        onPress={handleSearchClose}
+                        className='bg-danger/5 border-danger/30 hover:bg-danger/15 hover:border-danger/60 hover:shadow-medium transition-all duration-200'
+                        as={motion.button}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Icon icon='solar:close-circle-bold' className='text-danger h-5 w-5' />
+                      </Button>
+                    </Tooltip>
+                  </motion.div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Filter Button - Always visible on the right */}
-          <div className='flex items-center h-[80px] pr-2'>
+          <div className='flex h-[80px] items-center pr-2'>
             <Tooltip content='Toggle advanced filters' placement='bottom' delay={500}>
               <Button
-                variant={showFilters ? 'solid' : 'bordered'}
+                variant='solid'
                 size='md'
-                color={showFilters ? 'secondary' : 'default'}
-                onPress={onToggleFilters}
-                className={`font-semibold transition-all duration-300 ${
-                  showFilters 
-                    ? 'shadow-medium' 
-                    : 'bg-default-50 hover:bg-default-100 hover:shadow-small'
-                }`}
-                startContent={
-                  <div className='relative'>
-                    <Icon 
-                      icon='solar:filter-linear' 
-                      className='h-4 w-4 transition-colors duration-200'
-                    />
-                    {filtersCount > 0 && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className='absolute -top-2 -right-2 bg-danger text-danger-foreground rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold shadow-small border-2 border-background'
-                      >
-                        {filtersCount}
-                      </motion.div>
-                    )}
-                  </div>
-                }
-                as={motion.button}
-                whileHover={{ scale: 1.02, y: -1 }}
-                whileTap={{ scale: 0.98 }}
+                color='primary'
+                onPress={() => {
+                  console.log('Desktop filter button clicked, current showFilters:', showFilters);
+                  onToggleFilters?.();
+                }}
+                className={`text-medium rounded-large transition-transform-colors-opacity bg-primary text-primary-foreground data-[hover=true]:opacity-hover h-12 min-w-24 gap-3 px-6 motion-reduce:transition-none`}
+                startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
               >
-                Filters
+                {t('talentPool.filters.button')}
+                {filtersCount > 0 && (
+                  <div className='relative inline-flex shrink-0'>
+                    •
+                    <span className='font-regular text-tiny transition-transform-opacity !ease-soft-spring border-background bg-danger text-danger-foreground absolute top-[5%] right-[5%] z-10 box-border flex h-3 min-h-3 w-3 min-w-3 origin-center translate-x-1/2 -translate-y-1/2 scale-100 flex-wrap place-content-center items-center rounded-full border-2 px-1 whitespace-nowrap subpixel-antialiased opacity-100 !duration-300 select-none data-[invisible=true]:scale-0 data-[invisible=true]:opacity-0'></span>
+                  </div>
+                )}
               </Button>
             </Tooltip>
           </div>
@@ -383,34 +364,84 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
       <div className='block sm:hidden'>
         <div className='space-y-3'>
           {/* Mobile Search Bar */}
-          <div className='bg-background/80 border-divider/50 backdrop-blur-md rounded-2xl border p-3 shadow-small'>
-            <Input
-              placeholder={t('talentPool.search.placeholder')}
-              value={searchQuery}
-              onChange={(e) => onSearchChange?.(e.target.value)}
-              onKeyPress={handleSearchKeyPress}
-              startContent={
-                <Icon icon="solar:magnifer-linear" className="text-primary h-4 w-4" />
-              }
-              endContent={
-                searchQuery && (
-                  <Button
-                    isIconOnly
-                    size='sm'
-                    variant='light'
-                    onPress={() => onSearchChange?.('')}
-                    className='h-6 w-6 min-w-6'
-                  >
-                    <Icon icon='solar:close-circle-linear' className='h-4 w-4' />
-                  </Button>
-                )
-              }
-              size='md'
-              variant='flat'
-              classNames={{
-                inputWrapper: 'bg-background/60'
-              }}
-            />
+          <div className='bg-background/80 border-divider/50 shadow-small rounded-2xl border p-3 backdrop-blur-md'>
+            <div className='flex flex-col gap-4 md:flex-row'>
+              <div className='flex-1'>
+                <div
+                  className='group relative flex w-full flex-col justify-end data-[has-label=true]:mt-[calc(var(--heroui-font-size-small)_+_12px)] data-[hidden=true]:hidden'
+                  data-slot='base'
+                  data-filled='true'
+                  data-filled-within='true'
+                >
+                  <div data-slot='main-wrapper' className='flex h-full flex-col'>
+                    <div
+                      data-slot='input-wrapper'
+                      className='tap-highlight-transparent bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100 rounded-large transition-background group-data-[focus-visible=true]:ring-focus group-data-[focus-visible=true]:ring-offset-background relative inline-flex h-12 min-h-12 w-full flex-row items-center gap-3 px-3 shadow-xs outline-hidden !duration-150 group-data-[focus-visible=true]:z-10 group-data-[focus-visible=true]:ring-2 group-data-[focus-visible=true]:ring-offset-2 motion-reduce:transition-none'
+                      style={{ cursor: 'text' }}
+                    >
+                      <div
+                        data-slot='inner-wrapper'
+                        className='box-border inline-flex h-full w-full items-center'
+                      >
+                        <svg
+                          xmlns='http://www.w3.org/2000/svg'
+                          xmlnsXlink='http://www.w3.org/1999/xlink'
+                          aria-hidden='true'
+                          role='img'
+                          className='iconify iconify--lucide text-slate-400'
+                          width='1em'
+                          height='1em'
+                          viewBox='0 0 24 24'
+                        >
+                          <g
+                            fill='none'
+                            stroke='currentColor'
+                            strokeLinecap='round'
+                            strokeLinejoin='round'
+                            strokeWidth='2'
+                          >
+                            <path d='m21 21l-4.34-4.34'></path>
+                            <circle cx='11' cy='11' r='8'></circle>
+                          </g>
+                        </svg>
+                        <input
+                          data-slot='input'
+                          data-has-start-content='true'
+                          className='placeholder:text-foreground-500 text-medium group-data-[has-value=true]:text-default-foreground w-full bg-transparent bg-clip-text font-normal !outline-hidden file:cursor-pointer file:border-0 file:bg-transparent autofill:bg-transparent focus-visible:outline-hidden data-[has-end-content=true]:pe-1.5 data-[has-start-content=true]:ps-1.5 data-[type=color]:rounded-none'
+                          aria-label='Search by name, skills, or expertise...'
+                          placeholder='Search by name, skills, or expertise...'
+                          tabIndex={0}
+                          type='text'
+                          value={searchQuery}
+                          onChange={(e) => onSearchChange?.(e.target.value)}
+                          onKeyPress={handleSearchKeyPress}
+                          title=''
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Button
+                variant='solid'
+                size='md'
+                color='primary'
+                onPress={() => {
+                  console.log('Mobile filter button clicked, current showFilters:', showFilters);
+                  onToggleFilters?.();
+                }}
+                className='text-medium rounded-large transition-transform-colors-opacity bg-primary text-primary-foreground data-[hover=true]:opacity-hover h-12 min-w-24 gap-3 px-6 motion-reduce:transition-none'
+                startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
+              >
+                {t('talentPool.filters.button')}
+                {filtersCount > 0 && (
+                  <div className='relative inline-flex shrink-0'>
+                    •
+                    <span className='font-regular text-tiny transition-transform-opacity !ease-soft-spring border-background bg-danger text-danger-foreground absolute top-[5%] right-[5%] z-10 box-border flex h-3 min-h-3 w-3 min-w-3 origin-center translate-x-1/2 -translate-y-1/2 scale-100 flex-wrap place-content-center items-center rounded-full border-2 px-1 whitespace-nowrap subpixel-antialiased opacity-100 !duration-300 select-none data-[invisible=true]:scale-0 data-[invisible=true]:opacity-0'></span>
+                  </div>
+                )}
+              </Button>
+            </div>
             {searchQuery && (
               <div className='mt-2 flex justify-end'>
                 <Button

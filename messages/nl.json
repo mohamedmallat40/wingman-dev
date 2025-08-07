@@ -206,14 +206,61 @@
     "tabs": {
       "freelancers": "Freelancers",
       "agencies": "Bureaus",
-      "teams": "Teams"
+      "teams": "Teams",
+      "descriptions": {
+        "freelancers": "Individuele professionals",
+        "agencies": "Professionele bureaus",
+        "teams": "Samenwerkingsgroepen"
+      }
     },
     "search": {
-      "placeholder": "Zoek op naam, vaardigheden of locatie...",
-      "noResults": "Geen resultaten gevonden",
-      "filters": "Filters",
-      "reset": "Filters Resetten",
-      "apply": "Filters Toepassen"
+      "button": "Zoeken",
+      "placeholder": "Zoek op naam, vaardigheden of expertise...",
+      "tooltip": "Nu zoeken (Enter)",
+      "noResults": "Geen resultaten gevonden"
+    },
+    "filters": {
+      "button": "Filters",
+      "active": "Actief:",
+      "clearAll": "Alles Wissen",
+      "resetAll": "Alles Resetten",
+      "cancel": "Annuleren",
+      "apply": "Filters Toepassen",
+      "advanced": {
+        "title": "Geavanceerde Filters",
+        "description": "Verfijn uw zoekcriteria"
+      },
+      "categories": {
+        "location": "Locatie",
+        "profession": "Type Beroep",
+        "availability": "Beschikbaarheid",
+        "experience": "Ervaringsniveau"
+      },
+      "country": {
+        "placeholder": "Landen zoeken...",
+        "selectAll": "Selecteer alle {continent}",
+        "clearAll": "Alles wissen",
+        "selected": "{count, plural, one {# land} other {# landen}} geselecteerd"
+      }
+    },
+    "profession": {
+      "freelancer": "Freelancer",
+      "interim": "Interim",
+      "consultant": "Consultant",
+      "studentEntrepreneur": "Student ondernemer"
+    },
+    "experience": {
+      "junior": "Junior",
+      "midLevel": "Middenniveau",
+      "senior": "Senior",
+      "lead": "Lead",
+      "descriptions": {
+        "junior": "0-2 jaar ervaring",
+        "midLevel": "2-5 jaar ervaring",
+        "senior": "5-10 jaar ervaring",
+        "lead": "10+ jaar ervaring"
+      },
+      "selected": "{count, plural, one {# niveau} other {# niveaus}} geselecteerd"
     },
     "cards": {
       "viewProfile": "Profiel Bekijken",

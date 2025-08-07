@@ -2,30 +2,21 @@
 
 import React from 'react';
 
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-  Tooltip
-} from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Chip, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { type TalentCardProps } from '../types';
 import {
-  getAvailabilityConfig,
-  getWorkTypeConfig,
   formatRate,
-  getCountryFlag,
-  mapUserType,
+  getAvailabilityConfig,
   getUserInitials,
-  truncateText,
-  stripHtml
+  getWorkTypeConfig,
+  mapUserType,
+  stripHtml,
+  truncateText
 } from '../utils/talent-utils';
-
 
 const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect }) => {
   const t = useTranslations();
@@ -117,9 +108,13 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   <div className='flex flex-wrap items-center gap-2'>
                     <p className='text-medium text-foreground-600 truncate font-medium'>
                       {profession &&
-                      !['FULL_TIME_FREELANCER', 'PART_TIME_FREELANCER', 'STUDENT', 'FREELANCER', 'AGENCY'].includes(
-                        profession
-                      )
+                      ![
+                        'FULL_TIME_FREELANCER',
+                        'PART_TIME_FREELANCER',
+                        'STUDENT',
+                        'FREELANCER',
+                        'AGENCY'
+                      ].includes(profession)
                         ? profession
                         : mapUserType(profession || user.kind || 'FREELANCER', t)}
                     </p>
@@ -159,10 +154,10 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                       icon='solar:map-point-linear'
                       className='text-foreground-400 h-3.5 w-3.5'
                     />
-                    <span className='text-small text-foreground-500 font-medium flex items-center gap-2'>
+                    <span className='text-small text-foreground-500 flex items-center gap-2 font-medium'>
                       {city}
                       {region && (
-                        <img 
+                        <img
                           src={`https://flagcdn.com/16x12/${region.toLowerCase()}.png`}
                           alt={`${region} flag`}
                           className='h-3 w-4 rounded-sm shadow-sm'
@@ -173,7 +168,8 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                             const parent = target.parentElement;
                             if (parent && !parent.querySelector('.country-badge')) {
                               const badge = document.createElement('div');
-                              badge.className = 'country-badge inline-flex h-3 w-6 items-center justify-center rounded-sm bg-gradient-to-br from-primary-100 to-primary-200 text-xs font-bold text-primary-800 shadow-sm';
+                              badge.className =
+                                'country-badge inline-flex h-3 w-6 items-center justify-center rounded-sm bg-gradient-to-br from-primary-100 to-primary-200 text-xs font-bold text-primary-800 shadow-sm';
                               badge.textContent = region.toUpperCase();
                               badge.title = region;
                               parent.appendChild(badge);
@@ -190,9 +186,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                 <div className='flex flex-wrap items-center gap-2'>
                   {workType && (
                     <Chip
-                      startContent={
-                        <Icon icon={workTypeConfig.icon} className='h-3 w-3' />
-                      }
+                      startContent={<Icon icon={workTypeConfig.icon} className='h-3 w-3' />}
                       variant='flat'
                       color={workTypeConfig.color}
                       size='sm'
@@ -231,7 +225,9 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
               </p>
             ) : (
               <div className='py-4 text-center'>
-                <p className='text-small text-foreground-500'>{t('talentPool.cards.noAboutAvailable')}</p>
+                <p className='text-small text-foreground-500'>
+                  {t('talentPool.cards.noAboutAvailable')}
+                </p>
               </div>
             )}
           </div>
@@ -269,7 +265,9 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
               </div>
             ) : (
               <div className='py-4 text-center'>
-                <p className='text-small text-foreground-500'>{t('talentPool.cards.noSkillsListed')}</p>
+                <p className='text-small text-foreground-500'>
+                  {t('talentPool.cards.noSkillsListed')}
+                </p>
               </div>
             )}
           </div>
@@ -282,8 +280,12 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   <Icon icon='solar:calendar-linear' className='text-primary h-4 w-4' />
                 </div>
               </div>
-              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.experience')}</p>
-              <p className='text-small text-foreground font-bold'>{experienceYears || 0} {t('talentPool.cards.yearsExperience')}</p>
+              <p className='text-tiny text-foreground-500 font-medium'>
+                {t('talentPool.cards.experience')}
+              </p>
+              <p className='text-small text-foreground font-bold'>
+                {experienceYears || 0} {t('talentPool.cards.yearsExperience')}
+              </p>
             </div>
 
             <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-3 text-center backdrop-blur-sm'>
@@ -292,7 +294,9 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   <Icon icon='solar:dollar-minimalistic-linear' className='text-success h-4 w-4' />
                 </div>
               </div>
-              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.rate')}</p>
+              <p className='text-tiny text-foreground-500 font-medium'>
+                {t('talentPool.cards.rate')}
+              </p>
               <p className='text-small text-foreground font-bold'>{rate}</p>
             </div>
 
@@ -302,8 +306,12 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   <Icon icon='solar:verified-check-linear' className='text-secondary h-4 w-4' />
                 </div>
               </div>
-              <p className='text-tiny text-foreground-500 font-medium'>{t('talentPool.cards.skills')}</p>
-              <p className='text-small text-foreground font-bold'>{skills?.length || 0} {t('talentPool.cards.skillsCount')}</p>
+              <p className='text-tiny text-foreground-500 font-medium'>
+                {t('talentPool.cards.skills')}
+              </p>
+              <p className='text-small text-foreground font-bold'>
+                {skills?.length || 0} {t('talentPool.cards.skillsCount')}
+              </p>
             </div>
           </div>
         </CardBody>

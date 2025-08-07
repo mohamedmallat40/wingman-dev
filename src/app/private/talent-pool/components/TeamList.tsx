@@ -2,15 +2,18 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Button, Skeleton, Spinner } from '@heroui/react';
-import { Icon } from '@iconify/react';
+import { Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import wingManApi from '@/lib/axios';
 
-import { type Group, type TalentPoolFilters, type TeamResponse } from '../types';
 import { getCountryNameFromCode } from '../data/countries';
+import { type Group, type TalentPoolFilters, type TeamResponse } from '../types';
 import GroupCard from './GroupCard';
+import EmptyState from './shared/EmptyState';
+import ErrorState from './shared/ErrorState';
+import LoadingSkeleton from './shared/LoadingSkeleton';
 
 interface TeamListProps {
   filters?: TalentPoolFilters;
@@ -19,69 +22,8 @@ interface TeamListProps {
   onCountChange?: (count: number) => void;
 }
 
-const LoadingSkeleton: React.FC = () => (
-  <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-    {Array.from({ length: 12 }).map((_, index) => (
-      <div key={index} className='space-y-3'>
-        <Skeleton className='h-96 w-full rounded-lg' />
-      </div>
-    ))}
-  </div>
-);
-
-const EmptyState: React.FC<{ onReset: () => void }> = ({ onReset }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className='py-16 text-center'
-  >
-    <div className='mb-6'>
-      <Icon
-        icon='solar:users-group-rounded-linear'
-        className='text-default-300 mx-auto mb-4 h-24 w-24'
-      />
-      <h3 className='text-default-700 mb-2 text-xl font-semibold'>No teams found</h3>
-      <p className='text-default-500 mx-auto max-w-md'>
-        We couldn't find any teams matching your criteria. Try adjusting your filters or search
-        query.
-      </p>
-    </div>
-    <Button
-      color='primary'
-      variant='flat'
-      startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-      onPress={onReset}
-    >
-      Reset Filters
-    </Button>
-  </motion.div>
-);
-
-const ErrorState: React.FC<{ onRetry: () => void }> = ({ onRetry }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    className='py-16 text-center'
-  >
-    <div className='mb-6'>
-      <Icon icon='solar:danger-circle-linear' className='text-danger-300 mx-auto mb-4 h-24 w-24' />
-      <h3 className='text-default-700 mb-2 text-xl font-semibold'>Something went wrong</h3>
-      <p className='text-default-500 mx-auto max-w-md'>
-        We couldn't load the teams. Please try again.
-      </p>
-    </div>
-    <Button
-      color='danger'
-      variant='flat'
-      startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-      onPress={onRetry}
-    >
-      Try Again
-    </Button>
-  </motion.div>
-);
-
 const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, onCountChange }) => {
+  const t = useTranslations();
   const [teams, setTeams] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -175,7 +117,6 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
       setCurrentPage(data.meta.currentPage);
       setHasNextPage(data.meta.currentPage < data.meta.totalPages);
     } catch (err) {
-      console.error('Error fetching teams:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch teams');
     } finally {
       if (!append) {
@@ -208,16 +149,7 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
       (entries) => {
         const entry = entries[0];
         if (!entry) return;
-        console.log(
-          'Team sentinel intersecting:',
-          entry.isIntersecting,
-          'hasNextPage:',
-          hasNextPage,
-          'isLoadingMore:',
-          isLoadingMore
-        );
         if (entry.isIntersecting && hasNextPage && !isLoadingMore && !isLoading) {
-          console.log('Loading more teams...');
           loadMore();
         }
       },
@@ -249,25 +181,28 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
   };
 
   const handleViewTeam = (teamId: string) => {
-    console.log('View team:', teamId);
     onViewTeam?.(teamId);
   };
 
   const handleJoinTeam = async (teamId: string) => {
     try {
-      // Simulate API call
-      console.log('Joining team:', teamId);
       onJoinTeam?.(teamId);
 
       // You could update local state here if needed
       // For example, increment member count or show joined state
     } catch (err) {
-      console.error('Error joining team:', err);
+      // Handle join error silently
     }
   };
 
   if (error) {
-    return <ErrorState onRetry={handleRetry} />;
+    return (
+      <ErrorState
+        titleKey='talentPool.errorStates.teams.title'
+        descriptionKey='talentPool.errorStates.teams.description'
+        onRetry={handleRetry}
+      />
+    );
   }
 
   if (isLoading) {
@@ -275,7 +210,14 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
   }
 
   if (teams.length === 0) {
-    return <EmptyState onReset={handleResetFilters} />;
+    return (
+      <EmptyState
+        icon='solar:users-group-rounded-linear'
+        titleKey='talentPool.emptyStates.teams.title'
+        descriptionKey='talentPool.emptyStates.teams.description'
+        onReset={handleResetFilters}
+      />
+    );
   }
 
   return (
@@ -287,9 +229,13 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
             key={team.id}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ 
-              duration: 0.2, 
-              delay: isInitialLoad ? index * 0.02 : (index >= previousCount ? (index - previousCount) * 0.02 : 0) 
+            transition={{
+              duration: 0.2,
+              delay: isInitialLoad
+                ? index * 0.02
+                : index >= previousCount
+                  ? (index - previousCount) * 0.02
+                  : 0
             }}
           >
             <GroupCard group={team} onViewTeam={handleViewTeam} onJoinTeam={handleJoinTeam} />
@@ -303,11 +249,11 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
           {isLoadingMore ? (
             <div className='text-foreground-500 flex items-center gap-2'>
               <Spinner size='sm' color='primary' />
-              <span className='text-small'>Loading more teams...</span>
+              <span className='text-small'>{t('talentPool.loading.more.teams')}</span>
             </div>
           ) : (
             <div className='text-foreground-400 text-center'>
-              <span className='text-small'>Scroll to load more...</span>
+              <span className='text-small'>{t('talentPool.loading.scrollToLoad')}</span>
             </div>
           )}
         </div>

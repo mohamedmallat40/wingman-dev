@@ -29,7 +29,10 @@ const ErrorState: React.FC<ErrorStateProps> = ({
       className='py-16 text-center'
     >
       <div className='mb-6'>
-        <Icon icon='solar:danger-circle-linear' className='text-danger-300 mx-auto mb-4 h-24 w-24' />
+        <Icon
+          icon='solar:danger-circle-linear'
+          className='text-danger-300 mx-auto mb-4 h-24 w-24'
+        />
         <h3 className='text-default-700 mb-2 text-xl font-semibold'>{t(titleKey)}</h3>
         <p className='text-default-500 mx-auto max-w-md'>{t(descriptionKey)}</p>
       </div>

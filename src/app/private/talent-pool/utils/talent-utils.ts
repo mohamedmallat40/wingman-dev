@@ -105,7 +105,6 @@ const COUNTRY_FLAGS: Record<string, string> = {
 export const getCountryFlag = (region: string | null): string => {
   if (!region) return '🌍';
   const flag = COUNTRY_FLAGS[region.toUpperCase()];
-  console.log('Region:', region, 'Flag:', flag); // Debug log
   return flag || region; // Fallback to region code if flag not found
 };
 
