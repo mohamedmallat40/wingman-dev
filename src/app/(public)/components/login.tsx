@@ -105,9 +105,6 @@ export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginMo
 
     // Simulate API call to send reset email
     try {
-      console.log('Sending password reset email to:', resetEmail);
-      // Replace with actual API call
-      // await sendPasswordResetEmail(resetEmail);
       setResetSent(true);
     } catch (error) {
       setError('Failed to send reset email. Please try again.');

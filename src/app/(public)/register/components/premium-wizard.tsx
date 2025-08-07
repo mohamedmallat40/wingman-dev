@@ -283,6 +283,31 @@ export default function PremiumWizard() {
     form.registerUser(transformedData);
   };
 
+  const handleOAuthComplete = (oauthData: { isCompleted: boolean; user: any }) => {
+    if (oauthData.isCompleted) {
+      return;
+    }
+
+    // User needs to complete registration, populate form with OAuth data
+    const updatedRegistrationData: Partial<RegistrationData> = {
+      ...registrationData,
+      email: oauthData.data.user.email ?? '',
+      firstName: oauthData.user.firstName ?? '',
+      lastName: oauthData.user.lastName ?? '',
+      // Skip password requirement for OAuth users
+      password: `oauth-user-${oauthData.user?.id?.slice(0, -13)}`
+    };
+
+    setRegistrationData(updatedRegistrationData);
+
+    // Move to next step (category selection) since credentials are filled via OAuth
+    const nextStepIndex = getNextValidStep(currentStep);
+    if (nextStepIndex !== -1) {
+      setDirection(1);
+      setCurrentStep(nextStepIndex);
+    }
+  };
+
   const renderStepContent = () => {
     const stepId = steps[currentStep]?.id;
 
@@ -299,6 +324,7 @@ export default function PremiumWizard() {
             }}
             showButtons={false}
             onFormDataChange={setCurrentFormData}
+            onOAuthComplete={handleOAuthComplete}
           />
         );
       }
@@ -564,12 +590,12 @@ export default function PremiumWizard() {
                         className={`flex items-center gap-4 rounded-[16px] p-4 transition-all duration-500 ${
                           isCurrentStep
                             ? 'bg-primary/10 border-primary/20 border'
-                            : (isStepCompleted
+                            : isStepCompleted
                               ? 'from-primary/5 to-primary/10 border-primary/15 border bg-gradient-to-r'
-                              : 'bg-default-50 dark:bg-default-100/20')
+                              : 'bg-default-50 dark:bg-default-100/20'
                         }`}
                         animate={{
-                          scale: isCurrentStep ? 1.02 : (isStepCompleted ? 1.01 : 1),
+                          scale: isCurrentStep ? 1.02 : isStepCompleted ? 1.01 : 1,
                           opacity: isCurrentStep || isStepCompleted ? 1 : 0.6
                         }}
                         transition={{
@@ -584,9 +610,9 @@ export default function PremiumWizard() {
                           className={`relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-[14px] font-bold transition-all duration-500 ${
                             isCurrentStep
                               ? 'bg-primary text-white shadow-lg'
-                              : (isStepCompleted
+                              : isStepCompleted
                                 ? 'from-primary to-primary-600 bg-gradient-to-br text-white shadow-lg'
-                                : 'bg-default-100 text-default-500')
+                                : 'bg-default-100 text-default-500'
                           }`}
                           animate={{
                             scale: isStepCompleted ? 1.05 : 1
@@ -636,9 +662,9 @@ export default function PremiumWizard() {
                             className={`font-semibold tracking-[0.02em] transition-all duration-500 ${
                               isCurrentStep
                                 ? 'text-primary'
-                                : (isStepCompleted
+                                : isStepCompleted
                                   ? 'text-primary font-bold'
-                                  : 'text-foreground')
+                                  : 'text-foreground'
                             }`}
                           >
                             {t(step.titleKey)}
@@ -647,9 +673,9 @@ export default function PremiumWizard() {
                             className={`text-sm transition-all duration-500 ${
                               isCurrentStep
                                 ? 'text-primary/80'
-                                : (isStepCompleted
+                                : isStepCompleted
                                   ? 'text-primary/70 font-medium'
-                                  : 'text-default-500')
+                                  : 'text-default-500'
                             }`}
                           >
                             {isStepCompleted ? t('completed') : t(step.subtitleKey)}

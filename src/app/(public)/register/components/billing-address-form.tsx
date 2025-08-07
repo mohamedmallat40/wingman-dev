@@ -89,9 +89,7 @@ const getFallbackCountries = (locale: 'en' | 'fr' | 'nl') => {
 
 const getCountryList = (locale: 'en' | 'fr' | 'nl') => {
   try {
-    console.log('Loading countries for locale:', locale);
     const names = countries.getNames(locale, { select: 'official' });
-    console.log('Raw country names:', Object.keys(names).length);
 
     if (!names || Object.keys(names).length === 0) {
       console.warn('No countries loaded from i18n, using fallback');
@@ -107,7 +105,6 @@ const getCountryList = (locale: 'en' | 'fr' | 'nl') => {
       .sort((a, b) => a.name.localeCompare(b.name));
   } catch (error) {
     console.error('Error loading countries:', error);
-    console.log('Using fallback countries for locale:', locale);
     return getFallbackCountries(locale);
   }
 };
@@ -421,7 +418,6 @@ export default function BillingAddressForm({
           placeholder={getPlaceholderText(locale)}
           selectedKey={selectedCountryCode || null}
           onSelectionChange={(key) => {
-            console.log('Selected country:', key);
             if (key) {
               updateAddress('countryCode', key as string);
               setVatError('');

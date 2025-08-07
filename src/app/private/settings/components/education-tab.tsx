@@ -178,8 +178,6 @@ export default function EducationTab({ user, educations }: Readonly<EducationTab
 
     // Check if there are actually changes to save
     if (Object.keys(changedFields).length <= 1) {
-      // Only has ID
-      console.log('No changes to save');
       return;
     }
 

@@ -210,8 +210,6 @@ export default function ServicesTab({ user, services }: Readonly<ServicesTabProp
 
     // Check if there are actually changes to save
     if (Object.keys(changedFields).length <= 1) {
-      // Only has ID
-      console.log('No changes to save');
       return;
     }
 
@@ -288,8 +286,7 @@ export default function ServicesTab({ user, services }: Readonly<ServicesTabProp
   };
 
   const onError = (errors: unknown) => {
-    console.log('=== FORM VALIDATION ERRORS ===');
-    console.log('Form errors:', errors);
+    console.error('Form errors:', errors);
   };
 
   // Determine if save button should be shown and enabled

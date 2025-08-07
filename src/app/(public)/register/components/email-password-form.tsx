@@ -7,9 +7,18 @@ import type React from 'react';
 import { Button, Divider, Input } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import useOAuth from '@root/modules/auth/hooks/use-oauth';
+import { type IUserProfile } from '@root/modules/profile/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
+interface OAuthResponse {
+  success: boolean;
+  data?: {
+    user: IUserProfile;
+    token: string;
+  };
+  error?: string;
+}
 interface EmailPasswordFormProperties {
   onComplete: (data: {
     email: string;
@@ -20,6 +29,7 @@ interface EmailPasswordFormProperties {
   initialData: { email: string; password: string; firstName: string; lastName: string };
   showButtons?: boolean;
   onFormDataChange?: (data: any) => void;
+  onOAuthComplete?: (userData: { isCompleted: boolean; user: IUserProfile }) => void; // Add this prop
 }
 
 const validateEmail = (email: string) => {
@@ -35,7 +45,8 @@ export default function EmailPasswordForm({
   onComplete,
   initialData,
   showButtons = true,
-  onFormDataChange
+  onFormDataChange,
+  onOAuthComplete
 }: Readonly<EmailPasswordFormProperties>) {
   const [email, setEmail] = useState(initialData.email);
   const [password, setPassword] = useState(initialData.password);
@@ -44,6 +55,7 @@ export default function EmailPasswordForm({
   const [lastName, setLastName] = useState(initialData.lastName);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [isOAuthUser, setIsOAuthUser] = useState(false);
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
@@ -128,6 +140,40 @@ export default function EmailPasswordForm({
     }
   }, [firstName, lastName, email, password, confirmPassword, onFormDataChange]);
 
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await loginWithGoogle();
+      if (result && !result.isCompleted) {
+        setIsOAuthUser(true);
+        // Pre-fill form with OAuth data
+        setEmail(result.user.email || '');
+        setFirstName(result.user.firstName || '');
+        setLastName(result.user.lastName || '');
+      }
+      if (onOAuthComplete && result) {
+        onOAuthComplete(result);
+      }
+    } catch (error) {
+      console.error('Google OAuth failed:', error);
+    }
+  };
+  const handleLinkedInLogin = async () => {
+    try {
+      const result = await loginWithLinkedIn();
+      if (result && !result.isCompleted) {
+        setIsOAuthUser(true);
+        // Pre-fill form with OAuth data
+        setEmail(result.user.email || '');
+        setFirstName(result.user.firstName || '');
+        setLastName(result.user.lastName || '');
+      }
+      if (onOAuthComplete && result) {
+        onOAuthComplete(result);
+      }
+    } catch (error) {
+      console.error('Google OAuth failed:', error);
+    }
+  };
   return (
     <div className='flex h-full flex-col'>
       <div className='flex-1 space-y-6 pb-8'>
@@ -143,7 +189,7 @@ export default function EmailPasswordForm({
             fullWidth
             startContent={<Icon icon='flat-color-icons:google' width={20} />}
             variant='bordered'
-            onPress={loginWithGoogle}
+            onPress={handleGoogleLogin}
             isLoading={isGoogleLoading}
           >
             {isGoogleLoading ? t('connecting') : t('continueWithGoogle')}
@@ -154,11 +200,23 @@ export default function EmailPasswordForm({
             fullWidth
             startContent={<Icon icon='skill-icons:linkedin' width={20} />}
             variant='bordered'
-            onPress={loginWithLinkedIn}
+            onPress={handleLinkedInLogin}
             isLoading={isLinkedInLoading}
           >
             {isLinkedInLoading ? t('connecting') : t('continueWithLinkedIn')}
           </Button>
+          {isOAuthUser && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className='bg-success-50 border-success-200 mb-4 flex items-center gap-2 rounded-lg border p-3'
+            >
+              <Icon icon='solar:check-circle-bold' className='text-success h-4 w-4' />
+              <p className='text-success-700 text-sm font-medium'>
+                Successfully authenticated! Please complete your registration.
+              </p>
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Divider */}
@@ -191,7 +249,7 @@ export default function EmailPasswordForm({
                 onChange={(event: { target: { value: React.SetStateAction<string> } }) => {
                   setFirstName(event.target.value);
                   if (errors.firstName) {
-                    setErrors((prev) => ({ ...prev, firstName: undefined }));
+                    setErrors((previous) => ({ ...previous, firstName: undefined }));
                   }
                 }}
                 isInvalid={!!errors.firstName}
@@ -244,7 +302,7 @@ export default function EmailPasswordForm({
                 onChange={(event: { target: { value: React.SetStateAction<string> } }) => {
                   setLastName(event.target.value);
                   if (errors.lastName) {
-                    setErrors((prev) => ({ ...prev, lastName: undefined }));
+                    setErrors((previous) => ({ ...previous, lastName: undefined }));
                   }
                 }}
                 isInvalid={!!errors.lastName}
@@ -298,7 +356,7 @@ export default function EmailPasswordForm({
               onChange={(event: { target: { value: React.SetStateAction<string> } }) => {
                 setEmail(event.target.value);
                 if (errors.email) {
-                  setErrors((prev) => ({ ...prev, email: undefined }));
+                  setErrors((previous) => ({ ...previous, email: undefined }));
                 }
               }}
               isInvalid={!!errors.email}
@@ -351,7 +409,7 @@ export default function EmailPasswordForm({
               onChange={(event: { target: { value: React.SetStateAction<string> } }) => {
                 setPassword(event.target.value);
                 if (errors.password) {
-                  setErrors((prev) => ({ ...prev, password: undefined }));
+                  setErrors((previous) => ({ ...previous, password: undefined }));
                 }
               }}
               isInvalid={!!errors.password}
@@ -378,7 +436,9 @@ export default function EmailPasswordForm({
                   size='sm'
                   type='button'
                   variant='light'
-                  onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                  onPress={() => {
+                    setIsPasswordVisible(!isPasswordVisible);
+                  }}
                 >
                   {isPasswordVisible ? (
                     <Icon className='pointer-events-none text-xl' icon='solar:eye-closed-linear' />
@@ -421,7 +481,7 @@ export default function EmailPasswordForm({
               onChange={(event: { target: { value: React.SetStateAction<string> } }) => {
                 setConfirmPassword(event.target.value);
                 if (errors.confirmPassword) {
-                  setErrors((prev) => ({ ...prev, confirmPassword: undefined }));
+                  setErrors((previous) => ({ ...previous, confirmPassword: undefined }));
                 }
               }}
               isInvalid={!!errors.confirmPassword}
@@ -448,7 +508,9 @@ export default function EmailPasswordForm({
                   size='sm'
                   type='button'
                   variant='light'
-                  onPress={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
+                  onPress={() => {
+                    setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
+                  }}
                 >
                   {isConfirmPasswordVisible ? (
                     <Icon className='pointer-events-none text-xl' icon='solar:eye-closed-linear' />

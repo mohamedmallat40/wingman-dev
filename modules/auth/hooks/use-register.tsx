@@ -54,7 +54,6 @@ const useRegister = () => {
     onSuccess: (responseData: {
       data: { status: number; token?: string; user?: unknown; message: string };
     }) => {
-      console.log('Registration successful:', responseData.data);
       if (responseData.data.status >= 200 && responseData.data.status < 300) {
         router.push('/');
         addToast({
@@ -76,7 +75,6 @@ const useRegister = () => {
       }
     },
     onError: (error: Error) => {
-      console.log('Registration failed:', error);
       addToast({
         title: 'Registration Failed',
         description: error.message,
