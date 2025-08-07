@@ -249,6 +249,8 @@
     },
     "userTypes": {
       "freelancer": "Freelancer",
+      "fullTimeFreelancer": "Fulltime freelancer",
+      "partTimeFreelancer": "Parttime freelancer",
       "agency": "Bureau",
       "student": "Student"
     },

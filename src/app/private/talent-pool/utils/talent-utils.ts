@@ -111,7 +111,8 @@ export const getCountryFlag = (region: string | null): string => {
 
 // User type mapping with i18n keys
 const USER_TYPE_MAP = {
-  FULL_TIME_FREELANCER: 'talentPool.userTypes.freelancer',
+  FULL_TIME_FREELANCER: 'talentPool.userTypes.fullTimeFreelancer',
+  PART_TIME_FREELANCER: 'talentPool.userTypes.partTimeFreelancer',
   STUDENT: 'talentPool.userTypes.student', 
   FREELANCER: 'talentPool.userTypes.freelancer',
   AGENCY: 'talentPool.userTypes.agency'
@@ -122,10 +123,23 @@ export const mapUserType = (userType: UserKind | string, t?: (key: string) => st
   if (translationKey && t) {
     return t(translationKey);
   }
-  // Fallback for unknown types or when no translation function is provided
-  return translationKey 
-    ? (userType === 'STUDENT' ? 'Student' : 'Freelancer') 
-    : userType.toLowerCase().replace(/_/g, ' ');
+  
+  // Fallback for when no translation function is provided
+  switch (userType) {
+    case 'FULL_TIME_FREELANCER':
+      return 'Full time freelancer';
+    case 'PART_TIME_FREELANCER':
+      return 'Part time freelancer';
+    case 'STUDENT':
+      return 'Student';
+    case 'FREELANCER':
+      return 'Freelancer';
+    case 'AGENCY':
+      return 'Agency';
+    default:
+      // Format unknown types by replacing underscores and capitalizing
+      return userType.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
 };
 
 // Generate user initials for avatar fallback

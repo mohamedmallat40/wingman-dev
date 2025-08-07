@@ -117,7 +117,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                   <div className='flex flex-wrap items-center gap-2'>
                     <p className='text-medium text-foreground-600 truncate font-medium'>
                       {profession &&
-                      !['FULL_TIME_FREELANCER', 'STUDENT', 'FREELANCER', 'AGENCY'].includes(
+                      !['FULL_TIME_FREELANCER', 'PART_TIME_FREELANCER', 'STUDENT', 'FREELANCER', 'AGENCY'].includes(
                         profession
                       )
                         ? profession

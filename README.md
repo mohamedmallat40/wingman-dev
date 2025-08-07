@@ -132,6 +132,7 @@ talent-pool/
 ├── talent-pool/          # Advanced talent discovery system
 ├── profile/              # User profile management
 ├── settings/             # Account settings with tabs
+├── broadcasts/           # Broadcast center for announcements
 ├── challenges/           # Challenge management
 ├── community/            # Social features
 ├── solutions/            # Solutions marketplace

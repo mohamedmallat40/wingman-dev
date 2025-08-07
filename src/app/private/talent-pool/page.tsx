@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 
-import { Button } from '@heroui/react';
+import { Button, Chip, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
+// Toast notifications - implement with your preferred toast library
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
@@ -14,8 +15,13 @@ import HeroTabs from './components/HeroTabs';
 import SearchAndFilters from './components/SearchAndFilters';
 import TeamList from './components/TeamList';
 import { type TalentPoolFilters, type TalentType } from './types';
+// import { useURLState, generateFilterDescription, validateURLComplexity } from './utils/url-state-manager';
 
 const TalentPoolPage: React.FC = () => {
+  // ============================================================================
+  // SIMPLIFIED STATE MANAGEMENT (URL features temporarily disabled)
+  // ============================================================================
+  
   const [activeTab, setActiveTab] = useState<TalentType>('freelancers');
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<TalentPoolFilters>({});
@@ -28,6 +34,10 @@ const TalentPoolPage: React.FC = () => {
     teams: 0
   });
 
+  // ============================================================================
+  // STANDARD EVENT HANDLERS
+  // ============================================================================
+
   const handleTabChange = useCallback((tab: TalentType) => {
     setActiveTab(tab);
   }, []);
@@ -35,7 +45,8 @@ const TalentPoolPage: React.FC = () => {
   const handleSearch = useCallback(() => {
     setFilters((prev) => ({
       ...prev,
-      search: searchQuery.trim() || undefined
+      search: searchQuery.trim() || undefined,
+      name: searchQuery.trim() || undefined
     }));
   }, [searchQuery]);
 
@@ -119,6 +130,34 @@ const TalentPoolPage: React.FC = () => {
     }
   };
 
+  const getBreadcrumbs = () => {
+    const baseBreadcrumbs = [
+      { label: 'Home', href: '/private/dashboard', icon: 'solar:home-linear' },
+      { label: 'Talent Pool', href: '/private/talent-pool', icon: 'solar:users-group-rounded-linear' }
+    ];
+    
+    const tabLabels = {
+      freelancers: 'Freelancers',
+      agencies: 'Agencies', 
+      teams: 'Teams'
+    };
+    
+    const tabIcons = {
+      freelancers: 'solar:user-linear',
+      agencies: 'solar:buildings-linear',
+      teams: 'solar:users-group-rounded-linear'
+    };
+    
+    return [
+      ...baseBreadcrumbs,
+      { 
+        label: tabLabels[activeTab], 
+        icon: tabIcons[activeTab]
+      }
+    ];
+  };
+
+  // Simplified action items
   const actionItems = [
     {
       key: 'invite',
@@ -147,10 +186,7 @@ const TalentPoolPage: React.FC = () => {
       pageTitle='Talent Pool'
       pageDescription='Discover and connect with top professionals and teams'
       pageIcon='solar:users-group-rounded-linear'
-      breadcrumbs={[
-        { label: 'Home', href: '/private/dashboard', icon: 'solar:home-linear' },
-        { label: 'Talent Pool' }
-      ]}
+      breadcrumbs={getBreadcrumbs()}
       headerActions={
         <div className='flex items-center gap-2'>
           {actionItems.map((action) => (
