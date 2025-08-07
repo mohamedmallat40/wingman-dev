@@ -10,7 +10,7 @@ import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
-import { API_ROUTES } from '@/lib/api-routes';
+import { getBaseUrl } from '@/lib/utils/utilities';
 
 const Avatar = () => {
   const { profile, logout, isLoading } = useBasicProfile();
@@ -32,24 +32,28 @@ const Avatar = () => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
-          <div className='hidden flex-col items-end sm:flex min-w-0'>
-            <span className='text-foreground text-sm font-semibold capitalize tracking-tight'>
+          <div className='hidden min-w-0 flex-col items-end sm:flex'>
+            <span className='text-foreground text-sm font-semibold tracking-tight capitalize'>
               {profile?.firstName || ''} {profile?.lastName || ''}
             </span>
-            <span className='text-tiny text-foreground-500 max-w-48 truncate font-medium'>{profile?.email || ''}</span>
+            <span className='text-tiny text-foreground-500 max-w-48 truncate font-medium'>
+              {profile?.email || ''}
+            </span>
           </div>
 
           <HerouiAvatar
             isBordered
             as='button'
-            className='ring-primary/20 hover:ring-primary/40 ring-2 ring-offset-2 ring-offset-background transition-all duration-300 hover:scale-110 shadow-medium hover:shadow-large'
+            className='ring-primary/20 hover:ring-primary/40 ring-offset-background shadow-medium hover:shadow-large ring-2 ring-offset-2 transition-all duration-300 hover:scale-110'
             color='primary'
             name={`${profile?.firstName || ''} ${profile?.lastName || ''}` || 'User'}
             size='sm'
-            src={profile?.profileImage ? `https://app.extraexpertise.be/api/upload/${profile.profileImage}` : undefined}
+            src={
+              profile?.profileImage ? `${getBaseUrl()}/upload/${profile.profileImage}` : undefined
+            }
             showFallback
             fallback={
-              <div className="bg-gradient-to-br from-primary/20 to-secondary/20 w-full h-full flex items-center justify-center">
+              <div className='from-primary/20 to-secondary/20 flex h-full w-full items-center justify-center bg-gradient-to-br'>
                 <Icon icon='solar:user-bold' className='text-primary' width={18} />
               </div>
             }
@@ -64,7 +68,7 @@ const Avatar = () => {
       >
         <DropdownItem
           key='profile'
-          className='h-16 gap-3 opacity-100 rounded-lg hover:bg-primary/10'
+          className='hover:bg-primary/10 h-16 gap-3 rounded-lg opacity-100'
           textValue='Profile info'
           onPress={() => {
             router.push(`/private/profile?id=${profile?.id}`);
@@ -72,22 +76,24 @@ const Avatar = () => {
         >
           <div className='flex items-center gap-3'>
             <HerouiAvatar
-              src={profile?.profileImage ? `https://app.extraexpertise.be/api/upload/${profile.profileImage}` : undefined}
+              src={
+                profile?.profileImage ? `${getBaseUrl()}/upload/${profile.profileImage}` : undefined
+              }
               name={`${profile?.firstName || ''} ${profile?.lastName || ''}`}
               size='md'
-              className='ring-primary/20 ring-2 ring-offset-1 ring-offset-background shadow-medium'
+              className='ring-primary/20 ring-offset-background shadow-medium ring-2 ring-offset-1'
               showFallback
               fallback={
-                <div className="bg-gradient-to-br from-primary/20 to-secondary/20 w-full h-full flex items-center justify-center">
+                <div className='from-primary/20 to-secondary/20 flex h-full w-full items-center justify-center bg-gradient-to-br'>
                   <Icon icon='solar:user-bold' className='text-primary' width={20} />
                 </div>
               }
             />
-            <div className='flex flex-col min-w-0 flex-1'>
+            <div className='flex min-w-0 flex-1 flex-col'>
               <p className='text-foreground font-semibold'>
                 {profile?.firstName || ''} {profile?.lastName || ''}
               </p>
-              <p className='text-foreground-500 text-sm truncate'>{profile?.email || ''}</p>
+              <p className='text-foreground-500 truncate text-sm'>{profile?.email || ''}</p>
             </div>
           </div>
         </DropdownItem>

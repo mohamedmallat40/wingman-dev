@@ -40,3 +40,13 @@ export const formatCurrency = (amount: number | string) => {
     currency: 'EUR'
   }).format(amount);
 };
+
+export const getBaseUrl = (): string => {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  /* if (globalThis.window && globalThis.window.location) {
+    return globalThis.window.location.origin;
+  }
+  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://dev.extraexpertise.be/api'; */
+
+  return 'https://dev.extraexpertise.be/api';
+};

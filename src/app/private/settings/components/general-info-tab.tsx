@@ -37,6 +37,7 @@ import ISO6391 from 'iso-639-1';
 import { Plus, Save, Trash2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useFieldArray, useForm } from 'react-hook-form';
+import { getBaseUrl } from '@/lib/utils/utilities';
 
 // Register locales
 countries.registerLocale(enLocale);
@@ -399,7 +400,10 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
         <CardBody>
           <form onSubmit={generalForm.handleSubmit(onSubmitGeneral, onError)} className='space-y-6'>
             <div className='flex items-center gap-6'>
-              <Avatar src={generalForm.watch('profileImage')} className='h-24 w-24' />
+              <Avatar
+                src={`${getBaseUrl()}/upload/${generalForm.watch('profileImage')}`}
+                className='h-24 w-24'
+              />
               <div className='flex-1'>
                 <Input
                   {...generalForm.register('profileImage')}
