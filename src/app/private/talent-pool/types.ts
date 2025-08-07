@@ -7,7 +7,7 @@ export interface Skill {
   type?: 'NORMAL' | 'SOFT';
 }
 
-export type UserKind = 'FREELANCER' | 'AGENCY' | 'FULL_TIME_FREELANCER' | 'STUDENT';
+export type UserKind = 'FREELANCER' | 'AGENCY' | 'FULL_TIME_FREELANCER' | 'PART_TIME_FREELANCER' | 'STUDENT';
 export type WorkType = 'REMOTE' | 'ON_LOCATION' | 'HYBRID';
 export type PaymentType = 'HOURLY_BASED' | 'DAILY_BASED';
 export type AvailabilityStatus = 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | 'BUSY';
@@ -84,14 +84,16 @@ export type TalentType = 'freelancers' | 'agencies' | 'teams';
 
 export interface TalentPoolFilters {
   search?: string;
+  name?: string;
   skills?: string[];
-  region?: string;
   availability?: string;
   minRate?: number;
   maxRate?: number;
   workType?: WorkType;
   minRating?: number;
-  experienceLevel?: string;
+  experienceLevel?: string[];
+  country?: string[];
+  profession?: 'FULL_TIME_FREELANCER' | 'PART_TIME_FREELANCER' | 'CONTRACTOR' | 'STUDENT';
 }
 
 export interface TalentCardProps {

@@ -8,7 +8,6 @@ import {
   Input,
   Select,
   SelectItem,
-  Slider,
   Tooltip
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
@@ -16,6 +15,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { type TalentPoolFilters, type TalentType } from '../types';
+import CountryFilter from './CountryFilter';
+import AvailabilityFilter from './AvailabilityFilter';
+import ExperienceLevelFilter from './ExperienceLevelFilter';
+import ProfessionFilter from './ProfessionFilter';
+import { countries } from '../data/countries';
 
 interface SearchAndFiltersProps {
   searchQuery: string;
@@ -43,13 +47,15 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
 
   const handleSearchKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      // Update the name filter with the current search query
+      onFiltersChange({ ...filters, name: searchQuery || undefined });
       onSearch();
     }
   };
 
   const handleClearSearch = () => {
     onSearchChange('');
-    onFiltersChange({ ...filters, search: undefined });
+    onFiltersChange({ ...filters, search: undefined, name: undefined });
   };
 
   const handleClearAllFilters = () => {
@@ -62,19 +68,30 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
     onFiltersChange({ ...filters, skills });
   };
 
-  const handleRegionChange = (region: string) => {
-    onFiltersChange({ ...filters, region: region || undefined });
-  };
 
-  const handleAvailabilityChange = (availability: string) => {
+  const handleAvailabilityChange = (availability: 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | null) => {
     onFiltersChange({ ...filters, availability: availability || undefined });
   };
 
-  const handleRateRangeChange = (range: number[]) => {
+
+  const handleCountriesChange = (selectedCountries: string[]) => {
     onFiltersChange({ 
       ...filters, 
-      minRate: range[0], 
-      maxRate: range[1] 
+      country: selectedCountries.length > 0 ? selectedCountries : undefined 
+    });
+  };
+
+  const handleExperienceLevelChange = (experienceLevels: string[]) => {
+    onFiltersChange({ 
+      ...filters, 
+      experienceLevel: experienceLevels.length > 0 ? experienceLevels : undefined 
+    });
+  };
+
+  const handleProfessionChange = (profession: 'FULL_TIME_FREELANCER' | 'PART_TIME_FREELANCER' | 'CONTRACTOR' | 'STUDENT' | null) => {
+    onFiltersChange({ 
+      ...filters, 
+      profession: profession || undefined 
     });
   };
 
@@ -92,57 +109,14 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
     }).length;
   };
 
-  const regions = [
-    { key: 'BE', label: 'Belgium 🇧🇪' },
-    { key: 'NL', label: 'Netherlands 🇳🇱' },
-    { key: 'FR', label: 'France 🇫🇷' },
-    { key: 'DE', label: 'Germany 🇩🇪' },
-    { key: 'UK', label: 'United Kingdom 🇬🇧' }
-  ];
 
-  const availabilityOptions = [
-    { key: 'OPEN_FOR_PROJECT', label: t('talentPool.availability.availableForProjects') },
-    { key: 'OPEN_FOR_PART_TIME', label: t('talentPool.availability.partTimeAvailable') },
-    { key: 'BUSY', label: t('talentPool.availability.busy') }
-  ];
 
-  const quickFilters = [
-    {
-      key: 'available',
-      label: t('talentPool.availability.available'),
-      icon: 'solar:check-circle-linear',
-      isActive: filters.availability === 'OPEN_FOR_PROJECT',
-      onClick: () => handleAvailabilityChange(
-        filters.availability === 'OPEN_FOR_PROJECT' ? '' : 'OPEN_FOR_PROJECT'
-      )
-    },
-    {
-      key: 'remote',
-      label: t('talentPool.workType.remote'),
-      icon: 'solar:home-wifi-linear',  
-      isActive: filters.workType === 'REMOTE',
-      onClick: () => onFiltersChange({ 
-        ...filters, 
-        workType: filters.workType === 'REMOTE' ? undefined : 'REMOTE' 
-      })
-    },
-    {
-      key: 'high-rated',
-      label: 'Top Rated',
-      icon: 'solar:star-linear',
-      isActive: filters.minRating === 4.5,
-      onClick: () => onFiltersChange({ 
-        ...filters, 
-        minRating: filters.minRating === 4.5 ? undefined : 4.5 
-      })
-    }
-  ];
 
   return (
     <div className="space-y-6">
-      {/* Active Filters - Always visible when filters exist */}
+      {/* Active Filters - Only visible when there are active filters */}
       <AnimatePresence>
-        {Object.keys(filters).length > 0 && (
+        {getActiveFiltersCount() > 0 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -152,39 +126,36 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
           >
             <span className="text-small text-default-600 font-medium">Active:</span>
             
-            {filters.search && (
+            {(filters.search || filters.name) && (
               <Chip
                 size="sm"
                 variant="flat"
                 color="primary"
-                onClose={() => removeFilter('search')}
+                onClose={() => {
+                  removeFilter('search');
+                  removeFilter('name');
+                }}
                 startContent={<Icon icon="solar:magnifer-linear" className="h-3 w-3" />}
               >
-                "{filters.search}"
+                "{filters.search || filters.name}"
               </Chip>
             )}
 
-            {filters.region && (
-              <Chip
-                size="sm"
-                variant="flat"
-                color="secondary"
-                onClose={() => removeFilter('region')}
-                startContent={<Icon icon="solar:map-point-linear" className="h-3 w-3" />}
-              >
-                {regions.find(r => r.key === filters.region)?.label || filters.region}
-              </Chip>
-            )}
 
             {filters.availability && (
               <Chip
                 size="sm"
                 variant="flat"
-                color="success"
+                color={filters.availability === 'OPEN_FOR_PROJECT' ? 'success' : 'warning'}
                 onClose={() => removeFilter('availability')}
-                startContent={<Icon icon="solar:check-circle-linear" className="h-3 w-3" />}
+                startContent={
+                  <Icon 
+                    icon={filters.availability === 'OPEN_FOR_PROJECT' ? 'solar:briefcase-bold' : 'solar:clock-circle-bold'} 
+                    className="h-3 w-3" 
+                  />
+                }
               >
-                {availabilityOptions.find(a => a.key === filters.availability)?.label}
+                {filters.availability === 'OPEN_FOR_PROJECT' ? 'Full-Time' : 'Part-Time'}
               </Chip>
             )}
 
@@ -200,36 +171,76 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
               </Chip>
             )}
 
-            {(filters.minRate || filters.maxRate) && (
+
+            {filters.country && filters.country.length > 0 && (
+              <>
+                {filters.country.slice(0, 3).map((countryCode) => {
+                  const country = countries.find(c => c.code === countryCode);
+                  return (
+                    <Chip
+                      key={countryCode}
+                      size="sm"
+                      variant="flat"
+                      color="secondary"
+                      onClose={() => {
+                        const newCountries = filters.country?.filter(c => c !== countryCode) || [];
+                        onFiltersChange({ ...filters, country: newCountries.length > 0 ? newCountries : undefined });
+                      }}
+                      startContent={
+                        <img 
+                          src={`https://flagcdn.com/16x12/${countryCode.toLowerCase()}.png`}
+                          alt={`${country?.name} flag`}
+                          className="h-3 w-4 rounded-sm"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      }
+                    >
+                      {country?.name || countryCode}
+                    </Chip>
+                  );
+                })}
+                {filters.country.length > 3 && (
+                  <Chip
+                    size="sm"
+                    variant="flat"
+                    color="secondary"
+                    onClose={() => removeFilter('country')}
+                    startContent={<Icon icon="solar:global-linear" className="h-3 w-3" />}
+                  >
+                    +{filters.country.length - 3} more
+                  </Chip>
+                )}
+              </>
+            )}
+
+            {filters.profession && (
               <Chip
                 size="sm"
                 variant="flat"
-                color="danger"
-                onClose={() => {
-                  removeFilter('minRate');
-                  removeFilter('maxRate');
-                }}
-                startContent={<Icon icon="solar:dollar-minimalistic-linear" className="h-3 w-3" />}
+                color="warning"
+                onClose={() => removeFilter('profession')}
+                startContent={<Icon icon="solar:case-minimalistic-linear" className="h-3 w-3" />}
               >
-                €{filters.minRate || 0} - €{filters.maxRate || 1000}
+                {filters.profession === 'FULL_TIME_FREELANCER' ? 'Freelancer' : 
+                 filters.profession === 'PART_TIME_FREELANCER' ? 'Interim' :
+                 filters.profession === 'CONTRACTOR' ? 'Consultant' : 'Student entrepreneur'}
               </Chip>
             )}
 
-            {(filters.workType || filters.minRating || filters.experienceLevel) && (
+            {filters.experienceLevel && filters.experienceLevel.length > 0 && (
               <Chip
                 size="sm"
                 variant="flat"
-                color="primary"
-                onClose={() => {
-                  removeFilter('workType');
-                  removeFilter('minRating');
-                  removeFilter('experienceLevel');
-                }}
-                startContent={<Icon icon="solar:settings-linear" className="h-3 w-3" />}
+                color="secondary"
+                onClose={() => removeFilter('experienceLevel')}
+                startContent={<Icon icon="solar:medal-ribbons-star-linear" className="h-3 w-3" />}
               >
-                Other filters
+                {filters.experienceLevel.length} experience level{filters.experienceLevel.length === 1 ? '' : 's'}
               </Chip>
             )}
+
 
             <Button
               size="sm"
@@ -260,23 +271,6 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
               opacity: { duration: 0.2 }
             }}
           >
-          {/* Quick Filters */}
-          <div className="flex flex-wrap items-center gap-2">
-            {quickFilters.map((filter) => (
-              <Tooltip key={filter.key} content={filter.label} placement="bottom">
-                <Button
-                  variant={filter.isActive ? "solid" : "bordered"}
-                  color={filter.isActive ? "primary" : "default"}
-                  size="sm"
-                  startContent={<Icon icon={filter.icon} className="h-4 w-4" />}
-                  onClick={filter.onClick}
-                  className="transition-colors duration-150"
-                >
-                  <span className="hidden sm:inline">{filter.label}</span>
-                </Button>
-              </Tooltip>
-            ))}
-          </div>
 
           {/* Advanced Filters Panel */}
           <AnimatePresence>
@@ -315,106 +309,50 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                   </div>
 
                   {/* Filter Grid */}
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mb-6">
-                    {/* Region Filter */}
-                    <div className="space-y-3">
-                      <label className="text-foreground flex items-center gap-2 text-sm font-medium">
-                        <Icon icon="solar:map-point-linear" className="h-4 w-4 text-primary" />
-                        Location
-                      </label>
-                      <Select
-                        placeholder="Select region"
-                        selectedKeys={filters.region ? [filters.region] : []}
-                        onSelectionChange={(keys) => {
-                          const selectedKey = Array.from(keys)[0] as string;
-                          handleRegionChange(selectedKey);
-                        }}
-                        size="sm"
-                        variant="bordered"
-                      >
-                        {regions.map((region) => (
-                          <SelectItem key={region.key}>
-                            {region.label}
-                          </SelectItem>
-                        ))}
-                      </Select>
+                  <div className="space-y-6 mb-6">
+                    {/* Top Row - Country and Profession */}
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      {/* Country Filter */}
+                      <div className="space-y-3">
+                        <CountryFilter
+                          selectedCountries={filters.country || []}
+                          onSelectionChange={handleCountriesChange}
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Profession Filter */}
+                      <div className="space-y-3">
+                        <ProfessionFilter
+                          selectedProfession={filters.profession || null}
+                          onSelectionChange={handleProfessionChange}
+                          className="w-full"
+                        />
+                      </div>
                     </div>
 
-                    {/* Availability Filter */}
-                    <div className="space-y-3">
-                      <label className="text-foreground flex items-center gap-2 text-sm font-medium">
-                        <Icon icon="solar:check-circle-linear" className="h-4 w-4 text-primary" />
-                        Availability
-                      </label>
-                      <Select
-                        placeholder="Select availability"
-                        selectedKeys={filters.availability ? [filters.availability] : []}
-                        onSelectionChange={(keys) => {
-                          const selectedKey = Array.from(keys)[0] as string;
-                          handleAvailabilityChange(selectedKey);
-                        }}
-                        size="sm"
-                        variant="bordered"
-                      >
-                        {availabilityOptions.map((option) => (
-                          <SelectItem key={option.key}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </Select>
-                    </div>
+                    {/* Bottom Row - Availability and Experience Level */}
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      {/* Availability Filter */}
+                      <div className="space-y-3">
+                        <AvailabilityFilter
+                          selectedAvailability={filters.availability as 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | null}
+                          onSelectionChange={handleAvailabilityChange}
+                          className="w-full"
+                        />
+                      </div>
 
-                    {/* Rate Range Filter */}
-                    <div className="space-y-3">
-                      <label className="text-foreground flex items-center gap-2 text-sm font-medium">
-                        <Icon icon="solar:dollar-minimalistic-linear" className="h-4 w-4 text-primary" />
-                        Rate Range (€/day)
-                      </label>
-                      <div className="px-3 py-2">
-                        <Slider
-                          step={50}
-                          minValue={0}
-                          maxValue={1000}
-                          value={[filters.minRate || 0, filters.maxRate || 1000]}
-                          onChange={(value) => handleRateRangeChange(value as number[])}
-                          className="max-w-md"
-                          color="primary"
-                          size="sm"
-                          formatOptions={{
-                            style: "currency",
-                            currency: "EUR",
-                            minimumFractionDigits: 0
-                          }}
+                      {/* Experience Level Filter */}
+                      <div className="space-y-3">
+                        <ExperienceLevelFilter
+                          selectedLevels={filters.experienceLevel || []}
+                          onSelectionChange={handleExperienceLevelChange}
+                          className="w-full"
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Experience Level for Freelancers */}
-                  {activeTab === 'freelancers' && (
-                    <div className="space-y-3 mb-6">
-                      <label className="text-foreground flex items-center gap-2 text-sm font-medium">
-                        <Icon icon="solar:medal-ribbons-star-linear" className="h-4 w-4 text-primary" />
-                        Experience Level
-                      </label>
-                      <div className="flex flex-wrap gap-2">
-                        {['Junior', 'Mid-level', 'Senior', 'Lead'].map((level) => (
-                          <Chip
-                            key={level}
-                            variant={filters.experienceLevel === level ? "solid" : "bordered"}
-                            color={filters.experienceLevel === level ? "primary" : "default"}
-                            className="cursor-pointer transition-colors duration-150"
-                            onClick={() => onFiltersChange({
-                              ...filters,
-                              experienceLevel: filters.experienceLevel === level ? undefined : level
-                            })}
-                          >
-                            {level}
-                          </Chip>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   {/* Action Buttons */}
                   <div className="flex items-center justify-between pt-4 border-t border-divider/50">
@@ -440,6 +378,8 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                         color="primary"
                         startContent={<Icon icon="solar:magnifer-linear" className="h-4 w-4" />}
                         onClick={() => {
+                          // Update the name filter with the current search query
+                          onFiltersChange({ ...filters, name: searchQuery || undefined });
                           onSearch();
                           setShowAdvancedFilters(false);
                         }}

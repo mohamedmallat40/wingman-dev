@@ -181,20 +181,21 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                 </div>
 
                 {/* Right Side Actions */}
-                <div className='ml-2 flex items-center gap-0'>
-                  {/* Search Icon Button */}
-                  <Tooltip content='Open search' placement='bottom'>
+                <div className='ml-6 flex items-center gap-3'>
+                  {/* Search Button */}
+                  <Tooltip content='Open advanced search' placement='bottom' delay={500}>
                     <Button
-                      isIconOnly
-                      variant='light'
-                      size='lg'
+                      variant='bordered'
+                      size='md'
+                      color='primary'
                       onPress={handleSearchToggle}
-                      className='hover:bg-primary/10 hover:shadow-medium transition-all duration-200'
+                      className='bg-primary-50 hover:bg-primary-100 hover:shadow-medium font-semibold transition-all duration-300'
+                      startContent={<Icon icon='solar:magnifer-linear' className='h-4 w-4' />}
                       as={motion.button}
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
+                      whileHover={{ scale: 1.02, y: -1 }}
+                      whileTap={{ scale: 0.98 }}
                     >
-                      <Icon icon='solar:magnifer-linear' className='h-5 w-5 text-primary' />
+                      Search
                     </Button>
                   </Tooltip>
 
@@ -271,7 +272,7 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                     variant='bordered'
                     className='w-full'
                     classNames={{
-                      input: 'text-base',
+                      input: 'text-base !text-black placeholder:!text-gray-500',
                       inputWrapper: 'border-primary/20 hover:border-primary/40 focus-within:border-primary bg-background/80 backdrop-blur-sm shadow-medium'
                     }}
                   />
@@ -339,33 +340,39 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
 
           {/* Filter Button - Always visible on the right */}
           <div className='flex items-center h-[80px] pr-2'>
-            <Tooltip content='Toggle filters' placement='bottom'>
+            <Tooltip content='Toggle advanced filters' placement='bottom' delay={500}>
               <Button
-                isIconOnly
-                variant='light'
-                size='lg'
+                variant={showFilters ? 'solid' : 'bordered'}
+                size='md'
+                color={showFilters ? 'secondary' : 'default'}
                 onPress={onToggleFilters}
-                className={`transition-all duration-200 ${
+                className={`font-semibold transition-all duration-300 ${
                   showFilters 
-                    ? 'bg-primary/20 text-primary hover:bg-primary/30' 
-                    : 'hover:bg-primary/10 text-primary/70 hover:text-primary'
+                    ? 'shadow-medium' 
+                    : 'bg-default-50 hover:bg-default-100 hover:shadow-small'
                 }`}
+                startContent={
+                  <div className='relative'>
+                    <Icon 
+                      icon='solar:filter-linear' 
+                      className='h-4 w-4 transition-colors duration-200'
+                    />
+                    {filtersCount > 0 && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        className='absolute -top-2 -right-2 bg-danger text-danger-foreground rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold shadow-small border-2 border-background'
+                      >
+                        {filtersCount}
+                      </motion.div>
+                    )}
+                  </div>
+                }
                 as={motion.button}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.02, y: -1 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className='relative'>
-                  <Icon icon='solar:filter-linear' className='h-5 w-5' />
-                  {filtersCount > 0 && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      className='absolute -top-1 -right-1 bg-danger text-white rounded-full h-4 w-4 flex items-center justify-center text-xs font-bold'
-                    >
-                      {filtersCount}
-                    </motion.div>
-                  )}
-                </div>
+                Filters
               </Button>
             </Tooltip>
           </div>

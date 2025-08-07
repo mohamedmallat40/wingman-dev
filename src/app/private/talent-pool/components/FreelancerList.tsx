@@ -11,6 +11,7 @@ import wingManApi from '@/lib/axios';
 import { useTranslations } from 'next-intl';
 
 import { type TalentPoolFilters, type User, type UserResponse } from '../types';
+import { getCountryNameFromCode } from '../data/countries';
 import TalentCard from './TalentCard';
 import { EmptyState, ErrorState } from './shared';
 
@@ -150,11 +151,46 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       if (filters?.search) {
         params.search = filters.search;
       }
+      if (filters?.name) {
+        params.name = filters.name;
+      }
       if (filters?.region) {
         params.region = filters.region;
       }
       if (filters?.skills?.length) {
         params.skills = filters.skills.join(',');
+      }
+      if (filters?.availability) {
+        params.availability = filters.availability;
+      }
+      if (filters?.profession) {
+        params.profession = filters.profession;
+      }
+      if (filters?.experienceLevel?.length) {
+        params.experienceLevel = filters.experienceLevel.join(',');
+      }
+      if (filters?.country?.length) {
+        // Convert country codes to lowercase names and add as separate parameters
+        filters.country.forEach((countryCode, index) => {
+          const countryName = getCountryNameFromCode(countryCode);
+          if (index === 0) {
+            params.country = countryName;
+          } else {
+            params[`country${index + 1}`] = countryName;
+          }
+        });
+      }
+      if (filters?.workType) {
+        params.workType = filters.workType;
+      }
+      if (filters?.minRate) {
+        params.minRate = filters.minRate.toString();
+      }
+      if (filters?.maxRate) {
+        params.maxRate = filters.maxRate.toString();
+      }
+      if (filters?.minRating) {
+        params.minRating = filters.minRating.toString();
       }
 
       const response = await wingManApi.get('/network/all-users', { params });
