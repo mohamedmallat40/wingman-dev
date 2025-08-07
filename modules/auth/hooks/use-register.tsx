@@ -11,7 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { type RegistrationData } from '@/lib/types/auth';
+import { AddressDetails, type RegistrationData } from '@/lib/types/auth';
 
 import { registerSchema } from '../schema/register-schema';
 
@@ -21,17 +21,7 @@ interface IFormInput {
   firstName: string;
   lastName: string;
   kind: 'FREELANCER' | 'COMPANY' | 'AGENCY';
-  addressDetails: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-    countryCode?: string;
-    houseNumber?: string;
-    VATNumber?: string;
-    companyName?: string;
-    type?: 'BILLING' | 'SHIPPING';
-  };
+  addressDetails: AddressDetails;
 }
 
 const formatErrorMessage = (message: unknown): string => {

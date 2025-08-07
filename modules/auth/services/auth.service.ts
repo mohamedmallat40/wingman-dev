@@ -3,14 +3,7 @@ import { type IUserProfile } from '@root/modules/profile/types';
 import { API_ROUTES } from '@/lib/api-routes';
 import wingManApi from '@/lib/axios';
 import { type RegistrationData } from '@/lib/types/auth';
-
-const getBaseUrl = (): string => {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (globalThis.window && globalThis.window.location) {
-    return globalThis.window.location.origin;
-  }
-  return process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
-};
+import { getBaseUrl } from '@/lib/utils/utilities';
 
 interface OAuthResponse {
   success: boolean;
@@ -41,7 +34,7 @@ export const checkValidEUVAT = async (countryCode: string, vatNumber: string) =>
 };
 export const handleOAuth = (provider: 'google' | 'linkedin'): Promise<unknown> => {
   return new Promise((resolve, reject) => {
-    const authUrl = `${getBaseUrl()}/api/auth/${provider}`;
+    const authUrl = `https://dev.extraexpertise.be/api/auth/${provider}`;
     const authWindow = window.open(
       authUrl,
       `${provider}AuthPopup`,

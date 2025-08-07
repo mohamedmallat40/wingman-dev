@@ -1,44 +1,38 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { Spinner } from '@heroui/react';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import useProfile from '@root/modules/profile/hooks/use-profile';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
 import EducationSection from './components/education';
 import ExperienceSection from './components/experience';
 import GeneralInfoSection from './components/general-info';
+import ProfileCompletion from './components/profile-completion';
 import ProjectsSection from './components/projects';
+import ReviewsSection from './components/reviews';
 import ServicesSection from './components/services';
+import { IUserProfile } from '@root/modules/profile/types';
 
 export default function ProfilePage() {
   const parameters = useSearchParams();
-  const router = useRouter();
   const userId = parameters.get('id') ?? '';
   const { profile: currentUserProfile } = useBasicProfile();
 
-  // If no userId is provided, redirect to current user's profile
-  useEffect(() => {
-    if (!userId && currentUserProfile?.id) {
-      router.replace(`/private/profile?id=${currentUserProfile.id}`);
-    }
-  }, [userId, currentUserProfile?.id, router]);
-
   const {
-    profile: user,
+    user: user,
     projects,
     experience,
     education,
     services,
     languages,
+    reviews,
     isLoading,
     error
   } = useProfile(userId);
 
   // Show loading if we're redirecting or if data is loading
-  if ((!userId && !currentUserProfile?.id) || isLoading) {
+  if ((!userId && !currentUserProfile.id) || isLoading) {
     return (
       <div className='flex min-h-screen items-center justify-center'>
         <Spinner size='lg' />
@@ -62,8 +56,18 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className='min-h-screen w-full bg-transparent py-4'>
+    <div className='w-full bg-transparent py-4'>
       <div className='mx-auto px-3 md:mx-auto'>
+        {/* Profile Completion Card - Full Width at Top */}
+        <ProfileCompletion
+          skills={user?.skills ?? []}
+          projects={projects}
+          experience={experience}
+          education={education}
+          reviews={reviews}
+          services={services}
+        />
+
         <div className='space-y-8'>
           <GeneralInfoSection user={user} languages={languages} />
 
@@ -74,6 +78,9 @@ export default function ProfilePage() {
           <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
             <ExperienceSection experience={experience} />
             <EducationSection education={education} />
+          </div>
+          <div>
+            <ReviewsSection reviews={reviews} />
           </div>
         </div>
       </div>

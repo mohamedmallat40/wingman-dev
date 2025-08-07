@@ -5,8 +5,10 @@ import type { IUserProfile, Skill } from '@root/modules/profile/types';
 import { Avatar, Button, Card, CardBody, CardHeader, Chip } from '@heroui/react';
 import { type ILanguage } from '@root/modules/profile/types';
 import { Clock, DollarSign, Edit, MapPin } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { API_ROUTES } from '@/lib/api-routes';
+import { formatCurrency } from '@/lib/utils/utilities';
 
 interface GeneralInfoSectionProperties {
   user: IUserProfile;
@@ -17,6 +19,11 @@ export default function GeneralInfoSection({
   user,
   languages
 }: Readonly<GeneralInfoSectionProperties>) {
+  const router = useRouter();
+
+  const handleEditClick = () => {
+    router.push('/private/settings?tab=general');
+  };
   return (
     <Card className='w-full border-0 bg-transparent'>
       <CardHeader className='flex flex-row items-center justify-between'>
@@ -25,6 +32,7 @@ export default function GeneralInfoSection({
           isIconOnly
           variant='light'
           className='text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          onPress={handleEditClick}
         >
           <Edit size={20} />
         </Button>
@@ -33,7 +41,7 @@ export default function GeneralInfoSection({
         {/* Profile Header */}
         <div className='flex flex-col items-center gap-6 sm:flex-row sm:items-start'>
           <Avatar
-            src={`${API_ROUTES.profile.image}${user.profileImage}`}
+            src={`${API_ROUTES.profile.image}${user.profileImage ?? ''}`}
             className='h-24 w-24 sm:h-32 sm:w-32'
             name={`${user.firstName} ${user.lastName}`}
           />
@@ -43,7 +51,7 @@ export default function GeneralInfoSection({
                 {user.firstName} {user.lastName}
               </h1>
               <div className='mt-2 flex items-center justify-center gap-2 text-gray-600 sm:justify-start dark:text-gray-400'>
-                {user.address.length > 0 && (
+                {user?.address?.length > 0 && (
                   <>
                     <MapPin size={16} />
                     <span>
@@ -61,9 +69,8 @@ export default function GeneralInfoSection({
                 <span>{user.experienceYears} years experience</span>
               </div>
               <div className='flex items-center gap-2'>
-                <DollarSign size={16} className='text-green-500' />
                 <span>
-                  {`${user.hourlyRate}/{user.paymentType === 'HOURLY_BASED' ? 'HOURLY_BASED' : 'DAILY_BASED'}`}
+                  {`${formatCurrency(user.hourlyRate)}/${user.paymentType === 'HOURLY_BASED' ? 'hour' : 'day'}`}
                 </span>
               </div>
             </div>

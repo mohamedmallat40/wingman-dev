@@ -7,11 +7,19 @@ export const API_ROUTES = {
   },
   profile: {
     me: '/users/me',
+    userProfile: '/users/',
     image: `${process.env.NEXT_PUBLIC_BASE_URL ?? 'https://dev.extraexpertise.be/api'}/upload/`,
-    experience: '/experience/byUser/',
-    education: '/education/byUser/',
-    services: '/services/user/',
-    languages: '/languages/byUser/'
+    experience: '/experience',
+    experienceByUser: '/experience/byUser/',
+    educationByUser: '/education/byUser/',
+    education: '/education',
+    services: '/services',
+    servicesByUser: '/services/user/',
+    languages: '/languages',
+    languagesByUser: '/languages/byUser/',
+    reviews: '/public-reviews/',
+    skills: '/skills',
+    address: '/address'
   },
   documents: {
     personal: '/documents',

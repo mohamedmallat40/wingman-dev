@@ -31,3 +31,22 @@ export const formatDate = (dateString: string) => {
     month: 'short'
   });
 };
+
+export const formatCurrency = (amount: number | string) => {
+  if (typeof amount === 'string') return amount;
+
+  return new Intl.NumberFormat('nl-BE', {
+    style: 'currency',
+    currency: 'EUR'
+  }).format(amount);
+};
+
+export const getBaseUrl = (): string => {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  /* if (globalThis.window && globalThis.window.location) {
+    return globalThis.window.location.origin;
+  }
+  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://dev.extraexpertise.be/api'; */
+
+  return 'https://dev.extraexpertise.be/api';
+};

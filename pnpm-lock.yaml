@@ -73,6 +73,9 @@ importers:
       i18n-iso-countries:
         specifier: ^7.14.0
         version: 7.14.0
+      iso-639-1:
+        specifier: ^3.1.5
+        version: 3.1.5
       lucide-react:
         specifier: 0.508.0
         version: 0.508.0(react@19.1.0)
@@ -5636,6 +5639,10 @@ packages:
       {
         integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==
       }
+
+  iso-639-1@3.1.5:
+    resolution: {integrity: sha512-gXkz5+KN7HrG0Q5UGqSMO2qB9AsbEeyLP54kF1YrMsIxmu+g4BdB7rflReZTSTZGpfj8wywu6pfPBCylPIzGQA==}
+    engines: {node: '>=6.0'}
 
   iterator.prototype@1.1.5:
     resolution:
@@ -12444,6 +12451,8 @@ snapshots:
   isarray@2.0.5: {}
 
   isexe@2.0.0: {}
+
+  iso-639-1@3.1.5: {}
 
   iterator.prototype@1.1.5:
     dependencies:

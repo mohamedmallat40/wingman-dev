@@ -9,7 +9,7 @@ export const env = createEnv({
    * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_API_BASE_URL: z.string().url().default('https://app.extraexpertise.be/api')
+    NEXT_PUBLIC_API_BASE_URL: z.string().url().default('https://dev.extraexpertise.be/api')
   },
 
   /**
