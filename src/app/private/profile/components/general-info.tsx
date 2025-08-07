@@ -41,7 +41,7 @@ export default function GeneralInfoSection({
         {/* Profile Header */}
         <div className='flex flex-col items-center gap-6 sm:flex-row sm:items-start'>
           <Avatar
-            src={`${API_ROUTES.profile.image}${user.profileImage}`}
+            src={`${API_ROUTES.profile.image}${user.profileImage ?? ''}`}
             className='h-24 w-24 sm:h-32 sm:w-32'
             name={`${user.firstName} ${user.lastName}`}
           />
@@ -51,7 +51,7 @@ export default function GeneralInfoSection({
                 {user.firstName} {user.lastName}
               </h1>
               <div className='mt-2 flex items-center justify-center gap-2 text-gray-600 sm:justify-start dark:text-gray-400'>
-                {user.address.length > 0 && (
+                {user?.address?.length > 0 && (
                   <>
                     <MapPin size={16} />
                     <span>

@@ -1,10 +1,12 @@
+import { user } from '@heroui/theme';
 import {
   educationOptions,
   experienceOptions,
   languageOptions,
   profileOptions,
   reviewsOptions,
-  serviceOptions
+  serviceOptions,
+  userProfileOptions
 } from '@root/modules/profile/hooks/profile.server';
 import { type IExperience, type IUserProfile } from '@root/modules/profile/types';
 import { useQuery } from '@tanstack/react-query';
@@ -16,6 +18,11 @@ const useProfile = (userId: string) => {
 
   const experienceQuery = useQuery({
     ...experienceOptions(userId),
+    enabled: shouldFetchUserData
+  });
+
+  const userQuery = useQuery({
+    ...userProfileOptions(userId),
     enabled: shouldFetchUserData
   });
   const educationQuery = useQuery({
@@ -53,6 +60,7 @@ const useProfile = (userId: string) => {
         };
       });
   return {
+    user: userQuery.error ? null : (userQuery.data?.data ?? null),
     profile: data?.data as IUserProfile,
     projects,
     experience,

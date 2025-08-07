@@ -1,10 +1,11 @@
-import type { IEducation, IExperience, IReview, IService } from '@root/modules/profile/types';
+import type { IEducation, IExperience, IReview, IService, IUserProfile } from '@root/modules/profile/types';
 
 import {
   getMyProfile,
   getUserEducation,
   getUserExperience,
   getUserLanguages,
+  getUserProfile,
   getUserReviews,
   getUserService
 } from '@root/modules/profile/services/profile.service';
@@ -15,6 +16,18 @@ export const profileOptions = queryOptions({
   queryKey: ['profile'],
   queryFn: getMyProfile
 });
+export const userProfileOptions = (userId: string) =>
+  queryOptions({
+    queryKey: ['user-profile', userId],
+    queryFn: async (): Promise<{ data: IUserProfile }> => {
+      try {
+        return await getUserProfile(userId);
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    }
+  });
 
 export const experienceOptions = (userId: string) =>
   queryOptions({

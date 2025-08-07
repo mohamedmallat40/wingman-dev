@@ -12,6 +12,7 @@ import ProfileCompletion from './components/profile-completion';
 import ProjectsSection from './components/projects';
 import ReviewsSection from './components/reviews';
 import ServicesSection from './components/services';
+import { IUserProfile } from '@root/modules/profile/types';
 
 export default function ProfilePage() {
   const parameters = useSearchParams();
@@ -19,7 +20,7 @@ export default function ProfilePage() {
   const { profile: currentUserProfile } = useBasicProfile();
 
   const {
-    profile: user,
+    user: user,
     projects,
     experience,
     education,
@@ -59,7 +60,7 @@ export default function ProfilePage() {
       <div className='mx-auto px-3 md:mx-auto'>
         {/* Profile Completion Card - Full Width at Top */}
         <ProfileCompletion
-          skills={user.skills}
+          skills={user?.skills ?? []}
           projects={projects}
           experience={experience}
           education={education}

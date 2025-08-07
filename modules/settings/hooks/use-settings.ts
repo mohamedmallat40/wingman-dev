@@ -64,7 +64,7 @@ const useSettings = (userId?: string) => {
     onSuccess: async () => {
       handleSuccess('Profile updated successfully!');
       await queryClient.invalidateQueries({
-        queryKey: ['profile']
+        queryKey: ['user-profile']
       });
     },
     onError: (error) => {
@@ -77,7 +77,7 @@ const useSettings = (userId?: string) => {
     onSuccess: async () => {
       handleSuccess('Skills updated successfully!');
       await queryClient.invalidateQueries({
-        queryKey: ['profile']
+        queryKey: ['user-profile']
       });
       await queryClient.invalidateQueries({
         queryKey: ['all-skills']
@@ -299,7 +299,7 @@ const useSettings = (userId?: string) => {
     onSuccess: async () => {
       handleSuccess('Address updated successfully!');
       await queryClient.invalidateQueries({
-        queryKey: ['profile']
+        queryKey: ['profile', 'user-profile']
       });
     },
     onError: (error) => {
