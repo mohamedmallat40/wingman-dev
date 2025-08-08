@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
@@ -11,6 +11,7 @@ import DashboardLayout from '@/components/layouts/dashboard-layout';
 import HeroTabs from './components/HeroTabs';
 import SearchAndFilters from './components/SearchAndFilters';
 import { OptimizedFreelancerList, OptimizedAgencyList, OptimizedTeamList } from './components/OptimizedTalentLists';
+import InviteUserModal from './components/InviteUserModal';
 import { type TalentType } from './types';
 
 // Import custom hooks
@@ -31,6 +32,7 @@ const TalentPoolPage: React.FC = () => {
   // ============================================================================
   
   const talentPoolState = useTalentPoolState();
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const {
     activeTab,
     searchQuery,
@@ -75,6 +77,31 @@ const TalentPoolPage: React.FC = () => {
   const handleCreateTeam = useCallback(() => {
     console.log('Create new team');
     // In real app: open create team modal or navigate to create team page
+  }, []);
+
+  const handleInviteUser = useCallback(() => {
+    setIsInviteModalOpen(true);
+  }, []);
+
+  const handleInviteModalClose = useCallback(() => {
+    setIsInviteModalOpen(false);
+  }, []);
+
+  const handleInviteSubmit = useCallback(async (data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    personalMessage?: string;
+  }) => {
+    const { inviteUserToPlatform } = await import('@root/modules/invitations/services/invitations.service');
+    
+    try {
+      const result = await inviteUserToPlatform(data);
+      console.log('Invitation sent successfully:', result);
+    } catch (error) {
+      console.error('Failed to send invitation:', error);
+      throw error; // Re-throw to let the modal handle the error display
+    }
   }, []); 
 
   // Tab count handlers using the updateTabCount action
@@ -135,7 +162,9 @@ const TalentPoolPage: React.FC = () => {
   // Action items with handlers
   const actionItems = ACTION_ITEMS.map(item => ({
     ...item,
-    onClick: item.key === 'create-team' ? handleCreateTeam : () => console.log(`${item.label} clicked`)
+    onClick: item.key === 'create-team' ? handleCreateTeam : 
+             item.key === 'invite' ? handleInviteUser : 
+             () => console.log(`${item.label} clicked`)
   }));
 
   return (
@@ -206,6 +235,13 @@ const TalentPoolPage: React.FC = () => {
           </SearchAndFilters>
         </div>
       </div>
+
+      {/* Invite User Modal */}
+      <InviteUserModal
+        isOpen={isInviteModalOpen}
+        onClose={handleInviteModalClose}
+        onInvite={handleInviteSubmit}
+      />
     </DashboardLayout>
   );
 };

@@ -25,5 +25,8 @@ export const API_ROUTES = {
     personal: '/documents',
     shared: '/documents/shared',
     types: '/documents/types'
+  },
+  invitations: {
+    platform: '/invitations/platform'
   }
 };

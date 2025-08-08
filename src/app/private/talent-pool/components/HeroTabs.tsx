@@ -29,8 +29,6 @@ interface HeroTabsProps {
   filtersCount?: number;
 }
 
-// tabConfig moved inside component to use translations
-
 const HeroTabs: React.FC<HeroTabsProps> = ({
   activeTab,
   onTabChange,
@@ -46,6 +44,28 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
 }) => {
   const t = useTranslations();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
+  // Tab configuration with translations
+  const tabConfig = {
+    freelancers: {
+      label: t('talentPool.tabs.freelancers'),
+      description: t('talentPool.tabs.descriptions.freelancers'),
+      icon: 'solar:user-linear',
+      mobileIcon: 'solar:user-linear'
+    },
+    agencies: {
+      label: t('talentPool.tabs.agencies'),
+      description: t('talentPool.tabs.descriptions.agencies'),
+      icon: 'solar:buildings-2-linear',
+      mobileIcon: 'solar:buildings-2-linear'
+    },
+    teams: {
+      label: t('talentPool.tabs.teams'),
+      description: t('talentPool.tabs.descriptions.teams'),
+      icon: 'solar:users-group-rounded-linear',
+      mobileIcon: 'solar:users-group-rounded-linear'
+    }
+  };
 
   const handleSearchKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -172,13 +192,13 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                         size='md'
                         color='primary'
                         onPress={handleSearchToggle}
-                        className='group tap-highlight-transparent data-[focus-visible=true]:outline-focus text-medium rounded-large transition-transform-colors-opacity bg-primary-50 hover:bg-primary-100 hover:shadow-medium border-primary/20 relative z-0 box-border inline-flex h-12 min-w-24 transform-gpu cursor-pointer appearance-none items-center justify-center gap-3 overflow-hidden px-6 font-normal whitespace-nowrap subpixel-antialiased outline-hidden select-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-offset-2 data-[pressed=true]:scale-[0.97] motion-reduce:transition-none [&>svg]:max-w-[theme(spacing.8)]'
+                        className='group hover:shadow-medium bg-primary-50 hover:bg-primary-100 border-primary/20'
                         startContent={<Icon icon='solar:magnifer-linear' className='h-4 w-4' />}
                         as={motion.button}
                         whileHover={{ scale: 1.02, y: -1 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        Search
+                        {t('talentPool.search.button')}
                       </Button>
                     </Tooltip>
                   </div>
@@ -239,7 +259,7 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                               xmlnsXlink='http://www.w3.org/1999/xlink'
                               aria-hidden='true'
                               role='img'
-                              className='iconify iconify--lucide text-slate-400'
+                              className='iconify iconify--lucide text-default-400'
                               width='1em'
                               height='1em'
                               viewBox='0 0 24 24'
@@ -344,8 +364,11 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                   console.log('Desktop filter button clicked, current showFilters:', showFilters);
                   onToggleFilters?.();
                 }}
-                className={`text-medium rounded-large transition-transform-colors-opacity bg-primary text-primary-foreground data-[hover=true]:opacity-hover h-12 min-w-24 gap-3 px-6 motion-reduce:transition-none`}
+                className='hover:shadow-medium'
                 startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
+                as={motion.button}
+                whileHover={{ scale: 1.02, y: -1 }}
+                whileTap={{ scale: 0.98 }}
               >
                 {t('talentPool.filters.button')}
                 {filtersCount > 0 && (
@@ -388,7 +411,7 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                           xmlnsXlink='http://www.w3.org/1999/xlink'
                           aria-hidden='true'
                           role='img'
-                          className='iconify iconify--lucide text-slate-400'
+                          className='iconify iconify--lucide text-default-400'
                           width='1em'
                           height='1em'
                           viewBox='0 0 24 24'
@@ -430,7 +453,7 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                   console.log('Mobile filter button clicked, current showFilters:', showFilters);
                   onToggleFilters?.();
                 }}
-                className='text-medium rounded-large transition-transform-colors-opacity bg-primary text-primary-foreground data-[hover=true]:opacity-hover h-12 min-w-24 gap-3 px-6 motion-reduce:transition-none'
+                className='hover:shadow-medium'
                 startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
               >
                 {t('talentPool.filters.button')}

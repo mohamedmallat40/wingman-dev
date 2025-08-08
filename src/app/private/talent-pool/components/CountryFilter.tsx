@@ -65,13 +65,13 @@ export default function CountryFilter({
 
   return (
     <div className={`flex w-full flex-col gap-3 ${className || ''}`}>
-      <div style={{ color: 'black' }} className='[&_*]:!text-black [&_input]:!text-black'>
+      <div className='w-full'>
         <Autocomplete
           className='w-full'
           classNames={{
             trigger: 'bg-default-100 border-1 border-transparent data-[hover=true]:bg-default-200',
-            input: 'text-small',
-            inputWrapper: '[&_input]:!text-black [&_input]:[color:black!important]',
+            input: 'text-small text-foreground',
+            inputWrapper: 'data-[focus=true]:border-primary',
             clearButton: 'text-default-400',
             listbox: 'p-0',
             popoverContent: 'p-1 bg-background border border-default-200'
@@ -100,7 +100,7 @@ export default function CountryFilter({
                   className='border-default-100 mb-1 border-b'
                   classNames={{
                     base: 'data-[hover=true]:bg-primary-100 data-[selectable=true]:focus:bg-primary-100',
-                    title: '!text-black'
+                    title: 'text-foreground'
                   }}
                   startContent={
                     <div className='bg-primary-100 flex h-6 w-6 items-center justify-center rounded-full'>
@@ -110,10 +110,10 @@ export default function CountryFilter({
                   textValue={`All ${continent}`}
                 >
                   <div className='flex w-full items-center justify-between'>
-                    <span className='!text-primary-600 font-medium'>
+                    <span className='text-primary-600 font-medium'>
                       {t('talentPool.filters.country.selectAll', { continent })}
                     </span>
-                    <span className='text-tiny text-default-400'>
+                    <span className='text-tiny text-default-500'>
                       {countriesInContinent.length} countries
                     </span>
                   </div>
@@ -125,7 +125,7 @@ export default function CountryFilter({
                     key={country.code}
                     classNames={{
                       base: 'data-[hover=true]:bg-primary-100 data-[selectable=true]:focus:bg-primary-100',
-                      title: '!text-black'
+                      title: 'text-foreground'
                     }}
                     startContent={
                       <Avatar
@@ -137,8 +137,8 @@ export default function CountryFilter({
                     textValue={country.name}
                   >
                     <div className='flex w-full items-center justify-between'>
-                      <span className='!text-black'>{country.name}</span>
-                      <span className='text-tiny !text-gray-600'>{country.code}</span>
+                      <span className='text-foreground'>{country.name}</span>
+                      <span className='text-tiny text-default-500'>{country.code}</span>
                     </div>
                   </AutocompleteItem>
                 ))}

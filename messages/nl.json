@@ -283,6 +283,9 @@
       "noAboutAvailable": "Geen beschrijving beschikbaar"
     },
     "availability": {
+      "all": "Alle",
+      "fullTime": "Voltijd",
+      "partTime": "Deeltijd",
       "available": "Beschikbaar",
       "availableForProjects": "Beschikbaar voor Projecten",
       "partTimeAvailable": "Deeltijd Beschikbaar",
@@ -340,6 +343,74 @@
       "loadingMoreAgencies": "Meer bureaus laden...",
       "loadingMoreTeams": "Meer teams laden...",
       "scrollToLoadMore": "Scroll om meer te laden..."
+    },
+    "loading": {
+      "more": {
+        "freelancers": "Meer freelancers laden...",
+        "agencies": "Meer bureaus laden...",
+        "teams": "Meer teams laden..."
+      },
+      "scrollToLoad": "Scroll om meer te laden..."
+    }
+  },
+  "documents": {
+    "title": "Documenten",
+    "description": "Beheer uw documenten en bestanden",
+    "upload": "Document Uploaden",
+    "tabs": {
+      "allDocuments": "Alle Documenten",
+      "sharedWithMe": "Gedeeld met Mij",
+      "descriptions": {
+        "allDocuments": "Bekijk al uw documenten",
+        "sharedWithMe": "Documenten gedeeld door anderen"
+      }
+    },
+    "search": {
+      "button": "Zoeken",
+      "placeholder": "Zoek op naam, tags of type...",
+      "placeholderMobile": "Documenten zoeken...",
+      "tooltip": "Zoeken openen",
+      "searchNow": "Nu zoeken (Enter)",
+      "closeSearch": "Zoeken sluiten"
+    },
+    "filters": {
+      "button": "Filters",
+      "toggle": "Filters schakelen",
+      "title": "Document Filters",
+      "description": "Verfijn uw documenten zoeken",
+      "comingSoon": "Filters Binnenkort Beschikbaar!",
+      "comingSoonDescription": "We werken aan geavanceerde filteropties om u te helpen documenten sneller te vinden. Blijf op de hoogte voor filters op type, status, tags, en meer!",
+      "close": "Sluiten"
+    },
+    "views": {
+      "list": "Lijstweergave",
+      "grid": "Rasterweergave"
+    },
+    "card": {
+      "modified": "Gewijzigd",
+      "sharedWith": "Gedeeld met",
+      "share": "Delen",
+      "edit": "Bewerken",
+      "delete": "Verwijderen",
+      "moreOptions": "Meer opties"
+    },
+    "status": {
+      "awaitingSignature": "Wacht op Handtekening",
+      "underReview": "Onder Beoordeling",
+      "sentToClient": "Verzonden naar Klant",
+      "inProgress": "In Uitvoering"
+    },
+    "types": {
+      "proposal": "Voorstel",
+      "contract": "Contract",
+      "invoice": "Factuur",
+      "spreadsheet": "Spreadsheet",
+      "template": "Sjabloon"
+    },
+    "emptyState": {
+      "title": "Documentbeheer",
+      "description": "Bewaar en beheer uw belangrijke documenten",
+      "uploadButton": "Document Uploaden"
     }
   },
   "ERRORS": {

@@ -21,9 +21,9 @@ const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) =
       transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
       className='h-full w-full'
     >
-      <Card className='relative h-full w-full max-w-[600px] overflow-hidden border-0 bg-gradient-to-br from-white via-gray-50/50 to-white shadow-lg transition-all duration-300 hover:shadow-2xl'>
+      <Card className='relative h-full w-full max-w-[600px] overflow-hidden border-0 bg-gradient-to-br from-background via-background/95 to-background shadow-lg transition-all duration-300 hover:shadow-2xl'>
         <div className='bg-primary-100/30 absolute top-0 right-0 h-32 w-32 translate-x-1/2 -translate-y-1/2 transform rounded-full blur-2xl filter'></div>
-        <div className='absolute bottom-0 left-0 h-32 w-32 -translate-x-1/2 translate-y-1/2 transform rounded-full bg-blue-100/30 blur-2xl filter'></div>
+        <div className='absolute bottom-0 left-0 h-32 w-32 -translate-x-1/2 translate-y-1/2 transform rounded-full bg-secondary-100/30 blur-2xl filter'></div>
         <CardHeader className='relative flex flex-col items-start gap-4 px-6 pt-6 pb-6'>
           <div className='flex w-full items-center justify-between'>
             <div className='relative'>
@@ -35,7 +35,7 @@ const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) =
               >
                 {groupName.charAt(0).toUpperCase()}
               </div>
-              <div className='bg-primary-500 absolute -right-2 -bottom-2 rounded-full border-2 border-white px-2 py-1'>
+              <div className='bg-primary-500 absolute -right-2 -bottom-2 rounded-full border-2 border-background px-2 py-1'>
                 <div className='flex items-center gap-1'>
                   <Icon icon='solar:users-group-rounded-bold' className='h-3 w-3 text-white' />
                   <span className='text-xs font-bold text-white'>{members}</span>
@@ -69,10 +69,10 @@ const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) =
 
           <div className='flex w-full flex-col gap-2'>
             <div className='flex items-center justify-between'>
-              <h2 className='text-xl font-bold text-gray-900'>{groupName}</h2>
-              <div className='flex items-center gap-1 rounded-full bg-gray-100 px-2 py-1'>
-                <Icon icon='solar:users-group-rounded-linear' className='h-3 w-3 text-gray-600' />
-                <span className='text-xs font-medium text-gray-600'>
+              <h2 className='text-xl font-bold text-foreground'>{groupName}</h2>
+              <div className='flex items-center gap-1 rounded-full bg-default-100 px-2 py-1'>
+                <Icon icon='solar:users-group-rounded-linear' className='h-3 w-3 text-default-600' />
+                <span className='text-xs font-medium text-default-600'>
                   {members} member{members !== 1 ? 's' : ''}
                 </span>
               </div>
@@ -87,7 +87,7 @@ const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) =
 
         <CardBody className='relative z-10 gap-4 px-6 pt-0 pb-6'>
           {/* Team Owner Section */}
-          <div className='rounded-xl border border-gray-100 bg-white/60 p-4 shadow-sm backdrop-blur-sm'>
+          <div className='rounded-xl border border-default-200 bg-background/60 p-4 shadow-sm backdrop-blur-sm'>
             <h3 className='text-medium mb-3 flex items-center gap-2 font-semibold'>
               <Icon icon='solar:crown-linear' className='text-primary h-4 w-4' />
               Team Owner
@@ -103,7 +103,7 @@ const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) =
                 name={`${owner.firstName} ${owner.lastName}`}
               />
               <div className='flex flex-col'>
-                <p className='text-medium font-bold text-gray-900'>
+                <p className='text-medium font-bold text-foreground'>
                   {owner.firstName} {owner.lastName}
                 </p>
                 <p className='text-small text-default-500'>{owner.profession || 'Team Lead'}</p>
@@ -113,7 +113,7 @@ const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) =
 
           {/* Tools Section */}
           {displayTools.length > 0 && (
-            <div className='rounded-xl border border-gray-100 bg-white/60 p-4 shadow-sm backdrop-blur-sm'>
+            <div className='rounded-xl border border-default-200 bg-background/60 p-4 shadow-sm backdrop-blur-sm'>
               <h3 className='text-medium mb-3 flex items-center gap-2 font-semibold'>
                 <Icon icon='solar:document-text-linear' className='text-primary h-4 w-4' />
                 Tools & Technologies

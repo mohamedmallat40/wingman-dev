@@ -353,6 +353,66 @@
       "scrollToLoad": "Scroll to load more..."
     }
   },
+  "documents": {
+    "title": "Documents",
+    "description": "Manage your documents and files",
+    "upload": "Upload Document",
+    "tabs": {
+      "allDocuments": "All Documents",
+      "sharedWithMe": "Shared with Me",
+      "descriptions": {
+        "allDocuments": "View all your documents",
+        "sharedWithMe": "Documents shared by others"
+      }
+    },
+    "search": {
+      "button": "Search",
+      "placeholder": "Search documents by name, tags, or type...",
+      "placeholderMobile": "Search documents...",
+      "tooltip": "Open search",
+      "searchNow": "Search now (Enter)",
+      "closeSearch": "Close search"
+    },
+    "filters": {
+      "button": "Filters",
+      "toggle": "Toggle filters",
+      "title": "Document Filters",
+      "description": "Refine your document search",
+      "comingSoon": "Filters Coming Soon!",
+      "comingSoonDescription": "We're working on advanced filtering options to help you find documents faster. Stay tuned for filters by type, status, tags, and more!",
+      "close": "Close"
+    },
+    "views": {
+      "list": "List view",
+      "grid": "Grid view"
+    },
+    "card": {
+      "modified": "Modified",
+      "sharedWith": "Shared with",
+      "share": "Share",
+      "edit": "Edit",
+      "delete": "Delete",
+      "moreOptions": "More options"
+    },
+    "status": {
+      "awaitingSignature": "Awaiting Signature",
+      "underReview": "Under Review",
+      "sentToClient": "Sent to Client",
+      "inProgress": "In Progress"
+    },
+    "types": {
+      "proposal": "Proposal",
+      "contract": "Contract", 
+      "invoice": "Invoice",
+      "spreadsheet": "Spreadsheet",
+      "template": "Template"
+    },
+    "emptyState": {
+      "title": "Document Management",
+      "description": "Store and manage your important documents",
+      "uploadButton": "Upload Document"
+    }
+  },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"
   }

@@ -353,6 +353,66 @@
       "scrollToLoad": "Faites défiler pour charger plus..."
     }
   },
+  "documents": {
+    "title": "Documents",
+    "description": "Gérez vos documents et fichiers",
+    "upload": "Télécharger Document",
+    "tabs": {
+      "allDocuments": "Tous les Documents",
+      "sharedWithMe": "Partagés avec Moi",
+      "descriptions": {
+        "allDocuments": "Voir tous vos documents",
+        "sharedWithMe": "Documents partagés par d'autres"
+      }
+    },
+    "search": {
+      "button": "Rechercher",
+      "placeholder": "Rechercher par nom, tags ou type...",
+      "placeholderMobile": "Rechercher documents...",
+      "tooltip": "Ouvrir la recherche",
+      "searchNow": "Rechercher maintenant (Entrée)",
+      "closeSearch": "Fermer la recherche"
+    },
+    "filters": {
+      "button": "Filtres",
+      "toggle": "Basculer les filtres",
+      "title": "Filtres de Documents",
+      "description": "Affinez votre recherche de documents",
+      "comingSoon": "Filtres Bientôt Disponibles !",
+      "comingSoonDescription": "Nous travaillons sur des options de filtrage avancées pour vous aider à trouver des documents plus rapidement. Restez à l'écoute pour les filtres par type, statut, tags, et plus !",
+      "close": "Fermer"
+    },
+    "views": {
+      "list": "Vue liste",
+      "grid": "Vue grille"
+    },
+    "card": {
+      "modified": "Modifié",
+      "sharedWith": "Partagé avec",
+      "share": "Partager",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "moreOptions": "Plus d'options"
+    },
+    "status": {
+      "awaitingSignature": "En Attente de Signature",
+      "underReview": "En Cours de Révision",
+      "sentToClient": "Envoyé au Client",
+      "inProgress": "En Cours"
+    },
+    "types": {
+      "proposal": "Proposition",
+      "contract": "Contrat",
+      "invoice": "Facture",
+      "spreadsheet": "Feuille de Calcul",
+      "template": "Modèle"
+    },
+    "emptyState": {
+      "title": "Gestion des Documents",
+      "description": "Stockez et gérez vos documents importants",
+      "uploadButton": "Télécharger Document"
+    }
+  },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"
   }
