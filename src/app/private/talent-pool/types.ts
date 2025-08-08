@@ -106,6 +106,9 @@ export interface TalentCardProps {
   user: User;
   onViewProfile?: (userId: string) => void;
   onConnect?: (userId: string) => void;
+  onAddNote?: (userId: string) => void;
+  onAddToGroup?: (userId: string) => void;
+  onAssignTags?: (userId: string) => void;
 }
 
 export interface TeamCardProps {

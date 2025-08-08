@@ -4,7 +4,7 @@ import type { TalentType } from '../types';
 export const TALENT_POOL_TABS = {
   FREELANCERS: 'freelancers' as const,
   AGENCIES: 'agencies' as const,
-  TEAMS: 'teams' as const,
+  TEAMS: 'teams' as const
 } as const;
 
 export const TAB_CONFIG = {
@@ -80,17 +80,17 @@ export const ACTION_ITEMS = [
 export const FILTER_ANIMATION = {
   DURATION: 0.25,
   EASE: [0.4, 0.0, 0.2, 1] as const,
-  OPACITY_DURATION: 0.15,
+  OPACITY_DURATION: 0.15
 } as const;
 
 // Search debounce constants
 export const SEARCH_CONFIG = {
   DEBOUNCE_MS: 300,
-  MIN_SEARCH_LENGTH: 1,
+  MIN_SEARCH_LENGTH: 1
 } as const;
 
 // Performance constants
 export const PERFORMANCE_CONFIG = {
   ITEMS_PER_PAGE: 12,
-  PREFETCH_THRESHOLD: 5,
+  PREFETCH_THRESHOLD: 5
 } as const;

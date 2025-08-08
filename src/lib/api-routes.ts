@@ -8,7 +8,7 @@ export const API_ROUTES = {
   profile: {
     me: '/users/me',
     userProfile: '/users/',
-    image: `${process.env.NEXT_PUBLIC_BASE_URL ?? 'https://dev.extraexpertise.be/api'}/upload/`,
+    image: '/upload/',
     experience: '/experience',
     experienceByUser: '/experience/byUser/',
     educationByUser: '/education/byUser/',

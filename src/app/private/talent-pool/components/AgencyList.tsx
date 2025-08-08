@@ -14,6 +14,9 @@ import EmptyState from './shared/EmptyState';
 import ErrorState from './shared/ErrorState';
 import LoadingSkeleton from './shared/LoadingSkeleton';
 import TalentCard from './TalentCard';
+import AddNoteModal from './AddNoteModal';
+import AddToGroupModal from './AddToGroupModal';
+import AssignTagsModal from './AssignTagsModal';
 
 interface AgencyListProps {
   filters?: TalentPoolFilters;
@@ -38,6 +41,12 @@ const AgencyList: React.FC<AgencyListProps> = ({
   const [totalItems, setTotalItems] = useState(0);
   const [previousCount, setPreviousCount] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // Modal states
+  const [noteModalOpen, setNoteModalOpen] = useState(false);
+  const [groupModalOpen, setGroupModalOpen] = useState(false);
+  const [tagsModalOpen, setTagsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const itemsPerPage = 12; // 3x4 grid layout for enhanced cards
 
@@ -204,6 +213,63 @@ const AgencyList: React.FC<AgencyListProps> = ({
     }
   };
 
+  const handleAddNote = (userId: string) => {
+    const user = agencies.find(a => a.id === userId);
+    if (user) {
+      setSelectedUser(user);
+      setNoteModalOpen(true);
+    }
+  };
+
+  const handleAddToGroup = (userId: string) => {
+    const user = agencies.find(a => a.id === userId);
+    if (user) {
+      setSelectedUser(user);
+      setGroupModalOpen(true);
+    }
+  };
+
+  const handleAssignTags = (userId: string) => {
+    const user = agencies.find(a => a.id === userId);
+    if (user) {
+      setSelectedUser(user);
+      setTagsModalOpen(true);
+    }
+  };
+
+  const handleSaveNote = async (userId: string, note: string) => {
+    try {
+      console.log('Saving note for agency:', userId, 'Note:', note);
+      // Here you would make the API call to save the note
+      // await saveUserNote(userId, note);
+    } catch (error) {
+      console.error('Error saving note:', error);
+      throw error;
+    }
+  };
+
+  const handleAddToGroups = async (userId: string, groupIds: string[]) => {
+    try {
+      console.log('Adding agency to groups:', userId, 'Groups:', groupIds);
+      // Here you would make the API call to add user to groups
+      // await addUserToGroups(userId, groupIds);
+    } catch (error) {
+      console.error('Error adding to groups:', error);
+      throw error;
+    }
+  };
+
+  const handleAssignUserTags = async (userId: string, tagIds: string[]) => {
+    try {
+      console.log('Assigning tags to agency:', userId, 'Tags:', tagIds);
+      // Here you would make the API call to assign tags
+      // await assignUserTags(userId, tagIds);
+    } catch (error) {
+      console.error('Error assigning tags:', error);
+      throw error;
+    }
+  };
+
   if (error) {
     return (
       <ErrorState
@@ -235,7 +301,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
         {agencies.map((agency, index) => (
           <motion.div
-            key={agency.id}
+            key={`agency-${agency.id}-${index}`}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -247,7 +313,14 @@ const AgencyList: React.FC<AgencyListProps> = ({
                   : 0
             }}
           >
-            <TalentCard user={agency} onViewProfile={handleViewProfile} onConnect={handleConnect} />
+            <TalentCard 
+              user={agency} 
+              onViewProfile={handleViewProfile} 
+              onConnect={handleConnect}
+              onAddNote={handleAddNote}
+              onAddToGroup={handleAddToGroup}
+              onAssignTags={handleAssignTags}
+            />
           </motion.div>
         ))}
       </div>
@@ -267,6 +340,28 @@ const AgencyList: React.FC<AgencyListProps> = ({
           )}
         </div>
       )}
+
+      {/* Modals */}
+      <AddNoteModal
+        isOpen={noteModalOpen}
+        onClose={() => setNoteModalOpen(false)}
+        user={selectedUser}
+        onSaveNote={handleSaveNote}
+      />
+      
+      <AddToGroupModal
+        isOpen={groupModalOpen}
+        onClose={() => setGroupModalOpen(false)}
+        user={selectedUser}
+        onAddToGroups={handleAddToGroups}
+      />
+      
+      <AssignTagsModal
+        isOpen={tagsModalOpen}
+        onClose={() => setTagsModalOpen(false)}
+        user={selectedUser}
+        onAssignTags={handleAssignUserTags}
+      />
     </div>
   );
 };

@@ -226,7 +226,7 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
         {teams.map((team, index) => (
           <motion.div
-            key={team.id}
+            key={`team-${team.id}-${index}`}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{

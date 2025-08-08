@@ -280,7 +280,14 @@
       "membersCount": "members",
       "noSkillsListed": "No skills listed",
       "moreSkills": "more",
-      "noAboutAvailable": "No description available"
+      "noAboutAvailable": "No description available",
+      "actions": {
+        "connect": "Connect",
+        "connected": "Connected",
+        "addNote": "Add Note",
+        "addToGroup": "Add to Group",
+        "assignTags": "Assign Tags"
+      }
     },
     "availability": {
       "all": "All",
@@ -297,12 +304,21 @@
       "hybrid": "hybrid",
       "unknown": "unknown"
     },
+    "workingTime": {
+      "full_time": "Full time",
+      "part_time": "Part time",
+      "fullTime": "Full time",
+      "partTime": "Part time",
+      "FULL_TIME": "Full time",
+      "PART_TIME": "Part time"
+    },
     "userTypes": {
       "freelancer": "Freelancer",
       "fullTimeFreelancer": "Full time freelancer",
       "partTimeFreelancer": "Part time freelancer",
       "agency": "Agency",
-      "student": "Student"
+      "student": "Student",
+      "contractor": "Contractor"
     },
     "paymentTypes": {
       "hourly": "/hour",
@@ -320,6 +336,37 @@
       "teams": {
         "title": "No teams found",
         "description": "We couldn't find any teams matching your criteria. Try adjusting your filters or search query."
+      }
+    },
+    "modals": {
+      "addNote": {
+        "title": "Add Personal Note",
+        "subtitle": "Add a private note about this person",
+        "noteLabel": "Note",
+        "notePlaceholder": "Enter your personal notes about this freelancer/agency...",
+        "charactersRemaining": "characters remaining"
+      },
+      "addToGroup": {
+        "title": "Add to Group",
+        "subtitle": "Add this person to one or more groups",
+        "createNewGroup": "Create New Group",
+        "newGroupPlaceholder": "Enter group name...",
+        "existingGroups": "Existing Groups",
+        "selected": "selected",
+        "searchGroups": "Search groups...",
+        "loadingGroups": "Loading groups...",
+        "noGroupsFound": "No groups found",
+        "noGroups": "No groups available",
+        "members": "members"
+      },
+      "assignTags": {
+        "title": "Assign Tags",
+        "subtitle": "Add tags to organize and categorize this person",
+        "selectedTags": "Selected Tags",
+        "createNewTag": "Create New Tag",
+        "newTagPlaceholder": "Enter tag name...",
+        "availableTags": "Available Tags",
+        "noTags": "No tags available"
       }
     },
     "errorStates": {
@@ -351,6 +398,50 @@
         "teams": "Loading more teams..."
       },
       "scrollToLoad": "Scroll to load more..."
+    },
+    "profile": {
+      "sections": {
+        "about": "About",
+        "experience": "Experience",
+        "education": "Education",
+        "skills": "Skills",
+        "languages": "Languages",
+        "contact": "Contact"
+      },
+      "aboutDescription": "Learn more about this person",
+      "experienceDescription": "Professional background and work history",
+      "educationDescription": "Academic background and qualifications",
+      "skillsDescription": "Technical and professional expertise",
+      "languagesDescription": "Spoken languages and proficiency levels",
+      "present": "Present",
+      "grade": "Grade",
+      "professionalSummary": "Professional Summary",
+      "noSummaryAvailable": "No summary available",
+      "noExperience": "No experience information available",
+      "noEducation": "No education information available",
+      "noLanguages": "No languages information available",
+      "emailVerified": "Email verified",
+      "experienceYears": "{years} years experience",
+      "contact": "Contact",
+      "letsTalk": "Let's Talk",
+      "downloadCV": "Download CV",
+      "website": "Website",
+      "linkedin": "LinkedIn",
+      "linkedinProfile": "LinkedIn Profile", 
+      "profileCover": "Profile cover",
+      "workWithUser": "Interested in working with {name}?",
+      "connectionPending": "Connection Pending",
+      "error": {
+        "title": "Profile Not Available",
+        "userNotFound": "The requested profile could not be found.",
+        "generic": "Something went wrong while loading this profile.",
+        "failedToLoad": "Failed to load profile",
+        "profileNotFound": "Profile not found"
+      },
+      "metadata": {
+        "title": "Profile | Talent Pool",
+        "description": "View talent profile details"
+      }
     }
   },
   "documents": {
@@ -412,6 +503,16 @@
       "description": "Store and manage your important documents",
       "uploadButton": "Upload Document"
     }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "back": "Back",
+    "retry": "Retry"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"

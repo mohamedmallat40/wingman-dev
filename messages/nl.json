@@ -280,7 +280,14 @@
       "membersCount": "leden",
       "noSkillsListed": "Geen vaardigheden vermeld",
       "moreSkills": "meer",
-      "noAboutAvailable": "Geen beschrijving beschikbaar"
+      "noAboutAvailable": "Geen beschrijving beschikbaar",
+      "actions": {
+        "connect": "Verbinden",
+        "connected": "Verbonden",
+        "addNote": "Notitie Toevoegen",
+        "addToGroup": "Toevoegen aan Groep",
+        "assignTags": "Tags Toewijzen"
+      }
     },
     "availability": {
       "all": "Alle",
@@ -297,12 +304,21 @@
       "hybrid": "hybride",
       "unknown": "onbekend"
     },
+    "workingTime": {
+      "full_time": "Voltijd",
+      "part_time": "Deeltijd",
+      "fullTime": "Voltijd",
+      "partTime": "Deeltijd",
+      "FULL_TIME": "Voltijd",
+      "PART_TIME": "Deeltijd"
+    },
     "userTypes": {
       "freelancer": "Freelancer",
       "fullTimeFreelancer": "Fulltime freelancer",
       "partTimeFreelancer": "Parttime freelancer",
       "agency": "Bureau",
-      "student": "Student"
+      "student": "Student",
+      "contractor": "Contractant"
     },
     "paymentTypes": {
       "hourly": "/uur",
@@ -320,6 +336,37 @@
       "teams": {
         "title": "Geen teams gevonden",
         "description": "We konden geen teams vinden die voldoen aan uw criteria. Probeer uw filters of zoekquery aan te passen."
+      }
+    },
+    "modals": {
+      "addNote": {
+        "title": "Persoonlijke Notitie Toevoegen",
+        "subtitle": "Voeg een privénotitie toe over deze persoon",
+        "noteLabel": "Notitie",
+        "notePlaceholder": "Voer uw persoonlijke notities over deze freelancer/bureau in...",
+        "charactersRemaining": "karakters over"
+      },
+      "addToGroup": {
+        "title": "Toevoegen aan Groep",
+        "subtitle": "Voeg deze persoon toe aan een of meer groepen",
+        "createNewGroup": "Nieuwe Groep Maken",
+        "newGroupPlaceholder": "Groepsnaam invoeren...",
+        "existingGroups": "Bestaande Groepen",
+        "selected": "geselecteerd",
+        "searchGroups": "Groepen zoeken...",
+        "loadingGroups": "Groepen laden...",
+        "noGroupsFound": "Geen groepen gevonden",
+        "noGroups": "Geen groepen beschikbaar",
+        "members": "leden"
+      },
+      "assignTags": {
+        "title": "Tags Toewijzen",
+        "subtitle": "Voeg tags toe om deze persoon te organiseren en categoriseren",
+        "selectedTags": "Geselecteerde Tags",
+        "createNewTag": "Nieuwe Tag Maken",
+        "newTagPlaceholder": "Tag naam invoeren...",
+        "availableTags": "Beschikbare Tags",
+        "noTags": "Geen tags beschikbaar"
       }
     },
     "errorStates": {
@@ -351,6 +398,50 @@
         "teams": "Meer teams laden..."
       },
       "scrollToLoad": "Scroll om meer te laden..."
+    },
+    "profile": {
+      "sections": {
+        "about": "Over",
+        "experience": "Ervaring",
+        "education": "Opleiding",
+        "skills": "Vaardigheden",
+        "languages": "Talen",
+        "contact": "Contact"
+      },
+      "aboutDescription": "Leer meer over deze persoon",
+      "experienceDescription": "Professionele achtergrond en werkgeschiedenis",
+      "educationDescription": "Academische achtergrond en kwalificaties",
+      "skillsDescription": "Technische en professionele expertise",
+      "languagesDescription": "Gesproken talen en vaardigheidsniveaus",
+      "present": "Heden",
+      "grade": "Cijfer",
+      "professionalSummary": "Professionele Samenvatting",
+      "noSummaryAvailable": "Geen samenvatting beschikbaar",
+      "noExperience": "Geen ervaringsinformatie beschikbaar",
+      "noEducation": "Geen opleidingsinformatie beschikbaar",
+      "noLanguages": "Geen taalinformatie beschikbaar",
+      "emailVerified": "E-mail geverifieerd",
+      "experienceYears": "{years} jaar ervaring",
+      "contact": "Contact",
+      "letsTalk": "Laten we Praten",
+      "downloadCV": "CV Downloaden",
+      "website": "Website",
+      "linkedin": "LinkedIn",
+      "linkedinProfile": "LinkedIn Profiel", 
+      "profileCover": "Profielomslag",
+      "workWithUser": "Geïnteresseerd in samenwerken met {name}?",
+      "connectionPending": "Verbinding In Behandeling",
+      "error": {
+        "title": "Profiel Niet Beschikbaar",
+        "userNotFound": "Het gevraagde profiel kon niet worden gevonden.",
+        "generic": "Er ging iets mis bij het laden van dit profiel.",
+        "failedToLoad": "Laden van profiel mislukt",
+        "profileNotFound": "Profiel niet gevonden"
+      },
+      "metadata": {
+        "title": "Profiel | Talent Pool",
+        "description": "Bekijk talent profiel details"
+      }
     }
   },
   "documents": {
@@ -412,6 +503,16 @@
       "description": "Bewaar en beheer uw belangrijke documenten",
       "uploadButton": "Document Uploaden"
     }
+  },
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "create": "Aanmaken",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "close": "Sluiten",
+    "back": "Terug",
+    "retry": "Opnieuw Proberen"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet"

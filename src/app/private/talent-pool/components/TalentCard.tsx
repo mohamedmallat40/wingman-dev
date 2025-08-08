@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { Button, Card, CardBody, CardHeader, Chip, Tooltip } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Chip, Tooltip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
@@ -14,11 +14,14 @@ import {
   getUserInitials,
   getWorkTypeConfig,
   mapUserType,
+  mapWorkingTime,
   stripHtml,
   truncateText
 } from '../utils/talent-utils';
+import { getImageUrl } from '@/lib/utils/utilities';
+import { getCountryFlag, getCountryName } from '../utils/country-flags';
 
-const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect }) => {
+const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect, onAddNote, onAddToGroup, onAssignTags }) => {
   const t = useTranslations();
   const {
     id,
@@ -65,7 +68,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
               {profileImage && profileImage.trim() ? (
                 <div className='ring-primary/10 shadow-medium from-primary-200 to-secondary-200 h-20 w-20 overflow-hidden rounded-full bg-gradient-to-br ring-2'>
                   <img
-                    src={`https://app.extraexpertise.be/api/upload/${profileImage}`}
+                    src={getImageUrl(profileImage)}
                     alt={`${firstName} ${lastName}`}
                     className='h-full w-full object-cover'
                     onError={(e) => {
@@ -134,16 +137,52 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                     </Button>
                   </Tooltip>
 
-                  <Tooltip content={t('talentPool.cards.moreOptions')} placement='bottom'>
-                    <Button
-                      isIconOnly
-                      variant='light'
-                      size='sm'
-                      className='text-foreground-400 hover:text-foreground'
-                    >
-                      <Icon icon='solar:menu-dots-linear' className='h-4 w-4' />
-                    </Button>
-                  </Tooltip>
+                  <Dropdown>
+                    <DropdownTrigger>
+                      <Button
+                        isIconOnly
+                        variant='light'
+                        size='sm'
+                        className='text-foreground-500 hover:text-primary hover:bg-primary/10 transition-all duration-200 hover:scale-105'
+                      >
+                        <Icon icon='solar:menu-dots-linear' className='h-4 w-4' />
+                      </Button>
+                    </DropdownTrigger>
+                    <DropdownMenu className='min-w-[180px]'>
+                      <DropdownItem 
+                        key='connect' 
+                        startContent={<Icon icon={isConnected ? 'solar:check-circle-bold' : 'solar:user-plus-linear'} className='h-4 w-4' />}
+                        className={isConnected ? 'text-success data-[hover=true]:bg-success/10 data-[hover=true]:text-success' : 'data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'}
+                        onPress={() => !isConnected && onConnect?.(id)}
+                      >
+                        {isConnected ? t('talentPool.cards.actions.connected') : t('talentPool.cards.actions.connect')}
+                      </DropdownItem>
+                      <DropdownItem 
+                        key='addNote' 
+                        className='data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'
+                        startContent={<Icon icon='solar:document-text-linear' className='h-4 w-4' />}
+                        onPress={() => onAddNote?.(id)}
+                      >
+                        {t('talentPool.cards.actions.addNote')}
+                      </DropdownItem>
+                      <DropdownItem 
+                        key='addToGroup' 
+                        className='data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'
+                        startContent={<Icon icon='solar:users-group-rounded-linear' className='h-4 w-4' />}
+                        onPress={() => onAddToGroup?.(id)}
+                      >
+                        {t('talentPool.cards.actions.addToGroup')}
+                      </DropdownItem>
+                      <DropdownItem 
+                        key='assignTags' 
+                        className='data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'
+                        startContent={<Icon icon='solar:tag-linear' className='h-4 w-4' />}
+                        onPress={() => onAssignTags?.(id)}
+                      >
+                        {t('talentPool.cards.actions.assignTags')}
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
                 </div>
               </div>
 
@@ -158,8 +197,8 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                       {city}
                       {region && (
                         <img
-                          src={`https://flagcdn.com/16x12/${region.toLowerCase()}.png`}
-                          alt={`${region} flag`}
+                          src={getCountryFlag(region)}
+                          alt={`${getCountryName(region)} flag`}
                           className='h-3 w-4 rounded-sm shadow-sm'
                           onError={(e) => {
                             // Fallback to badge if flag image fails
@@ -171,7 +210,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                               badge.className =
                                 'country-badge inline-flex h-3 w-6 items-center justify-center rounded-sm bg-gradient-to-br from-primary-100 to-primary-200 text-xs font-bold text-primary-800 shadow-sm';
                               badge.textContent = region.toUpperCase();
-                              badge.title = region;
+                              badge.title = getCountryName(region);
                               parent.appendChild(badge);
                             }
                           }}
@@ -203,7 +242,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect 
                       size='sm'
                       className='text-tiny font-bold'
                     >
-                      {workingTime.replace('_', ' ').toLowerCase()}
+                      {mapWorkingTime(workingTime, t)}
                     </Chip>
                   )}
                 </div>

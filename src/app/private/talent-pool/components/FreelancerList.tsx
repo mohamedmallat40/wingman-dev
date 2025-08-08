@@ -12,6 +12,9 @@ import { getCountryNameFromCode } from '../data/countries';
 import { type TalentPoolFilters, type User, type UserResponse } from '../types';
 import { EmptyState, ErrorState } from './shared';
 import TalentCard from './TalentCard';
+import AddNoteModal from './AddNoteModal';
+import AddToGroupModal from './AddToGroupModal';
+import AssignTagsModal from './AssignTagsModal';
 
 interface FreelancerListProps {
   filters?: TalentPoolFilters;
@@ -122,6 +125,12 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
   const [totalItems, setTotalItems] = useState(0);
   const [previousCount, setPreviousCount] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // Modal states
+  const [noteModalOpen, setNoteModalOpen] = useState(false);
+  const [groupModalOpen, setGroupModalOpen] = useState(false);
+  const [tagsModalOpen, setTagsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const itemsPerPage = 12; // 3x4 grid layout for enhanced cards
 
@@ -301,6 +310,63 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
     }
   };
 
+  const handleAddNote = (userId: string) => {
+    const user = freelancers.find(f => f.id === userId);
+    if (user) {
+      setSelectedUser(user);
+      setNoteModalOpen(true);
+    }
+  };
+
+  const handleAddToGroup = (userId: string) => {
+    const user = freelancers.find(f => f.id === userId);
+    if (user) {
+      setSelectedUser(user);
+      setGroupModalOpen(true);
+    }
+  };
+
+  const handleAssignTags = (userId: string) => {
+    const user = freelancers.find(f => f.id === userId);
+    if (user) {
+      setSelectedUser(user);
+      setTagsModalOpen(true);
+    }
+  };
+
+  const handleSaveNote = async (userId: string, note: string) => {
+    try {
+      console.log('Saving note for user:', userId, 'Note:', note);
+      // Here you would make the API call to save the note
+      // await saveUserNote(userId, note);
+    } catch (error) {
+      console.error('Error saving note:', error);
+      throw error;
+    }
+  };
+
+  const handleAddToGroups = async (userId: string, groupIds: string[]) => {
+    try {
+      console.log('Adding user to groups:', userId, 'Groups:', groupIds);
+      // Here you would make the API call to add user to groups
+      // await addUserToGroups(userId, groupIds);
+    } catch (error) {
+      console.error('Error adding to groups:', error);
+      throw error;
+    }
+  };
+
+  const handleAssignUserTags = async (userId: string, tagIds: string[]) => {
+    try {
+      console.log('Assigning tags to user:', userId, 'Tags:', tagIds);
+      // Here you would make the API call to assign tags
+      // await assignUserTags(userId, tagIds);
+    } catch (error) {
+      console.error('Error assigning tags:', error);
+      throw error;
+    }
+  };
+
   if (error) {
     return (
       <ErrorState
@@ -332,7 +398,7 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
         {freelancers.map((freelancer, index) => (
           <motion.div
-            key={freelancer.id}
+            key={`freelancer-${freelancer.id}-${index}`}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -348,6 +414,9 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
               user={freelancer}
               onViewProfile={handleViewProfile}
               onConnect={handleConnect}
+              onAddNote={handleAddNote}
+              onAddToGroup={handleAddToGroup}
+              onAssignTags={handleAssignTags}
             />
           </motion.div>
         ))}
@@ -370,6 +439,28 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
           )}
         </div>
       )}
+
+      {/* Modals */}
+      <AddNoteModal
+        isOpen={noteModalOpen}
+        onClose={() => setNoteModalOpen(false)}
+        user={selectedUser}
+        onSaveNote={handleSaveNote}
+      />
+      
+      <AddToGroupModal
+        isOpen={groupModalOpen}
+        onClose={() => setGroupModalOpen(false)}
+        user={selectedUser}
+        onAddToGroups={handleAddToGroups}
+      />
+      
+      <AssignTagsModal
+        isOpen={tagsModalOpen}
+        onClose={() => setTagsModalOpen(false)}
+        user={selectedUser}
+        onAssignTags={handleAssignUserTags}
+      />
     </div>
   );
 };

@@ -40,9 +40,7 @@ export default function BroadcastsPage() {
         <div className='text-center'>
           <Icon icon='solar:dialog-2-linear' className='text-primary mb-4 h-24 w-24' />
           <h2 className='mb-2 text-2xl font-bold'>Broadcast Center</h2>
-          <p className='text-default-600 mb-4'>
-            Create and manage announcements for your network
-          </p>
+          <p className='text-default-600 mb-4'>Create and manage announcements for your network</p>
           <Button color='primary' startContent={<Icon icon='solar:dialog-2-linear' />}>
             Create Broadcast
           </Button>

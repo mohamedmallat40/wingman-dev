@@ -7,6 +7,7 @@ import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 
 import { type TeamCardProps } from '../types';
+import { getImageUrl } from '@/lib/utils/utilities';
 
 const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) => {
   const { id, groupName, color, members, tools, owner, connections } = group;
@@ -96,7 +97,7 @@ const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) =
               <Avatar
                 src={
                   owner.profileImage
-                    ? `https://app.extraexpertise.be/api/upload/${owner.profileImage}`
+                    ? getImageUrl(owner.profileImage)
                     : undefined
                 }
                 className='ring-primary-100 h-12 w-12 ring-4 ring-offset-2'

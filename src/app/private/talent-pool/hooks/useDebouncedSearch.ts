@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 /**
  * Custom hook for debouncing search input to prevent excessive API calls
@@ -37,9 +37,7 @@ export const useAdvancedDebouncedSearch = (
   } = {}
 ) => {
   const { delay = 300, minLength = 1, immediate = false } = options;
-  const [debouncedQuery, setDebouncedQuery] = useState(
-    immediate ? searchQuery : ''
-  );
+  const [debouncedQuery, setDebouncedQuery] = useState(immediate ? searchQuery : '');
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
@@ -51,7 +49,7 @@ export const useAdvancedDebouncedSearch = (
     }
 
     setIsSearching(true);
-    
+
     const handler = setTimeout(() => {
       setDebouncedQuery(searchQuery);
       setIsSearching(false);
@@ -65,6 +63,6 @@ export const useAdvancedDebouncedSearch = (
   return {
     debouncedQuery,
     isSearching,
-    hasMinimumLength: searchQuery.length >= minLength,
+    hasMinimumLength: searchQuery.length >= minLength
   };
 };

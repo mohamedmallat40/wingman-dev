@@ -280,7 +280,14 @@
       "membersCount": "membres",
       "noSkillsListed": "Aucune compétence répertoriée",
       "moreSkills": "plus",
-      "noAboutAvailable": "Aucune description disponible"
+      "noAboutAvailable": "Aucune description disponible",
+      "actions": {
+        "connect": "Se Connecter",
+        "connected": "Connecté",
+        "addNote": "Ajouter une Note",
+        "addToGroup": "Ajouter au Groupe",
+        "assignTags": "Assigner des Tags"
+      }
     },
     "availability": {
       "all": "Tous",
@@ -297,12 +304,21 @@
       "hybrid": "hybride",
       "unknown": "inconnu"
     },
+    "workingTime": {
+      "full_time": "Temps plein",
+      "part_time": "Temps partiel",
+      "fullTime": "Temps plein",
+      "partTime": "Temps partiel",
+      "FULL_TIME": "Temps plein",
+      "PART_TIME": "Temps partiel"
+    },
     "userTypes": {
       "freelancer": "Freelancer",
       "fullTimeFreelancer": "Freelancer temps plein",
       "partTimeFreelancer": "Freelancer temps partiel",
       "agency": "Agence",
-      "student": "Étudiant"
+      "student": "Étudiant",
+      "contractor": "Contractuel"
     },
     "paymentTypes": {
       "hourly": "/heure",
@@ -320,6 +336,37 @@
       "teams": {
         "title": "Aucune équipe trouvée",
         "description": "Nous n'avons trouvé aucune équipe correspondant à vos critères. Essayez d'ajuster vos filtres ou votre requête de recherche."
+      }
+    },
+    "modals": {
+      "addNote": {
+        "title": "Ajouter une Note Personnelle",
+        "subtitle": "Ajoutez une note privée à propos de cette personne",
+        "noteLabel": "Note",
+        "notePlaceholder": "Entrez vos notes personnelles sur ce freelancer/agence...",
+        "charactersRemaining": "caractères restants"
+      },
+      "addToGroup": {
+        "title": "Ajouter au Groupe",
+        "subtitle": "Ajoutez cette personne à un ou plusieurs groupes",
+        "createNewGroup": "Créer un Nouveau Groupe",
+        "newGroupPlaceholder": "Entrez le nom du groupe...",
+        "existingGroups": "Groupes Existants",
+        "selected": "sélectionné",
+        "searchGroups": "Rechercher des groupes...",
+        "loadingGroups": "Chargement des groupes...",
+        "noGroupsFound": "Aucun groupe trouvé",
+        "noGroups": "Aucun groupe disponible",
+        "members": "membres"
+      },
+      "assignTags": {
+        "title": "Assigner des Tags",
+        "subtitle": "Ajoutez des tags pour organiser et catégoriser cette personne",
+        "selectedTags": "Tags Sélectionnés",
+        "createNewTag": "Créer un Nouveau Tag",
+        "newTagPlaceholder": "Entrez le nom du tag...",
+        "availableTags": "Tags Disponibles",
+        "noTags": "Aucun tag disponible"
       }
     },
     "errorStates": {
@@ -351,6 +398,50 @@
         "teams": "Chargement de plus d'équipes..."
       },
       "scrollToLoad": "Faites défiler pour charger plus..."
+    },
+    "profile": {
+      "sections": {
+        "about": "À propos",
+        "experience": "Expérience",
+        "education": "Formation",
+        "skills": "Compétences",
+        "languages": "Langues",
+        "contact": "Contact"
+      },
+      "aboutDescription": "En savoir plus sur cette personne",
+      "experienceDescription": "Parcours professionnel et historique de travail",
+      "educationDescription": "Formation académique et qualifications",
+      "skillsDescription": "Expertise technique et professionnelle",
+      "languagesDescription": "Langues parlées et niveaux de compétence",
+      "present": "Présent",
+      "grade": "Note",
+      "professionalSummary": "Résumé Professionnel",
+      "noSummaryAvailable": "Aucun résumé disponible",
+      "noExperience": "Aucune information d'expérience disponible",
+      "noEducation": "Aucune information de formation disponible",
+      "noLanguages": "Aucune information de langue disponible",
+      "emailVerified": "E-mail vérifié",
+      "experienceYears": "{years} années d'expérience",
+      "contact": "Contact",
+      "letsTalk": "Discutons",
+      "downloadCV": "Télécharger le CV",
+      "website": "Site web",
+      "linkedin": "LinkedIn",
+      "linkedinProfile": "Profil LinkedIn", 
+      "profileCover": "Couverture de profil",
+      "workWithUser": "Intéressé par travailler avec {name} ?",
+      "connectionPending": "Connexion en attente",
+      "error": {
+        "title": "Profil Non Disponible",
+        "userNotFound": "Le profil demandé n'a pas pu être trouvé.",
+        "generic": "Une erreur s'est produite lors du chargement de ce profil.",
+        "failedToLoad": "Échec du chargement du profil",
+        "profileNotFound": "Profil non trouvé"
+      },
+      "metadata": {
+        "title": "Profil | Bassin de Talents",
+        "description": "Voir les détails du profil de talent"
+      }
     }
   },
   "documents": {
@@ -412,6 +503,16 @@
       "description": "Stockez et gérez vos documents importants",
       "uploadButton": "Télécharger Document"
     }
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "back": "Retour",
+    "retry": "Réessayer"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"
