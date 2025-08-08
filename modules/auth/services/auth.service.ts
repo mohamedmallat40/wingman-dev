@@ -32,6 +32,15 @@ export const checkValidEUVAT = async (countryCode: string, vatNumber: string) =>
     `${API_ROUTES.auth.checkValidEUVAT}?countryCode=${countryCode}&vatNumber=${vatNumber}`
   );
 };
+
+export const completeProfileService = async (data: RegistrationData, token: string) => {
+  return wingManApi.post(API_ROUTES.auth.completeProfile, data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
 export const handleOAuth = (provider: 'google' | 'linkedin'): Promise<unknown> => {
   return new Promise((resolve, reject) => {
     const authUrl = `https://dev.extraexpertise.be/api/auth/${provider}`;

@@ -96,6 +96,8 @@ export default function PremiumWizard() {
   const [subscriptionTypeFromUrl, setSubscriptionTypeFromUrl] = useState<string | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const [currentFormData, setCurrentFormData] = useState<any>({});
+  const [isOAuthUser, setIsOAuthUser] = useState(false);
+  const [oauthToken, setOauthToken] = useState<string | undefined>();
 
   const t = useTranslations('registration');
   const steps = allSteps;
@@ -212,10 +214,10 @@ export default function PremiumWizard() {
     password: string;
     firstName: string;
     lastName: string;
+    chatToken?: string;
+    token?: string;
   }) => {
     setIsLoading(true);
-    // Simulate API check or validation
-    await new Promise((resolve) => setTimeout(resolve, 800));
     setRegistrationData((previous) => ({ ...previous, ...data }));
     setIsLoading(false);
     nextStep();
@@ -280,22 +282,26 @@ export default function PremiumWizard() {
       ...(finalData.senderId && { senderId: finalData.senderId })
     };
 
-    form.registerUser(transformedData);
+    if (isOAuthUser && oauthToken) {
+      form.completeProfile(transformedData, oauthToken);
+    } else {
+      form.registerUser(transformedData);
+    }
   };
 
-  const handleOAuthComplete = (oauthData: { isCompleted: boolean; user: any }) => {
+  const handleOAuthComplete = (oauthData: { isCompleted: boolean; user: any; token?: string }) => {
     if (oauthData.isCompleted) {
       return;
     }
 
-    // User needs to complete registration, populate form with OAuth data
+    setIsOAuthUser(true);
+    setOauthToken(oauthData.token); // Store OAuth token
+
     const updatedRegistrationData: Partial<RegistrationData> = {
       ...registrationData,
-      email: oauthData.data.user.email ?? '',
+      email: oauthData.user.email ?? '',
       firstName: oauthData.user.firstName ?? '',
-      lastName: oauthData.user.lastName ?? '',
-      // Skip password requirement for OAuth users
-      password: `oauth-user-${oauthData.user?.id?.slice(0, -13)}`
+      lastName: oauthData.user.lastName ?? ''
     };
 
     setRegistrationData(updatedRegistrationData);

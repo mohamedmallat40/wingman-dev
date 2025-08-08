@@ -3,7 +3,8 @@ export const API_ROUTES = {
     login: '/auth/local/signin',
     register: '/auth/local/signup',
     subscriptions: '/subscription',
-    checkValidEUVAT: '/invoices/validate-vat'
+    checkValidEUVAT: '/invoices/validate-vat',
+    completeProfile: '/auth/complete-account'
   },
   profile: {
     me: '/users/me',

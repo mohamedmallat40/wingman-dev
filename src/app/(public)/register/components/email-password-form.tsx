@@ -143,15 +143,12 @@ export default function EmailPasswordForm({
   const handleGoogleLogin = async () => {
     try {
       const result = await loginWithGoogle();
-      if (result && !result.isCompleted) {
-        setIsOAuthUser(true);
-        // Pre-fill form with OAuth data
-        setEmail(result.user.email || '');
-        setFirstName(result.user.firstName || '');
-        setLastName(result.user.lastName || '');
-      }
-      if (onOAuthComplete && result) {
-        onOAuthComplete(result);
+      if (!result.isCompleted && onOAuthComplete) {
+        onOAuthComplete({
+          isCompleted: result.isCompleted,
+          user: result.user,
+          token: result.token // Pass the token
+        });
       }
     } catch (error) {
       console.error('Google OAuth failed:', error);
@@ -163,11 +160,11 @@ export default function EmailPasswordForm({
       if (result && !result.isCompleted) {
         setIsOAuthUser(true);
         // Pre-fill form with OAuth data
-        setEmail(result.user.email || '');
-        setFirstName(result.user.firstName || '');
-        setLastName(result.user.lastName || '');
+        setEmail(result.user?.email ?? '');
+        setFirstName(result.user?.firstName ?? '');
+        setLastName(result.user?.lastName ?? '');
       }
-      if (onOAuthComplete && result) {
+      if (onOAuthComplete) {
         onOAuthComplete(result);
       }
     } catch (error) {

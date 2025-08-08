@@ -12,6 +12,7 @@ interface OAuthResponse {
   success: boolean;
   user: IUserProfile;
   token: string;
+  chatToken: string;
   error?: string;
 }
 
@@ -25,10 +26,12 @@ const useOAuth = () => {
     try {
       const data = (await handleOAuth(provider)) as OAuthResponse;
       // Store token if provided
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-      }
       if (data.user) {
+
+
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
         setUser(data.user);
 
         // Check if user registration is complete
@@ -44,14 +47,20 @@ const useOAuth = () => {
           router.push('/private/dashboard');
           return { isCompleted: true, user: data.user };
         } else {
-          // User needs to complete registration
           addToast({
             title: 'Welcome!',
             description: 'Please complete your registration to continue.',
             color: 'success',
             timeout: 3000
           });
-          return { isCompleted: false, user: data.user };
+
+          
+          return {
+            isCompleted: false,
+            user: data.user,
+            token: data.token,
+            chatToken: data.chatToken
+          };
         }
       }
 
