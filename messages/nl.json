@@ -447,7 +447,7 @@
   "documents": {
     "title": "Documenten",
     "description": "Beheer uw documenten en bestanden",
-    "upload": "Document Uploaden",
+    "uploadButton": "Document Uploaden",
     "tabs": {
       "allDocuments": "Alle Documenten",
       "sharedWithMe": "Gedeeld met Mij",
@@ -502,6 +502,99 @@
       "title": "Documentbeheer",
       "description": "Bewaar en beheer uw belangrijke documenten",
       "uploadButton": "Document Uploaden"
+    },
+    "upload": {
+      "title": "Document Uploaden",
+      "subtitle": "Voeg een nieuw document toe aan je collectie",
+      "documentName": {
+        "label": "Documentnaam",
+        "placeholder": "Voer documentnaam in..."
+      },
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Zoek en selecteer tags..."
+      },
+      "file": {
+        "label": "Bestand",
+        "dropTitle": "Zet je bestand hier neer",
+        "uploadTitle": "Upload je document", 
+        "description": "Sleep je bestand hierheen of klik om te bladeren",
+        "chooseFile": "Kies Bestand",
+        "supported": "Ondersteund: PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
+        "unknownType": "Onbekend type"
+      },
+      "progress": {
+        "uploading": "Uploaden...",
+        "loadingText": "Uploaden..."
+      },
+      "buttons": {
+        "cancel": "Annuleren",
+        "upload": "Document Uploaden",
+        "uploading": "Uploaden..."
+      },
+      "type": {
+        "label": "Documenttype",
+        "placeholder": "Selecteer documenttype",
+        "options": {
+          "invoice": "Factuur",
+          "quote": "Offerte", 
+          "contract": "Contract"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Selecteer status",
+        "options": {
+          "draft": "Concept",
+          "pending_review": "Wacht op Beoordeling",
+          "issued": "Uitgegeven",
+          "rejected": "Afgewezen",
+          "overdue": "Achterstallig",
+          "archived": "Gearchiveerd",
+          "cancelled": "Geannuleerd",
+          "disputed": "Betwist"
+        }
+      },
+      "fileSize": {
+        "bytes": "Bytes",
+        "kb": "KB", 
+        "mb": "MB",
+        "gb": "GB"
+      }
+    },
+    "status": {
+      "awaitingSignature": "Wacht op Handtekening",
+      "underReview": "In Beoordeling",
+      "sentToClient": "Naar Klant Gestuurd",
+      "inProgress": "In Behandeling"
+    },
+    "actions": {
+      "view": "Document Bekijken",
+      "edit": "Bewerken",
+      "download": "Downloaden", 
+      "duplicate": "Dupliceren",
+      "delete": "Verwijderen"
+    },
+    "share": {
+      "success": "Document gedeeld met {count} {count, plural, one {persoon} other {personen}}!",
+      "failed": "Delen mislukt. Probeer opnieuw."
+    },
+    "tags": {
+      "contract": "Contract",
+      "proposal": "Voorstel",
+      "invoice": "Factuur",
+      "financial": "Financieel",
+      "legal": "Juridisch",
+      "marketing": "Marketing",
+      "hr": "Human Resources",
+      "technical": "Technisch", 
+      "design": "Design",
+      "project": "Project",
+      "client": "Klant",
+      "internal": "Intern",
+      "urgent": "Urgent",
+      "draft": "Concept",
+      "final": "Definitief"
     }
   },
   "common": {

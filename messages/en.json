@@ -447,7 +447,7 @@
   "documents": {
     "title": "Documents",
     "description": "Manage your documents and files",
-    "upload": "Upload Document",
+    "uploadButton": "Upload Document",
     "tabs": {
       "allDocuments": "All Documents",
       "sharedWithMe": "Shared with Me",
@@ -502,6 +502,105 @@
       "title": "Document Management",
       "description": "Store and manage your important documents",
       "uploadButton": "Upload Document"
+    },
+    "upload": {
+      "title": "Upload Document",
+      "subtitle": "Add a new document to your collection",
+      "documentName": {
+        "label": "Document Name",
+        "placeholder": "Enter document name..."
+      },
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Search and select tags..."
+      },
+      "file": {
+        "label": "File",
+        "dropTitle": "Drop your file here",
+        "uploadTitle": "Upload your document", 
+        "description": "Drag and drop your file or click to browse",
+        "chooseFile": "Choose File",
+        "supported": "Supported: PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
+        "unknownType": "Unknown type"
+      },
+      "progress": {
+        "uploading": "Uploading...",
+        "loadingText": "Uploading..."
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "upload": "Upload Document",
+        "uploading": "Uploading..."
+      },
+      "messages": {
+        "success": "Document \"{name}\" uploaded successfully!",
+        "error": "Failed to upload document. Please try again.",
+        "missingTypeId": "No ID mapping found for document type: {type}",
+        "missingStatusId": "No ID mapping found for status: {status}"
+      },
+      "type": {
+        "label": "Document Type",
+        "placeholder": "Select document type",
+        "options": {
+          "invoice": "Invoice",
+          "quote": "Quote", 
+          "contract": "Contract"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select status",
+        "options": {
+          "draft": "Draft",
+          "pending_review": "Pending Review",
+          "issued": "Issued",
+          "rejected": "Rejected",
+          "overdue": "Overdue",
+          "archived": "Archived",
+          "cancelled": "Cancelled",
+          "disputed": "Disputed"
+        }
+      },
+      "fileSize": {
+        "bytes": "Bytes",
+        "kb": "KB", 
+        "mb": "MB",
+        "gb": "GB"
+      }
+    },
+    "status": {
+      "awaitingSignature": "Awaiting Signature",
+      "underReview": "Under Review",
+      "sentToClient": "Sent to Client",
+      "inProgress": "In Progress"
+    },
+    "actions": {
+      "view": "View Document",
+      "edit": "Edit",
+      "download": "Download", 
+      "duplicate": "Duplicate",
+      "delete": "Delete"
+    },
+    "share": {
+      "success": "Document shared with {count} {count, plural, one {person} other {people}}!",
+      "failed": "Share failed. Please try again."
+    },
+    "tags": {
+      "contract": "Contract",
+      "proposal": "Proposal",
+      "invoice": "Invoice",
+      "financial": "Financial",
+      "legal": "Legal",
+      "marketing": "Marketing",
+      "hr": "Human Resources",
+      "technical": "Technical", 
+      "design": "Design",
+      "project": "Project",
+      "client": "Client",
+      "internal": "Internal",
+      "urgent": "Urgent",
+      "draft": "Draft",
+      "final": "Final"
     }
   },
   "common": {

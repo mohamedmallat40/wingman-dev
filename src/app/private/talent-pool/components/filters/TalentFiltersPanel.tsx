@@ -2,16 +2,18 @@
 
 import React, { useEffect, useState } from 'react';
 
+import type { Country } from '../../data/countries';
+
 import { Button, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { countries } from '../data/countries';
-import { type TalentPoolFilters, type TalentType } from '../types';
+import { countries } from '../../data/countries';
+import { type TalentPoolFilters, type TalentType } from '../../types';
 import AvailabilityFilter from './AvailabilityFilter';
 import CountryFilter from './CountryFilter';
-import ExperienceLevelFilter from './ExperienceLevelFilter';
+import ExperienceFilter from './ExperienceFilter';
 import ProfessionFilter from './ProfessionFilter';
 
 interface SearchAndFiltersProps {
@@ -31,7 +33,6 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
   onSearchChange,
   filters,
   onFiltersChange,
-  activeTab,
   onSearch,
   showFiltersPanel = false,
   onToggleFiltersPanel,
@@ -126,7 +127,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
             transition={{ duration: 0.2 }}
             className='from-default-50/60 to-primary/5 border-default-200/50 flex flex-wrap items-center gap-2 rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'
           >
-            <span className='text-small text-default-600 font-medium'>{t('talentPool.filters.active')}</span>
+            <span className='text-small text-default-600 font-medium'>
+              {t('talentPool.filters.active')}
+            </span>
 
             {(filters.search || filters.name) && (
               <Chip
@@ -178,8 +181,8 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
 
             {filters.country && filters.country.length > 0 && (
               <>
-                {filters.country.slice(0, 3).map((countryCode) => {
-                  const country = countries.find((c) => c.code === countryCode);
+                {filters.country.slice(0, 3).map((countryCode: string) => {
+                  const country = countries.find((c: Country) => c.code === countryCode);
                   return (
                     <Chip
                       key={countryCode}
@@ -188,7 +191,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                       color='secondary'
                       onClose={() => {
                         const newCountries =
-                          filters.country?.filter((c) => c !== countryCode) || [];
+                          filters.country?.filter((c: string) => c !== countryCode) || [];
                         onFiltersChange({
                           ...filters,
                           country: newCountries.length > 0 ? newCountries : undefined
@@ -315,7 +318,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                           <h3 className='text-foreground text-lg font-semibold'>
                             {t('talentPool.filters.advanced.title')}
                           </h3>
-                          <p className='text-default-600 text-sm'>{t('talentPool.filters.advanced.description')}</p>
+                          <p className='text-default-600 text-sm'>
+                            {t('talentPool.filters.advanced.description')}
+                          </p>
                         </div>
                       </div>
                       <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
@@ -350,7 +355,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                                 className='text-primary-600 h-3 w-3'
                               />
                             </div>
-                            <span className='text-primary-700 text-sm font-medium'>{t('talentPool.filters.categories.location')}</span>
+                            <span className='text-primary-700 text-sm font-medium'>
+                              {t('talentPool.filters.categories.location')}
+                            </span>
                           </div>
                           <CountryFilter
                             selectedCountries={filters.country || []}
@@ -429,7 +436,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                               {t('talentPool.filters.categories.experience')}
                             </span>
                           </div>
-                          <ExperienceLevelFilter
+                          <ExperienceFilter
                             selectedLevels={filters.experienceLevel || []}
                             onSelectionChange={handleExperienceLevelChange}
                             className='w-full'

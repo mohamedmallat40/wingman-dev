@@ -25,7 +25,7 @@ export default function ProfessionFilter({
   className = ''
 }: ProfessionFilterProps) {
   const t = useTranslations();
-  
+
   const professions = [
     {
       key: 'FULL_TIME_FREELANCER' as const,

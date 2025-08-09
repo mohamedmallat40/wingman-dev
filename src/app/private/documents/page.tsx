@@ -127,7 +127,7 @@ export default function DocumentsPage() {
           className='font-medium'
           onPress={() => setShowUploadModal(true)}
         >
-          {t('upload')}
+          {t('uploadButton')}
         </Button>
       }
     >

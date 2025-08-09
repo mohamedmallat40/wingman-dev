@@ -9,7 +9,7 @@ export interface ProfileUser {
   aboutMe?: string;
   profileImage?: string;
   profileCover?: string;
-  statusAviability: string;
+  statusAvailability: string;
   phoneNumber?: string;
   linkedinProfile?: string;
   profileWebsite?: string;
@@ -69,6 +69,8 @@ export interface ConnectionStatus {
   isPending?: boolean;
   connectionId?: string;
   canConnect: boolean;
+  canAccept?: boolean;
+  invitationId?: string;
 }
 
 export interface ProfileData {

@@ -314,8 +314,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 <div className='flex flex-wrap gap-3'>
                   {user.skills.map((skill, index) => {
                     // Modern light color palette for chips
-                    const colors = ['primary', 'secondary', 'success', 'warning'];
-                    const chipColor = colors[index % colors.length];
+                    const colors = ['primary', 'secondary', 'success', 'warning'] as const;
+                    const chipColor = colors[index % colors.length] as 'primary' | 'secondary' | 'success' | 'warning';
 
                     return (
                       <Chip
@@ -732,11 +732,28 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           {/* Profile summary card */}
           <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-br shadow-sm'>
             <CardBody className='p-8 text-center'>
-              <Avatar
-                className='ring-primary/20 mx-auto mb-4 h-20 w-20 shadow-lg ring-4'
-                src={user.profileImage ? getImageUrl(user.profileImage) : undefined}
-                name={getUserInitials(user.firstName, user.lastName)}
-              />
+              <div className='mx-auto mb-4 h-20 w-20'>
+                {user.profileImage && user.profileImage.trim() ? (
+                  <div className='ring-primary/20 shadow-lg from-primary-200 to-secondary-200 h-full w-full overflow-hidden rounded-full bg-gradient-to-br ring-4'>
+                    <img
+                      src={getImageUrl(user.profileImage)}
+                      alt={`${user.firstName} ${user.lastName}`}
+                      className='h-full w-full object-cover'
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const parent = e.currentTarget.parentElement;
+                        if (parent) {
+                          parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xl font-bold text-primary-800">${getUserInitials(user.firstName, user.lastName)}</div>`;
+                        }
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div className='ring-primary/20 shadow-lg from-primary-200 to-secondary-200 text-primary-800 flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br text-xl font-bold ring-4'>
+                    {getUserInitials(user.firstName, user.lastName)}
+                  </div>
+                )}
+              </div>
 
               <h4 className='text-foreground mb-3 text-lg font-bold'>{fullName}</h4>
 

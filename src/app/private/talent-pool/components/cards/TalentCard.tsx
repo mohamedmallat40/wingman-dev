@@ -2,12 +2,26 @@
 
 import React from 'react';
 
-import { Button, Card, CardBody, CardHeader, Chip, Tooltip, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@heroui/react';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Chip,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+  Tooltip
+} from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { type TalentCardProps } from '../types';
+import { getImageUrl } from '@/lib/utils/utilities';
+
+import { type Skill, type TalentCardProps } from '../../types';
+import { getCountryFlag, getCountryName } from '../../utils/country-flags';
 import {
   formatRate,
   getAvailabilityConfig,
@@ -17,11 +31,16 @@ import {
   mapWorkingTime,
   stripHtml,
   truncateText
-} from '../utils/talent-utils';
-import { getImageUrl } from '@/lib/utils/utilities';
-import { getCountryFlag, getCountryName } from '../utils/country-flags';
+} from '../../utils/talent-utils';
 
-const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect, onAddNote, onAddToGroup, onAssignTags }) => {
+const TalentCard: React.FC<TalentCardProps> = ({
+  user,
+  onViewProfile,
+  onConnect,
+  onAddNote,
+  onAddToGroup,
+  onAssignTags
+}) => {
   const t = useTranslations();
   const {
     id,
@@ -32,7 +51,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect,
     region,
     city,
     skills,
-    statusAviability,
+    statusAvailability,
     isConnected,
     aboutMe,
     experienceYears,
@@ -45,7 +64,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect,
     averageRating
   } = user;
 
-  const availabilityConfig = getAvailabilityConfig(statusAviability);
+  const availabilityConfig = getAvailabilityConfig(statusAvailability);
   const workTypeConfig = getWorkTypeConfig(workType || '');
   const displaySkills = skills.slice(0, 4);
   const hasMoreSkills = skills.length > 4;
@@ -149,32 +168,49 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect,
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu className='min-w-[180px]'>
-                      <DropdownItem 
-                        key='connect' 
-                        startContent={<Icon icon={isConnected ? 'solar:check-circle-bold' : 'solar:user-plus-linear'} className='h-4 w-4' />}
-                        className={isConnected ? 'text-success data-[hover=true]:bg-success/10 data-[hover=true]:text-success' : 'data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'}
+                      <DropdownItem
+                        key='connect'
+                        startContent={
+                          <Icon
+                            icon={
+                              isConnected ? 'solar:check-circle-bold' : 'solar:user-plus-linear'
+                            }
+                            className='h-4 w-4'
+                          />
+                        }
+                        className={
+                          isConnected
+                            ? 'text-success data-[hover=true]:bg-success/10 data-[hover=true]:text-success'
+                            : 'data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'
+                        }
                         onPress={() => !isConnected && onConnect?.(id)}
                       >
-                        {isConnected ? t('talentPool.cards.actions.connected') : t('talentPool.cards.actions.connect')}
+                        {isConnected
+                          ? t('talentPool.cards.actions.connected')
+                          : t('talentPool.cards.actions.connect')}
                       </DropdownItem>
-                      <DropdownItem 
-                        key='addNote' 
+                      <DropdownItem
+                        key='addNote'
                         className='data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'
-                        startContent={<Icon icon='solar:document-text-linear' className='h-4 w-4' />}
+                        startContent={
+                          <Icon icon='solar:document-text-linear' className='h-4 w-4' />
+                        }
                         onPress={() => onAddNote?.(id)}
                       >
                         {t('talentPool.cards.actions.addNote')}
                       </DropdownItem>
-                      <DropdownItem 
-                        key='addToGroup' 
+                      <DropdownItem
+                        key='addToGroup'
                         className='data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'
-                        startContent={<Icon icon='solar:users-group-rounded-linear' className='h-4 w-4' />}
+                        startContent={
+                          <Icon icon='solar:users-group-rounded-linear' className='h-4 w-4' />
+                        }
                         onPress={() => onAddToGroup?.(id)}
                       >
                         {t('talentPool.cards.actions.addToGroup')}
                       </DropdownItem>
-                      <DropdownItem 
-                        key='assignTags' 
+                      <DropdownItem
+                        key='assignTags'
                         className='data-[hover=true]:bg-primary/10 data-[hover=true]:text-primary'
                         startContent={<Icon icon='solar:tag-linear' className='h-4 w-4' />}
                         onPress={() => onAssignTags?.(id)}
@@ -279,7 +315,7 @@ const TalentCard: React.FC<TalentCardProps> = ({ user, onViewProfile, onConnect,
             </h3>
             {displaySkills.length > 0 ? (
               <div className='flex flex-wrap gap-2'>
-                {displaySkills.map((skill, index) => (
+                {displaySkills.map((skill: Skill, index: number) => (
                   <Chip
                     key={`${skill.key}-${index}`}
                     size='sm'

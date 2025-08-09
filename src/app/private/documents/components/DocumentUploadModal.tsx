@@ -16,11 +16,15 @@ import {
   Card,
   CardBody,
   Progress,
-  Divider
+  Divider,
+  Select,
+  SelectItem
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+
+import wingManApi from '@/lib/axios';
 
 interface DocumentUploadModalProps {
   isOpen: boolean;
@@ -29,26 +33,91 @@ interface DocumentUploadModalProps {
     name: string;
     tags: string[];
     file: File;
+    type: string;
+    status: string;
   }) => Promise<void>;
 }
 
+interface UploadResponse {
+  originalname: string;
+  filename: string;
+  buffer: string;
+}
+
+interface DocumentCreatePayload {
+  documentName: string;
+  typeId: string;
+  tags: string[];
+  statusId: string;
+  fileName: string;
+}
+
+// Document types
+const DOCUMENT_TYPES = ['INVOICE', 'QUOTE', 'CONTRACT'] as const;
+type DocumentType = typeof DOCUMENT_TYPES[number];
+
+// Status options based on document type
+const STATUS_OPTIONS = {
+  INVOICE: ['Draft', 'Pending Review', 'Issued', 'Rejected', 'Overdue', 'Archived', 'Cancelled', 'Disputed'],
+  QUOTE: ['Draft', 'Pending Review', 'Issued', 'Rejected', 'Overdue', 'Archived', 'Cancelled'],
+  CONTRACT: ['Draft', 'Pending Review', 'Issued', 'Rejected', 'Overdue', 'Archived', 'Cancelled']
+} as const;
+
+// Document type ID mappings - TODO: Update with real IDs from your system
+const DOCUMENT_TYPE_IDS = {
+  INVOICE: '08d5bea7-7a2f-499e-9768-f12dbd1f1071', // Example ID - replace with actual
+  QUOTE: 'quote-type-id-here', // TODO: Replace with actual ID
+  CONTRACT: 'contract-type-id-here' // TODO: Replace with actual ID
+};
+
+// Status ID mappings - TODO: Update with real IDs from your system
+const STATUS_IDS = {
+  'Draft': '60d445b8-4ce6-4eb6-be0c-1acaebedf208', // Example ID - replace with actual
+  'Pending Review': 'pending-review-id-here', // TODO: Replace with actual ID
+  'Issued': 'issued-id-here', // TODO: Replace with actual ID
+  'Rejected': 'rejected-id-here', // TODO: Replace with actual ID
+  'Overdue': 'overdue-id-here', // TODO: Replace with actual ID
+  'Archived': 'archived-id-here', // TODO: Replace with actual ID
+  'Cancelled': 'cancelled-id-here', // TODO: Replace with actual ID
+  'Disputed': 'disputed-id-here' // TODO: Replace with actual ID
+};
+
+// Tag ID mappings - TODO: Update with real IDs from your system
+const TAG_IDS = {
+  'contract': '4d702ba4-6403-40e6-a679-5f07b2bd8416', // Example ID - replace with actual
+  'proposal': 'proposal-tag-id-here', // TODO: Replace with actual ID
+  'invoice': 'invoice-tag-id-here', // TODO: Replace with actual ID
+  'financial': 'financial-tag-id-here', // TODO: Replace with actual ID
+  'legal': 'legal-tag-id-here', // TODO: Replace with actual ID
+  'marketing': 'marketing-tag-id-here', // TODO: Replace with actual ID
+  'hr': 'hr-tag-id-here', // TODO: Replace with actual ID
+  'technical': 'technical-tag-id-here', // TODO: Replace with actual ID
+  'design': 'design-tag-id-here', // TODO: Replace with actual ID
+  'project': 'project-tag-id-here', // TODO: Replace with actual ID
+  'client': 'client-tag-id-here', // TODO: Replace with actual ID
+  'internal': 'internal-tag-id-here', // TODO: Replace with actual ID
+  'urgent': 'urgent-tag-id-here', // TODO: Replace with actual ID
+  'draft': 'draft-tag-id-here', // TODO: Replace with actual ID
+  'final': 'final-tag-id-here' // TODO: Replace with actual ID
+};
+
 // Mock available tags - in real app this would come from API
-const AVAILABLE_TAGS = [
-  { key: 'contract', label: 'Contract', color: 'primary' },
-  { key: 'proposal', label: 'Proposal', color: 'secondary' },
-  { key: 'invoice', label: 'Invoice', color: 'success' },
-  { key: 'financial', label: 'Financial', color: 'warning' },
-  { key: 'legal', label: 'Legal', color: 'danger' },
-  { key: 'marketing', label: 'Marketing', color: 'primary' },
-  { key: 'hr', label: 'Human Resources', color: 'secondary' },
-  { key: 'technical', label: 'Technical', color: 'success' },
-  { key: 'design', label: 'Design', color: 'warning' },
-  { key: 'project', label: 'Project', color: 'danger' },
-  { key: 'client', label: 'Client', color: 'primary' },
-  { key: 'internal', label: 'Internal', color: 'secondary' },
-  { key: 'urgent', label: 'Urgent', color: 'danger' },
-  { key: 'draft', label: 'Draft', color: 'default' },
-  { key: 'final', label: 'Final', color: 'success' }
+const AVAILABLE_TAG_KEYS = [
+  { key: 'contract', color: 'primary' },
+  { key: 'proposal', color: 'secondary' },
+  { key: 'invoice', color: 'success' },
+  { key: 'financial', color: 'warning' },
+  { key: 'legal', color: 'danger' },
+  { key: 'marketing', color: 'primary' },
+  { key: 'hr', color: 'secondary' },
+  { key: 'technical', color: 'success' },
+  { key: 'design', color: 'warning' },
+  { key: 'project', color: 'danger' },
+  { key: 'client', color: 'primary' },
+  { key: 'internal', color: 'secondary' },
+  { key: 'urgent', color: 'danger' },
+  { key: 'draft', color: 'default' },
+  { key: 'final', color: 'success' }
 ];
 
 const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
@@ -56,13 +125,21 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
   onClose,
   onUpload
 }) => {
-  const t = useTranslations('documents');
+  const t = useTranslations();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Create available tags with i18n labels
+  const AVAILABLE_TAGS = AVAILABLE_TAG_KEYS.map(tagConfig => ({
+    ...tagConfig,
+    label: t(`documents.tags.${tagConfig.key}`)
+  }));
   
   // Form state
   const [documentName, setDocumentName] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [documentType, setDocumentType] = useState<DocumentType | ''>('');
+  const [documentStatus, setDocumentStatus] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -80,11 +157,27 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
       setDocumentName('');
       setSelectedTags([]);
       setSelectedFile(null);
+      setDocumentType('');
+      setDocumentStatus('');
       setSearchValue('');
       setUploadProgress(0);
       onClose();
     }
   }, [isUploading, onClose]);
+
+  // Handle document type change
+  const handleTypeChange = useCallback((value: string) => {
+    if (value && DOCUMENT_TYPES.includes(value as DocumentType)) {
+      setDocumentType(value as DocumentType);
+      // Reset status when type changes
+      setDocumentStatus('');
+    }
+  }, []);
+
+  // Get available status options based on document type
+  const availableStatuses = documentType && STATUS_OPTIONS[documentType] 
+    ? STATUS_OPTIONS[documentType] 
+    : [];
 
   // Handle file selection
   const handleFileSelect = useCallback((file: File) => {
@@ -145,9 +238,14 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
 
   // Format file size
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return `0 ${t('documents.upload.fileSize.bytes')}`;
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = [
+      t('documents.upload.fileSize.bytes'), 
+      t('documents.upload.fileSize.kb'), 
+      t('documents.upload.fileSize.mb'), 
+      t('documents.upload.fileSize.gb')
+    ];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
@@ -165,35 +263,89 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
     return 'solar:file-bold';
   };
 
-  // Handle form submission
+  // Handle form submission with real API calls
   const handleSubmit = useCallback(async () => {
-    if (!selectedFile || !documentName.trim()) return;
+    if (!selectedFile || !documentName.trim() || !documentType || !documentStatus) return;
 
     setIsUploading(true);
+    setUploadProgress(0);
     
     try {
-      // Simulate upload progress
-      for (let i = 0; i <= 100; i += 10) {
-        setUploadProgress(i);
-        await new Promise(resolve => setTimeout(resolve, 100));
+      // Step 1: Upload the file to /upload endpoint
+      setUploadProgress(20);
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      
+      console.log('Uploading file to /upload endpoint...');
+      const uploadResponse = await wingManApi.post<UploadResponse>('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      console.log('File upload response:', uploadResponse.data);
+      setUploadProgress(60);
+
+      // Step 2: Create the document record with /documents endpoint
+      const typeId = DOCUMENT_TYPE_IDS[documentType];
+      const statusId = STATUS_IDS[documentStatus];
+      const tagIds = selectedTags.map(tagKey => TAG_IDS[tagKey]).filter(Boolean); // Filter out undefined IDs
+      
+      if (!typeId) {
+        throw new Error(`No ID mapping found for document type: ${documentType}`);
+      }
+      if (!statusId) {
+        throw new Error(`No ID mapping found for status: ${documentStatus}`);
       }
 
+      const documentPayload: DocumentCreatePayload = {
+        documentName: documentName.trim(),
+        typeId,
+        tags: tagIds,
+        statusId,
+        fileName: uploadResponse.data.filename
+      };
+
+      console.log('Creating document with payload:', documentPayload);
+      setUploadProgress(80);
+
+      const documentResponse = await wingManApi.post('/documents', documentPayload);
+      console.log('Document created:', documentResponse.data);
+
+      setUploadProgress(100);
+
+      // Call the optional onUpload callback for parent component
       await onUpload?.({
         name: documentName.trim(),
         tags: selectedTags,
-        file: selectedFile
+        file: selectedFile,
+        type: documentType,
+        status: documentStatus
       });
 
+      // Close modal on success
       handleClose();
+      
+      // Show success message (you might want to use a toast notification instead)
+      alert(`Document "${documentName}" uploaded successfully!`);
+
     } catch (error) {
       console.error('Upload failed:', error);
+      
+      // Show user-friendly error message
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Failed to upload document. Please try again.';
+      alert(errorMessage);
+      
+      // Reset progress on error
+      setUploadProgress(0);
     } finally {
       setIsUploading(false);
-      setUploadProgress(0);
     }
-  }, [selectedFile, documentName, selectedTags, onUpload, handleClose]);
+  }, [selectedFile, documentName, selectedTags, documentType, documentStatus, onUpload, handleClose]);
 
-  const isFormValid = documentName.trim() && selectedFile;
+  const isFormValid = documentName.trim() && selectedFile && documentType && documentStatus;
 
   return (
     <Modal
@@ -239,10 +391,10 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                 </motion.div>
                 <div>
                   <h2 className="text-xl font-semibold text-foreground">
-                    Upload Document
+                    {t('documents.upload.title')}
                   </h2>
                   <p className="text-sm text-default-500">
-                    Add a new document to your collection
+                    {t('documents.upload.subtitle')}
                   </p>
                 </div>
               </div>
@@ -252,12 +404,12 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
               {/* Document Name Input */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-foreground">
-                  Document Name <span className="text-danger">*</span>
+                  {t('documents.upload.documentName.label')} <span className="text-danger">*</span>
                 </label>
                 <Input
                   value={documentName}
                   onValueChange={setDocumentName}
-                  placeholder="Enter document name..."
+                  placeholder={t('documents.upload.documentName.placeholder')}
                   variant="bordered"
                   classNames={{
                     base: 'w-full',
@@ -273,10 +425,82 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                 />
               </div>
 
+              {/* Document Type Selection */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">
+                  {t('documents.upload.type.label')} <span className="text-danger">*</span>
+                </label>
+                <Select
+                  selectedKeys={documentType ? [documentType] : []}
+                  onSelectionChange={(keys) => {
+                    const selectedKey = Array.from(keys)[0];
+                    if (selectedKey) {
+                      handleTypeChange(selectedKey as string);
+                    }
+                  }}
+                  placeholder={t('documents.upload.type.placeholder')}
+                  variant="bordered"
+                  classNames={{
+                    trigger:
+                      'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] h-14 bg-default-100 dark:bg-default-50',
+                    value: 'text-foreground font-normal tracking-[0.02em]',
+                    listbox: 'max-h-[200px]',
+                    popoverContent: 'rounded-[16px] shadow-[0px_12px_24px_rgba(0,0,0,0.08)]'
+                  }}
+                  startContent={
+                    <Icon icon="solar:document-linear" className="h-5 w-5 flex-shrink-0 text-default-400" />
+                  }
+                >
+                  {DOCUMENT_TYPES.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {t(`documents.upload.type.options.${type.toLowerCase()}`)}
+                    </SelectItem>
+                  ))}
+                </Select>
+              </div>
+
+              {/* Document Status Selection */}
+              {documentType && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">
+                    {t('documents.upload.status.label')} <span className="text-danger">*</span>
+                  </label>
+                  <Select
+                    selectedKeys={documentStatus ? [documentStatus] : []}
+                    onSelectionChange={(keys) => {
+                      const selectedKey = Array.from(keys)[0];
+                      if (selectedKey) {
+                        setDocumentStatus(selectedKey as string);
+                      }
+                    }}
+                    placeholder={t('documents.upload.status.placeholder')}
+                    variant="bordered"
+                    classNames={{
+                      trigger:
+                        'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] h-14 bg-default-100 dark:bg-default-50',
+                      value: 'text-foreground font-normal tracking-[0.02em]',
+                      listbox: 'max-h-[200px]',
+                      popoverContent: 'rounded-[16px] shadow-[0px_12px_24px_rgba(0,0,0,0.08)]'
+                    }}
+                    startContent={
+                      <Icon icon="solar:flag-linear" className="h-5 w-5 flex-shrink-0 text-default-400" />
+                    }
+                  >
+                    {availableStatuses && availableStatuses.length > 0 
+                      ? availableStatuses.map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {t(`documents.upload.status.options.${status.toLowerCase().replace(' ', '_')}`)}
+                          </SelectItem>
+                        ))
+                      : null}
+                  </Select>
+                </div>
+              )}
+
               {/* Tags Selection */}
               <div className="space-y-3">
                 <label className="text-sm font-medium text-foreground">
-                  Tags
+                  {t('documents.upload.tags.label')}
                 </label>
                 
                 {/* Selected Tags */}
@@ -317,7 +541,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                 <Autocomplete
                   inputValue={searchValue}
                   onInputChange={setSearchValue}
-                  placeholder="Search and select tags..."
+                  placeholder={t('documents.upload.tags.placeholder')}
                   variant="bordered"
                   classNames={{
                     base: 'w-full',
@@ -357,7 +581,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
               {/* File Upload Area */}
               <div className="space-y-3">
                 <label className="text-sm font-medium text-foreground">
-                  File <span className="text-danger">*</span>
+                  {t('documents.upload.file.label')} <span className="text-danger">*</span>
                 </label>
 
                 <motion.div
@@ -400,11 +624,11 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                       </motion.div>
                       
                       <h3 className="mb-2 font-semibold text-foreground">
-                        {isDragOver ? 'Drop your file here' : 'Upload your document'}
+                        {isDragOver ? t('documents.upload.file.dropTitle') : t('documents.upload.file.uploadTitle')}
                       </h3>
                       
                       <p className="mb-4 text-sm text-default-500">
-                        Drag and drop your file or click to browse
+                        {t('documents.upload.file.description')}
                       </p>
                       
                       <Button
@@ -413,11 +637,11 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                         onPress={() => fileInputRef.current?.click()}
                         startContent={<Icon icon="solar:folder-open-linear" className="h-4 w-4" />}
                       >
-                        Choose File
+                        {t('documents.upload.file.chooseFile')}
                       </Button>
                       
                       <p className="mt-3 text-xs text-default-400">
-                        Supported: PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)
+                        {t('documents.upload.file.supported')}
                       </p>
                     </div>
                   ) : (
@@ -441,7 +665,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                                 {selectedFile.name}
                               </p>
                               <p className="text-sm text-default-500">
-                                {formatFileSize(selectedFile.size)} • {selectedFile.type || 'Unknown type'}
+                                {formatFileSize(selectedFile.size)} • {selectedFile.type || t('documents.upload.file.unknownType')}
                               </p>
                             </div>
                             
@@ -472,7 +696,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                     className="space-y-2"
                   >
                     <div className="flex justify-between text-sm">
-                      <span className="text-foreground">Uploading...</span>
+                      <span className="text-foreground">{t('documents.upload.progress.uploading')}</span>
                       <span className="text-default-500">{uploadProgress}%</span>
                     </div>
                     <Progress 
@@ -491,7 +715,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                 onPress={handleClose}
                 disabled={isUploading}
               >
-                Cancel
+                {t('documents.upload.buttons.cancel')}
               </Button>
               
               <Button
@@ -499,11 +723,11 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({
                 onPress={handleSubmit}
                 isDisabled={!isFormValid}
                 isLoading={isUploading}
-                loadingText="Uploading..."
+                loadingText={t('documents.upload.progress.loadingText')}
                 startContent={!isUploading ? <Icon icon="solar:upload-linear" className="h-4 w-4" /> : undefined}
                 className="min-w-[120px]"
               >
-                {isUploading ? 'Uploading...' : 'Upload Document'}
+                {isUploading ? t('documents.upload.buttons.uploading') : t('documents.upload.buttons.upload')}
               </Button>
             </ModalFooter>
           </>

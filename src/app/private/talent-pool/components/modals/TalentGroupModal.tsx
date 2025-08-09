@@ -1,26 +1,27 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { 
-  Modal, 
-  ModalContent, 
-  ModalHeader, 
-  ModalBody, 
-  ModalFooter,
-  Button,
+import {
   Avatar,
-  Divider,
+  Button,
   Checkbox,
-  Spinner,
   Chip,
-  Input
+  Divider,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Spinner
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 
-import { type User, type Group } from '../types';
 import { getImageUrl } from '@/lib/utils/utilities';
+
+import { type Group, type User } from '../../types';
 
 interface AddToGroupModalProps {
   isOpen: boolean;
@@ -29,11 +30,11 @@ interface AddToGroupModalProps {
   onAddToGroups?: (userId: string, groupIds: string[]) => void;
 }
 
-const AddToGroupModal: React.FC<AddToGroupModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  user, 
-  onAddToGroups 
+const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
+  isOpen,
+  onClose,
+  user,
+  onAddToGroups
 }) => {
   const t = useTranslations();
   const [selectedGroups, setSelectedGroups] = useState<Set<string>>(new Set());
@@ -56,7 +57,7 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
       connections: []
     },
     {
-      id: '2', 
+      id: '2',
       groupName: 'Backend Specialists',
       color: '#10B981',
       members: 8,
@@ -85,7 +86,7 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
     setIsFetchingGroups(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setGroups(mockGroups);
     } catch (error) {
       console.error('Error fetching groups:', error);
@@ -94,7 +95,7 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
     }
   };
 
-  const filteredGroups = groups.filter(group => 
+  const filteredGroups = groups.filter((group) =>
     group.groupName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -110,12 +111,12 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
 
   const handleCreateGroup = async () => {
     if (!newGroupName.trim()) return;
-    
+
     setIsCreatingGroup(true);
     try {
       // Simulate group creation
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       const newGroup: Group = {
         id: `new-${Date.now()}`,
         groupName: newGroupName.trim(),
@@ -125,9 +126,9 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
         owner: user!,
         connections: []
       };
-      
-      setGroups(prev => [newGroup, ...prev]);
-      setSelectedGroups(prev => new Set([...prev, newGroup.id]));
+
+      setGroups((prev) => [newGroup, ...prev]);
+      setSelectedGroups((prev) => new Set([...prev, newGroup.id]));
       setNewGroupName('');
     } catch (error) {
       console.error('Error creating group:', error);
@@ -138,7 +139,7 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
 
   const handleSave = async () => {
     if (!user || selectedGroups.size === 0) return;
-    
+
     setIsLoading(true);
     try {
       await onAddToGroups?.(user.id, Array.from(selectedGroups));
@@ -160,84 +161,86 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
   if (!user) return null;
 
   return (
-    <Modal 
-      isOpen={isOpen} 
+    <Modal
+      isOpen={isOpen}
       onClose={handleClose}
-      size="xl"
-      backdrop="blur"
-      placement="center"
-      scrollBehavior="inside"
+      size='xl'
+      backdrop='blur'
+      placement='center'
+      scrollBehavior='inside'
       classNames={{
-        base: "bg-background dark:bg-content1",
-        backdrop: "bg-black/50 backdrop-blur-sm"
+        base: 'bg-background dark:bg-content1',
+        backdrop: 'bg-black/50 backdrop-blur-sm'
       }}
     >
-      <ModalContent className="w-full max-w-xl rounded-[24px] shadow-[0px_12px_24px_rgba(0,0,0,0.08)]">
-        <ModalHeader className="flex flex-col items-center pt-8 pb-6">
-          <div className="text-center">
-            <div className="mb-4">
-              <div className="bg-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[24px]">
-                <Icon icon="solar:users-group-rounded-linear" className="text-primary h-8 w-8" />
+      <ModalContent className='w-full max-w-xl rounded-[24px] shadow-[0px_12px_24px_rgba(0,0,0,0.08)]'>
+        <ModalHeader className='flex flex-col items-center pt-8 pb-6'>
+          <div className='text-center'>
+            <div className='mb-4'>
+              <div className='bg-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[24px]'>
+                <Icon icon='solar:users-group-rounded-linear' className='text-primary h-8 w-8' />
               </div>
             </div>
-            <h2 className="text-foreground mb-2 text-2xl font-bold tracking-[0.02em]">
+            <h2 className='text-foreground mb-2 text-2xl font-bold tracking-[0.02em]'>
               {t('talentPool.modals.addToGroup.title')}
             </h2>
-            <p className="text-default-500 font-normal tracking-[0.02em]">
+            <p className='text-default-500 font-normal tracking-[0.02em]'>
               {t('talentPool.modals.addToGroup.subtitle')}
             </p>
           </div>
         </ModalHeader>
 
-        <ModalBody className="gap-4 px-6">
+        <ModalBody className='gap-4 px-6'>
           {/* User Info */}
-          <div className="flex items-center gap-3 p-4 rounded-[16px] bg-default-100 dark:bg-default-50 border border-default-200 dark:border-default-100">
+          <div className='bg-default-100 dark:bg-default-50 border-default-200 dark:border-default-100 flex items-center gap-3 rounded-[16px] border p-4'>
             <Avatar
-              src={
-                user.profileImage
-                  ? getImageUrl(user.profileImage)
-                  : undefined
-              }
+              src={user.profileImage ? getImageUrl(user.profileImage) : undefined}
               name={`${user.firstName} ${user.lastName}`}
-              className="w-12 h-12"
+              className='h-12 w-12'
             />
             <div>
-              <p className="font-semibold text-foreground">
+              <p className='text-foreground font-semibold'>
                 {user.firstName} {user.lastName}
               </p>
-              <p className="text-small text-default-500">
-                {user.profession || user.kind}
-              </p>
+              <p className='text-small text-default-500'>{user.profession || user.kind}</p>
             </div>
           </div>
 
           <Divider />
 
           {/* Create New Group */}
-          <div className="space-y-3">
-            <h3 className="text-medium font-semibold">
+          <div className='space-y-3'>
+            <h3 className='text-medium font-semibold'>
               {t('talentPool.modals.addToGroup.createNewGroup')}
             </h3>
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <Input
                 value={newGroupName}
                 onValueChange={setNewGroupName}
                 placeholder={t('talentPool.modals.addToGroup.newGroupPlaceholder')}
-                size="sm"
+                size='sm'
                 classNames={{
-                  inputWrapper: "border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] bg-default-100 dark:bg-default-50",
-                  input: "text-foreground font-normal tracking-[0.02em] placeholder:text-default-400"
+                  inputWrapper:
+                    'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] bg-default-100 dark:bg-default-50',
+                  input:
+                    'text-foreground font-normal tracking-[0.02em] placeholder:text-default-400'
                 }}
-                startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4 text-default-400" />}
+                startContent={
+                  <Icon icon='solar:add-circle-linear' className='text-default-400 h-4 w-4' />
+                }
               />
               <Button
-                size="sm"
-                color="primary"
-                variant="flat"
+                size='sm'
+                color='primary'
+                variant='flat'
                 onPress={handleCreateGroup}
                 isLoading={isCreatingGroup}
                 disabled={!newGroupName.trim()}
-                startContent={!isCreatingGroup ? <Icon icon="solar:add-circle-bold" className="h-4 w-4" /> : null}
+                startContent={
+                  !isCreatingGroup ? (
+                    <Icon icon='solar:add-circle-bold' className='h-4 w-4' />
+                  ) : null
+                }
               >
                 {t('common.create')}
               </Button>
@@ -247,13 +250,13 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
           <Divider />
 
           {/* Existing Groups */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h3 className="text-medium font-semibold">
+          <div className='space-y-3'>
+            <div className='flex items-center justify-between'>
+              <h3 className='text-medium font-semibold'>
                 {t('talentPool.modals.addToGroup.existingGroups')}
               </h3>
               {selectedGroups.size > 0 && (
-                <Chip size="sm" color="primary" variant="flat">
+                <Chip size='sm' color='primary' variant='flat'>
                   {selectedGroups.size} {t('talentPool.modals.addToGroup.selected')}
                 </Chip>
               )}
@@ -264,50 +267,58 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
               value={searchQuery}
               onValueChange={setSearchQuery}
               placeholder={t('talentPool.modals.addToGroup.searchGroups')}
-              size="sm"
+              size='sm'
               classNames={{
-                inputWrapper: "border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] bg-default-100 dark:bg-default-50",
-                input: "text-foreground font-normal tracking-[0.02em] placeholder:text-default-400"
+                inputWrapper:
+                  'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] bg-default-100 dark:bg-default-50',
+                input: 'text-foreground font-normal tracking-[0.02em] placeholder:text-default-400'
               }}
-              startContent={<Icon icon="solar:magnifer-linear" className="h-4 w-4 text-default-400" />}
+              startContent={
+                <Icon icon='solar:magnifer-linear' className='text-default-400 h-4 w-4' />
+              }
             />
 
             {/* Groups List */}
-            <div className="space-y-2 max-h-60 overflow-y-auto">
+            <div className='max-h-60 space-y-2 overflow-y-auto'>
               {isFetchingGroups ? (
-                <div className="flex items-center justify-center p-4">
-                  <Spinner size="sm" />
-                  <span className="ml-2 text-small text-default-500">
+                <div className='flex items-center justify-center p-4'>
+                  <Spinner size='sm' />
+                  <span className='text-small text-default-500 ml-2'>
                     {t('talentPool.modals.addToGroup.loadingGroups')}
                   </span>
                 </div>
               ) : filteredGroups.length === 0 ? (
-                <div className="text-center p-4 text-default-500">
-                  <Icon icon="solar:users-group-rounded-linear" className="h-12 w-12 mx-auto mb-2 text-default-300" />
-                  <p className="text-small">
-                    {searchQuery ? t('talentPool.modals.addToGroup.noGroupsFound') : t('talentPool.modals.addToGroup.noGroups')}
+                <div className='text-default-500 p-4 text-center'>
+                  <Icon
+                    icon='solar:users-group-rounded-linear'
+                    className='text-default-300 mx-auto mb-2 h-12 w-12'
+                  />
+                  <p className='text-small'>
+                    {searchQuery
+                      ? t('talentPool.modals.addToGroup.noGroupsFound')
+                      : t('talentPool.modals.addToGroup.noGroups')}
                   </p>
                 </div>
               ) : (
                 filteredGroups.map((group) => (
                   <div
                     key={group.id}
-                    className="flex items-center gap-3 p-3 rounded-[16px] border border-default-200 dark:border-default-100 hover:bg-default-100 dark:hover:bg-default-50 transition-colors"
+                    className='border-default-200 dark:border-default-100 hover:bg-default-100 dark:hover:bg-default-50 flex items-center gap-3 rounded-[16px] border p-3 transition-colors'
                   >
                     <Checkbox
                       isSelected={selectedGroups.has(group.id)}
                       onValueChange={(isSelected) => handleGroupSelection(group.id, isSelected)}
-                      color="primary"
+                      color='primary'
                     />
                     <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                      className='flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white'
                       style={{ backgroundColor: group.color }}
                     >
                       {group.groupName.charAt(0).toUpperCase()}
                     </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-foreground">{group.groupName}</p>
-                      <p className="text-tiny text-default-500">
+                    <div className='flex-1'>
+                      <p className='text-foreground font-medium'>{group.groupName}</p>
+                      <p className='text-tiny text-default-500'>
                         {group.members} {t('talentPool.modals.addToGroup.members')}
                       </p>
                     </div>
@@ -318,23 +329,25 @@ const AddToGroupModal: React.FC<AddToGroupModalProps> = ({
           </div>
         </ModalBody>
 
-        <ModalFooter className="justify-end pt-4 pb-8">
-          <div className="flex gap-3">
-            <Button 
-              className="border-default-300 hover:border-primary hover:bg-primary/5 h-12 rounded-[16px] font-medium tracking-[0.02em] transition-all duration-300"
-              variant="bordered"
+        <ModalFooter className='justify-end pt-4 pb-8'>
+          <div className='flex gap-3'>
+            <Button
+              className='border-default-300 hover:border-primary hover:bg-primary/5 h-12 rounded-[16px] font-medium tracking-[0.02em] transition-all duration-300'
+              variant='bordered'
               onPress={handleClose}
               disabled={isLoading}
             >
               {t('common.cancel')}
             </Button>
-            <Button 
-              className="h-12 rounded-[16px] font-bold tracking-[0.02em] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] transition-all duration-300 hover:shadow-[0px_12px_24px_rgba(59,130,246,0.2)]"
-              color="primary" 
+            <Button
+              className='h-12 rounded-[16px] font-bold tracking-[0.02em] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] transition-all duration-300 hover:shadow-[0px_12px_24px_rgba(59,130,246,0.2)]'
+              color='primary'
               onPress={handleSave}
               isLoading={isLoading}
               disabled={selectedGroups.size === 0}
-              startContent={!isLoading ? <Icon icon="solar:check-linear" className="h-5 w-5" /> : null}
+              startContent={
+                !isLoading ? <Icon icon='solar:check-linear' className='h-5 w-5' /> : null
+              }
             >
               {t('common.save')} ({selectedGroups.size})
             </Button>

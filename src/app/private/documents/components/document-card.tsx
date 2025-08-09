@@ -139,10 +139,10 @@ export default function DocumentCard({ document, viewMode = 'list' }: Readonly<D
       // Here you would integrate with your actual sharing API
       // await shareDocument(data);
       
-      alert(`Document shared with ${data.userIds.length} ${data.userIds.length === 1 ? 'person' : 'people'}!`);
+      alert(t('share.success', { count: data.userIds.length }));
     } catch (error) {
       console.error('Share failed:', error);
-      alert('Share failed. Please try again.');
+      alert(t('share.failed'));
     }
   };
 
@@ -284,16 +284,16 @@ export default function DocumentCard({ document, viewMode = 'list' }: Readonly<D
                 </DropdownTrigger>
                 <DropdownMenu className='min-w-[160px]'>
                   <DropdownItem key='view' startContent={<Icon icon='solar:eye-linear' className='h-4 w-4' />}>
-                    View Document
+                    {t('actions.view')}
                   </DropdownItem>
                   <DropdownItem key='edit' startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}>
-                    {t('card.edit')}
+                    {t('actions.edit')}
                   </DropdownItem>
                   <DropdownItem key='download' startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}>
-                    Download
+                    {t('actions.download')}
                   </DropdownItem>
                   <DropdownItem key='duplicate' startContent={<Icon icon='solar:copy-linear' className='h-4 w-4' />}>
-                    Duplicate
+                    {t('actions.duplicate')}
                   </DropdownItem>
                   <DropdownItem 
                     key='delete' 
@@ -301,7 +301,7 @@ export default function DocumentCard({ document, viewMode = 'list' }: Readonly<D
                     color='danger'
                     startContent={<Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />}
                   >
-                    {t('card.delete')}
+                    {t('actions.delete')}
                   </DropdownItem>
                 </DropdownMenu>
               </Dropdown>

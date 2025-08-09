@@ -18,7 +18,7 @@ export default function ExperienceLevelFilter({
   className = ''
 }: ExperienceLevelFilterProps) {
   const t = useTranslations();
-  
+
   const experienceLevels = [
     {
       key: '0-2',

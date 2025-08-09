@@ -2,37 +2,119 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Spinner } from '@heroui/react';
+import { Skeleton, Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import wingManApi from '@/lib/axios';
 
-import { getCountryNameFromCode } from '../data/countries';
-import { type TalentPoolFilters, type User, type UserResponse } from '../types';
-import EmptyState from './shared/EmptyState';
-import ErrorState from './shared/ErrorState';
-import LoadingSkeleton from './shared/LoadingSkeleton';
-import TalentCard from './TalentCard';
-import AddNoteModal from './AddNoteModal';
-import AddToGroupModal from './AddToGroupModal';
-import AssignTagsModal from './AssignTagsModal';
+import { getCountryNameFromCode } from '../../data/countries';
+import { type TalentPoolFilters, type User, type UserResponse } from '../../types';
+import { TalentCard } from '../cards';
+import { TalentGroupModal, TalentNoteModal, TalentTagsModal } from '../modals';
+import { TalentEmptyState, TalentErrorState, TalentLoadingSkeleton } from '../states';
 
-interface AgencyListProps {
+interface FreelancerListProps {
   filters?: TalentPoolFilters;
   onViewProfile?: (userId: string) => void;
   onConnect?: (userId: string) => void;
   onCountChange?: (count: number) => void;
 }
 
-const AgencyList: React.FC<AgencyListProps> = ({
+const LoadingSkeleton: React.FC = () => (
+  <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
+    {Array.from({ length: 12 }).map((_, index) => (
+      <div
+        key={index}
+        className='shadow-soft border-default-200 from-background via-background/95 to-background rounded-large h-full w-full space-y-4 border bg-gradient-to-br p-6'
+      >
+        {/* Header Section */}
+        <div className='flex w-full items-start gap-4'>
+          <div className='relative'>
+            <Skeleton className='h-20 w-20 rounded-full' />
+            <div className='absolute -right-1 -bottom-1'>
+              <Skeleton className='h-6 w-6 rounded-full' />
+            </div>
+          </div>
+          <div className='flex min-w-0 flex-grow flex-col gap-2'>
+            <div className='flex items-start justify-between'>
+              <div className='min-w-0 flex-grow space-y-2'>
+                <Skeleton className='h-6 w-32 rounded-lg' />
+                <Skeleton className='h-4 w-24 rounded-lg' />
+              </div>
+              <div className='ml-2 flex items-center gap-1'>
+                <Skeleton className='h-8 w-8 rounded-lg' />
+                <Skeleton className='h-8 w-8 rounded-lg' />
+              </div>
+            </div>
+            <div className='space-y-1'>
+              <Skeleton className='h-4 w-28 rounded-lg' />
+            </div>
+            <div className='mt-2 flex items-center gap-2'>
+              <Skeleton className='h-6 w-16 rounded-full' />
+              <Skeleton className='h-6 w-20 rounded-full' />
+            </div>
+          </div>
+        </div>
+
+        {/* About Section */}
+        <div className='bg-background/80 rounded-large border-default-200/50 space-y-2 border p-4 backdrop-blur-sm'>
+          <div className='flex items-center gap-2'>
+            <Skeleton className='h-4 w-4 rounded' />
+            <Skeleton className='h-4 w-12 rounded-lg' />
+          </div>
+          <div className='space-y-2'>
+            <Skeleton className='h-3 w-full rounded-lg' />
+            <Skeleton className='h-3 w-4/5 rounded-lg' />
+            <Skeleton className='h-3 w-3/4 rounded-lg' />
+          </div>
+        </div>
+
+        {/* Skills Section */}
+        <div className='bg-background/80 rounded-large border-default-200/50 space-y-3 border p-4 backdrop-blur-sm'>
+          <div className='flex items-center gap-2'>
+            <Skeleton className='h-4 w-4 rounded' />
+            <Skeleton className='h-4 w-16 rounded-lg' />
+          </div>
+          <div className='flex flex-wrap gap-2'>
+            <Skeleton className='h-6 w-16 rounded-full' />
+            <Skeleton className='h-6 w-12 rounded-full' />
+            <Skeleton className='h-6 w-20 rounded-full' />
+            <Skeleton className='h-6 w-14 rounded-full' />
+          </div>
+        </div>
+
+        {/* Stats Section */}
+        <div className='grid grid-cols-3 gap-3'>
+          <div className='bg-background/80 rounded-large border-default-200/50 space-y-2 border p-3 text-center backdrop-blur-sm'>
+            <Skeleton className='mx-auto h-8 w-8 rounded-full' />
+            <Skeleton className='mx-auto h-3 w-16 rounded-lg' />
+            <Skeleton className='mx-auto h-4 w-12 rounded-lg' />
+          </div>
+          <div className='bg-background/80 rounded-large border-default-200/50 space-y-2 border p-3 text-center backdrop-blur-sm'>
+            <Skeleton className='mx-auto h-8 w-8 rounded-full' />
+            <Skeleton className='mx-auto h-3 w-8 rounded-lg' />
+            <Skeleton className='mx-auto h-4 w-10 rounded-lg' />
+          </div>
+          <div className='bg-background/80 rounded-large border-default-200/50 space-y-2 border p-3 text-center backdrop-blur-sm'>
+            <Skeleton className='mx-auto h-8 w-8 rounded-full' />
+            <Skeleton className='mx-auto h-3 w-10 rounded-lg' />
+            <Skeleton className='mx-auto h-4 w-14 rounded-lg' />
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+const FreelancerList: React.FC<FreelancerListProps> = ({
   filters,
   onViewProfile,
   onConnect,
   onCountChange
 }) => {
   const t = useTranslations();
-  const [agencies, setAgencies] = useState<User[]>([]);
+  const [freelancers, setFreelancers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,13 +132,13 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
   const itemsPerPage = 12; // 3x4 grid layout for enhanced cards
 
-  const fetchAgencies = async (page: number = 1, append: boolean = false) => {
+  const fetchFreelancers = async (page: number = 1, append: boolean = false) => {
     try {
       if (append) {
         setIsLoadingMore(true);
       } else {
         setIsLoading(true);
-        setAgencies([]);
+        setFreelancers([]);
         setCurrentPage(1);
         setHasNextPage(true);
       }
@@ -64,7 +146,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
       const params: Record<string, string> = {
         categories: 'All',
-        kind: 'AGENCY',
+        kind: 'FREELANCER',
         page: page.toString(),
         limit: itemsPerPage.toString()
       };
@@ -119,12 +201,12 @@ const AgencyList: React.FC<AgencyListProps> = ({
       const data = response.data as UserResponse;
 
       if (append) {
-        setPreviousCount(agencies.length);
-        setAgencies((prev) => [...prev, ...data.items]);
+        setPreviousCount(freelancers.length);
+        setFreelancers((prev) => [...prev, ...data.items]);
         setIsInitialLoad(false);
       } else {
         setPreviousCount(0);
-        setAgencies(data.items);
+        setFreelancers(data.items);
         // Only notify parent of count change on initial load
         onCountChange?.(data.meta.totalItems);
       }
@@ -133,7 +215,8 @@ const AgencyList: React.FC<AgencyListProps> = ({
       setCurrentPage(data.meta.currentPage);
       setHasNextPage(data.meta.currentPage < data.meta.totalPages);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch agencies');
+      console.error('Error fetching freelancers:', err);
+      setError(err instanceof Error ? err.message : 'Failed to fetch freelancers');
     } finally {
       if (!append) {
         setIsLoading(false);
@@ -148,14 +231,14 @@ const AgencyList: React.FC<AgencyListProps> = ({
     setHasNextPage(true);
     setPreviousCount(0);
     setIsInitialLoad(true);
-    fetchAgencies(1);
+    fetchFreelancers(1);
   }, [filters]);
 
   // Infinite scroll implementation
   const loadMore = useCallback(() => {
     if (!isLoadingMore && hasNextPage) {
       const nextPage = currentPage + 1;
-      fetchAgencies(nextPage, true);
+      fetchFreelancers(nextPage, true);
     }
   }, [currentPage, hasNextPage, isLoadingMore]);
 
@@ -165,7 +248,16 @@ const AgencyList: React.FC<AgencyListProps> = ({
       (entries) => {
         const entry = entries[0];
         if (!entry) return;
+        console.log(
+          'Freelancer sentinel intersecting:',
+          entry.isIntersecting,
+          'hasNextPage:',
+          hasNextPage,
+          'isLoadingMore:',
+          isLoadingMore
+        );
         if (entry.isIntersecting && hasNextPage && !isLoadingMore && !isLoading) {
+          console.log('Loading more freelancers...');
           loadMore();
         }
       },
@@ -175,7 +267,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
       }
     );
 
-    const sentinel = document.getElementById('agency-sentinel');
+    const sentinel = document.getElementById('freelancer-sentinel');
     if (sentinel) {
       observer.observe(sentinel);
     }
@@ -188,33 +280,36 @@ const AgencyList: React.FC<AgencyListProps> = ({
   }, [loadMore, hasNextPage, isLoadingMore, isLoading]);
 
   const handleRetry = () => {
-    fetchAgencies(1);
+    fetchFreelancers(1);
   };
 
   const handleResetFilters = () => {
     // This would typically be handled by parent component
-    fetchAgencies(1);
+    fetchFreelancers(1);
   };
 
   const handleViewProfile = (userId: string) => {
+    console.log('View profile:', userId);
     onViewProfile?.(userId);
   };
 
   const handleConnect = async (userId: string) => {
     try {
+      // Simulate API call
+      console.log('Connecting to user:', userId);
       onConnect?.(userId);
 
       // Update local state to reflect connection
-      setAgencies((prev) =>
+      setFreelancers((prev) =>
         prev.map((user) => (user.id === userId ? { ...user, isConnected: true } : user))
       );
     } catch (err) {
-      // Handle connection error silently
+      console.error('Error connecting to user:', err);
     }
   };
 
   const handleAddNote = (userId: string) => {
-    const user = agencies.find(a => a.id === userId);
+    const user = freelancers.find((f) => f.id === userId);
     if (user) {
       setSelectedUser(user);
       setNoteModalOpen(true);
@@ -222,7 +317,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
   };
 
   const handleAddToGroup = (userId: string) => {
-    const user = agencies.find(a => a.id === userId);
+    const user = freelancers.find((f) => f.id === userId);
     if (user) {
       setSelectedUser(user);
       setGroupModalOpen(true);
@@ -230,7 +325,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
   };
 
   const handleAssignTags = (userId: string) => {
-    const user = agencies.find(a => a.id === userId);
+    const user = freelancers.find((f) => f.id === userId);
     if (user) {
       setSelectedUser(user);
       setTagsModalOpen(true);
@@ -239,7 +334,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
   const handleSaveNote = async (userId: string, note: string) => {
     try {
-      console.log('Saving note for agency:', userId, 'Note:', note);
+      console.log('Saving note for user:', userId, 'Note:', note);
       // Here you would make the API call to save the note
       // await saveUserNote(userId, note);
     } catch (error) {
@@ -250,7 +345,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
   const handleAddToGroups = async (userId: string, groupIds: string[]) => {
     try {
-      console.log('Adding agency to groups:', userId, 'Groups:', groupIds);
+      console.log('Adding user to groups:', userId, 'Groups:', groupIds);
       // Here you would make the API call to add user to groups
       // await addUserToGroups(userId, groupIds);
     } catch (error) {
@@ -261,7 +356,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
   const handleAssignUserTags = async (userId: string, tagIds: string[]) => {
     try {
-      console.log('Assigning tags to agency:', userId, 'Tags:', tagIds);
+      console.log('Assigning tags to user:', userId, 'Tags:', tagIds);
       // Here you would make the API call to assign tags
       // await assignUserTags(userId, tagIds);
     } catch (error) {
@@ -272,24 +367,24 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
   if (error) {
     return (
-      <ErrorState
-        titleKey='talentPool.errorStates.agencies.title'
-        descriptionKey='talentPool.errorStates.agencies.description'
+      <TalentErrorState
+        titleKey='talentPool.errorStates.freelancers.title'
+        descriptionKey='talentPool.errorStates.freelancers.description'
         onRetry={handleRetry}
       />
     );
   }
 
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <TalentLoadingSkeleton />;
   }
 
-  if (agencies.length === 0) {
+  if (freelancers.length === 0) {
     return (
-      <EmptyState
-        icon='solar:buildings-linear'
-        titleKey='talentPool.emptyStates.agencies.title'
-        descriptionKey='talentPool.emptyStates.agencies.description'
+      <TalentEmptyState
+        icon='solar:user-search-linear'
+        titleKey='talentPool.emptyStates.freelancers.title'
+        descriptionKey='talentPool.emptyStates.freelancers.description'
         onReset={handleResetFilters}
       />
     );
@@ -297,11 +392,11 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
   return (
     <div className='space-y-6'>
-      {/* Agencies Grid */}
+      {/* Freelancers Grid */}
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {agencies.map((agency, index) => (
+        {freelancers.map((freelancer, index) => (
           <motion.div
-            key={`agency-${agency.id}-${index}`}
+            key={`freelancer-${freelancer.id}-${index}`}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
             animate={{ opacity: 1, y: 0 }}
             transition={{
@@ -313,9 +408,9 @@ const AgencyList: React.FC<AgencyListProps> = ({
                   : 0
             }}
           >
-            <TalentCard 
-              user={agency} 
-              onViewProfile={handleViewProfile} 
+            <TalentCard
+              user={freelancer}
+              onViewProfile={handleViewProfile}
               onConnect={handleConnect}
               onAddNote={handleAddNote}
               onAddToGroup={handleAddToGroup}
@@ -327,36 +422,38 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
       {/* Infinite Scroll Sentinel */}
       {hasNextPage && (
-        <div id='agency-sentinel' className='mt-8 flex h-20 items-center justify-center'>
+        <div id='freelancer-sentinel' className='mt-8 flex h-20 items-center justify-center'>
           {isLoadingMore ? (
             <div className='text-foreground-500 flex items-center gap-2'>
               <Spinner size='sm' color='primary' />
-              <span className='text-small'>{t('talentPool.loading.more.agencies')}</span>
+              <span className='text-small'>
+                {t('talentPool.loadingStates.loadingMoreFreelancers')}
+              </span>
             </div>
           ) : (
             <div className='text-foreground-400 text-center'>
-              <span className='text-small'>{t('talentPool.loading.scrollToLoad')}</span>
+              <span className='text-small'>{t('talentPool.loadingStates.scrollToLoadMore')}</span>
             </div>
           )}
         </div>
       )}
 
       {/* Modals */}
-      <AddNoteModal
+      <TalentNoteModal
         isOpen={noteModalOpen}
         onClose={() => setNoteModalOpen(false)}
         user={selectedUser}
         onSaveNote={handleSaveNote}
       />
-      
-      <AddToGroupModal
+
+      <TalentGroupModal
         isOpen={groupModalOpen}
         onClose={() => setGroupModalOpen(false)}
         user={selectedUser}
         onAddToGroups={handleAddToGroups}
       />
-      
-      <AssignTagsModal
+
+      <TalentTagsModal
         isOpen={tagsModalOpen}
         onClose={() => setTagsModalOpen(false)}
         user={selectedUser}
@@ -366,4 +463,4 @@ const AgencyList: React.FC<AgencyListProps> = ({
   );
 };
 
-export default AgencyList;
+export default FreelancerList;

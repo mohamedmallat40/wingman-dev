@@ -1,20 +1,20 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
-  Input,
-  Textarea,
   Form,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Textarea
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 interface InviteUserModalProps {
@@ -28,13 +28,9 @@ interface InviteUserModalProps {
   }) => Promise<void>;
 }
 
-const InviteUserModal: React.FC<InviteUserModalProps> = ({
-  isOpen,
-  onClose,
-  onInvite
-}) => {
+const InviteUserModal: React.FC<InviteUserModalProps> = ({ isOpen, onClose, onInvite }) => {
   const t = useTranslations('talentPool');
-  
+
   // Form state
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -58,37 +54,40 @@ const InviteUserModal: React.FC<InviteUserModalProps> = ({
   }, [isInviting, onClose]);
 
   // Handle form submission
-  const handleSubmit = useCallback(async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!firstName || !lastName || !email) return;
+  const handleSubmit = useCallback(
+    async (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if (!firstName || !lastName || !email) return;
 
-    setError('');
-    setIsInviting(true);
+      setError('');
+      setIsInviting(true);
 
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      await onInvite?.({
-        firstName,
-        lastName,
-        email,
-        personalMessage: personalMessage.trim() || undefined
-      });
+      try {
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      setSuccess(true);
-      
-      // Auto close after success
-      setTimeout(() => {
-        handleClose();
-      }, 2000);
-    } catch (error) {
-      console.error('Invite failed:', error);
-      setError('Failed to send invitation. Please try again.');
-    } finally {
-      setIsInviting(false);
-    }
-  }, [firstName, lastName, email, personalMessage, onInvite, handleClose]);
+        await onInvite?.({
+          firstName,
+          lastName,
+          email,
+          personalMessage: personalMessage.trim() || undefined
+        });
+
+        setSuccess(true);
+
+        // Auto close after success
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
+      } catch (error) {
+        console.error('Invite failed:', error);
+        setError('Failed to send invitation. Please try again.');
+      } finally {
+        setIsInviting(false);
+      }
+    },
+    [firstName, lastName, email, personalMessage, onInvite, handleClose]
+  );
 
   // Validation
   const isFormValid = firstName.trim() && lastName.trim() && email.trim();
@@ -125,10 +124,9 @@ const InviteUserModal: React.FC<InviteUserModalProps> = ({
               {success ? 'Invitation Sent!' : 'Invite to Talent Pool'}
             </h2>
             <p className='text-default-500 font-normal tracking-[0.02em]'>
-              {success 
+              {success
                 ? `We've sent an invitation to ${email}`
-                : 'Send an invitation to join your talent pool'
-              }
+                : 'Send an invitation to join your talent pool'}
             </p>
           </motion.div>
         </ModalHeader>
@@ -142,13 +140,8 @@ const InviteUserModal: React.FC<InviteUserModalProps> = ({
               transition={{ duration: 0.4 }}
               className='bg-success-50 border-success-200 rounded-[16px] border p-6 text-center'
             >
-              <Icon
-                icon='solar:mailbox-bold'
-                className='text-success mx-auto mb-3 h-12 w-12'
-              />
-              <p className='text-success-700 mb-4 font-medium'>
-                Invitation sent successfully!
-              </p>
+              <Icon icon='solar:mailbox-bold' className='text-success mx-auto mb-3 h-12 w-12' />
+              <p className='text-success-700 mb-4 font-medium'>Invitation sent successfully!</p>
               <p className='text-default-600 text-sm'>
                 {firstName} {lastName} will receive an email invitation to join your talent pool.
               </p>
@@ -316,9 +309,7 @@ const InviteUserModal: React.FC<InviteUserModalProps> = ({
                   isDisabled={!isFormValid || isInviting}
                   isLoading={isInviting}
                   startContent={
-                    !isInviting && (
-                      <Icon icon='solar:letter-unread-bold' className='h-5 w-5' />
-                    )
+                    !isInviting && <Icon icon='solar:letter-unread-bold' className='h-5 w-5' />
                   }
                   type='submit'
                 >

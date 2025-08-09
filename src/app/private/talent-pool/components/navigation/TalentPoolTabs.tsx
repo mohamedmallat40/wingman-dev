@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 
-import { Button, Input, Tab, Tabs, Tooltip } from '@heroui/react';
+import { Button, Tab, Tabs, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { type TalentType } from '../types';
+import { type TalentType } from '../../types';
 
 interface HeroTabsProps {
   activeTab: TalentType;
@@ -531,7 +531,7 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                 size='md'
                 fullWidth
                 startContent={<Icon icon='solar:user-plus-linear' className='h-4 w-4' />}
-                onClick={onCreateTeam}
+                onPress={onCreateTeam}
                 className='font-medium'
               >
                 Create Team

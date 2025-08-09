@@ -447,7 +447,7 @@
   "documents": {
     "title": "Documents",
     "description": "Gérez vos documents et fichiers",
-    "upload": "Télécharger Document",
+    "uploadButton": "Télécharger Document",
     "tabs": {
       "allDocuments": "Tous les Documents",
       "sharedWithMe": "Partagés avec Moi",
@@ -502,6 +502,99 @@
       "title": "Gestion des Documents",
       "description": "Stockez et gérez vos documents importants",
       "uploadButton": "Télécharger Document"
+    },
+    "upload": {
+      "title": "Télécharger Document",
+      "subtitle": "Ajouter un nouveau document à votre collection",
+      "documentName": {
+        "label": "Nom du Document",
+        "placeholder": "Entrer le nom du document..."
+      },
+      "tags": {
+        "label": "Étiquettes",
+        "placeholder": "Rechercher et sélectionner les étiquettes..."
+      },
+      "file": {
+        "label": "Fichier",
+        "dropTitle": "Déposer votre fichier ici",
+        "uploadTitle": "Télécharger votre document", 
+        "description": "Glisser-déposer votre fichier ou cliquer pour parcourir",
+        "chooseFile": "Choisir Fichier",
+        "supported": "Supporté : PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
+        "unknownType": "Type inconnu"
+      },
+      "progress": {
+        "uploading": "Téléchargement...",
+        "loadingText": "Téléchargement..."
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "upload": "Télécharger Document",
+        "uploading": "Téléchargement..."
+      },
+      "type": {
+        "label": "Type de Document",
+        "placeholder": "Sélectionner le type de document",
+        "options": {
+          "invoice": "Facture",
+          "quote": "Devis", 
+          "contract": "Contrat"
+        }
+      },
+      "status": {
+        "label": "Statut",
+        "placeholder": "Sélectionner le statut",
+        "options": {
+          "draft": "Brouillon",
+          "pending_review": "En Attente de Révision",
+          "issued": "Émis",
+          "rejected": "Rejeté",
+          "overdue": "En Retard",
+          "archived": "Archivé",
+          "cancelled": "Annulé",
+          "disputed": "En Litige"
+        }
+      },
+      "fileSize": {
+        "bytes": "Octets",
+        "kb": "Ko", 
+        "mb": "Mo",
+        "gb": "Go"
+      }
+    },
+    "status": {
+      "awaitingSignature": "En Attente de Signature",
+      "underReview": "En Cours de Révision",
+      "sentToClient": "Envoyé au Client",
+      "inProgress": "En Cours"
+    },
+    "actions": {
+      "view": "Voir Document",
+      "edit": "Modifier",
+      "download": "Télécharger", 
+      "duplicate": "Dupliquer",
+      "delete": "Supprimer"
+    },
+    "share": {
+      "success": "Document partagé avec {count} {count, plural, one {personne} other {personnes}} !",
+      "failed": "Partage échoué. Veuillez réessayer."
+    },
+    "tags": {
+      "contract": "Contrat",
+      "proposal": "Proposition",
+      "invoice": "Facture",
+      "financial": "Financier",
+      "legal": "Juridique",
+      "marketing": "Marketing",
+      "hr": "Ressources Humaines",
+      "technical": "Technique", 
+      "design": "Design",
+      "project": "Projet",
+      "client": "Client",
+      "internal": "Interne",
+      "urgent": "Urgent",
+      "draft": "Brouillon",
+      "final": "Final"
     }
   },
   "common": {

@@ -18,7 +18,7 @@ export default function AvailabilityFilter({
   className = ''
 }: AvailabilityFilterProps) {
   const t = useTranslations();
-  
+
   const options = [
     {
       key: null,

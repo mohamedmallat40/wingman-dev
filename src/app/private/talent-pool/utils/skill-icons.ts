@@ -163,31 +163,31 @@ export const getSkillIcon = (skillName: string): string => {
   
   // Category-based fallback
   if (normalizedSkill.includes('react') || normalizedSkill.includes('vue') || normalizedSkill.includes('angular')) {
-    return skillIcons.frontend;
+    return skillIcons.frontend!;
   }
   
   if (normalizedSkill.includes('node') || normalizedSkill.includes('python') || normalizedSkill.includes('java') || normalizedSkill.includes('php')) {
-    return skillIcons.backend;
+    return skillIcons.backend!;
   }
   
   if (normalizedSkill.includes('design') || normalizedSkill.includes('ui') || normalizedSkill.includes('ux')) {
-    return skillIcons.design;
+    return skillIcons.design!;
   }
   
   if (normalizedSkill.includes('marketing') || normalizedSkill.includes('seo') || normalizedSkill.includes('ads')) {
-    return skillIcons.marketing;
+    return skillIcons.marketing!;
   }
   
   if (normalizedSkill.includes('data') || normalizedSkill.includes('analytics') || normalizedSkill.includes('analysis')) {
-    return skillIcons.data;
+    return skillIcons.data!;
   }
   
   if (normalizedSkill.includes('mobile') || normalizedSkill.includes('ios') || normalizedSkill.includes('android')) {
-    return skillIcons.mobile;
+    return skillIcons.mobile!;
   }
   
   if (normalizedSkill.includes('project') || normalizedSkill.includes('management') || normalizedSkill.includes('agile')) {
-    return skillIcons['project management'];
+    return skillIcons['project management']!;
   }
   
   // Default fallback icon

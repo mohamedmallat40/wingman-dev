@@ -9,14 +9,14 @@ import { useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import HeroTabs from './components/HeroTabs';
-import InviteUserModal from './components/InviteUserModal';
+import { TalentFiltersPanel } from './components/filters';
 import {
-  OptimizedAgencyList,
-  OptimizedFreelancerList,
-  OptimizedTeamList
-} from './components/OptimizedTalentLists';
-import SearchAndFilters from './components/SearchAndFilters';
+  AgencyListContainer,
+  FreelancerListContainer,
+  TeamListContainer
+} from './components/lists';
+import { InviteTalentModal } from './components/modals';
+import { TalentPoolTabs } from './components/navigation';
 // Import constants
 import {
   ACTION_ITEMS,
@@ -147,13 +147,13 @@ const TalentPoolPage: React.FC = () => {
     switch (activeTab) {
       case 'freelancers':
         return (
-          <OptimizedFreelancerList {...commonProps} onCountChange={handleFreelancerCountChange} />
+          <FreelancerListContainer {...commonProps} onCountChange={handleFreelancerCountChange} />
         );
       case 'agencies':
-        return <OptimizedAgencyList {...commonProps} onCountChange={handleAgencyCountChange} />;
+        return <AgencyListContainer {...commonProps} onCountChange={handleAgencyCountChange} />;
       case 'teams':
         return (
-          <OptimizedTeamList
+          <TeamListContainer
             filters={filters}
             onViewTeam={handleViewTeam}
             onJoinTeam={handleJoinTeam}
@@ -205,7 +205,7 @@ const TalentPoolPage: React.FC = () => {
               startContent={
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
-              onClick={() => action.onClick?.()}
+              onPress={() => action.onClick?.()}
               className='transition-all duration-200 hover:shadow-md'
             >
               {action.label}
@@ -217,7 +217,7 @@ const TalentPoolPage: React.FC = () => {
       <div className='mx-auto w-[70%] space-y-8 py-6'>
         {/* Enhanced Tabs Navigation with Integrated Search */}
         <div className='space-y-6'>
-          <HeroTabs
+          <TalentPoolTabs
             activeTab={activeTab}
             onTabChange={setActiveTab}
             counts={tabCounts}
@@ -231,7 +231,7 @@ const TalentPoolPage: React.FC = () => {
           />
 
           {/* Search and Filters - Active filters always visible, controls only show when panel is open */}
-          <SearchAndFilters
+          <TalentFiltersPanel
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             filters={filters}
@@ -253,12 +253,12 @@ const TalentPoolPage: React.FC = () => {
                 {renderActiveTabContent()}
               </motion.div>
             </AnimatePresence>
-          </SearchAndFilters>
+          </TalentFiltersPanel>
         </div>
       </div>
 
       {/* Invite User Modal */}
-      <InviteUserModal
+      <InviteTalentModal
         isOpen={isInviteModalOpen}
         onClose={handleInviteModalClose}
         onInvite={handleInviteSubmit}

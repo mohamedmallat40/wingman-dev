@@ -8,12 +8,10 @@ import { useTranslations } from 'next-intl';
 
 import wingManApi from '@/lib/axios';
 
-import { getCountryNameFromCode } from '../data/countries';
-import { type Group, type TalentPoolFilters, type TeamResponse } from '../types';
-import GroupCard from './GroupCard';
-import EmptyState from './shared/EmptyState';
-import ErrorState from './shared/ErrorState';
-import LoadingSkeleton from './shared/LoadingSkeleton';
+import { getCountryNameFromCode } from '../../data/countries';
+import { type Group, type TalentPoolFilters, type TeamResponse } from '../../types';
+import { TalentGroupCard } from '../cards';
+import { TalentEmptyState, TalentErrorState, TalentLoadingSkeleton } from '../states';
 
 interface TeamListProps {
   filters?: TalentPoolFilters;
@@ -197,7 +195,7 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
 
   if (error) {
     return (
-      <ErrorState
+      <TalentErrorState
         titleKey='talentPool.errorStates.teams.title'
         descriptionKey='talentPool.errorStates.teams.description'
         onRetry={handleRetry}
@@ -206,12 +204,12 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
   }
 
   if (isLoading) {
-    return <LoadingSkeleton />;
+    return <TalentLoadingSkeleton />;
   }
 
   if (teams.length === 0) {
     return (
-      <EmptyState
+      <TalentEmptyState
         icon='solar:users-group-rounded-linear'
         titleKey='talentPool.emptyStates.teams.title'
         descriptionKey='talentPool.emptyStates.teams.description'
@@ -238,7 +236,7 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
                   : 0
             }}
           >
-            <GroupCard group={team} onViewTeam={handleViewTeam} onJoinTeam={handleJoinTeam} />
+            <TalentGroupCard group={team} onViewTeam={handleViewTeam} onJoinTeam={handleJoinTeam} />
           </motion.div>
         ))}
       </div>

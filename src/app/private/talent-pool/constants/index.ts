@@ -55,26 +55,36 @@ export const TAB_BREADCRUMB_ICONS: Record<TalentType, string> = {
 } as const;
 
 // Action items configuration
-export const ACTION_ITEMS = [
+interface ActionItemConfig {
+  key: string;
+  label: string;
+  icon: string;
+  color: 'primary' | 'secondary';
+  variant: 'solid' | 'flat';
+  priority: 'primary' | 'secondary';
+  tooltip: string;
+}
+
+export const ACTION_ITEMS: ActionItemConfig[] = [
   {
     key: 'invite',
     label: 'Invite',
     icon: 'solar:user-plus-linear',
-    color: 'primary' as const,
-    variant: 'solid' as const,
-    priority: 'primary' as const,
+    color: 'primary',
+    variant: 'solid',
+    priority: 'primary',
     tooltip: 'Invite new talent'
   },
   {
     key: 'create-team',
     label: 'Create Team',
     icon: 'solar:users-group-rounded-linear',
-    color: 'secondary' as const,
-    variant: 'flat' as const,
-    priority: 'secondary' as const,
+    color: 'secondary',
+    variant: 'flat',
+    priority: 'secondary',
     tooltip: 'Create new team'
   }
-] as const;
+];
 
 // Filter panel animation constants
 export const FILTER_ANIMATION = {

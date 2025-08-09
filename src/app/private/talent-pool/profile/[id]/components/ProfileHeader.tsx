@@ -39,7 +39,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const t = useTranslations();
 
   const fullName = `${user.firstName} ${user.lastName}`;
-  const availabilityConfig = getAvailabilityConfig(user.statusAviability);
+  const availabilityConfig = getAvailabilityConfig(user.statusAvailability);
   const workTypeConfig = getWorkTypeConfig(user.workType || '');
   const rate = formatRate(
     user.amount || 0,
@@ -78,12 +78,28 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <CardBody className='p-4 sm:p-6'>
             <div className='flex flex-col gap-6 lg:flex-row'>
               <div className='flex flex-1 gap-4'>
-                <Avatar
-                  src={user.profileImage ? getImageUrl(user.profileImage) : undefined}
-                  name={getUserInitials(user.firstName, user.lastName)}
-                  className='ring-primary/20 h-36 w-36 text-5xl font-bold shadow-sm ring-2 sm:h-40 sm:w-40'
-                  radius='lg'
-                />
+                <div className='relative'>
+                  {user.profileImage && user.profileImage.trim() ? (
+                    <div className='ring-primary/20 shadow-lg from-primary-200 to-secondary-200 h-36 w-36 overflow-hidden rounded-xl bg-gradient-to-br ring-2 sm:h-40 sm:w-40'>
+                      <img
+                        src={getImageUrl(user.profileImage)}
+                        alt={`${user.firstName} ${user.lastName}`}
+                        className='h-full w-full object-cover'
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-5xl font-bold text-primary-800 sm:text-6xl">${getUserInitials(user.firstName, user.lastName)}</div>`;
+                          }
+                        }}
+                      />
+                    </div>
+                  ) : (
+                    <div className='ring-primary/20 shadow-lg from-primary-200 to-secondary-200 text-primary-800 flex h-36 w-36 items-center justify-center rounded-xl bg-gradient-to-br text-5xl font-bold ring-2 sm:h-40 sm:w-40 sm:text-6xl'>
+                      {getUserInitials(user.firstName, user.lastName)}
+                    </div>
+                  )}
+                </div>
 
                 <div className='flex-1'>
                   <h1 className='text-foreground text-2xl font-semibold tracking-tight sm:text-3xl'>
@@ -167,8 +183,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                             <>
                               {user.city && <span>,</span>}
                               <img
-                                src={getCountryFlag(user.region)}
-                                alt={`${getCountryName(user.region)} flag`}
+                                src={getCountryFlag(user.region!)}
+                                alt={`${getCountryName(user.region!)} flag`}
                                 className='h-3 w-4 rounded-sm shadow-sm'
                                 onError={(e) => {
                                   // Fallback to text if flag image fails
@@ -179,8 +195,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                                     const textSpan = document.createElement('span');
                                     textSpan.className =
                                       'country-text text-xs font-medium text-foreground-600';
-                                    textSpan.textContent = user.region.toUpperCase();
-                                    textSpan.title = getCountryName(user.region);
+                                    textSpan.textContent = user.region!.toUpperCase();
+                                    textSpan.title = getCountryName(user.region!);
                                     parent.appendChild(textSpan);
                                   }
                                 }}
