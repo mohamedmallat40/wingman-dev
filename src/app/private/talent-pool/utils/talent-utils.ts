@@ -105,8 +105,27 @@ const COUNTRY_FLAGS: Record<string, string> = {
 export const getCountryFlag = (region: string | null): string => {
   if (!region) return '🌍';
   const flag = COUNTRY_FLAGS[region.toUpperCase()];
-  console.log('Region:', region, 'Flag:', flag); // Debug log
   return flag || region; // Fallback to region code if flag not found
+};
+
+// Working time mapping with i18n keys
+const WORKING_TIME_MAP = {
+  FULL_TIME: 'talentPool.workingTime.FULL_TIME',
+  PART_TIME: 'talentPool.workingTime.PART_TIME',
+  full_time: 'talentPool.workingTime.full_time',
+  part_time: 'talentPool.workingTime.part_time',
+  fullTime: 'talentPool.workingTime.fullTime',
+  partTime: 'talentPool.workingTime.partTime'
+} as const;
+
+export const mapWorkingTime = (workingTime: string, t?: (key: string) => string): string => {
+  const translationKey = WORKING_TIME_MAP[workingTime as keyof typeof WORKING_TIME_MAP];
+  if (translationKey && t) {
+    return t(translationKey);
+  }
+  
+  // Fallback for when no translation function is provided or unknown working time
+  return workingTime.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
 
 // User type mapping with i18n keys
@@ -115,7 +134,8 @@ const USER_TYPE_MAP = {
   PART_TIME_FREELANCER: 'talentPool.userTypes.partTimeFreelancer',
   STUDENT: 'talentPool.userTypes.student', 
   FREELANCER: 'talentPool.userTypes.freelancer',
-  AGENCY: 'talentPool.userTypes.agency'
+  AGENCY: 'talentPool.userTypes.agency',
+  CONTRACTOR: 'talentPool.userTypes.contractor'
 } as const;
 
 export const mapUserType = (userType: UserKind | string, t?: (key: string) => string): string => {
@@ -136,6 +156,8 @@ export const mapUserType = (userType: UserKind | string, t?: (key: string) => st
       return 'Freelancer';
     case 'AGENCY':
       return 'Agency';
+    case 'CONTRACTOR':
+      return 'Contractor';
     default:
       // Format unknown types by replacing underscores and capitalizing
       return userType.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());

@@ -206,14 +206,61 @@
     "tabs": {
       "freelancers": "Freelancers",
       "agencies": "Agences",
-      "teams": "Équipes"
+      "teams": "Équipes",
+      "descriptions": {
+        "freelancers": "Professionnels indépendants",
+        "agencies": "Agences professionnelles",
+        "teams": "Groupes collaboratifs"
+      }
     },
     "search": {
-      "placeholder": "Rechercher par nom, compétences ou localisation...",
-      "noResults": "Aucun résultat trouvé",
-      "filters": "Filtres",
-      "reset": "Réinitialiser les Filtres",
-      "apply": "Appliquer les Filtres"
+      "button": "Rechercher",
+      "placeholder": "Rechercher par nom, compétences ou expertise...",
+      "tooltip": "Rechercher maintenant (Entrée)",
+      "noResults": "Aucun résultat trouvé"
+    },
+    "filters": {
+      "button": "Filtres",
+      "active": "Actifs :",
+      "clearAll": "Tout Effacer",
+      "resetAll": "Tout Réinitialiser",
+      "cancel": "Annuler",
+      "apply": "Appliquer les Filtres",
+      "advanced": {
+        "title": "Filtres Avancés",
+        "description": "Affinez vos critères de recherche"
+      },
+      "categories": {
+        "location": "Localisation",
+        "profession": "Type de Profession",
+        "availability": "Disponibilité",
+        "experience": "Niveau d'Expérience"
+      },
+      "country": {
+        "placeholder": "Rechercher des pays...",
+        "selectAll": "Sélectionner tout {continent}",
+        "clearAll": "Tout effacer",
+        "selected": "{count, plural, one {# pays} other {# pays}} sélectionné{count, plural, one {} other {s}}"
+      }
+    },
+    "profession": {
+      "freelancer": "Freelancer",
+      "interim": "Intérimaire",
+      "consultant": "Consultant",
+      "studentEntrepreneur": "Étudiant entrepreneur"
+    },
+    "experience": {
+      "junior": "Junior",
+      "midLevel": "Niveau Intermédiaire",
+      "senior": "Senior",
+      "lead": "Lead",
+      "descriptions": {
+        "junior": "0-2 ans d'expérience",
+        "midLevel": "2-5 ans d'expérience",
+        "senior": "5-10 ans d'expérience",
+        "lead": "10+ ans d'expérience"
+      },
+      "selected": "{count, plural, one {# niveau} other {# niveaux}} sélectionné{count, plural, one {} other {s}}"
     },
     "cards": {
       "viewProfile": "Voir le Profil",
@@ -233,9 +280,19 @@
       "membersCount": "membres",
       "noSkillsListed": "Aucune compétence répertoriée",
       "moreSkills": "plus",
-      "noAboutAvailable": "Aucune description disponible"
+      "noAboutAvailable": "Aucune description disponible",
+      "actions": {
+        "connect": "Se Connecter",
+        "connected": "Connecté",
+        "addNote": "Ajouter une Note",
+        "addToGroup": "Ajouter au Groupe",
+        "assignTags": "Assigner des Tags"
+      }
     },
     "availability": {
+      "all": "Tous",
+      "fullTime": "Temps Plein",
+      "partTime": "Temps Partiel",
       "available": "Disponible",
       "availableForProjects": "Disponible pour les Projets",
       "partTimeAvailable": "Disponible à Temps Partiel",
@@ -247,12 +304,21 @@
       "hybrid": "hybride",
       "unknown": "inconnu"
     },
+    "workingTime": {
+      "full_time": "Temps plein",
+      "part_time": "Temps partiel",
+      "fullTime": "Temps plein",
+      "partTime": "Temps partiel",
+      "FULL_TIME": "Temps plein",
+      "PART_TIME": "Temps partiel"
+    },
     "userTypes": {
       "freelancer": "Freelancer",
       "fullTimeFreelancer": "Freelancer temps plein",
       "partTimeFreelancer": "Freelancer temps partiel",
       "agency": "Agence",
-      "student": "Étudiant"
+      "student": "Étudiant",
+      "contractor": "Contractuel"
     },
     "paymentTypes": {
       "hourly": "/heure",
@@ -270,6 +336,37 @@
       "teams": {
         "title": "Aucune équipe trouvée",
         "description": "Nous n'avons trouvé aucune équipe correspondant à vos critères. Essayez d'ajuster vos filtres ou votre requête de recherche."
+      }
+    },
+    "modals": {
+      "addNote": {
+        "title": "Ajouter une Note Personnelle",
+        "subtitle": "Ajoutez une note privée à propos de cette personne",
+        "noteLabel": "Note",
+        "notePlaceholder": "Entrez vos notes personnelles sur ce freelancer/agence...",
+        "charactersRemaining": "caractères restants"
+      },
+      "addToGroup": {
+        "title": "Ajouter au Groupe",
+        "subtitle": "Ajoutez cette personne à un ou plusieurs groupes",
+        "createNewGroup": "Créer un Nouveau Groupe",
+        "newGroupPlaceholder": "Entrez le nom du groupe...",
+        "existingGroups": "Groupes Existants",
+        "selected": "sélectionné",
+        "searchGroups": "Rechercher des groupes...",
+        "loadingGroups": "Chargement des groupes...",
+        "noGroupsFound": "Aucun groupe trouvé",
+        "noGroups": "Aucun groupe disponible",
+        "members": "membres"
+      },
+      "assignTags": {
+        "title": "Assigner des Tags",
+        "subtitle": "Ajoutez des tags pour organiser et catégoriser cette personne",
+        "selectedTags": "Tags Sélectionnés",
+        "createNewTag": "Créer un Nouveau Tag",
+        "newTagPlaceholder": "Entrez le nom du tag...",
+        "availableTags": "Tags Disponibles",
+        "noTags": "Aucun tag disponible"
       }
     },
     "errorStates": {
@@ -293,7 +390,222 @@
       "loadingMoreAgencies": "Chargement de plus d'agences...",
       "loadingMoreTeams": "Chargement de plus d'équipes...",
       "scrollToLoadMore": "Faites défiler pour charger plus..."
+    },
+    "loading": {
+      "more": {
+        "freelancers": "Chargement de plus de freelancers...",
+        "agencies": "Chargement de plus d'agences...",
+        "teams": "Chargement de plus d'équipes..."
+      },
+      "scrollToLoad": "Faites défiler pour charger plus..."
+    },
+    "profile": {
+      "sections": {
+        "about": "À propos",
+        "experience": "Expérience",
+        "education": "Formation",
+        "skills": "Compétences",
+        "languages": "Langues",
+        "contact": "Contact"
+      },
+      "aboutDescription": "En savoir plus sur cette personne",
+      "experienceDescription": "Parcours professionnel et historique de travail",
+      "educationDescription": "Formation académique et qualifications",
+      "skillsDescription": "Expertise technique et professionnelle",
+      "languagesDescription": "Langues parlées et niveaux de compétence",
+      "present": "Présent",
+      "grade": "Note",
+      "professionalSummary": "Résumé Professionnel",
+      "noSummaryAvailable": "Aucun résumé disponible",
+      "noExperience": "Aucune information d'expérience disponible",
+      "noEducation": "Aucune information de formation disponible",
+      "noLanguages": "Aucune information de langue disponible",
+      "emailVerified": "E-mail vérifié",
+      "experienceYears": "{years} années d'expérience",
+      "contact": "Contact",
+      "letsTalk": "Discutons",
+      "downloadCV": "Télécharger le CV",
+      "website": "Site web",
+      "linkedin": "LinkedIn",
+      "linkedinProfile": "Profil LinkedIn", 
+      "profileCover": "Couverture de profil",
+      "workWithUser": "Intéressé par travailler avec {name} ?",
+      "connectionPending": "Connexion en attente",
+      "error": {
+        "title": "Profil Non Disponible",
+        "userNotFound": "Le profil demandé n'a pas pu être trouvé.",
+        "generic": "Une erreur s'est produite lors du chargement de ce profil.",
+        "failedToLoad": "Échec du chargement du profil",
+        "profileNotFound": "Profil non trouvé"
+      },
+      "metadata": {
+        "title": "Profil | Bassin de Talents",
+        "description": "Voir les détails du profil de talent"
+      }
     }
+  },
+  "documents": {
+    "title": "Documents",
+    "description": "Gérez vos documents et fichiers",
+    "uploadButton": "Télécharger Document",
+    "tabs": {
+      "allDocuments": "Tous les Documents",
+      "sharedWithMe": "Partagés avec Moi",
+      "descriptions": {
+        "allDocuments": "Voir tous vos documents",
+        "sharedWithMe": "Documents partagés par d'autres"
+      }
+    },
+    "search": {
+      "button": "Rechercher",
+      "placeholder": "Rechercher par nom, tags ou type...",
+      "placeholderMobile": "Rechercher documents...",
+      "tooltip": "Ouvrir la recherche",
+      "searchNow": "Rechercher maintenant (Entrée)",
+      "closeSearch": "Fermer la recherche"
+    },
+    "filters": {
+      "button": "Filtres",
+      "toggle": "Basculer les filtres",
+      "title": "Filtres de Documents",
+      "description": "Affinez votre recherche de documents",
+      "comingSoon": "Filtres Bientôt Disponibles !",
+      "comingSoonDescription": "Nous travaillons sur des options de filtrage avancées pour vous aider à trouver des documents plus rapidement. Restez à l'écoute pour les filtres par type, statut, tags, et plus !",
+      "close": "Fermer"
+    },
+    "views": {
+      "list": "Vue liste",
+      "grid": "Vue grille"
+    },
+    "card": {
+      "modified": "Modifié",
+      "sharedWith": "Partagé avec",
+      "share": "Partager",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "moreOptions": "Plus d'options"
+    },
+    "status": {
+      "awaitingSignature": "En Attente de Signature",
+      "underReview": "En Cours de Révision",
+      "sentToClient": "Envoyé au Client",
+      "inProgress": "En Cours"
+    },
+    "types": {
+      "proposal": "Proposition",
+      "contract": "Contrat",
+      "invoice": "Facture",
+      "spreadsheet": "Feuille de Calcul",
+      "template": "Modèle"
+    },
+    "emptyState": {
+      "title": "Gestion des Documents",
+      "description": "Stockez et gérez vos documents importants",
+      "uploadButton": "Télécharger Document"
+    },
+    "upload": {
+      "title": "Télécharger Document",
+      "subtitle": "Ajouter un nouveau document à votre collection",
+      "documentName": {
+        "label": "Nom du Document",
+        "placeholder": "Entrer le nom du document..."
+      },
+      "tags": {
+        "label": "Étiquettes",
+        "placeholder": "Rechercher et sélectionner les étiquettes..."
+      },
+      "file": {
+        "label": "Fichier",
+        "dropTitle": "Déposer votre fichier ici",
+        "uploadTitle": "Télécharger votre document", 
+        "description": "Glisser-déposer votre fichier ou cliquer pour parcourir",
+        "chooseFile": "Choisir Fichier",
+        "supported": "Supporté : PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
+        "unknownType": "Type inconnu"
+      },
+      "progress": {
+        "uploading": "Téléchargement...",
+        "loadingText": "Téléchargement..."
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "upload": "Télécharger Document",
+        "uploading": "Téléchargement..."
+      },
+      "type": {
+        "label": "Type de Document",
+        "placeholder": "Sélectionner le type de document",
+        "options": {
+          "invoice": "Facture",
+          "quote": "Devis", 
+          "contract": "Contrat"
+        }
+      },
+      "status": {
+        "label": "Statut",
+        "placeholder": "Sélectionner le statut",
+        "options": {
+          "draft": "Brouillon",
+          "pending_review": "En Attente de Révision",
+          "issued": "Émis",
+          "rejected": "Rejeté",
+          "overdue": "En Retard",
+          "archived": "Archivé",
+          "cancelled": "Annulé",
+          "disputed": "En Litige"
+        }
+      },
+      "fileSize": {
+        "bytes": "Octets",
+        "kb": "Ko", 
+        "mb": "Mo",
+        "gb": "Go"
+      }
+    },
+    "status": {
+      "awaitingSignature": "En Attente de Signature",
+      "underReview": "En Cours de Révision",
+      "sentToClient": "Envoyé au Client",
+      "inProgress": "En Cours"
+    },
+    "actions": {
+      "view": "Voir Document",
+      "edit": "Modifier",
+      "download": "Télécharger", 
+      "duplicate": "Dupliquer",
+      "delete": "Supprimer"
+    },
+    "share": {
+      "success": "Document partagé avec {count} {count, plural, one {personne} other {personnes}} !",
+      "failed": "Partage échoué. Veuillez réessayer."
+    },
+    "tags": {
+      "contract": "Contrat",
+      "proposal": "Proposition",
+      "invoice": "Facture",
+      "financial": "Financier",
+      "legal": "Juridique",
+      "marketing": "Marketing",
+      "hr": "Ressources Humaines",
+      "technical": "Technique", 
+      "design": "Design",
+      "project": "Projet",
+      "client": "Client",
+      "internal": "Interne",
+      "urgent": "Urgent",
+      "draft": "Brouillon",
+      "final": "Final"
+    }
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "back": "Retour",
+    "retry": "Réessayer"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"

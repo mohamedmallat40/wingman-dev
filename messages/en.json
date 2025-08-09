@@ -206,14 +206,61 @@
     "tabs": {
       "freelancers": "Freelancers",
       "agencies": "Agencies", 
-      "teams": "Teams"
+      "teams": "Teams",
+      "descriptions": {
+        "freelancers": "Individual professionals",
+        "agencies": "Professional agencies",
+        "teams": "Collaborative groups"
+      }
     },
     "search": {
-      "placeholder": "Search by name, skills, or location...",
-      "noResults": "No results found",
-      "filters": "Filters",
-      "reset": "Reset Filters",
-      "apply": "Apply Filters"
+      "button": "Search",
+      "placeholder": "Search by name, skills, or expertise...",
+      "tooltip": "Search now (Enter)",
+      "noResults": "No results found"
+    },
+    "filters": {
+      "button": "Filters",
+      "active": "Active:",
+      "clearAll": "Clear All",
+      "resetAll": "Reset All",
+      "cancel": "Cancel", 
+      "apply": "Apply Filters",
+      "advanced": {
+        "title": "Advanced Filters",
+        "description": "Refine your search criteria"
+      },
+      "categories": {
+        "location": "Location",
+        "profession": "Profession Type",
+        "availability": "Availability", 
+        "experience": "Experience Level"
+      },
+      "country": {
+        "placeholder": "Search countries...",
+        "selectAll": "Select all {continent}",
+        "clearAll": "Clear all",
+        "selected": "{count, plural, one {# country} other {# countries}} selected"
+      }
+    },
+    "profession": {
+      "freelancer": "Freelancer",
+      "interim": "Interim",
+      "consultant": "Consultant",
+      "studentEntrepreneur": "Student entrepreneur"
+    },
+    "experience": {
+      "junior": "Junior",
+      "midLevel": "Mid-Level",
+      "senior": "Senior", 
+      "lead": "Lead",
+      "descriptions": {
+        "junior": "0-2 years of experience",
+        "midLevel": "2-5 years of experience",
+        "senior": "5-10 years of experience",
+        "lead": "10+ years of experience"
+      },
+      "selected": "{count, plural, one {# level} other {# levels}} selected"
     },
     "cards": {
       "viewProfile": "View Profile",
@@ -233,9 +280,19 @@
       "membersCount": "members",
       "noSkillsListed": "No skills listed",
       "moreSkills": "more",
-      "noAboutAvailable": "No description available"
+      "noAboutAvailable": "No description available",
+      "actions": {
+        "connect": "Connect",
+        "connected": "Connected",
+        "addNote": "Add Note",
+        "addToGroup": "Add to Group",
+        "assignTags": "Assign Tags"
+      }
     },
     "availability": {
+      "all": "All",
+      "fullTime": "Full-Time",
+      "partTime": "Part-Time",
       "available": "Available",
       "availableForProjects": "Available for Projects", 
       "partTimeAvailable": "Part-time Available",
@@ -247,12 +304,21 @@
       "hybrid": "hybrid",
       "unknown": "unknown"
     },
+    "workingTime": {
+      "full_time": "Full time",
+      "part_time": "Part time",
+      "fullTime": "Full time",
+      "partTime": "Part time",
+      "FULL_TIME": "Full time",
+      "PART_TIME": "Part time"
+    },
     "userTypes": {
       "freelancer": "Freelancer",
       "fullTimeFreelancer": "Full time freelancer",
       "partTimeFreelancer": "Part time freelancer",
       "agency": "Agency",
-      "student": "Student"
+      "student": "Student",
+      "contractor": "Contractor"
     },
     "paymentTypes": {
       "hourly": "/hour",
@@ -270,6 +336,37 @@
       "teams": {
         "title": "No teams found",
         "description": "We couldn't find any teams matching your criteria. Try adjusting your filters or search query."
+      }
+    },
+    "modals": {
+      "addNote": {
+        "title": "Add Personal Note",
+        "subtitle": "Add a private note about this person",
+        "noteLabel": "Note",
+        "notePlaceholder": "Enter your personal notes about this freelancer/agency...",
+        "charactersRemaining": "characters remaining"
+      },
+      "addToGroup": {
+        "title": "Add to Group",
+        "subtitle": "Add this person to one or more groups",
+        "createNewGroup": "Create New Group",
+        "newGroupPlaceholder": "Enter group name...",
+        "existingGroups": "Existing Groups",
+        "selected": "selected",
+        "searchGroups": "Search groups...",
+        "loadingGroups": "Loading groups...",
+        "noGroupsFound": "No groups found",
+        "noGroups": "No groups available",
+        "members": "members"
+      },
+      "assignTags": {
+        "title": "Assign Tags",
+        "subtitle": "Add tags to organize and categorize this person",
+        "selectedTags": "Selected Tags",
+        "createNewTag": "Create New Tag",
+        "newTagPlaceholder": "Enter tag name...",
+        "availableTags": "Available Tags",
+        "noTags": "No tags available"
       }
     },
     "errorStates": {
@@ -293,7 +390,228 @@
       "loadingMoreAgencies": "Loading more agencies...",
       "loadingMoreTeams": "Loading more teams...",
       "scrollToLoadMore": "Scroll to load more..."
+    },
+    "loading": {
+      "more": {
+        "freelancers": "Loading more freelancers...",
+        "agencies": "Loading more agencies...",
+        "teams": "Loading more teams..."
+      },
+      "scrollToLoad": "Scroll to load more..."
+    },
+    "profile": {
+      "sections": {
+        "about": "About",
+        "experience": "Experience",
+        "education": "Education",
+        "skills": "Skills",
+        "languages": "Languages",
+        "contact": "Contact"
+      },
+      "aboutDescription": "Learn more about this person",
+      "experienceDescription": "Professional background and work history",
+      "educationDescription": "Academic background and qualifications",
+      "skillsDescription": "Technical and professional expertise",
+      "languagesDescription": "Spoken languages and proficiency levels",
+      "present": "Present",
+      "grade": "Grade",
+      "professionalSummary": "Professional Summary",
+      "noSummaryAvailable": "No summary available",
+      "noExperience": "No experience information available",
+      "noEducation": "No education information available",
+      "noLanguages": "No languages information available",
+      "emailVerified": "Email verified",
+      "experienceYears": "{years} years experience",
+      "contact": "Contact",
+      "letsTalk": "Let's Talk",
+      "downloadCV": "Download CV",
+      "website": "Website",
+      "linkedin": "LinkedIn",
+      "linkedinProfile": "LinkedIn Profile", 
+      "profileCover": "Profile cover",
+      "workWithUser": "Interested in working with {name}?",
+      "connectionPending": "Connection Pending",
+      "error": {
+        "title": "Profile Not Available",
+        "userNotFound": "The requested profile could not be found.",
+        "generic": "Something went wrong while loading this profile.",
+        "failedToLoad": "Failed to load profile",
+        "profileNotFound": "Profile not found"
+      },
+      "metadata": {
+        "title": "Profile | Talent Pool",
+        "description": "View talent profile details"
+      }
     }
+  },
+  "documents": {
+    "title": "Documents",
+    "description": "Manage your documents and files",
+    "uploadButton": "Upload Document",
+    "tabs": {
+      "allDocuments": "All Documents",
+      "sharedWithMe": "Shared with Me",
+      "descriptions": {
+        "allDocuments": "View all your documents",
+        "sharedWithMe": "Documents shared by others"
+      }
+    },
+    "search": {
+      "button": "Search",
+      "placeholder": "Search documents by name, tags, or type...",
+      "placeholderMobile": "Search documents...",
+      "tooltip": "Open search",
+      "searchNow": "Search now (Enter)",
+      "closeSearch": "Close search"
+    },
+    "filters": {
+      "button": "Filters",
+      "toggle": "Toggle filters",
+      "title": "Document Filters",
+      "description": "Refine your document search",
+      "comingSoon": "Filters Coming Soon!",
+      "comingSoonDescription": "We're working on advanced filtering options to help you find documents faster. Stay tuned for filters by type, status, tags, and more!",
+      "close": "Close"
+    },
+    "views": {
+      "list": "List view",
+      "grid": "Grid view"
+    },
+    "card": {
+      "modified": "Modified",
+      "sharedWith": "Shared with",
+      "share": "Share",
+      "edit": "Edit",
+      "delete": "Delete",
+      "moreOptions": "More options"
+    },
+    "status": {
+      "awaitingSignature": "Awaiting Signature",
+      "underReview": "Under Review",
+      "sentToClient": "Sent to Client",
+      "inProgress": "In Progress"
+    },
+    "types": {
+      "proposal": "Proposal",
+      "contract": "Contract", 
+      "invoice": "Invoice",
+      "spreadsheet": "Spreadsheet",
+      "template": "Template"
+    },
+    "emptyState": {
+      "title": "Document Management",
+      "description": "Store and manage your important documents",
+      "uploadButton": "Upload Document"
+    },
+    "upload": {
+      "title": "Upload Document",
+      "subtitle": "Add a new document to your collection",
+      "documentName": {
+        "label": "Document Name",
+        "placeholder": "Enter document name..."
+      },
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Search and select tags..."
+      },
+      "file": {
+        "label": "File",
+        "dropTitle": "Drop your file here",
+        "uploadTitle": "Upload your document", 
+        "description": "Drag and drop your file or click to browse",
+        "chooseFile": "Choose File",
+        "supported": "Supported: PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
+        "unknownType": "Unknown type"
+      },
+      "progress": {
+        "uploading": "Uploading...",
+        "loadingText": "Uploading..."
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "upload": "Upload Document",
+        "uploading": "Uploading..."
+      },
+      "messages": {
+        "success": "Document \"{name}\" uploaded successfully!",
+        "error": "Failed to upload document. Please try again.",
+        "missingTypeId": "No ID mapping found for document type: {type}",
+        "missingStatusId": "No ID mapping found for status: {status}"
+      },
+      "type": {
+        "label": "Document Type",
+        "placeholder": "Select document type",
+        "options": {
+          "invoice": "Invoice",
+          "quote": "Quote", 
+          "contract": "Contract"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select status",
+        "options": {
+          "draft": "Draft",
+          "pending_review": "Pending Review",
+          "issued": "Issued",
+          "rejected": "Rejected",
+          "overdue": "Overdue",
+          "archived": "Archived",
+          "cancelled": "Cancelled",
+          "disputed": "Disputed"
+        }
+      },
+      "fileSize": {
+        "bytes": "Bytes",
+        "kb": "KB", 
+        "mb": "MB",
+        "gb": "GB"
+      }
+    },
+    "status": {
+      "awaitingSignature": "Awaiting Signature",
+      "underReview": "Under Review",
+      "sentToClient": "Sent to Client",
+      "inProgress": "In Progress"
+    },
+    "actions": {
+      "view": "View Document",
+      "edit": "Edit",
+      "download": "Download", 
+      "duplicate": "Duplicate",
+      "delete": "Delete"
+    },
+    "share": {
+      "success": "Document shared with {count} {count, plural, one {person} other {people}}!",
+      "failed": "Share failed. Please try again."
+    },
+    "tags": {
+      "contract": "Contract",
+      "proposal": "Proposal",
+      "invoice": "Invoice",
+      "financial": "Financial",
+      "legal": "Legal",
+      "marketing": "Marketing",
+      "hr": "Human Resources",
+      "technical": "Technical", 
+      "design": "Design",
+      "project": "Project",
+      "client": "Client",
+      "internal": "Internal",
+      "urgent": "Urgent",
+      "draft": "Draft",
+      "final": "Final"
+    }
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "back": "Back",
+    "retry": "Retry"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"

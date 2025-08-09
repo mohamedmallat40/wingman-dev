@@ -7,7 +7,12 @@ export interface Skill {
   type?: 'NORMAL' | 'SOFT';
 }
 
-export type UserKind = 'FREELANCER' | 'AGENCY' | 'FULL_TIME_FREELANCER' | 'PART_TIME_FREELANCER' | 'STUDENT';
+export type UserKind =
+  | 'FREELANCER'
+  | 'AGENCY'
+  | 'FULL_TIME_FREELANCER'
+  | 'PART_TIME_FREELANCER'
+  | 'STUDENT';
 export type WorkType = 'REMOTE' | 'ON_LOCATION' | 'HYBRID';
 export type PaymentType = 'HOURLY_BASED' | 'DAILY_BASED';
 export type AvailabilityStatus = 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | 'BUSY';
@@ -25,7 +30,7 @@ export interface User {
   skills: Skill[];
   hourlyRate: number;
   dailyRate: number;
-  statusAviability: AvailabilityStatus;
+  statusAvailability: AvailabilityStatus;
   isConnected: boolean;
   isCompleted: boolean;
   aboutMe?: string;
@@ -93,6 +98,7 @@ export interface TalentPoolFilters {
   minRating?: number;
   experienceLevel?: string[];
   country?: string[];
+  region?: string;
   profession?: 'FULL_TIME_FREELANCER' | 'PART_TIME_FREELANCER' | 'CONTRACTOR' | 'STUDENT';
 }
 
@@ -100,6 +106,9 @@ export interface TalentCardProps {
   user: User;
   onViewProfile?: (userId: string) => void;
   onConnect?: (userId: string) => void;
+  onAddNote?: (userId: string) => void;
+  onAddToGroup?: (userId: string) => void;
+  onAssignTags?: (userId: string) => void;
 }
 
 export interface TeamCardProps {

@@ -1,108 +1,141 @@
 'use client';
 
-import React, { useCallback, useEffect, useState, useMemo } from 'react';
+import React, { useCallback, useState } from 'react';
 
-import { Button, Chip, Tooltip } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
-// Toast notifications - implement with your preferred toast library
+import { useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import AgencyList from './components/AgencyList';
-import FreelancerList from './components/FreelancerList';
-import HeroTabs from './components/HeroTabs';
-import SearchAndFilters from './components/SearchAndFilters';
-import TeamList from './components/TeamList';
-import { type TalentPoolFilters, type TalentType } from './types';
-// import { useURLState, generateFilterDescription, validateURLComplexity } from './utils/url-state-manager';
+import { TalentFiltersPanel } from './components/filters';
+import {
+  AgencyListContainer,
+  FreelancerListContainer,
+  TeamListContainer
+} from './components/lists';
+import { InviteTalentModal } from './components/modals';
+import { TalentPoolTabs } from './components/navigation';
+// Import constants
+import {
+  ACTION_ITEMS,
+  BREADCRUMB_CONFIG,
+  TAB_BREADCRUMB_ICONS,
+  TAB_BREADCRUMB_LABELS
+} from './constants';
+import { useFilterMemoization } from './hooks/useFilterMemoization';
+// Import custom hooks
+import { useTalentPoolState } from './hooks/useTalentPoolState';
+import { type TalentType } from './types';
 
 const TalentPoolPage: React.FC = () => {
   // ============================================================================
-  // SIMPLIFIED STATE MANAGEMENT (URL features temporarily disabled)
-  // ============================================================================
-  
-  const [activeTab, setActiveTab] = useState<TalentType>('freelancers');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<TalentPoolFilters>({});
-  const [showFilters, setShowFilters] = useState(false);
-
-  // Dynamic counts from API
-  const [tabCounts, setTabCounts] = useState({
-    freelancers: 0,
-    agencies: 0,
-    teams: 0
-  });
-
-  // ============================================================================
-  // STANDARD EVENT HANDLERS
+  // SIMPLIFIED STATE MANAGEMENT USING CUSTOM HOOKS
   // ============================================================================
 
-  const handleTabChange = useCallback((tab: TalentType) => {
-    setActiveTab(tab);
-  }, []);
+  const router = useRouter();
+  const talentPoolState = useTalentPoolState();
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const {
+    activeTab,
+    searchQuery,
+    filters,
+    showFilters,
+    tabCounts,
+    setActiveTab,
+    setSearchQuery,
+    handleSearch,
+    setFilters,
+    toggleFilters,
+    updateTabCount
+  } = talentPoolState;
 
-  const handleSearch = useCallback(() => {
-    setFilters((prev) => ({
-      ...prev,
-      search: searchQuery.trim() || undefined,
-      name: searchQuery.trim() || undefined
-    }));
-  }, [searchQuery]);
+  // Get memoized filter information for performance
+  const { activeFiltersCount } = useFilterMemoization(filters);
 
-  const handleFiltersChange = useCallback((newFilters: TalentPoolFilters) => {
-    setFilters(newFilters);
-  }, []);
+  // ============================================================================
+  // EVENT HANDLERS (Simplified with better naming)
+  // ============================================================================
 
-  const handleViewProfile = (userId: string) => {
-    console.log('Navigate to profile:', userId);
-    // In real app: router.push(`/profile/${userId}`);
-  };
+  const handleViewProfile = useCallback(
+    (userId: string) => {
+      router.push(`/private/talent-pool/profile/${userId}`);
+    },
+    [router]
+  );
 
-  const handleConnect = (userId: string) => {
+  const handleConnect = useCallback((userId: string) => {
     console.log('Connect with user:', userId);
     // In real app: call connection API
-  };
+  }, []);
 
-  const handleViewTeam = (teamId: string) => {
+  const handleViewTeam = useCallback((teamId: string) => {
     console.log('Navigate to team:', teamId);
     // In real app: router.push(`/team/${teamId}`);
-  };
+  }, []);
 
-  const handleJoinTeam = (teamId: string) => {
+  const handleJoinTeam = useCallback((teamId: string) => {
     console.log('Join team:', teamId);
     // In real app: call join team API
-  };
+  }, []);
 
-  const handleCreateTeam = () => {
+  const handleCreateTeam = useCallback(() => {
     console.log('Create new team');
     // In real app: open create team modal or navigate to create team page
-  };
-
-  const handleFreelancerCountChange = useCallback((count: number) => {
-    setTabCounts((prev) => ({ ...prev, freelancers: count }));
   }, []);
 
-  const handleAgencyCountChange = useCallback((count: number) => {
-    setTabCounts((prev) => ({ ...prev, agencies: count }));
+  const handleInviteUser = useCallback(() => {
+    setIsInviteModalOpen(true);
   }, []);
 
-  const handleTeamCountChange = useCallback((count: number) => {
-    setTabCounts((prev) => ({ ...prev, teams: count }));
+  const handleInviteModalClose = useCallback(() => {
+    setIsInviteModalOpen(false);
   }, []);
 
-  const handleToggleFilters = useCallback(() => {
-    setShowFilters(!showFilters);
-  }, [showFilters]);
+  const handleInviteSubmit = useCallback(
+    async (data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      personalMessage?: string;
+    }) => {
+      const { inviteUserToPlatform } = await import(
+        '@root/modules/invitations/services/invitations.service'
+      );
 
-  const getActiveFiltersCount = useCallback(() => {
-    return Object.keys(filters).filter(key => {
-      const value = filters[key as keyof TalentPoolFilters];
-      return value !== undefined && value !== null && 
-             (Array.isArray(value) ? value.length > 0 : true);
-    }).length;
-  }, [filters]);
+      try {
+        const result = await inviteUserToPlatform(data);
+        console.log('Invitation sent successfully:', result);
+      } catch (error) {
+        console.error('Failed to send invitation:', error);
+        throw error; // Re-throw to let the modal handle the error display
+      }
+    },
+    []
+  );
 
+  // Tab count handlers using the updateTabCount action
+  const handleFreelancerCountChange = useCallback(
+    (count: number) => {
+      updateTabCount('freelancers', count);
+    },
+    [updateTabCount]
+  );
+
+  const handleAgencyCountChange = useCallback(
+    (count: number) => {
+      updateTabCount('agencies', count);
+    },
+    [updateTabCount]
+  );
+
+  const handleTeamCountChange = useCallback(
+    (count: number) => {
+      updateTabCount('teams', count);
+    },
+    [updateTabCount]
+  );
 
   const renderActiveTabContent = () => {
     const commonProps = {
@@ -113,12 +146,14 @@ const TalentPoolPage: React.FC = () => {
 
     switch (activeTab) {
       case 'freelancers':
-        return <FreelancerList {...commonProps} onCountChange={handleFreelancerCountChange} />;
+        return (
+          <FreelancerListContainer {...commonProps} onCountChange={handleFreelancerCountChange} />
+        );
       case 'agencies':
-        return <AgencyList {...commonProps} onCountChange={handleAgencyCountChange} />;
+        return <AgencyListContainer {...commonProps} onCountChange={handleAgencyCountChange} />;
       case 'teams':
         return (
-          <TeamList
+          <TeamListContainer
             filters={filters}
             onViewTeam={handleViewTeam}
             onJoinTeam={handleJoinTeam}
@@ -131,55 +166,27 @@ const TalentPoolPage: React.FC = () => {
   };
 
   const getBreadcrumbs = () => {
-    const baseBreadcrumbs = [
-      { label: 'Home', href: '/private/dashboard', icon: 'solar:home-linear' },
-      { label: 'Talent Pool', href: '/private/talent-pool', icon: 'solar:users-group-rounded-linear' }
-    ];
-    
-    const tabLabels = {
-      freelancers: 'Freelancers',
-      agencies: 'Agencies', 
-      teams: 'Teams'
-    };
-    
-    const tabIcons = {
-      freelancers: 'solar:user-linear',
-      agencies: 'solar:buildings-linear',
-      teams: 'solar:users-group-rounded-linear'
-    };
-    
+    const baseBreadcrumbs = [BREADCRUMB_CONFIG.HOME, BREADCRUMB_CONFIG.TALENT_POOL];
+
     return [
       ...baseBreadcrumbs,
-      { 
-        label: tabLabels[activeTab], 
-        icon: tabIcons[activeTab]
+      {
+        label: TAB_BREADCRUMB_LABELS[activeTab],
+        icon: TAB_BREADCRUMB_ICONS[activeTab]
       }
     ];
   };
 
-  // Simplified action items
-  const actionItems = [
-    {
-      key: 'invite',
-      label: 'Invite',
-      icon: 'solar:user-plus-linear',
-      color: 'primary' as const,
-      variant: 'solid' as const,
-      priority: 'primary' as const,
-      tooltip: 'Invite new talent',
-      onClick: () => console.log('Invite talent')
-    },
-    {
-      key: 'create-team',
-      label: 'Create Team',
-      icon: 'solar:users-group-rounded-linear',
-      color: 'secondary' as const,
-      variant: 'flat' as const,
-      priority: 'secondary' as const,
-      tooltip: 'Create new team',
-      onClick: handleCreateTeam
-    }
-  ];
+  // Action items with handlers
+  const actionItems = ACTION_ITEMS.map((item) => ({
+    ...item,
+    onClick:
+      item.key === 'create-team'
+        ? handleCreateTeam
+        : item.key === 'invite'
+          ? handleInviteUser
+          : () => console.log(`${item.label} clicked`)
+  }));
 
   return (
     <DashboardLayout
@@ -198,7 +205,7 @@ const TalentPoolPage: React.FC = () => {
               startContent={
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
-              onClick={() => action.onClick?.()}
+              onPress={() => action.onClick?.()}
               className='transition-all duration-200 hover:shadow-md'
             >
               {action.label}
@@ -210,28 +217,29 @@ const TalentPoolPage: React.FC = () => {
       <div className='mx-auto w-[70%] space-y-8 py-6'>
         {/* Enhanced Tabs Navigation with Integrated Search */}
         <div className='space-y-6'>
-          <HeroTabs
+          <TalentPoolTabs
             activeTab={activeTab}
-            onTabChange={handleTabChange}
+            onTabChange={setActiveTab}
             counts={tabCounts}
             onCreateTeam={handleCreateTeam}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onSearch={handleSearch}
             showFilters={showFilters}
-            onToggleFilters={handleToggleFilters}
-            filtersCount={getActiveFiltersCount()}
+            onToggleFilters={toggleFilters}
+            filtersCount={activeFiltersCount}
           />
 
           {/* Search and Filters - Active filters always visible, controls only show when panel is open */}
-          <SearchAndFilters
+          <TalentFiltersPanel
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             filters={filters}
-            onFiltersChange={handleFiltersChange}
+            onFiltersChange={setFilters}
             activeTab={activeTab}
             onSearch={handleSearch}
             showFiltersPanel={showFilters}
+            onToggleFiltersPanel={toggleFilters}
           >
             {/* Tab Content - Cards as children to follow filter animations */}
             <AnimatePresence mode='wait'>
@@ -245,9 +253,16 @@ const TalentPoolPage: React.FC = () => {
                 {renderActiveTabContent()}
               </motion.div>
             </AnimatePresence>
-          </SearchAndFilters>
+          </TalentFiltersPanel>
         </div>
       </div>
+
+      {/* Invite User Modal */}
+      <InviteTalentModal
+        isOpen={isInviteModalOpen}
+        onClose={handleInviteModalClose}
+        onInvite={handleInviteSubmit}
+      />
     </DashboardLayout>
   );
 };

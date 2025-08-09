@@ -206,14 +206,61 @@
     "tabs": {
       "freelancers": "Freelancers",
       "agencies": "Bureaus",
-      "teams": "Teams"
+      "teams": "Teams",
+      "descriptions": {
+        "freelancers": "Individuele professionals",
+        "agencies": "Professionele bureaus",
+        "teams": "Samenwerkingsgroepen"
+      }
     },
     "search": {
-      "placeholder": "Zoek op naam, vaardigheden of locatie...",
-      "noResults": "Geen resultaten gevonden",
-      "filters": "Filters",
-      "reset": "Filters Resetten",
-      "apply": "Filters Toepassen"
+      "button": "Zoeken",
+      "placeholder": "Zoek op naam, vaardigheden of expertise...",
+      "tooltip": "Nu zoeken (Enter)",
+      "noResults": "Geen resultaten gevonden"
+    },
+    "filters": {
+      "button": "Filters",
+      "active": "Actief:",
+      "clearAll": "Alles Wissen",
+      "resetAll": "Alles Resetten",
+      "cancel": "Annuleren",
+      "apply": "Filters Toepassen",
+      "advanced": {
+        "title": "Geavanceerde Filters",
+        "description": "Verfijn uw zoekcriteria"
+      },
+      "categories": {
+        "location": "Locatie",
+        "profession": "Type Beroep",
+        "availability": "Beschikbaarheid",
+        "experience": "Ervaringsniveau"
+      },
+      "country": {
+        "placeholder": "Landen zoeken...",
+        "selectAll": "Selecteer alle {continent}",
+        "clearAll": "Alles wissen",
+        "selected": "{count, plural, one {# land} other {# landen}} geselecteerd"
+      }
+    },
+    "profession": {
+      "freelancer": "Freelancer",
+      "interim": "Interim",
+      "consultant": "Consultant",
+      "studentEntrepreneur": "Student ondernemer"
+    },
+    "experience": {
+      "junior": "Junior",
+      "midLevel": "Middenniveau",
+      "senior": "Senior",
+      "lead": "Lead",
+      "descriptions": {
+        "junior": "0-2 jaar ervaring",
+        "midLevel": "2-5 jaar ervaring",
+        "senior": "5-10 jaar ervaring",
+        "lead": "10+ jaar ervaring"
+      },
+      "selected": "{count, plural, one {# niveau} other {# niveaus}} geselecteerd"
     },
     "cards": {
       "viewProfile": "Profiel Bekijken",
@@ -233,9 +280,19 @@
       "membersCount": "leden",
       "noSkillsListed": "Geen vaardigheden vermeld",
       "moreSkills": "meer",
-      "noAboutAvailable": "Geen beschrijving beschikbaar"
+      "noAboutAvailable": "Geen beschrijving beschikbaar",
+      "actions": {
+        "connect": "Verbinden",
+        "connected": "Verbonden",
+        "addNote": "Notitie Toevoegen",
+        "addToGroup": "Toevoegen aan Groep",
+        "assignTags": "Tags Toewijzen"
+      }
     },
     "availability": {
+      "all": "Alle",
+      "fullTime": "Voltijd",
+      "partTime": "Deeltijd",
       "available": "Beschikbaar",
       "availableForProjects": "Beschikbaar voor Projecten",
       "partTimeAvailable": "Deeltijd Beschikbaar",
@@ -247,12 +304,21 @@
       "hybrid": "hybride",
       "unknown": "onbekend"
     },
+    "workingTime": {
+      "full_time": "Voltijd",
+      "part_time": "Deeltijd",
+      "fullTime": "Voltijd",
+      "partTime": "Deeltijd",
+      "FULL_TIME": "Voltijd",
+      "PART_TIME": "Deeltijd"
+    },
     "userTypes": {
       "freelancer": "Freelancer",
       "fullTimeFreelancer": "Fulltime freelancer",
       "partTimeFreelancer": "Parttime freelancer",
       "agency": "Bureau",
-      "student": "Student"
+      "student": "Student",
+      "contractor": "Contractant"
     },
     "paymentTypes": {
       "hourly": "/uur",
@@ -270,6 +336,37 @@
       "teams": {
         "title": "Geen teams gevonden",
         "description": "We konden geen teams vinden die voldoen aan uw criteria. Probeer uw filters of zoekquery aan te passen."
+      }
+    },
+    "modals": {
+      "addNote": {
+        "title": "Persoonlijke Notitie Toevoegen",
+        "subtitle": "Voeg een privénotitie toe over deze persoon",
+        "noteLabel": "Notitie",
+        "notePlaceholder": "Voer uw persoonlijke notities over deze freelancer/bureau in...",
+        "charactersRemaining": "karakters over"
+      },
+      "addToGroup": {
+        "title": "Toevoegen aan Groep",
+        "subtitle": "Voeg deze persoon toe aan een of meer groepen",
+        "createNewGroup": "Nieuwe Groep Maken",
+        "newGroupPlaceholder": "Groepsnaam invoeren...",
+        "existingGroups": "Bestaande Groepen",
+        "selected": "geselecteerd",
+        "searchGroups": "Groepen zoeken...",
+        "loadingGroups": "Groepen laden...",
+        "noGroupsFound": "Geen groepen gevonden",
+        "noGroups": "Geen groepen beschikbaar",
+        "members": "leden"
+      },
+      "assignTags": {
+        "title": "Tags Toewijzen",
+        "subtitle": "Voeg tags toe om deze persoon te organiseren en categoriseren",
+        "selectedTags": "Geselecteerde Tags",
+        "createNewTag": "Nieuwe Tag Maken",
+        "newTagPlaceholder": "Tag naam invoeren...",
+        "availableTags": "Beschikbare Tags",
+        "noTags": "Geen tags beschikbaar"
       }
     },
     "errorStates": {
@@ -293,7 +390,222 @@
       "loadingMoreAgencies": "Meer bureaus laden...",
       "loadingMoreTeams": "Meer teams laden...",
       "scrollToLoadMore": "Scroll om meer te laden..."
+    },
+    "loading": {
+      "more": {
+        "freelancers": "Meer freelancers laden...",
+        "agencies": "Meer bureaus laden...",
+        "teams": "Meer teams laden..."
+      },
+      "scrollToLoad": "Scroll om meer te laden..."
+    },
+    "profile": {
+      "sections": {
+        "about": "Over",
+        "experience": "Ervaring",
+        "education": "Opleiding",
+        "skills": "Vaardigheden",
+        "languages": "Talen",
+        "contact": "Contact"
+      },
+      "aboutDescription": "Leer meer over deze persoon",
+      "experienceDescription": "Professionele achtergrond en werkgeschiedenis",
+      "educationDescription": "Academische achtergrond en kwalificaties",
+      "skillsDescription": "Technische en professionele expertise",
+      "languagesDescription": "Gesproken talen en vaardigheidsniveaus",
+      "present": "Heden",
+      "grade": "Cijfer",
+      "professionalSummary": "Professionele Samenvatting",
+      "noSummaryAvailable": "Geen samenvatting beschikbaar",
+      "noExperience": "Geen ervaringsinformatie beschikbaar",
+      "noEducation": "Geen opleidingsinformatie beschikbaar",
+      "noLanguages": "Geen taalinformatie beschikbaar",
+      "emailVerified": "E-mail geverifieerd",
+      "experienceYears": "{years} jaar ervaring",
+      "contact": "Contact",
+      "letsTalk": "Laten we Praten",
+      "downloadCV": "CV Downloaden",
+      "website": "Website",
+      "linkedin": "LinkedIn",
+      "linkedinProfile": "LinkedIn Profiel", 
+      "profileCover": "Profielomslag",
+      "workWithUser": "Geïnteresseerd in samenwerken met {name}?",
+      "connectionPending": "Verbinding In Behandeling",
+      "error": {
+        "title": "Profiel Niet Beschikbaar",
+        "userNotFound": "Het gevraagde profiel kon niet worden gevonden.",
+        "generic": "Er ging iets mis bij het laden van dit profiel.",
+        "failedToLoad": "Laden van profiel mislukt",
+        "profileNotFound": "Profiel niet gevonden"
+      },
+      "metadata": {
+        "title": "Profiel | Talent Pool",
+        "description": "Bekijk talent profiel details"
+      }
     }
+  },
+  "documents": {
+    "title": "Documenten",
+    "description": "Beheer uw documenten en bestanden",
+    "uploadButton": "Document Uploaden",
+    "tabs": {
+      "allDocuments": "Alle Documenten",
+      "sharedWithMe": "Gedeeld met Mij",
+      "descriptions": {
+        "allDocuments": "Bekijk al uw documenten",
+        "sharedWithMe": "Documenten gedeeld door anderen"
+      }
+    },
+    "search": {
+      "button": "Zoeken",
+      "placeholder": "Zoek op naam, tags of type...",
+      "placeholderMobile": "Documenten zoeken...",
+      "tooltip": "Zoeken openen",
+      "searchNow": "Nu zoeken (Enter)",
+      "closeSearch": "Zoeken sluiten"
+    },
+    "filters": {
+      "button": "Filters",
+      "toggle": "Filters schakelen",
+      "title": "Document Filters",
+      "description": "Verfijn uw documenten zoeken",
+      "comingSoon": "Filters Binnenkort Beschikbaar!",
+      "comingSoonDescription": "We werken aan geavanceerde filteropties om u te helpen documenten sneller te vinden. Blijf op de hoogte voor filters op type, status, tags, en meer!",
+      "close": "Sluiten"
+    },
+    "views": {
+      "list": "Lijstweergave",
+      "grid": "Rasterweergave"
+    },
+    "card": {
+      "modified": "Gewijzigd",
+      "sharedWith": "Gedeeld met",
+      "share": "Delen",
+      "edit": "Bewerken",
+      "delete": "Verwijderen",
+      "moreOptions": "Meer opties"
+    },
+    "status": {
+      "awaitingSignature": "Wacht op Handtekening",
+      "underReview": "Onder Beoordeling",
+      "sentToClient": "Verzonden naar Klant",
+      "inProgress": "In Uitvoering"
+    },
+    "types": {
+      "proposal": "Voorstel",
+      "contract": "Contract",
+      "invoice": "Factuur",
+      "spreadsheet": "Spreadsheet",
+      "template": "Sjabloon"
+    },
+    "emptyState": {
+      "title": "Documentbeheer",
+      "description": "Bewaar en beheer uw belangrijke documenten",
+      "uploadButton": "Document Uploaden"
+    },
+    "upload": {
+      "title": "Document Uploaden",
+      "subtitle": "Voeg een nieuw document toe aan je collectie",
+      "documentName": {
+        "label": "Documentnaam",
+        "placeholder": "Voer documentnaam in..."
+      },
+      "tags": {
+        "label": "Tags",
+        "placeholder": "Zoek en selecteer tags..."
+      },
+      "file": {
+        "label": "Bestand",
+        "dropTitle": "Zet je bestand hier neer",
+        "uploadTitle": "Upload je document", 
+        "description": "Sleep je bestand hierheen of klik om te bladeren",
+        "chooseFile": "Kies Bestand",
+        "supported": "Ondersteund: PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
+        "unknownType": "Onbekend type"
+      },
+      "progress": {
+        "uploading": "Uploaden...",
+        "loadingText": "Uploaden..."
+      },
+      "buttons": {
+        "cancel": "Annuleren",
+        "upload": "Document Uploaden",
+        "uploading": "Uploaden..."
+      },
+      "type": {
+        "label": "Documenttype",
+        "placeholder": "Selecteer documenttype",
+        "options": {
+          "invoice": "Factuur",
+          "quote": "Offerte", 
+          "contract": "Contract"
+        }
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Selecteer status",
+        "options": {
+          "draft": "Concept",
+          "pending_review": "Wacht op Beoordeling",
+          "issued": "Uitgegeven",
+          "rejected": "Afgewezen",
+          "overdue": "Achterstallig",
+          "archived": "Gearchiveerd",
+          "cancelled": "Geannuleerd",
+          "disputed": "Betwist"
+        }
+      },
+      "fileSize": {
+        "bytes": "Bytes",
+        "kb": "KB", 
+        "mb": "MB",
+        "gb": "GB"
+      }
+    },
+    "status": {
+      "awaitingSignature": "Wacht op Handtekening",
+      "underReview": "In Beoordeling",
+      "sentToClient": "Naar Klant Gestuurd",
+      "inProgress": "In Behandeling"
+    },
+    "actions": {
+      "view": "Document Bekijken",
+      "edit": "Bewerken",
+      "download": "Downloaden", 
+      "duplicate": "Dupliceren",
+      "delete": "Verwijderen"
+    },
+    "share": {
+      "success": "Document gedeeld met {count} {count, plural, one {persoon} other {personen}}!",
+      "failed": "Delen mislukt. Probeer opnieuw."
+    },
+    "tags": {
+      "contract": "Contract",
+      "proposal": "Voorstel",
+      "invoice": "Factuur",
+      "financial": "Financieel",
+      "legal": "Juridisch",
+      "marketing": "Marketing",
+      "hr": "Human Resources",
+      "technical": "Technisch", 
+      "design": "Design",
+      "project": "Project",
+      "client": "Klant",
+      "internal": "Intern",
+      "urgent": "Urgent",
+      "draft": "Concept",
+      "final": "Definitief"
+    }
+  },
+  "common": {
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "create": "Aanmaken",
+    "edit": "Bewerken",
+    "delete": "Verwijderen",
+    "close": "Sluiten",
+    "back": "Terug",
+    "retry": "Opnieuw Proberen"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet"

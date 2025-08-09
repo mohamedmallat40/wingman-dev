@@ -20,5 +20,10 @@ export default function HeroUiProvider({ children }: Readonly<THeroUiProvider>) 
     [router]
   );
 
-  return <HeroUIProvider navigate={navigate}>{children}</HeroUIProvider>;
+  return (
+    <HeroUIProvider navigate={navigate}>
+      <ToastProvider />
+      {children}
+    </HeroUIProvider>
+  );
 }
