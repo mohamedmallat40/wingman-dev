@@ -72,6 +72,11 @@ export default {
           medium: '2px',
           large: '3px'
         },
+        spacing: {
+          'container-mobile': '0.5rem',
+          'container-tablet': '1rem', 
+          'container-desktop': '1.5rem'
+        },
         boxShadow: {
           small: '0 1px 2px 0 rgba(0, 0, 0, 0.04)'
         }

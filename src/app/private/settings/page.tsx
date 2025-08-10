@@ -75,7 +75,7 @@ export default function SettingsPage({ userId }: Readonly<SettingsPageProperties
   }
 
   return (
-    <div className='mx-auto w-[70%] space-y-8 py-6'>
+    <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
       <div>
         <div className='mb-8'>
           <h1 className='text-3xl font-bold text-gray-900 dark:text-white'>Profile Settings</h1>

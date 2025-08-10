@@ -12,7 +12,7 @@ export default function CTA() {
   const t = useTranslations('landing.cta');
 
   return (
-    <section id='contact' className='relative z-10 mx-auto max-w-7xl px-6 py-20'>
+    <section id='contact' className='relative z-10 mx-auto max-w-7xl px-2 sm:px-4 xl:px-6 py-20'>
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

@@ -76,7 +76,7 @@ export default function Pricing() {
   const [selectedPricingTab, setSelectedPricingTab] = React.useState('monthly');
 
   return (
-    <section id='pricing' className='relative z-10 mx-auto max-w-7xl px-6 py-20'>
+    <section id='pricing' className='relative z-10 mx-auto max-w-7xl px-2 sm:px-4 xl:px-6 py-20'>
       <motion.header
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

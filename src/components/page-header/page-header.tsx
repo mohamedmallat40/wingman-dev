@@ -218,7 +218,7 @@ export default function PageHeader({
       <div className='from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-r via-transparent opacity-60' />
 
       <div className='relative py-6 sm:px-6'>
-        <div className='mx-auto w-[70%]'>
+        <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
           {/* Breadcrumbs */}
           {breadcrumbs && breadcrumbs.length > 0 && (
             <motion.div

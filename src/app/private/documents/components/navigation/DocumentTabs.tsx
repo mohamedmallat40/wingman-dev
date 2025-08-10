@@ -7,7 +7,7 @@ import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { type DocumentType } from '../types';
+import { type DocumentType } from '../../types';
 
 interface DocumentTabsProps {
   activeTab: string;
@@ -86,7 +86,9 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
     if (newState) {
       // Focus the input when expanding
       setTimeout(() => {
-        const searchInput = document.querySelector('[data-document-search-input]') as HTMLInputElement;
+        const searchInput = document.querySelector(
+          '[data-document-search-input]'
+        ) as HTMLInputElement;
         if (searchInput) {
           searchInput.focus();
         }
@@ -127,10 +129,12 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                       color='primary'
                       size='lg'
                       classNames={{
-                        tabList: 'gap-6 w-full relative rounded-none p-0 border-b border-divider dark:border-default-700',
+                        tabList:
+                          'gap-6 w-full relative rounded-none p-0 border-b border-divider dark:border-default-700',
                         cursor: 'w-full bg-primary-500',
                         tab: 'max-w-fit px-0 h-12',
-                        tabContent: 'group-data-[selected=true]:text-primary-500 dark:group-data-[selected=true]:text-primary-400'
+                        tabContent:
+                          'group-data-[selected=true]:text-primary-500 dark:group-data-[selected=true]:text-primary-400'
                       }}
                     >
                       {Object.entries(tabConfig).map(([key, config]) => {
@@ -149,7 +153,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                                 <div className='flex flex-col items-start'>
                                   <span className='font-medium'>{config.label}</span>
                                   <div className='flex items-center gap-2'>
-                                    <span className='text-default-500 text-xs'>
+                                    <span className='text-default-500 dark:text-default-400 text-xs'>
                                       {config.description}
                                     </span>
                                     {isActive && !isLoading && (
@@ -228,7 +232,9 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                     <Input
                       data-document-search-input
                       placeholder={t('documents.search.placeholder')}
-                      startContent={<Icon icon='solar:magnifer-linear' className='text-default-400 h-4 w-4' />}
+                      startContent={
+                        <Icon icon='solar:magnifer-linear' className='text-default-400 h-4 w-4' />
+                      }
                       value={searchQuery}
                       onValueChange={onSearchChange}
                       onKeyDown={handleSearchKeyPress}
@@ -319,14 +325,14 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                 {t('documents.filters.button')}
                 {showFilters && (
                   <div className='relative inline-flex shrink-0'>
-                    <span className='bg-white text-primary absolute top-[5%] right-[5%] z-10 box-border flex h-3 min-h-3 w-3 min-w-3 origin-center translate-x-1/2 -translate-y-1/2 scale-100 flex-wrap place-content-center items-center rounded-full border-2 border-primary px-1 whitespace-nowrap subpixel-antialiased opacity-100 !duration-300 select-none'></span>
+                    <span className='text-primary dark:bg-content1 dark:text-primary border-primary absolute top-[5%] right-[5%] z-10 box-border flex h-3 min-h-3 w-3 min-w-3 origin-center translate-x-1/2 -translate-y-1/2 scale-100 flex-wrap place-content-center items-center rounded-full border-2 bg-white px-1 whitespace-nowrap subpixel-antialiased opacity-100 !duration-300 select-none'></span>
                   </div>
                 )}
               </Button>
             </Tooltip>
 
             {/* View Toggle Buttons */}
-            <div className='flex items-center gap-1 rounded-lg border border-default-200 bg-background/60 p-1'>
+            <div className='border-default-200 dark:border-default-700 bg-background/60 dark:bg-content1/60 flex items-center gap-1 rounded-lg border p-1'>
               <Tooltip content={t('documents.views.list')} placement='bottom'>
                 <Button
                   isIconOnly
@@ -360,17 +366,20 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
       <div className='block sm:hidden'>
         <div className='space-y-3'>
           {/* Mobile Search Bar */}
-          <div className='bg-background/80 border-divider/50 shadow-small rounded-2xl border p-3 backdrop-blur-md'>
+          <div className='bg-background/80 border-divider/50 dark:border-default-700/50 shadow-small rounded-2xl border p-3 backdrop-blur-md'>
             <div className='flex flex-col gap-4 md:flex-row'>
               <div className='flex-1'>
                 <Input
                   placeholder={t('documents.search.placeholderMobile')}
-                  startContent={<Icon icon='solar:magnifer-linear' className='text-default-400 h-4 w-4' />}
+                  startContent={
+                    <Icon icon='solar:magnifer-linear' className='text-default-400 h-4 w-4' />
+                  }
                   value={searchQuery}
                   onValueChange={onSearchChange}
                   onKeyDown={handleSearchKeyPress}
                   classNames={{
-                    inputWrapper: 'bg-default-100 data-[hover=true]:bg-default-200 group-data-[focus=true]:bg-default-100',
+                    inputWrapper:
+                      'bg-default-100 dark:bg-default-50 data-[hover=true]:bg-default-200 dark:data-[hover=true]:bg-default-100 group-data-[focus=true]:bg-default-100 dark:group-data-[focus=true]:bg-default-50',
                     input: 'text-medium text-foreground'
                   }}
                 />
@@ -388,7 +397,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                   {t('documents.filters.button')}
                 </Button>
                 {/* Mobile View Toggle */}
-                <div className='flex items-center gap-1 rounded-lg border border-default-200 bg-background/60 p-1'>
+                <div className='border-default-200 dark:border-default-700 bg-background/60 dark:bg-content1/60 flex items-center gap-1 rounded-lg border p-1'>
                   <Button
                     isIconOnly
                     size='sm'
@@ -428,7 +437,7 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
           </div>
 
           {/* Mobile Tabs */}
-          <div className='bg-default-100 flex rounded-xl p-1'>
+          <div className='bg-default-100 dark:bg-default-800 flex rounded-xl p-1'>
             {Object.entries(tabConfig).map(([key, config]) => {
               const isActive = activeTab === key;
 
@@ -438,8 +447,8 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                   onClick={() => onTabChange(key)}
                   className={`relative flex flex-1 flex-col items-center gap-1 rounded-lg px-3 py-3 transition-all duration-200 ${
                     isActive
-                      ? 'bg-background text-primary-600 shadow-sm'
-                      : 'text-default-600 hover:text-default-900'
+                      ? 'bg-background dark:bg-content1 text-primary-600 dark:text-primary-400 shadow-sm'
+                      : 'text-default-600 dark:text-default-400 hover:text-default-900 dark:hover:text-default-100'
                   } `}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -447,17 +456,19 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                   <div className='flex flex-col items-center'>
                     <span className='text-xs font-medium'>{config.label}</span>
                     {isActive && !isLoading && (
-                      <span className='text-default-500 mt-0.5 text-xs'>{documentsCount}</span>
+                      <span className='text-default-500 dark:text-default-400 mt-0.5 text-xs'>
+                        {documentsCount}
+                      </span>
                     )}
                     {isLoading && (
-                      <div className='bg-default-200 mt-0.5 h-2 w-6 animate-pulse rounded' />
+                      <div className='bg-default-200 dark:bg-default-700 mt-0.5 h-2 w-6 animate-pulse rounded' />
                     )}
                   </div>
 
                   {isActive && (
                     <motion.div
                       layoutId='activeDocumentTab'
-                      className='bg-primary-50 absolute inset-0 -z-10 rounded-lg'
+                      className='bg-primary-50 dark:bg-primary-900/20 absolute inset-0 -z-10 rounded-lg'
                       initial={false}
                       transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                     />

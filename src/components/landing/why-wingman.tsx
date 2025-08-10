@@ -27,7 +27,7 @@ export default function WhyWingman() {
   ];
 
   return (
-    <section id='about' className='relative z-10 mx-auto max-w-7xl px-6 py-20'>
+    <section id='about' className='relative z-10 mx-auto max-w-7xl px-2 sm:px-4 xl:px-6 py-20'>
       <motion.header
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

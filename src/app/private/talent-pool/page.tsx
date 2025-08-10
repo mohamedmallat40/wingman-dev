@@ -214,7 +214,7 @@ const TalentPoolPage: React.FC = () => {
         </div>
       }
     >
-      <div className='mx-auto w-[70%] space-y-8 py-6'>
+      <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
         {/* Enhanced Tabs Navigation with Integrated Search */}
         <div className='space-y-6'>
           <TalentPoolTabs

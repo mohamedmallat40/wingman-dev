@@ -1,249 +1,210 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import { useDocuments } from '@root/modules/documents/hooks/use-documents';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import DocumentCard, { DocumentCardSkeleton } from './components/document-card';
-import DocumentTabs from './components/DocumentTabs';
-import DocumentUploadModal from './components/DocumentUploadModal';
+import {
+  DocumentFiltersPanel,
+  DocumentListContainer,
+  DocumentTabs,
+  DocumentUploadModal
+} from './components';
+import {
+  ACTION_ITEMS,
+  BREADCRUMB_CONFIG,
+  TAB_BREADCRUMB_ICONS,
+  TAB_BREADCRUMB_LABELS
+} from './constants';
+import { useDocumentFilters, useDocuments, useDocumentState } from './hooks';
 import { type DocumentType } from './types';
+import { filterDocuments, getActiveFiltersCount } from './utils';
 
 export default function DocumentsPage() {
   const t = useTranslations('documents');
   const { data: result, isLoading, error, isError } = useDocuments();
-  const [selectedTab, setSelectedTab] = useState<DocumentType>('all-documents');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [showUploadModal, setShowUploadModal] = useState(false);
 
+  // Enhanced state management using custom hooks
+  const documentState = useDocumentState();
+  const {
+    activeTab,
+    searchQuery,
+    filters,
+    showFilters,
+    viewMode,
+    setActiveTab,
+    setSearchQuery,
+    setFilters,
+    toggleFilters,
+    setViewMode,
+    handleSearch
+  } = documentState;
+
+  // Get filter information for performance
+  const activeFiltersCount = useMemo(() => getActiveFiltersCount(filters), [filters]);
+
   // Filter documents based on active tab and search query
-  const filteredDocuments = React.useMemo(() => {
+  const filteredDocuments = useMemo(() => {
     if (!result?.data) return [];
 
     let documents = result.data;
 
     // Filter by tab
-    if (selectedTab === 'shared-with-me') {
-      documents = documents.filter(doc => doc.sharedWith.length > 0);
+    if (activeTab === 'shared-with-me') {
+      documents = documents.filter((doc) => doc.sharedWith.length > 0);
     }
     // 'all-documents' shows all documents, so no additional filtering needed
 
-    // Filter by search query
-    if (searchQuery.trim()) {
-      documents = documents.filter(
-        (doc) =>
-          doc.documentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          doc.tags.some((tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
-          doc.type.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
+    // Apply filters and search using utility function
+    return filterDocuments(documents, filters, searchQuery);
+  }, [result?.data, activeTab, searchQuery, filters]);
 
-    return documents;
-  }, [result?.data, selectedTab, searchQuery]);
+  // Event handlers following talent pool pattern
+  const handleUploadDocument = useCallback(() => {
+    setShowUploadModal(true);
+  }, []);
 
-  const handleSearch = () => {
-    // Trigger search logic if needed
+  const handleUploadModalClose = useCallback(() => {
+    setShowUploadModal(false);
+  }, []);
+
+  const handleUpload = useCallback(
+    async (data: { name: string; tags: string[]; file: File; type: string; status: string }) => {
+      try {
+        console.log('Uploading document:', data);
+        // Here you would integrate with your actual upload API
+        // await uploadDocument(data);
+
+        // For now, just log the data
+        alert(`Document "${data.name}" uploaded successfully with tags: ${data.tags.join(', ')}`);
+      } catch (error) {
+        console.error('Upload failed:', error);
+        alert('Upload failed. Please try again.');
+      }
+    },
+    []
+  );
+
+  const handleCreateFolder = useCallback(() => {
+    console.log('Create new folder');
+    // In real app: open create folder modal or navigate to create folder page
+  }, []);
+
+  const handleRefresh = useCallback(() => {
+    // In a real app, this would refetch the data
+    window.location.reload();
+  }, []);
+
+  // Breadcrumbs configuration
+  const getBreadcrumbs = () => {
+    const baseBreadcrumbs = [BREADCRUMB_CONFIG.HOME, BREADCRUMB_CONFIG.DOCUMENTS];
+
+    return [
+      ...baseBreadcrumbs,
+      {
+        label: TAB_BREADCRUMB_LABELS[activeTab],
+        icon: TAB_BREADCRUMB_ICONS[activeTab]
+      }
+    ];
   };
 
-  const handleToggleFilters = () => {
-    setShowFilters(!showFilters);
-  };
-
-  const handleUpload = async (data: { name: string; tags: string[]; file: File }) => {
-    try {
-      console.log('Uploading document:', data);
-      // Here you would integrate with your actual upload API
-      // await uploadDocument(data);
-      
-      // For now, just log the data
-      alert(`Document "${data.name}" uploaded successfully with tags: ${data.tags.join(', ')}`);
-    } catch (error) {
-      console.error('Upload failed:', error);
-      alert('Upload failed. Please try again.');
-    }
-  };
-
-  const documentList = () => {
-    if (isLoading) {
-      return (
-        <div className='space-y-2'>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <DocumentCardSkeleton key={index} />
-          ))}
-        </div>
-      );
-    }
-
-    if (filteredDocuments.length === 0) {
-      return (
-        <div className='mt-10 flex flex-col items-center text-center'>
-          <Icon
-            icon='solar:document-text-linear'
-            className='text-primary mx-auto mb-4 block h-24 w-24'
-          />
-          <h2 className='mb-2 text-2xl font-bold'>{t('emptyState.title')}</h2>
-          <p className='text-default-600 mb-4'>{t('emptyState.description')}</p>
-          <Button 
-            color='primary' 
-            startContent={<Icon icon='solar:document-add-linear' />}
-            onPress={() => setShowUploadModal(true)}
-          >
-            {t('emptyState.uploadButton')}
-          </Button>
-        </div>
-      );
-    }
-
-    return (
-      <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' : 'space-y-2'}>
-        {filteredDocuments.map((document) => (
-          <DocumentCard key={document.id} document={document} viewMode={viewMode} />
-        ))}
-      </div>
-    );
-  };
+  // Action items with handlers
+  const actionItems = ACTION_ITEMS.map((item) => ({
+    ...item,
+    onClick:
+      item.key === 'upload'
+        ? handleUploadDocument
+        : item.key === 'new-folder'
+          ? handleCreateFolder
+          : () => console.log(`${item.label} clicked`)
+  }));
 
   return (
     <DashboardLayout
       pageTitle={t('title')}
       pageDescription={t('description')}
       pageIcon='solar:document-text-linear'
-      breadcrumbs={[
-        { label: 'Home', href: '/private/dashboard', icon: 'solar:home-linear' },
-        { label: t('title') }
-      ]}
+      breadcrumbs={getBreadcrumbs()}
       headerActions={
-        <Button
-          color='primary'
-          startContent={<Icon icon='solar:upload-linear' className='h-4 w-4' />}
-          className='font-medium'
-          onPress={() => setShowUploadModal(true)}
-        >
-          {t('uploadButton')}
-        </Button>
+        <div className='flex items-center gap-2'>
+          {actionItems.map((action) => (
+            <Button
+              key={action.key}
+              color={action.color}
+              variant={action.variant}
+              size='sm'
+              startContent={
+                action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
+              }
+              onPress={() => action.onClick?.()}
+              className='font-medium transition-all duration-200 hover:shadow-md'
+            >
+              {action.label}
+            </Button>
+          ))}
+        </div>
       }
     >
-      <div className='mx-auto w-[70%] space-y-8 py-6'>
+      <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
         <div className='space-y-6'>
+          {/* Enhanced Tabs Navigation with Integrated Search */}
           <DocumentTabs
-            activeTab={selectedTab}
-            onTabChange={(tab) => setSelectedTab(tab as DocumentType)}
+            activeTab={activeTab}
+            onTabChange={(tab) => setActiveTab(tab as DocumentType)}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onSearch={handleSearch}
             documentsCount={filteredDocuments.length}
-            onToggleFilters={handleToggleFilters}
+            onToggleFilters={toggleFilters}
             showFilters={showFilters}
             viewMode={viewMode}
             onViewModeChange={setViewMode}
           />
 
-          {/* Filter Panel */}
-          <AnimatePresence>
-            {showFilters && (
+          {/* Enhanced Filters Panel with Document Content */}
+          <DocumentFiltersPanel
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            filters={filters}
+            onFiltersChange={setFilters}
+            activeTab={activeTab}
+            onSearch={handleSearch}
+            showFiltersPanel={showFilters}
+            onToggleFiltersPanel={toggleFilters}
+          >
+            {/* Document List Container */}
+            <AnimatePresence mode='wait'>
               <motion.div
-                layoutId='filter-panel'
-                className='space-y-6 overflow-hidden'
-                initial={{ opacity: 0, scaleY: 0, transformOrigin: 'top' }}
-                animate={{ opacity: 1, scaleY: 1, transformOrigin: 'top' }}
-                exit={{ opacity: 0, scaleY: 0, transformOrigin: 'top' }}
-                transition={{
-                  duration: 0.25,
-                  ease: [0.4, 0.0, 0.2, 1],
-                  opacity: { duration: 0.15 }
-                }}
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
               >
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3, ease: 'easeOut' }}
-                  className='border-divider/50 dark:border-default-700 from-background/95 to-background/90 dark:from-content1/95 dark:to-content1/90 ring-primary/5 dark:ring-primary/10 relative rounded-xl border bg-gradient-to-br shadow-xl ring-1 backdrop-blur-xl'
-                >
-                  {/* Background gradient */}
-                  <div className='from-primary/8 via-secondary/4 to-success/6 absolute inset-0 rounded-xl bg-gradient-to-br opacity-40' />
-
-                  <div className='relative p-6'>
-                    {/* Header */}
-                    <div className='mb-6 flex items-center justify-between'>
-                      <div className='flex items-center gap-3'>
-                        <motion.div
-                          className='from-primary/15 to-primary/10 ring-primary/30 flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br shadow-sm ring-1'
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Icon icon='solar:filter-linear' className='text-primary h-5 w-5' />
-                        </motion.div>
-                        <div>
-                          <h3 className='text-foreground text-lg font-semibold'>
-                            {t('filters.title')}
-                          </h3>
-                          <p className='text-default-600 text-sm'>{t('filters.description')}</p>
-                        </div>
-                      </div>
-                      <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                        <Button
-                          isIconOnly
-                          size='sm'
-                          variant='light'
-                          onClick={handleToggleFilters}
-                          className='hover:bg-danger/10 hover:text-danger-600 rounded-full transition-all duration-200'
-                        >
-                          <Icon icon='solar:close-linear' className='h-4 w-4' />
-                        </Button>
-                      </motion.div>
-                    </div>
-
-                    {/* Coming Soon Message */}
-                    <div className='flex min-h-[200px] flex-col items-center justify-center rounded-xl border border-dashed border-default-300 dark:border-default-600 bg-default-50 dark:bg-default-900/20 p-8 text-center'>
-                      <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.2, duration: 0.3 }}
-                        className='mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20'
-                      >
-                        <Icon icon='solar:settings-minimalistic-linear' className='text-primary h-8 w-8' />
-                      </motion.div>
-                      <h4 className='mb-2 text-lg font-semibold text-foreground'>{t('filters.comingSoon')}</h4>
-                      <p className='text-sm text-default-600 max-w-md'>
-                        {t('filters.comingSoonDescription')}
-                      </p>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className='border-divider/50 dark:border-default-700 flex items-center justify-end border-t pt-4 mt-6'>
-                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Button
-                          variant='bordered'
-                          onClick={handleToggleFilters}
-                          className='hover:bg-default/50 transition-all duration-200 hover:shadow-sm'
-                        >
-                          {t('filters.close')}
-                        </Button>
-                      </motion.div>
-                    </div>
-                  </div>
-                </motion.div>
+                <DocumentListContainer
+                  documents={filteredDocuments}
+                  viewMode={viewMode}
+                  isLoading={isLoading}
+                  error={isError ? error?.message || 'An error occurred' : null}
+                  onUpload={handleUploadDocument}
+                  onRefresh={handleRefresh}
+                />
               </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className='space-y-4'>{documentList()}</div>
+            </AnimatePresence>
+          </DocumentFiltersPanel>
         </div>
       </div>
 
       {/* Upload Modal */}
       <DocumentUploadModal
         isOpen={showUploadModal}
-        onClose={() => setShowUploadModal(false)}
+        onClose={handleUploadModalClose}
         onUpload={handleUpload}
       />
     </DashboardLayout>

@@ -19,7 +19,7 @@ import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 
-import Login from '@/app/(public)/components/login';
+import Login, { LoginModal } from '@/app/(public)/components/login';
 import { WingmanIcon } from '@/components/icons/wingman';
 import { LanguageSwitcher } from '@/components/ui/language-switcher';
 import ThemeToggle from '@/components/ui/theme-toggle';
@@ -35,6 +35,8 @@ const menuItems = [
 const BasicNavbar = ({ classNames = {}, ...props }) => {
   const router = useRouter();
   const pathname = usePathname();
+  const [showLoginModal, setShowLoginModal] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   // Smart navigation function for anchor links
   const handleNavigation = (href: string) => {
@@ -72,6 +74,7 @@ const BasicNavbar = ({ classNames = {}, ...props }) => {
         }}
         height='88px'
         maxWidth='full'
+        onMenuOpenChange={setIsMenuOpen}
       >
         {/* Left Content */}
         <NavbarBrand
@@ -85,7 +88,6 @@ const BasicNavbar = ({ classNames = {}, ...props }) => {
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
           >
-            <NavbarMenuToggle className='text-primary mr-2 h-6 sm:hidden' />
             <div className='from-primary/15 to-primary/5 border-primary/20 group-hover:from-primary/25 group-hover:to-primary/10 flex h-12 w-12 items-center justify-center rounded-[16px] border bg-gradient-to-br shadow-[0px_4px_12px_rgba(59,130,246,0.15)] transition-all duration-300 group-hover:scale-110'>
               <WingmanIcon className='text-primary h-7 w-7' />
             </div>
@@ -176,11 +178,13 @@ const BasicNavbar = ({ classNames = {}, ...props }) => {
           <NavbarMenuItem className='relative z-10 mb-6'>
             <Button
               fullWidth
-              as={Link}
-              href='/#'
               variant='bordered'
               className='border-primary/30 hover:border-primary hover:bg-primary/10 bg-background/50 h-14 rounded-[16px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-300'
               startContent={<Icon icon='solar:login-2-linear' className='h-4 w-4' />}
+              onPress={() => {
+                setIsMenuOpen(false);
+                setShowLoginModal(true);
+              }}
             >
               Sign In
             </Button>
@@ -190,8 +194,11 @@ const BasicNavbar = ({ classNames = {}, ...props }) => {
               fullWidth
               color='primary'
               className='from-primary to-primary-600 border-primary/20 h-14 rounded-[16px] border bg-gradient-to-r font-semibold tracking-[0.02em] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] hover:shadow-[0px_12px_24px_rgba(59,130,246,0.25)]'
-              href='/register'
               startContent={<Icon icon='solar:rocket-2-linear' className='h-4 w-4' />}
+              onPress={() => {
+                setIsMenuOpen(false);
+                router.push('/register');
+              }}
             >
               Get Started
             </Button>
@@ -224,7 +231,10 @@ const BasicNavbar = ({ classNames = {}, ...props }) => {
               >
                 <button
                   className='text-default-600 hover:text-primary hover:bg-primary/5 hover:border-primary/20 group flex w-full items-center gap-3 rounded-[12px] border border-transparent px-4 py-3 font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-300'
-                  onClick={() => handleNavigation(item.href)}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    handleNavigation(item.href);
+                  }}
                 >
                   <Icon
                     icon='solar:arrow-right-linear'
@@ -237,6 +247,16 @@ const BasicNavbar = ({ classNames = {}, ...props }) => {
           ))}
         </NavbarMenu>
       </Navbar>
+
+      {/* Login Modal */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onOpenChange={setShowLoginModal}
+        onSwitchToRegister={() => {
+          setShowLoginModal(false);
+          router.push('/register');
+        }}
+      />
     </motion.div>
   );
 };
