@@ -1243,17 +1243,17 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       <DrawerContent className="h-screen">
         {(onClose) => (
           <>
-            <DrawerHeader className="border-b border-divider/30 bg-gradient-to-r from-background/95 to-default-50/30 backdrop-blur-xl">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-br from-primary/15 to-primary/5 rounded-2xl border border-primary/20">
-                    <Icon icon="solar:document-add-outline" className="h-7 w-7 text-primary/80" />
+            <DrawerHeader className="border-b border-divider/20 bg-gradient-to-r from-background/98 to-default-50/40 backdrop-blur-2xl">
+              <div className="flex items-center justify-between w-full py-2">
+                <div className="flex items-center gap-5">
+                  <div className="p-4 bg-gradient-to-br from-primary/20 to-primary/8 rounded-3xl border border-primary/30 shadow-lg shadow-primary/10">
+                    <Icon icon="solar:document-add-outline" className="h-8 w-8 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    <h2 className="text-3xl font-black bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent mb-1">
                       CV Upload & Review
                     </h2>
-                    <p className="text-default-500 font-medium">
+                    <p className="text-default-600 font-semibold text-lg">
                       {currentStep === 'upload' && 'Upload your CV to automatically enhance your profile'}
                       {currentStep === 'parsing' && 'AI is analyzing and extracting information from your CV'}
                       {currentStep === 'review' && 'Review and edit the extracted information before applying'}
@@ -1268,9 +1268,9 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                   variant="light"
                   size="lg"
                   onPress={handleClose}
-                  className="hover:bg-danger/10 hover:text-danger transition-all duration-200"
+                  className="hover:bg-danger/15 hover:text-danger transition-all duration-300 hover:scale-105 rounded-2xl"
                 >
-                  <Icon icon="solar:close-circle-outline" className="h-6 w-6" />
+                  <Icon icon="solar:close-circle-outline" className="h-7 w-7" />
                 </Button>
               </div>
             </DrawerHeader>
