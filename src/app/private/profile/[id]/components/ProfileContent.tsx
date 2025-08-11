@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Avatar,
@@ -16,6 +16,8 @@ import {
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+
+import CVUploadDrawer from './CVUploadDrawer';
 
 import { getImageUrl } from '@/lib/utils/utilities';
 
