@@ -502,7 +502,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                     {(uploadedFile.size / 1024 / 1024).toFixed(1)} MB • Uploaded successfully
                   </div>
                 </div>
-                <Icon icon="solar:check-circle-bold" className="h-6 w-6 text-success" />
+                <Icon icon="solar:check-circle-outline" className="h-6 w-6 text-success/70" />
               </div>
             </CardBody>
           </Card>
