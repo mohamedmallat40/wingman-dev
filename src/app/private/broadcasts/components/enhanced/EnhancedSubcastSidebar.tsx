@@ -423,7 +423,9 @@ export default function EnhancedSubcastSidebar({
             className="mb-4"
             classNames={{
               tabList: "w-full",
-              tab: "px-2 py-1 text-xs"
+              tab: "px-2 py-1 text-xs text-foreground",
+              tabContent: "text-foreground group-data-[selected=true]:text-primary",
+              cursor: "bg-primary"
             }}
           >
             <Tab key="following" title="Following" />
