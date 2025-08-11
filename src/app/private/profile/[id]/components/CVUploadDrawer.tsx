@@ -1059,11 +1059,13 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                   </div>
                 }
               >
-                <ScrollShadow className="flex-1 w-full">
-                  <div className="pb-6">
-                    {section.content()}
-                  </div>
-                </ScrollShadow>
+                <div className="flex-1 min-h-0">
+                  <ScrollShadow className="h-full w-full">
+                    <div className="py-6">
+                      {section.content()}
+                    </div>
+                  </ScrollShadow>
+                </div>
               </Tab>
             ))}
           </Tabs>
