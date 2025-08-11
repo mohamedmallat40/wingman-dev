@@ -84,9 +84,6 @@ export default function EnhancedBroadcastFeed({
   selectedTopics,
   selectedSubcast
 }: EnhancedBroadcastFeedProps) {
-  const t = useTranslations('broadcasts.feed');
-  const tPost = useTranslations('broadcasts.post');
-  const tActions = useTranslations('broadcasts.actions');
   
   const [posts, setPosts] = useState<BroadcastPost[]>([]);
   const [loading, setLoading] = useState(true);
