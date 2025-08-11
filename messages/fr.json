@@ -206,14 +206,61 @@
     "tabs": {
       "freelancers": "Freelancers",
       "agencies": "Agences",
-      "teams": "Équipes"
+      "teams": "Équipes",
+      "descriptions": {
+        "freelancers": "Professionnels indépendants",
+        "agencies": "Agences professionnelles",
+        "teams": "Groupes collaboratifs"
+      }
     },
     "search": {
-      "placeholder": "Rechercher par nom, compétences ou localisation...",
-      "noResults": "Aucun résultat trouvé",
-      "filters": "Filtres",
-      "reset": "Réinitialiser les Filtres",
-      "apply": "Appliquer les Filtres"
+      "button": "Rechercher",
+      "placeholder": "Rechercher par nom, compétences ou expertise...",
+      "tooltip": "Rechercher maintenant (Entrée)",
+      "noResults": "Aucun résultat trouvé"
+    },
+    "filters": {
+      "button": "Filtres",
+      "active": "Actifs :",
+      "clearAll": "Tout Effacer",
+      "resetAll": "Tout Réinitialiser",
+      "cancel": "Annuler",
+      "apply": "Appliquer les Filtres",
+      "advanced": {
+        "title": "Filtres Avancés",
+        "description": "Affinez vos critères de recherche"
+      },
+      "categories": {
+        "location": "Localisation",
+        "profession": "Type de Profession",
+        "availability": "Disponibilité",
+        "experience": "Niveau d'Expérience"
+      },
+      "country": {
+        "placeholder": "Rechercher des pays...",
+        "selectAll": "Sélectionner tout {continent}",
+        "clearAll": "Tout effacer",
+        "selected": "{count, plural, one {# pays} other {# pays}} sélectionné{count, plural, one {} other {s}}"
+      }
+    },
+    "profession": {
+      "freelancer": "Freelancer",
+      "interim": "Intérimaire",
+      "consultant": "Consultant",
+      "studentEntrepreneur": "Étudiant entrepreneur"
+    },
+    "experience": {
+      "junior": "Junior",
+      "midLevel": "Niveau Intermédiaire",
+      "senior": "Senior",
+      "lead": "Lead",
+      "descriptions": {
+        "junior": "0-2 ans d'expérience",
+        "midLevel": "2-5 ans d'expérience",
+        "senior": "5-10 ans d'expérience",
+        "lead": "10+ ans d'expérience"
+      },
+      "selected": "{count, plural, one {# niveau} other {# niveaux}} sélectionné{count, plural, one {} other {s}}"
     },
     "cards": {
       "viewProfile": "Voir le Profil",
@@ -233,9 +280,19 @@
       "membersCount": "membres",
       "noSkillsListed": "Aucune compétence répertoriée",
       "moreSkills": "plus",
-      "noAboutAvailable": "Aucune description disponible"
+      "noAboutAvailable": "Aucune description disponible",
+      "actions": {
+        "connect": "Se Connecter",
+        "connected": "Connecté",
+        "addNote": "Ajouter une Note",
+        "addToGroup": "Ajouter au Groupe",
+        "assignTags": "Assigner des Tags"
+      }
     },
     "availability": {
+      "all": "Tous",
+      "fullTime": "Temps Plein",
+      "partTime": "Temps Partiel",
       "available": "Disponible",
       "availableForProjects": "Disponible pour les Projets",
       "partTimeAvailable": "Disponible à Temps Partiel",
@@ -247,10 +304,21 @@
       "hybrid": "hybride",
       "unknown": "inconnu"
     },
+    "workingTime": {
+      "full_time": "Temps plein",
+      "part_time": "Temps partiel",
+      "fullTime": "Temps plein",
+      "partTime": "Temps partiel",
+      "FULL_TIME": "Temps plein",
+      "PART_TIME": "Temps partiel"
+    },
     "userTypes": {
       "freelancer": "Freelancer",
+      "fullTimeFreelancer": "Freelancer temps plein",
+      "partTimeFreelancer": "Freelancer temps partiel",
       "agency": "Agence",
-      "student": "Étudiant"
+      "student": "Étudiant",
+      "contractor": "Contractuel"
     },
     "paymentTypes": {
       "hourly": "/heure",
@@ -268,6 +336,37 @@
       "teams": {
         "title": "Aucune équipe trouvée",
         "description": "Nous n'avons trouvé aucune équipe correspondant à vos critères. Essayez d'ajuster vos filtres ou votre requête de recherche."
+      }
+    },
+    "modals": {
+      "addNote": {
+        "title": "Ajouter une Note Personnelle",
+        "subtitle": "Ajoutez une note privée à propos de cette personne",
+        "noteLabel": "Note",
+        "notePlaceholder": "Entrez vos notes personnelles sur ce freelancer/agence...",
+        "charactersRemaining": "caractères restants"
+      },
+      "addToGroup": {
+        "title": "Ajouter au Groupe",
+        "subtitle": "Ajoutez cette personne à un ou plusieurs groupes",
+        "createNewGroup": "Créer un Nouveau Groupe",
+        "newGroupPlaceholder": "Entrez le nom du groupe...",
+        "existingGroups": "Groupes Existants",
+        "selected": "sélectionné",
+        "searchGroups": "Rechercher des groupes...",
+        "loadingGroups": "Chargement des groupes...",
+        "noGroupsFound": "Aucun groupe trouvé",
+        "noGroups": "Aucun groupe disponible",
+        "members": "membres"
+      },
+      "assignTags": {
+        "title": "Assigner des Tags",
+        "subtitle": "Ajoutez des tags pour organiser et catégoriser cette personne",
+        "selectedTags": "Tags Sélectionnés",
+        "createNewTag": "Créer un Nouveau Tag",
+        "newTagPlaceholder": "Entrez le nom du tag...",
+        "availableTags": "Tags Disponibles",
+        "noTags": "Aucun tag disponible"
       }
     },
     "errorStates": {
@@ -291,7 +390,460 @@
       "loadingMoreAgencies": "Chargement de plus d'agences...",
       "loadingMoreTeams": "Chargement de plus d'équipes...",
       "scrollToLoadMore": "Faites défiler pour charger plus..."
+    },
+    "loading": {
+      "more": {
+        "freelancers": "Chargement de plus de freelancers...",
+        "agencies": "Chargement de plus d'agences...",
+        "teams": "Chargement de plus d'équipes..."
+      },
+      "scrollToLoad": "Faites défiler pour charger plus..."
+    },
+    "profile": {
+      "sections": {
+        "about": "À propos",
+        "experience": "Expérience",
+        "education": "Formation",
+        "skills": "Compétences",
+        "languages": "Langues",
+        "contact": "Contact"
+      },
+      "aboutDescription": "En savoir plus sur cette personne",
+      "experienceDescription": "Parcours professionnel et historique de travail",
+      "educationDescription": "Formation académique et qualifications",
+      "skillsDescription": "Expertise technique et professionnelle",
+      "languagesDescription": "Langues parlées et niveaux de compétence",
+      "present": "Présent",
+      "grade": "Note",
+      "professionalSummary": "Résumé Professionnel",
+      "noSummaryAvailable": "Aucun résumé disponible",
+      "noExperience": "Aucune information d'expérience disponible",
+      "noEducation": "Aucune information de formation disponible",
+      "noLanguages": "Aucune information de langue disponible",
+      "emailVerified": "E-mail vérifié",
+      "experienceYears": "{years} années d'expérience",
+      "contact": "Contact",
+      "letsTalk": "Discutons",
+      "downloadCV": "Télécharger le CV",
+      "website": "Site web",
+      "linkedin": "LinkedIn",
+      "linkedinProfile": "Profil LinkedIn", 
+      "profileCover": "Couverture de profil",
+      "workWithUser": "Intéressé par travailler avec {name} ?",
+      "connectionPending": "Connexion en attente",
+      "error": {
+        "title": "Profil Non Disponible",
+        "userNotFound": "Le profil demandé n'a pas pu être trouvé.",
+        "generic": "Une erreur s'est produite lors du chargement de ce profil.",
+        "failedToLoad": "Échec du chargement du profil",
+        "profileNotFound": "Profil non trouvé"
+      },
+      "metadata": {
+        "title": "Profil | Bassin de Talents",
+        "description": "Voir les détails du profil de talent"
+      }
     }
+  },
+  "documents": {
+    "title": "Documents",
+    "description": "Gérez vos documents et fichiers",
+    "uploadButton": "Télécharger Document",
+    "tabs": {
+      "allDocuments": "Tous les Documents",
+      "sharedWithMe": "Partagés avec Moi",
+      "descriptions": {
+        "allDocuments": "Voir tous vos documents",
+        "sharedWithMe": "Documents partagés par d'autres"
+      }
+    },
+    "search": {
+      "button": "Rechercher",
+      "placeholder": "Rechercher par nom, tags ou type...",
+      "placeholderMobile": "Rechercher documents...",
+      "tooltip": "Ouvrir la recherche",
+      "searchNow": "Rechercher maintenant (Entrée)",
+      "closeSearch": "Fermer la recherche"
+    },
+    "filters": {
+      "button": "Filtres",
+      "toggle": "Basculer les filtres",
+      "title": "Filtres de Documents",
+      "description": "Affinez votre recherche de documents",
+      "comingSoon": "Filtres Bientôt Disponibles !",
+      "comingSoonDescription": "Nous travaillons sur des options de filtrage avancées pour vous aider à trouver des documents plus rapidement. Restez à l'écoute pour les filtres par type, statut, tags, et plus !",
+      "close": "Fermer"
+    },
+    "views": {
+      "list": "Vue liste",
+      "grid": "Vue grille"
+    },
+    "card": {
+      "modified": "Modifié",
+      "sharedWith": "Partagé avec",
+      "share": "Partager",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "moreOptions": "Plus d'options"
+    },
+    "status": {
+      "awaitingSignature": "En Attente de Signature",
+      "underReview": "En Cours de Révision",
+      "sentToClient": "Envoyé au Client",
+      "inProgress": "En Cours"
+    },
+    "types": {
+      "proposal": "Proposition",
+      "contract": "Contrat",
+      "invoice": "Facture",
+      "spreadsheet": "Feuille de Calcul",
+      "template": "Modèle"
+    },
+    "emptyState": {
+      "title": "Gestion des Documents",
+      "description": "Stockez et gérez vos documents importants",
+      "uploadButton": "Télécharger Document"
+    },
+    "upload": {
+      "title": "Télécharger Document",
+      "subtitle": "Ajouter un nouveau document à votre collection",
+      "documentName": {
+        "label": "Nom du Document",
+        "placeholder": "Entrer le nom du document..."
+      },
+      "tags": {
+        "label": "Étiquettes",
+        "placeholder": "Rechercher et sélectionner les étiquettes..."
+      },
+      "file": {
+        "label": "Fichier",
+        "dropTitle": "Déposer votre fichier ici",
+        "uploadTitle": "Télécharger votre document", 
+        "description": "Glisser-déposer votre fichier ou cliquer pour parcourir",
+        "chooseFile": "Choisir Fichier",
+        "supported": "Supporté : PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
+        "unknownType": "Type inconnu"
+      },
+      "progress": {
+        "uploading": "Téléchargement...",
+        "loadingText": "Téléchargement..."
+      },
+      "buttons": {
+        "cancel": "Annuler",
+        "upload": "Télécharger Document",
+        "uploading": "Téléchargement..."
+      },
+      "type": {
+        "label": "Type de Document",
+        "placeholder": "Sélectionner le type de document",
+        "options": {
+          "invoice": "Facture",
+          "quote": "Devis", 
+          "contract": "Contrat"
+        }
+      },
+      "status": {
+        "label": "Statut",
+        "placeholder": "Sélectionner le statut",
+        "options": {
+          "draft": "Brouillon",
+          "pending_review": "En Attente de Révision",
+          "issued": "Émis",
+          "rejected": "Rejeté",
+          "overdue": "En Retard",
+          "archived": "Archivé",
+          "cancelled": "Annulé",
+          "disputed": "En Litige"
+        }
+      },
+      "fileSize": {
+        "bytes": "Octets",
+        "kb": "Ko", 
+        "mb": "Mo",
+        "gb": "Go"
+      }
+    },
+    "status": {
+      "awaitingSignature": "En Attente de Signature",
+      "underReview": "En Cours de Révision",
+      "sentToClient": "Envoyé au Client",
+      "inProgress": "En Cours"
+    },
+    "actions": {
+      "view": "Voir Document",
+      "edit": "Modifier",
+      "download": "Télécharger", 
+      "duplicate": "Dupliquer",
+      "delete": "Supprimer"
+    },
+    "share": {
+      "success": "Document partagé avec {count} {count, plural, one {personne} other {personnes}} !",
+      "failed": "Partage échoué. Veuillez réessayer."
+    },
+    "tags": {
+      "contract": "Contrat",
+      "proposal": "Proposition",
+      "invoice": "Facture",
+      "financial": "Financier",
+      "legal": "Juridique",
+      "marketing": "Marketing",
+      "hr": "Ressources Humaines",
+      "technical": "Technique", 
+      "design": "Design",
+      "project": "Projet",
+      "client": "Client",
+      "internal": "Interne",
+      "urgent": "Urgent",
+      "draft": "Brouillon",
+      "final": "Final"
+    }
+  },
+  "broadcasts": {
+    "title": "Flux de Diffusion",
+    "description": "Restez informé avec le dernier contenu de vos sujets sélectionnés et subcasts favoris",
+    "onboarding": {
+      "title": "Créez Votre Flux de Diffusion Parfait",
+      "subtitle": "Choisissez des sujets qui correspondent à vos intérêts et expertise pour obtenir des recommandations de contenu personnalisées",
+      "selectTopics": "Sélectionnez au moins {minSelect} sujets pour commencer avec votre flux personnalisé",
+      "selectedCount": "{selected} sur {max} sélectionnés (minimum {min} requis)",
+      "shuffleButton": "Choisir 5 pour Moi",
+      "shuffleTooltip": "Laissez-nous sélectionner 5 sujets populaires pour vous",
+      "clearButton": "Tout Effacer",
+      "confirmButton": "Créer Mon Flux",
+      "noTopicsSelected": "Aucun sujet sélectionné pour le moment. Choisissez des sujets qui vous intéressent !",
+      "moreTopics": "+{count} autres sélectionnés",
+      "searchPlaceholder": "Rechercher des sujets...",
+      "searchTooltip": "Parcourir les sujets disponibles",
+      "filterBy": "Filtrer par catégorie",
+      "allTopics": "Toutes les Catégories",
+      "featured": "Sujets Vedettes",
+      "showMore": "Afficher Plus d'Options",
+      "showLess": "Afficher Moins d'Options"
+    },
+    "categories": {
+      "all": "Tous",
+      "ai": "IA & Agents",
+      "development": "Dév & Cloud",
+      "cloud": "Cloud",
+      "devops": "DevOps",
+      "data": "Données",
+      "design": "Design",
+      "product": "Produit",
+      "marketing": "Croissance Marketing",
+      "sales": "Guide de Vente",
+      "freelance": "Ops Freelance",
+      "business": "Business",
+      "tech": "Technologie",
+      "lifestyle": "Style de Vie",
+      "education": "Éducation"
+    },
+    "actions": {
+      "resetTopics": "Réinitialiser la Sélection de Sujets",
+      "refreshFeed": "Actualiser le Flux",
+      "viewPost": "Voir l'Article Complet",
+      "readMore": "Lire Plus",
+      "readLess": "Lire Moins",
+      "share": "Partager l'Article",
+      "bookmark": "Sauvegarder pour Plus Tard",
+      "bookmarked": "Sauvegardé",
+      "like": "J'aime",
+      "liked": "Aimé",
+      "comment": "Ajouter un Commentaire",
+      "reply": "Répondre",
+      "savePost": "Sauvegarder l'Article",
+      "reportPost": "Signaler le Contenu"
+    },
+    "feed": {
+      "title": "Votre Flux de Diffusion",
+      "subtitle": "Dernières mises à jour de vos sujets sélectionnés et subcasts suivis",
+      "filterBy": "Filtrer par sujet",
+      "sortBy": "Trier par",
+      "allPosts": "Tous les Articles",
+      "recentPosts": "Récents",
+      "popularPosts": "Populaires",
+      "bookmarkedPosts": "Articles Sauvegardés",
+      "noPostsFound": "Aucun article trouvé",
+      "noPostsFoundDescription": "Essayez d'ajuster vos filtres, de sélectionner différents sujets ou de suivre plus de subcasts",
+      "loadMore": "Charger Plus d'Articles",
+      "loading": "Chargement des articles...",
+      "refreshing": "Actualisation de votre flux...",
+      "newPostsAvailable": "{count} {count, plural, one {nouvel article} other {nouveaux articles}} disponible{count, plural, one {} other {s}}",
+      "showNewPosts": "Afficher les Nouveaux Articles"
+    },
+    "post": {
+      "publishedOn": "Publié le {date}",
+      "readTime": "{minutes} min de lecture",
+      "author": "Par {author}",
+      "tags": "Sujets",
+      "relatedPosts": "Vous pourriez aussi aimer",
+      "types": {
+        "article": "Article",
+        "video": "Vidéo",
+        "image": "Image",
+        "poll": "Sondage",
+        "quote": "Citation"
+      },
+      "engagement": {
+        "likes": "{count, plural, =0 {Aucun j'aime} one {# j'aime} other {# j'aime}}",
+        "comments": "{count, plural, =0 {Aucun commentaire} one {# commentaire} other {# commentaires}}",
+        "shares": "{count, plural, =0 {Aucun partage} one {# partage} other {# partages}}",
+        "bookmarks": "{count, plural, =0 {Non sauvegardé} one {# sauvegarde} other {# sauvegardes}}"
+      },
+      "actions": {
+        "share": "Partager cet article",
+        "copyLink": "Copier le lien de l'article",
+        "reportPost": "Signaler un contenu inapproprié",
+        "hidePost": "Masquer cet article"
+      }
+    },
+    "sidebar": {
+      "title": "Subcasts",
+      "subtitle": "Suivez des chaînes de contenu spécialisées pour des mises à jour ciblées",
+      "searchPlaceholder": "Rechercher des subcasts...",
+      "popularSubcasts": "Subcasts Populaires",
+      "followedSubcasts": "Suivis",
+      "recommendedSubcasts": "Recommandés pour Vous",
+      "allSubcasts": "Tous les Articles",
+      "follow": "Suivre",
+      "following": "Suivi {count}",
+      "unfollow": "Ne Plus Suivre",
+      "followers": "{count, plural, =0 {Aucun abonné} one {# abonné} other {# abonnés}}",
+      "posts": "{count, plural, =0 {Aucun article} one {# article} other {# articles}}",
+      "newPosts": "{count} {count, plural, one {nouvel article} other {nouveaux articles}}",
+      "lastPost": "Dernier article il y a {time}",
+      "noSubcasts": "Aucun subcast trouvé",
+      "noFollowedSubcasts": "Vous ne suivez encore aucun subcast. Découvrez des chaînes qui correspondent à vos intérêts !",
+      "exploreSubcasts": "Découvrir Plus",
+      "createSubcast": "Créer un Nouveau Subcast",
+      "manageSubcasts": "Gérer Mes Subcasts"
+    },
+    "subcast": {
+      "about": "À propos",
+      "description": "Description",
+      "moderators": "Modérateurs",
+      "rules": "Règles",
+      "recentActivity": "Activité Récente",
+      "topContributors": "Principaux Contributeurs",
+      "stats": {
+        "followers": "Abonnés",
+        "posts": "Articles",
+        "comments": "Commentaires",
+        "created": "Créé"
+      }
+    },
+    "comments": {
+      "title": "Discussion",
+      "subtitle": "{count, plural, =0 {Aucun commentaire pour le moment} one {# commentaire} other {# commentaires}}",
+      "noComments": "Aucun commentaire pour le moment",
+      "beFirstToComment": "Soyez le premier à lancer la discussion",
+      "writeComment": "Partagez vos réflexions...",
+      "postComment": "Publier le Commentaire",
+      "cancel": "Annuler",
+      "edit": "Modifier le Commentaire",
+      "delete": "Supprimer le Commentaire",
+      "reply": "Répondre",
+      "showReplies": "Afficher {count, plural, one {# réponse} other {# réponses}}",
+      "hideReplies": "Masquer les réponses",
+      "loadMoreComments": "Charger plus de commentaires",
+      "sortBy": "Trier par",
+      "newest": "Plus Récents",
+      "oldest": "Plus Anciens",
+      "popular": "Les Plus Populaires"
+    },
+    "notifications": {
+      "newPost": "Nouvel article dans {subcast}",
+      "newComment": "{author} a commenté votre article",
+      "newReply": "{author} a répondu à votre commentaire",
+      "postLiked": "{author} a aimé votre article",
+      "commentLiked": "{author} a aimé votre commentaire",
+      "newFollower": "{author} a commencé à suivre {subcast}",
+      "mentionedInPost": "{author} vous a mentionné dans un article",
+      "mentionedInComment": "{author} vous a mentionné dans un commentaire"
+    },
+    "loading": {
+      "title": "Chargement de votre flux de diffusion...",
+      "subtitle": "Préparation du contenu personnalisé basé sur vos intérêts",
+      "posts": "Chargement des articles...",
+      "comments": "Chargement de la discussion...",
+      "subcasts": "Chargement des subcasts...",
+      "loadingMore": "Chargement de plus d'articles...",
+      "refreshing": "Actualisation du contenu..."
+    },
+    "empty": {
+      "title": "Votre flux est vide",
+      "subtitle": "Sélectionnez des sujets ou suivez des subcasts pour voir du contenu pertinent ici",
+      "posts": {
+        "title": "Aucun article à afficher",
+        "subtitle": "Essayez de sélectionner différents sujets, de suivre plus de subcasts ou d'ajuster vos filtres"
+      },
+      "subcasts": {
+        "title": "Aucun subcast ne correspond à votre recherche",
+        "subtitle": "Essayez des mots-clés différents ou parcourez tous les subcasts disponibles"
+      },
+      "comments": {
+        "title": "Aucune discussion pour le moment",
+        "subtitle": "Soyez le premier à partager vos réflexions sur cet article"
+      }
+    },
+    "error": {
+      "title": "Quelque chose s'est mal passé",
+      "subtitle": "Nous n'avons pas pu charger votre flux de diffusion. Veuillez vérifier votre connexion et réessayer.",
+      "retry": "Réessayer",
+      "posts": {
+        "title": "Impossible de charger les articles",
+        "subtitle": "Il y a eu un problème lors du chargement du contenu de votre flux"
+      },
+      "comments": {
+        "title": "Commentaires indisponibles",
+        "subtitle": "Nous n'avons pas pu charger la discussion pour cet article"
+      },
+      "subcasts": {
+        "title": "Subcasts indisponibles",
+        "subtitle": "Nous n'avons pas pu charger les subcasts disponibles en ce moment"
+      }
+    },
+    "accessibility": {
+      "openPost": "Ouvrir le contenu complet de l'article",
+      "likePost": "Aimer cet article",
+      "bookmarkPost": "Sauvegarder cet article pour plus tard",
+      "sharePost": "Partager cet article avec d'autres",
+      "commentOnPost": "Ajouter un commentaire à cet article",
+      "followSubcast": "Suivre ce subcast pour les mises à jour",
+      "unfollowSubcast": "Arrêter de suivre ce subcast",
+      "viewProfile": "Voir le profil utilisateur et les détails",
+      "closeModal": "Fermer la fenêtre de dialogue",
+      "openMenu": "Ouvrir le menu d'options",
+      "closeMenu": "Fermer le menu d'options",
+      "searchPosts": "Rechercher parmi les articles",
+      "filterTopics": "Filtrer les articles par sujet",
+      "sortPosts": "Changer l'ordre de tri des articles"
+    }
+  },
+  "navigation": {
+    "home": "Accueil",
+    "dashboard": "Tableau de Bord",
+    "broadcasts": "Diffusions",
+    "challenges": "Défis",
+    "talentPool": "Bassin de Talents",
+    "documents": "Documents"
+  },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "back": "Retour",
+    "retry": "Réessayer"
+  },
+  "time": {
+    "now": "maintenant",
+    "minutesAgo": "{minutes, plural, one {il y a # minute} other {il y a # minutes}}",
+    "hoursAgo": "{hours, plural, one {il y a # heure} other {il y a # heures}}",
+    "daysAgo": "{days, plural, one {il y a # jour} other {il y a # jours}}",
+    "weeksAgo": "{weeks, plural, one {il y a # semaine} other {il y a # semaines}}",
+    "monthsAgo": "{months, plural, one {il y a # mois} other {il y a # mois}}",
+    "yearsAgo": "{years, plural, one {il y a # an} other {il y a # ans}}"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"

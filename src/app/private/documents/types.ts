@@ -23,3 +23,13 @@ export interface IDocument {
     name: string;
   };
 }
+
+export type DocumentType = 'all-documents' | 'shared-with-me';
+
+export interface DocumentFilters {
+  search?: string;
+  name?: string;
+  tags?: string[];
+  type?: string;
+  status?: string;
+}

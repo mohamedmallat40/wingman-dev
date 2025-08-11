@@ -18,7 +18,7 @@ export const env = createEnv({
    */
   server: {
     // SERVER_VAR: z.string(),
-    NODE_ENV: z.enum(['development', 'test', 'production']).default('development')
+    NODE_ENV: z.enum(['development', 'qa', 'test', 'production']).default('development')
   },
   /**
    * You can't destruct `process.env` as a regular object in the Next.js edge runtimes

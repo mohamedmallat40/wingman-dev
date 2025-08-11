@@ -28,11 +28,10 @@ const useOAuth = () => {
       // Store token if provided
       if (data.user) {
 
-
-        if (data.token) {
+        if (data.token && data.user.isCompleted) {
           localStorage.setItem('token', data.token);
+          setUser(data.user);
         }
-        setUser(data.user);
 
         // Check if user registration is complete
         if (data.user.isCompleted) {

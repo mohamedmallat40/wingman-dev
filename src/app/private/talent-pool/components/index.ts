@@ -1,14 +1,32 @@
-// Export all Talent Pool components for easy importing
+// ============================================================================
+// TALENT POOL COMPONENTS - ORGANIZED EXPORTS
+// ============================================================================
 
-export { default as TalentCard } from './TalentCard';
-export { default as GroupCard } from './GroupCard';
-export { default as HeroTabs } from './HeroTabs';
-export { default as FreelancerList } from './FreelancerList';
-export { default as AgencyList } from './AgencyList';
-export { default as TeamList } from './TeamList';
+// Card Components
+export * from './cards';
 
-// Export shared components
-export * from './shared';
+// List Components
+export * from './lists';
+
+// Filter Components
+export * from './filters';
+
+// Modal Components
+export * from './modals';
+
+// Navigation Components
+export * from './navigation';
+
+// State Components
+export * from './states';
+
+
+// List container exports with old names
+export {
+  FreelancerListContainer as OptimizedFreelancerList,
+  AgencyListContainer as OptimizedAgencyList,
+  TeamListContainer as OptimizedTeamList
+} from './lists';
 
 // Re-export types for convenience
 export type {

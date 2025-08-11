@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https' as const,
+        hostname: 'app.extraexpertise.be',
+        pathname: '/api/upload/**'
+      },
+      {
+        protocol: 'https' as const,
         hostname: 'dev.extraexpertise.be',
         pathname: '/api/upload/**'
       },

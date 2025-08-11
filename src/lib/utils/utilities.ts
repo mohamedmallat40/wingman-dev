@@ -42,11 +42,10 @@ export const formatCurrency = (amount: number | string) => {
 };
 
 export const getBaseUrl = (): string => {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  /* if (globalThis.window && globalThis.window.location) {
-    return globalThis.window.location.origin;
-  }
-  return process.env.NEXT_PUBLIC_BASE_URL ?? 'https://dev.extraexpertise.be/api'; */
+  // Use the environment variable from env.js which already has proper validation
+  return process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://dev.extraexpertise.be/api';
+};
 
-  return 'https://dev.extraexpertise.be/api';
+export const getImageUrl = (imagePath: string): string => {
+  return `${getBaseUrl()}/upload/${imagePath}`;
 };
