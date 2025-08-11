@@ -92,26 +92,6 @@ export default function BroadcastsPage() {
         pageDescription={t('description')}
         headerActions={
           <div className='flex items-center gap-2'>
-            {/* Notifications Button */}
-            <Button
-              variant='flat'
-              size='sm'
-              isIconOnly
-              onPress={() => setIsNotificationOpen(true)}
-            >
-              <div className="relative">
-                <Icon icon='solar:bell-linear' className='h-4 w-4' />
-                {unreadNotifications > 0 && (
-                  <Badge
-                    content={unreadNotifications > 99 ? '99+' : unreadNotifications}
-                    color="danger"
-                    size="sm"
-                    className="absolute -top-1 -right-1 scale-75"
-                  />
-                )}
-              </div>
-            </Button>
-
             {/* Create Post Button */}
             <Button
               color='primary'
