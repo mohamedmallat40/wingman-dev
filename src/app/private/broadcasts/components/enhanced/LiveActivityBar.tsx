@@ -161,7 +161,7 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
               <div className={`absolute inset-0 w-2 h-2 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-ping opacity-60`} />
               <div className={`absolute inset-0 w-3 h-3 rounded-full bg-${getActivityColor(currentActivity.priority)}/20 animate-ping opacity-40 -translate-x-0.5 -translate-y-0.5`} />
             </div>
-            <span className="text-xs font-medium text-white/90 dark:text-white/80 tracking-wide drop-shadow-sm">LIVE</span>
+            <span className="text-xs font-medium text-foreground-800 dark:text-white/80 tracking-wide drop-shadow-sm">LIVE</span>
           </div>
 
           {/* Activity content */}
