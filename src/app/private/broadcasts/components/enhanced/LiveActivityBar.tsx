@@ -262,19 +262,19 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
 
         {/* Progress indicator */}
         {activities.length > 1 && (
-          <div className="flex gap-1 mt-2 justify-center">
+          <div className="flex gap-1.5 mt-3 justify-center">
             {activities.map((_, index) => (
               <motion.div
                 key={index}
-                className={`h-1 rounded-full transition-all duration-300 ${
+                className={`h-1.5 rounded-full transition-all duration-300 ${
                   index === currentIndex
-                    ? `bg-${getActivityColor(currentActivity.priority)} w-6`
-                    : 'bg-default-300 w-1'
+                    ? `bg-${getActivityColor(currentActivity.priority)} w-8`
+                    : 'bg-default-300 w-2'
                 }`}
                 initial={false}
                 animate={{
-                  backgroundColor: index === currentIndex 
-                    ? `var(--heroui-${getActivityColor(currentActivity.priority)})` 
+                  backgroundColor: index === currentIndex
+                    ? `var(--heroui-${getActivityColor(currentActivity.priority)})`
                     : 'var(--heroui-default-300)'
                 }}
               />
