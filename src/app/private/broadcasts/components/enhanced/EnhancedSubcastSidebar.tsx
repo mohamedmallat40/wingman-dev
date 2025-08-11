@@ -495,7 +495,7 @@ export default function EnhancedSubcastSidebar({
               <div className="mb-4">
                 <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                   <Icon icon="solar:fire-linear" className="h-4 w-4 text-warning" />
-                  Trending Topics
+                  Hot Topics
                 </h3>
                 <div className="space-y-2">
                   {TRENDING_TOPICS.slice(0, 3).map((topic, index) => (
