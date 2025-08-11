@@ -155,14 +155,14 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
       className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-40 px-4 ${className}`}
     >
       <div className={"bg-background/95 backdrop-blur-lg border border-default-200 rounded-xl shadow-xl px-6 py-3 max-w-2xl mx-auto\""}>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {/* Live indicator */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="relative">
-              <div className={`w-2 h-2 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-pulse`} />
-              <div className={`absolute inset-0 w-2 h-2 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-ping opacity-75`} />
+              <div className={`w-3 h-3 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-pulse`} />
+              <div className={`absolute inset-0 w-3 h-3 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-ping opacity-75`} />
             </div>
-            <span className="text-xs font-medium text-foreground-600">LIVE</span>
+            <span className="text-sm font-semibold text-foreground-700 tracking-wide">LIVE</span>
           </div>
 
           {/* Activity content */}
