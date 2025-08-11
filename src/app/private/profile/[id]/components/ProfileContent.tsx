@@ -827,6 +827,13 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
         </div>
       </div>
+
+      {/* CV Upload Drawer */}
+      <CVUploadDrawer
+        isOpen={isCVUploadOpen}
+        onOpenChange={setIsCVUploadOpen}
+        onDataParsed={handleCVDataParsed}
+      />
     </section>
   );
 };
