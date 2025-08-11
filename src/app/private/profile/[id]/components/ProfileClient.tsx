@@ -4,12 +4,13 @@ import React, { useEffect, useState } from 'react';
 
 import { Card, CardBody, CardHeader, Skeleton, Spinner } from '@heroui/react';
 import { addToast } from '@heroui/toast';
+import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
 import wingManApi from '@/lib/axios';
 
-import { type ProfileData } from '../../types';
+import { type ProfileData } from '../types';
 import ErrorState from './ErrorState';
 import ProfileContent from './ProfileContent';
 import ProfileHeader from './ProfileHeader';
@@ -21,10 +22,14 @@ interface ProfileClientProps {
 const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
   const router = useRouter();
   const t = useTranslations();
+  const { profile: currentUserProfile } = useBasicProfile();
 
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Check if this is the current user's profile
+  const isOwnProfile = currentUserProfile?.id === userId;
 
   useEffect(() => {
     fetchProfileData();
@@ -49,16 +54,11 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         wingManApi.get(`languages/byUser/${userId}`),
         wingManApi.get(`education/byUser/${userId}`),
         wingManApi.get(`notes/${userId}`),
-        wingManApi.get(`invitations/check_user_connection/${userId}`)
+        // Only check connection status if not own profile
+        isOwnProfile
+          ? Promise.resolve({ data: null })
+          : wingManApi.get(`invitations/check_user_connection/${userId}`)
       ]);
-
-      // Debug the connection response
-      console.log('connectionResponse:', connectionResponse);
-      if (connectionResponse.status === 'fulfilled') {
-        console.log('connectionResponse.value.data:', connectionResponse.value.data);
-      } else {
-        console.log('connectionResponse failed:', connectionResponse.reason);
-      }
 
       // Check if user data failed (critical)
       if (userResponse.status === 'rejected') {
@@ -72,8 +72,15 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         languages: languagesResponse.status === 'fulfilled' ? languagesResponse.value.data : [],
         education: educationResponse.status === 'fulfilled' ? educationResponse.value.data : [],
         notes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
-        connectionStatus:
-          connectionResponse.status === 'fulfilled'
+        connectionStatus: isOwnProfile
+          ? {
+              isConnected: true, // Own profile is always "connected"
+              isPending: false,
+              canConnect: false,
+              canAccept: false,
+              invitationId: null
+            }
+          : connectionResponse.status === 'fulfilled'
             ? {
                 isConnected: connectionResponse.value.data?.status === 'ACCEPTED',
                 isPending: connectionResponse.value.data?.status === 'PENDING',
@@ -82,7 +89,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
                   connectionResponse.value.data?.status === 'REJECTED',
                 canAccept:
                   connectionResponse.value.data?.status === 'PENDING' &&
-                  connectionResponse.value.data?.receiverId === 'currentUserId', // You'll need to get current user ID
+                  connectionResponse.value.data?.receiverId === currentUserProfile?.id,
                 invitationId: connectionResponse.value.data?.id
               }
             : {
@@ -104,23 +111,14 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
   };
 
   const handleConnect = async () => {
-    console.log('handleConnect called');
-    console.log('profileData:', profileData);
-    console.log('connectionStatus:', profileData?.connectionStatus);
-
-    // Temporarily bypass the canConnect check for testing
-    // if (!profileData?.connectionStatus.canConnect) {
-    //   console.log('Cannot connect - canConnect is false');
-    //   return;
-    // }
+    if (!profileData?.connectionStatus.canConnect || isOwnProfile) {
+      return;
+    }
 
     try {
-      console.log('Sending invitation request to:', `invitations/${userId}`);
       // Send invitation request
       await wingManApi.post(`invitations/${userId}`);
 
-      console.log('Invitation sent successfully');
-      // Show success toast
       addToast({
         title: 'Invitation sent successfully!',
         description: "Your connection request has been sent. You'll be notified when they respond.",
@@ -133,17 +131,12 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         `invitations/check_user_connection/${userId}`
       );
 
-      console.log('Updated connection response:', connectionResponse.data);
-
-      // Update the connection status properly
       const newConnectionStatus = {
         isConnected: connectionResponse.data?.status === 'ACCEPTED',
         isPending: connectionResponse.data?.status === 'PENDING',
         canConnect:
           !connectionResponse.data?.status || connectionResponse.data?.status === 'REJECTED'
       };
-
-      console.log('New connection status:', newConnectionStatus);
 
       setProfileData((prev) =>
         prev
@@ -155,8 +148,6 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
       );
     } catch (err) {
       console.error('Error connecting to user:', err);
-
-      // Show error toast
       addToast({
         title: 'Failed to send invitation',
         description: 'Something went wrong. Please try again later.',
@@ -167,10 +158,9 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
   };
 
   const handleAccept = async () => {
-    if (!profileData?.connectionStatus.invitationId) return;
+    if (!profileData?.connectionStatus.invitationId || isOwnProfile) return;
 
     try {
-      console.log('Accepting invitation:', profileData.connectionStatus.invitationId);
       await wingManApi.patch(`invitations/accept/${profileData.connectionStatus.invitationId}`);
 
       addToast({
@@ -184,6 +174,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
       const connectionResponse = await wingManApi.get(
         `invitations/check_user_connection/${userId}`
       );
+
       const newConnectionStatus = {
         isConnected: connectionResponse.data?.status === 'ACCEPTED',
         isPending: connectionResponse.data?.status === 'PENDING',
@@ -191,7 +182,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
           !connectionResponse.data?.status || connectionResponse.data?.status === 'REJECTED',
         canAccept:
           connectionResponse.data?.status === 'PENDING' &&
-          connectionResponse.data?.receiverId === 'currentUserId',
+          connectionResponse.data?.receiverId === currentUserProfile?.id,
         invitationId: connectionResponse.data?.id
       };
 
@@ -214,10 +205,9 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
   };
 
   const handleRefuse = async () => {
-    if (!profileData?.connectionStatus.invitationId) return;
+    if (!profileData?.connectionStatus.invitationId || isOwnProfile) return;
 
     try {
-      console.log('Declining invitation:', profileData.connectionStatus.invitationId);
       await wingManApi.patch(`invitations/declined/${profileData.connectionStatus.invitationId}`);
 
       addToast({
@@ -231,6 +221,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
       const connectionResponse = await wingManApi.get(
         `invitations/check_user_connection/${userId}`
       );
+
       const newConnectionStatus = {
         isConnected: connectionResponse.data?.status === 'ACCEPTED',
         isPending: connectionResponse.data?.status === 'PENDING',
@@ -238,7 +229,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
           !connectionResponse.data?.status || connectionResponse.data?.status === 'REJECTED',
         canAccept:
           connectionResponse.data?.status === 'PENDING' &&
-          connectionResponse.data?.receiverId === 'currentUserId',
+          connectionResponse.data?.receiverId === currentUserProfile?.id,
         invitationId: connectionResponse.data?.id
       };
 
@@ -284,6 +275,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
       <ProfileHeader
         user={profileData.user}
         connectionStatus={profileData.connectionStatus}
+        isOwnProfile={isOwnProfile}
         onConnect={handleConnect}
         onAccept={handleAccept}
         onRefuse={handleRefuse}
@@ -296,6 +288,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         languages={profileData.languages}
         education={profileData.education}
         notes={profileData.notes}
+        isOwnProfile={isOwnProfile}
       />
     </div>
   );

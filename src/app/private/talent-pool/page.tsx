@@ -60,7 +60,7 @@ const TalentPoolPage: React.FC = () => {
 
   const handleViewProfile = useCallback(
     (userId: string) => {
-      router.push(`/private/talent-pool/profile/${userId}`);
+      router.push(`/private/profile/${userId}`);
     },
     [router]
   );

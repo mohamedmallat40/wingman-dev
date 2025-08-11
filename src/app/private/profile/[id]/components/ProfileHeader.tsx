@@ -5,10 +5,9 @@ import React from 'react';
 import { Avatar, Badge, Button, Card, CardBody, CardHeader, Divider } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
-import { getImageUrl } from '@/lib/utils/utilities';
-
-import { getCountryFlag, getCountryName } from '../../../utils/country-flags';
+import { getCountryFlag, getCountryName } from '@/app/private/talent-pool/utils/country-flags';
 import {
   formatRate,
   getAvailabilityConfig,
@@ -16,12 +15,15 @@ import {
   getWorkTypeConfig,
   mapUserType,
   mapWorkingTime
-} from '../../../utils/talent-utils';
-import { type ConnectionStatus, type ProfileUser } from '../../types';
+} from '@/app/private/talent-pool/utils/talent-utils';
+import { getImageUrl } from '@/lib/utils/utilities';
+
+import { type ConnectionStatus, type ProfileUser } from '../types';
 
 interface ProfileHeaderProps {
   user: ProfileUser;
   connectionStatus: ConnectionStatus;
+  isOwnProfile: boolean;
   onConnect: () => void;
   onAccept: () => void;
   onRefuse: () => void;
@@ -31,12 +33,14 @@ interface ProfileHeaderProps {
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   user,
   connectionStatus,
+  isOwnProfile,
   onConnect,
   onAccept,
   onRefuse,
   onBack
 }) => {
   const t = useTranslations();
+  const router = useRouter();
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const availabilityConfig = getAvailabilityConfig(user.statusAvailability);
@@ -48,11 +52,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     t
   );
 
-  // Debug logging
-  console.log('ProfileHeader - connectionStatus:', connectionStatus);
-  console.log('ProfileHeader - isConnected:', connectionStatus.isConnected);
-  console.log('ProfileHeader - isPending:', connectionStatus.isPending);
-  console.log('ProfileHeader - canConnect:', connectionStatus.canConnect);
+  const handleEditGeneral = () => {
+    router.push('/private/settings?tab=general');
+  };
 
   return (
     <section className='from-background via-background to-default-50/30 relative overflow-hidden bg-gradient-to-br'>
@@ -61,7 +63,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
       <div className='container mx-auto px-4 py-6 sm:px-6 lg:px-8'>
         {/* Navigation */}
-        <nav className='mb-6 flex items-center'>
+        <nav className='mb-6 flex items-center justify-between'>
           <Button
             variant='light'
             size='sm'
@@ -71,6 +73,20 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           >
             {t('common.back')}
           </Button>
+
+          {/* Edit button for own profile */}
+          {isOwnProfile && (
+            <Button
+              variant='flat'
+              color='primary'
+              size='sm'
+              startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
+              onPress={handleEditGeneral}
+              className='rounded-full'
+            >
+              Edit Profile
+            </Button>
+          )}
         </nav>
 
         {/* Main Profile Card */}
@@ -80,7 +96,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               <div className='flex flex-1 gap-4'>
                 <div className='relative'>
                   {user.profileImage && user.profileImage.trim() ? (
-                    <div className='ring-primary/20 shadow-lg from-primary-200 to-secondary-200 h-36 w-36 overflow-hidden rounded-xl bg-gradient-to-br ring-2 sm:h-40 sm:w-40'>
+                    <div className='ring-primary/20 from-primary-200 to-secondary-200 h-36 w-36 overflow-hidden rounded-xl bg-gradient-to-br shadow-lg ring-2 sm:h-40 sm:w-40'>
                       <img
                         src={getImageUrl(user.profileImage)}
                         alt={`${user.firstName} ${user.lastName}`}
@@ -95,21 +111,50 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       />
                     </div>
                   ) : (
-                    <div className='ring-primary/20 shadow-lg from-primary-200 to-secondary-200 text-primary-800 flex h-36 w-36 items-center justify-center rounded-xl bg-gradient-to-br text-5xl font-bold ring-2 sm:h-40 sm:w-40 sm:text-6xl'>
+                    <div className='ring-primary/20 from-primary-200 to-secondary-200 text-primary-800 flex h-36 w-36 items-center justify-center rounded-xl bg-gradient-to-br text-5xl font-bold shadow-lg ring-2 sm:h-40 sm:w-40 sm:text-6xl'>
                       {getUserInitials(user.firstName, user.lastName)}
                     </div>
+                  )}
+
+                  {/* Edit avatar button for own profile */}
+                  {isOwnProfile && (
+                    <Button
+                      isIconOnly
+                      variant='flat'
+                      color='primary'
+                      size='sm'
+                      className='absolute -right-2 -bottom-2 rounded-full shadow-lg'
+                      onPress={handleEditGeneral}
+                    >
+                      <Icon icon='solar:pen-linear' className='h-3 w-3' />
+                    </Button>
                   )}
                 </div>
 
                 <div className='flex-1'>
-                  <h1 className='text-foreground text-2xl font-semibold tracking-tight sm:text-3xl'>
-                    {fullName}
-                  </h1>
-                  <p className='text-foreground-500 mt-1'>
-                    {mapUserType(user.profession || user.kind || 'FREELANCER', t)} ·{' '}
-                    {user.workType ? t(workTypeConfig.labelKey) : 'Remote'} ·{' '}
-                    {user.workingTime ? mapWorkingTime(user.workingTime, t) : ''}
-                  </p>
+                  <div className='flex items-start justify-between'>
+                    <div>
+                      <h1 className='text-foreground flex items-center gap-2 text-2xl font-semibold tracking-tight sm:text-3xl'>
+                        {fullName}
+                        {isOwnProfile && (
+                          <Button
+                            isIconOnly
+                            variant='light'
+                            size='sm'
+                            className='text-foreground-400 hover:text-primary'
+                            onPress={handleEditGeneral}
+                          >
+                            <Icon icon='solar:pen-linear' className='h-4 w-4' />
+                          </Button>
+                        )}
+                      </h1>
+                      <p className='text-foreground-500 mt-1'>
+                        {mapUserType(user.profession || user.kind || 'FREELANCER', t)} ·{' '}
+                        {user.workType ? t(workTypeConfig.labelKey) : 'Remote'} ·{' '}
+                        {user.workingTime ? mapWorkingTime(user.workingTime, t) : ''}
+                      </p>
+                    </div>
+                  </div>
 
                   {/* Key Information - Freelancer & Availability */}
                   <div className='mt-3 flex flex-wrap items-center gap-2'>
@@ -158,6 +203,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       >
                         {t(availabilityConfig.labelKey)}
                       </span>
+                      {isOwnProfile && (
+                        <Button
+                          isIconOnly
+                          variant='light'
+                          size='sm'
+                          className='text-foreground-400 hover:text-primary -mr-1 h-4 w-4'
+                          onPress={handleEditGeneral}
+                        >
+                          <Icon icon='solar:pen-linear' className='h-3 w-3' />
+                        </Button>
+                      )}
                     </div>
                   </div>
 
@@ -172,6 +228,17 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                       <span className='inline-flex items-center gap-1'>
                         <Icon icon='solar:clock-circle-linear' className='text-primary h-4 w-4' />~
                         {user.experienceYears} {t('talentPool.cards.yearsExperience')}
+                        {isOwnProfile && (
+                          <Button
+                            isIconOnly
+                            variant='light'
+                            size='sm'
+                            className='text-foreground-400 hover:text-primary h-4 w-4'
+                            onPress={handleEditGeneral}
+                          >
+                            <Icon icon='solar:pen-linear' className='h-2.5 w-2.5' />
+                          </Button>
+                        )}
                       </span>
                     )}
                     {(user.city || user.region) && (
@@ -187,7 +254,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                                 alt={`${getCountryName(user.region!)} flag`}
                                 className='h-3 w-4 rounded-sm shadow-sm'
                                 onError={(e) => {
-                                  // Fallback to text if flag image fails
                                   const target = e.currentTarget;
                                   target.style.display = 'none';
                                   const parent = target.parentElement;
@@ -204,94 +270,134 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                             </>
                           )}
                         </span>
+                        {isOwnProfile && (
+                          <Button
+                            isIconOnly
+                            variant='light'
+                            size='sm'
+                            className='text-foreground-400 hover:text-primary h-4 w-4'
+                            onPress={handleEditGeneral}
+                          >
+                            <Icon icon='solar:pen-linear' className='h-2.5 w-2.5' />
+                          </Button>
+                        )}
                       </span>
                     )}
                   </div>
                 </div>
               </div>
 
+              {/* Actions Section */}
               <div className='flex min-w-56 flex-col items-stretch gap-2'>
-                {connectionStatus.isConnected ? (
-                  <div className='bg-success/10 border-success/20 inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3'>
-                    <Icon icon='solar:check-circle-bold' className='text-success h-4 w-4' />
-                    <span className='text-success-700 font-medium'>
-                      {t('talentPool.cards.actions.connected')}
-                    </span>
-                  </div>
-                ) : connectionStatus.canAccept ? (
-                  <div className='flex gap-2'>
+                {isOwnProfile ? (
+                  // Own profile actions
+                  <div className='space-y-2'>
                     <Button
-                      color='success'
+                      color='primary'
                       size='lg'
-                      startContent={<Icon icon='solar:check-circle-linear' className='h-4 w-4' />}
-                      onPress={onAccept}
-                      className='flex-1 rounded-full'
+                      startContent={<Icon icon='solar:settings-linear' className='h-4 w-4' />}
+                      onPress={() => router.push('/private/settings')}
+                      className='w-full rounded-full'
                     >
-                      Accept
+                      Edit Profile
                     </Button>
+
                     <Button
                       variant='flat'
-                      color='danger'
+                      color='secondary'
                       size='lg'
-                      startContent={<Icon icon='solar:close-circle-linear' className='h-4 w-4' />}
-                      onPress={onRefuse}
-                      className='flex-1 rounded-full'
+                      startContent={<Icon icon='solar:eye-linear' className='h-4 w-4' />}
+                      onPress={() => router.push('/private/profile')}
+                      className='w-full rounded-full'
                     >
-                      Decline
+                      Preview Profile
                     </Button>
-                  </div>
-                ) : connectionStatus.isPending ? (
-                  <div className='bg-warning/10 border-warning/20 inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3'>
-                    <Icon icon='solar:clock-circle-linear' className='text-warning h-4 w-4' />
-                    <span className='text-warning-700 font-medium'>
-                      {t('talentPool.profile.connectionPending')}
-                    </span>
                   </div>
                 ) : (
-                  <Button
-                    color='primary'
-                    size='lg'
-                    startContent={<Icon icon='solar:user-plus-linear' className='h-4 w-4' />}
-                    onPress={() => {
-                      console.log('Connect button clicked');
-                      console.log('connectionStatus:', connectionStatus);
-                      console.log('canConnect:', connectionStatus.canConnect);
-                      onConnect();
-                    }}
-                    className='rounded-full'
-                  >
-                    {t('talentPool.cards.actions.connect')}
-                  </Button>
-                )}
+                  // Other user's profile actions
+                  <>
+                    {connectionStatus.isConnected ? (
+                      <div className='bg-success/10 border-success/20 inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3'>
+                        <Icon icon='solar:check-circle-bold' className='text-success h-4 w-4' />
+                        <span className='text-success-700 font-medium'>
+                          {t('talentPool.cards.actions.connected')}
+                        </span>
+                      </div>
+                    ) : connectionStatus.canAccept ? (
+                      <div className='flex gap-2'>
+                        <Button
+                          color='success'
+                          size='lg'
+                          startContent={
+                            <Icon icon='solar:check-circle-linear' className='h-4 w-4' />
+                          }
+                          onPress={onAccept}
+                          className='flex-1 rounded-full'
+                        >
+                          Accept
+                        </Button>
+                        <Button
+                          variant='flat'
+                          color='danger'
+                          size='lg'
+                          startContent={
+                            <Icon icon='solar:close-circle-linear' className='h-4 w-4' />
+                          }
+                          onPress={onRefuse}
+                          className='flex-1 rounded-full'
+                        >
+                          Decline
+                        </Button>
+                      </div>
+                    ) : connectionStatus.isPending ? (
+                      <div className='bg-warning/10 border-warning/20 inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3'>
+                        <Icon icon='solar:clock-circle-linear' className='text-warning h-4 w-4' />
+                        <span className='text-warning-700 font-medium'>
+                          {t('talentPool.profile.connectionPending')}
+                        </span>
+                      </div>
+                    ) : (
+                      <Button
+                        color='primary'
+                        size='lg'
+                        startContent={<Icon icon='solar:user-plus-linear' className='h-4 w-4' />}
+                        onPress={onConnect}
+                        className='rounded-full'
+                      >
+                        {t('talentPool.cards.actions.connect')}
+                      </Button>
+                    )}
 
-                <div className='flex gap-2'>
-                  {connectionStatus.isConnected && user.email && (
-                    <Button
-                      variant='flat'
-                      color='success'
-                      size='lg'
-                      startContent={<Icon icon='solar:chat-round-linear' className='h-4 w-4' />}
-                      as='a'
-                      href={`mailto:${user.email}`}
-                      className='flex-1 rounded-full'
-                    >
-                      Chat
-                    </Button>
-                  )}
-                  {user.phoneNumber && (
-                    <Button
-                      variant='flat'
-                      color='warning'
-                      size='lg'
-                      startContent={<Icon icon='solar:phone-linear' className='h-4 w-4' />}
-                      as='a'
-                      href={`tel:${user.phoneNumber}`}
-                      className='flex-1 rounded-full'
-                    >
-                      Call
-                    </Button>
-                  )}
-                </div>
+                    <div className='flex gap-2'>
+                      {connectionStatus.isConnected && user.email && (
+                        <Button
+                          variant='flat'
+                          color='success'
+                          size='lg'
+                          startContent={<Icon icon='solar:chat-round-linear' className='h-4 w-4' />}
+                          as='a'
+                          href={`mailto:${user.email}`}
+                          className='flex-1 rounded-full'
+                        >
+                          Chat
+                        </Button>
+                      )}
+                      {user.phoneNumber && (
+                        <Button
+                          variant='flat'
+                          color='warning'
+                          size='lg'
+                          startContent={<Icon icon='solar:phone-linear' className='h-4 w-4' />}
+                          as='a'
+                          href={`tel:${user.phoneNumber}`}
+                          className='flex-1 rounded-full'
+                        >
+                          Call
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                )}
 
                 {user.linkedinProfile && (
                   <Button

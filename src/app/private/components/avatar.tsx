@@ -71,7 +71,7 @@ const Avatar = () => {
           className='hover:bg-primary/10 h-16 gap-3 rounded-lg opacity-100'
           textValue='Profile info'
           onPress={() => {
-            router.push(`/private/profile?id=${profile?.id}`);
+            router.push('/private/profile');
           }}
         >
           <div className='flex items-center gap-3'>
