@@ -747,12 +747,12 @@ export default function EnhancedSubcastSidebar({
               variant="flat"
               size="sm"
               fullWidth
-              startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-              className="text-foreground-600 hover:text-primary hover:bg-primary/10"
+              startContent={<Icon icon="solar:compass-linear" className="h-4 w-4" />}
+              className="text-foreground-600 hover:text-emerald-600 hover:bg-emerald-50"
             >
-              {t('exploreSubcasts')}
+              Discover Topics
             </Button>
-            
+
             <Button
               variant="light"
               size="sm"
@@ -760,7 +760,7 @@ export default function EnhancedSubcastSidebar({
               startContent={<Icon icon="solar:settings-linear" className="h-4 w-4" />}
               className="text-foreground-500 hover:text-primary"
             >
-              {t('manageSubcasts')}
+              Manage Topics
             </Button>
           </div>
         </CardBody>
