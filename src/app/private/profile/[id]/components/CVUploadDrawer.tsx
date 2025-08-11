@@ -1235,25 +1235,25 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       size="5xl"
       placement="right"
       classNames={{
-        base: "w-[80vw] h-screen max-w-[80vw]",
-        wrapper: "w-[80vw] h-screen",
+        base: "w-[80vw] h-screen max-w-[80vw] ml-auto",
+        wrapper: "w-[80vw] h-screen ml-auto",
         backdrop: "bg-black/60 backdrop-blur-md"
       }}
     >
       <DrawerContent className="h-screen">
         {(onClose) => (
           <>
-            <DrawerHeader className="border-b border-divider/30 bg-gradient-to-r from-background/95 to-default-50/30 backdrop-blur-xl">
-              <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-gradient-to-br from-primary/15 to-primary/5 rounded-2xl border border-primary/20">
-                    <Icon icon="solar:document-add-outline" className="h-7 w-7 text-primary/80" />
+            <DrawerHeader className="border-b border-divider/20 bg-gradient-to-r from-background/98 to-default-50/40 backdrop-blur-2xl">
+              <div className="flex items-center justify-between w-full py-2">
+                <div className="flex items-center gap-5">
+                  <div className="p-4 bg-gradient-to-br from-primary/20 to-primary/8 rounded-3xl border border-primary/30 shadow-lg shadow-primary/10">
+                    <Icon icon="solar:document-add-outline" className="h-8 w-8 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    <h2 className="text-3xl font-black bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent mb-1">
                       CV Upload & Review
                     </h2>
-                    <p className="text-default-500 font-medium">
+                    <p className="text-default-600 font-semibold text-lg">
                       {currentStep === 'upload' && 'Upload your CV to automatically enhance your profile'}
                       {currentStep === 'parsing' && 'AI is analyzing and extracting information from your CV'}
                       {currentStep === 'review' && 'Review and edit the extracted information before applying'}
@@ -1268,9 +1268,9 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                   variant="light"
                   size="lg"
                   onPress={handleClose}
-                  className="hover:bg-danger/10 hover:text-danger transition-all duration-200"
+                  className="hover:bg-danger/15 hover:text-danger transition-all duration-300 hover:scale-105 rounded-2xl"
                 >
-                  <Icon icon="solar:close-circle-outline" className="h-6 w-6" />
+                  <Icon icon="solar:close-circle-outline" className="h-7 w-7" />
                 </Button>
               </div>
             </DrawerHeader>
@@ -1278,11 +1278,18 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             <DrawerBody className="p-0 overflow-hidden">
               <div className="h-full flex">
                 {/* Vertical Steps Sidebar */}
-                <div className="w-80 bg-gradient-to-b from-default-50/50 to-default-100/30 border-r border-divider/30 backdrop-blur-sm">
-                  <div className="p-6 h-full flex flex-col">
-                    <div className="mb-8">
-                      <h3 className="text-lg font-semibold text-foreground mb-2">Progress</h3>
-                      <p className="text-sm text-default-500">Follow the steps to complete your CV upload</p>
+                <div className="w-80 bg-gradient-to-b from-default-50/60 to-default-100/40 border-r border-divider/20 backdrop-blur-xl">
+                  <div className="p-8 h-full flex flex-col">
+                    <div className="mb-10">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl border border-primary/20">
+                          <Icon icon="solar:chart-2-outline" className="h-5 w-5 text-primary/80" />
+                        </div>
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                          Progress Tracker
+                        </h3>
+                      </div>
+                      <p className="text-default-600 font-medium">Complete each step to enhance your profile</p>
                     </div>
 
                     <div className="flex-1 space-y-6">
@@ -1294,30 +1301,30 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                           transition={{ delay: index * 0.1 }}
                           className="relative"
                         >
-                          <div className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${
+                          <div className={`flex items-center gap-4 p-5 rounded-2xl transition-all duration-500 ${
                             index === currentStepIndex
-                              ? 'bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 shadow-lg'
+                              ? 'bg-gradient-to-r from-primary/15 to-primary/8 border border-primary/30 shadow-xl shadow-primary/10'
                               : index < currentStepIndex
-                              ? 'bg-gradient-to-r from-success/10 to-success/5 border border-success/20'
-                              : 'bg-default-100/50 border border-default-200/50 hover:bg-default-100/80'
+                              ? 'bg-gradient-to-r from-success/15 to-success/8 border border-success/30 shadow-lg shadow-success/5'
+                              : 'bg-gradient-to-r from-default-100/60 to-default-50/40 border border-default-200/60 hover:border-default-300/80 hover:shadow-md'
                           }`}>
-                            <div className={`relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
+                            <div className={`relative flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-500 ${
                               index < currentStepIndex
-                                ? 'bg-gradient-to-br from-success/20 to-success/10 border border-success/30'
+                                ? 'bg-gradient-to-br from-success/25 to-success/15 border-2 border-success/40 shadow-lg shadow-success/20'
                                 : index === currentStepIndex
-                                ? 'bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30'
-                                : 'bg-gradient-to-br from-default-200/50 to-default-100/50 border border-default-300/50'
+                                ? 'bg-gradient-to-br from-primary/25 to-primary/15 border-2 border-primary/40 shadow-xl shadow-primary/25'
+                                : 'bg-gradient-to-br from-default-200/60 to-default-100/40 border-2 border-default-300/60'
                             }`}>
                               {index < currentStepIndex ? (
                                 <Icon
                                   icon="solar:check-circle-outline"
-                                  className="h-6 w-6 text-success/80"
+                                  className="h-7 w-7 text-success font-semibold"
                                 />
                               ) : (
                                 <Icon
                                   icon={step.icon}
-                                  className={`h-6 w-6 ${
-                                    index === currentStepIndex ? 'text-primary/80' : 'text-default-400'
+                                  className={`h-7 w-7 ${
+                                    index === currentStepIndex ? 'text-primary font-semibold' : 'text-default-500'
                                   }`}
                                 />
                               )}
@@ -1331,16 +1338,18 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                             </div>
 
                             <div className="flex-1">
-                              <div className={`font-semibold transition-colors duration-300 ${
+                              <div className={`text-lg font-bold transition-colors duration-500 ${
                                 index === currentStepIndex
                                   ? 'text-primary'
                                   : index < currentStepIndex
                                   ? 'text-success'
-                                  : 'text-default-600'
+                                  : 'text-default-700'
                               }`}>
                                 {step.title}
                               </div>
-                              <div className="text-sm text-default-500 mt-1">
+                              <div className={`text-sm font-medium mt-1.5 transition-colors duration-300 ${
+                                index === currentStepIndex ? 'text-primary/70' : 'text-default-600'
+                              }`}>
                                 {step.key === 'upload' && 'Select and upload your CV file'}
                                 {step.key === 'parsing' && 'AI extracts information'}
                                 {step.key === 'review' && 'Review and edit data'}
@@ -1372,21 +1381,33 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                     </div>
 
                     {/* Progress Summary */}
-                    <div className="mt-8 p-4 bg-gradient-to-r from-default-100/50 to-default-50/50 rounded-2xl border border-default-200/50">
-                      <div className="flex items-center gap-3 mb-3">
-                        <Icon icon="solar:chart-outline" className="h-5 w-5 text-primary/70" />
-                        <span className="font-medium text-default-700">Progress Overview</span>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-default-600">Completed Steps</span>
-                          <span className="font-medium text-primary">{currentStepIndex} / {steps.length}</span>
+                    <div className="mt-auto p-6 bg-gradient-to-br from-default-100/70 to-default-50/50 rounded-3xl border border-default-200/60 shadow-lg backdrop-blur-sm">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl">
+                          <Icon icon="solar:chart-outline" className="h-5 w-5 text-primary" />
                         </div>
-                        <div className="w-full bg-default-200/50 rounded-full h-2">
-                          <div
-                            className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
-                          />
+                        <span className="font-bold text-default-800">Progress Overview</span>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-default-700 font-medium">Completed Steps</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-lg text-primary">{currentStepIndex}</span>
+                            <span className="text-default-500 font-medium">/ {steps.length}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="w-full bg-default-200/70 rounded-full h-3 shadow-inner">
+                            <div
+                              className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 h-3 rounded-full transition-all duration-700 shadow-sm"
+                              style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
+                            />
+                          </div>
+                          <div className="text-center">
+                            <span className="text-xs font-medium text-primary">
+                              {Math.round((currentStepIndex / steps.length) * 100)}% Complete
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1394,15 +1415,15 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col bg-gradient-to-br from-background/50 to-default-50/20">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentStep}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3 }}
-                      className="flex-1 p-8"
+                      initial={{ opacity: 0, x: 30, scale: 0.98 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -30, scale: 0.98 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="flex-1 p-10"
                     >
                       {currentStep === 'upload' && renderUploadStep()}
                       {currentStep === 'parsing' && renderParsingStep()}
@@ -1415,15 +1436,15 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
               </div>
             </DrawerBody>
 
-            <DrawerFooter className="border-t border-divider/30 bg-gradient-to-r from-background/95 to-default-50/30 backdrop-blur-xl">
-              <div className="flex justify-end gap-3 w-full">
+            <DrawerFooter className="border-t border-divider/20 bg-gradient-to-r from-background/98 to-default-50/40 backdrop-blur-2xl py-6">
+              <div className="flex justify-end gap-4 w-full">
                 {currentStep === 'upload' && (
                   <Button
                     variant="flat"
                     onPress={handleClose}
                     size="lg"
-                    startContent={<Icon icon="solar:close-circle-outline" className="h-4 w-4" />}
-                    className="hover:bg-default-200/50"
+                    startContent={<Icon icon="solar:close-circle-outline" className="h-5 w-5" />}
+                    className="hover:bg-default-200/60 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-semibold"
                   >
                     Cancel
                   </Button>
@@ -1435,8 +1456,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                       variant="flat"
                       onPress={() => setCurrentStep('upload')}
                       size="lg"
-                      startContent={<Icon icon="solar:arrow-left-outline" className="h-4 w-4" />}
-                      className="hover:bg-default-200/50"
+                      startContent={<Icon icon="solar:arrow-left-outline" className="h-5 w-5" />}
+                      className="hover:bg-default-200/60 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-semibold"
                     >
                       Upload Different CV
                     </Button>
@@ -1445,8 +1466,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                       onPress={handleApplyData}
                       isDisabled={selectedSections.size === 0}
                       size="lg"
-                      endContent={<Icon icon="solar:arrow-right-outline" className="h-4 w-4" />}
-                      className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
+                      endContent={<Icon icon="solar:arrow-right-outline" className="h-5 w-5" />}
+                      className="bg-gradient-to-r from-primary via-primary/95 to-primary/90 hover:from-primary/95 hover:to-primary/85 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-bold shadow-lg shadow-primary/25"
                     >
                       Apply to Profile ({Object.keys(reviewData || {}).length} sections)
                     </Button>
@@ -1459,8 +1480,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                     onPress={handleClose}
                     size="lg"
                     variant="solid"
-                    endContent={<Icon icon="solar:check-circle-outline" className="h-4 w-4" />}
-                    className="bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80"
+                    endContent={<Icon icon="solar:check-circle-outline" className="h-5 w-5" />}
+                    className="bg-gradient-to-r from-success via-success/95 to-success/90 hover:from-success/95 hover:to-success/85 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-bold shadow-lg shadow-success/25"
                   >
                     Done
                   </Button>
