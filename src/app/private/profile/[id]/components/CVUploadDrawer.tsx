@@ -564,7 +564,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             variant="bordered"
             value={reviewData.personalInfo.linkedinProfile || ''}
             onChange={(e) => handleUpdateItem('personalInfo', -1, { linkedinProfile: e.target.value })}
-            startContent={<Icon icon="solar:link-linear" className="h-4 w-4 text-default-400" />}
+            startContent={<Icon icon="solar:link-outline" className="h-4 w-4 text-default-400" />}
           />
         </div>
         <Input
