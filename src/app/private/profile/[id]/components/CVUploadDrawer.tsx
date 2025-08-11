@@ -1415,15 +1415,15 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col">
+                <div className="flex-1 flex flex-col bg-gradient-to-br from-background/50 to-default-50/20">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentStep}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -20 }}
-                      transition={{ duration: 0.3 }}
-                      className="flex-1 p-8"
+                      initial={{ opacity: 0, x: 30, scale: 0.98 }}
+                      animate={{ opacity: 1, x: 0, scale: 1 }}
+                      exit={{ opacity: 0, x: -30, scale: 0.98 }}
+                      transition={{ duration: 0.4, ease: "easeInOut" }}
+                      className="flex-1 p-10"
                     >
                       {currentStep === 'upload' && renderUploadStep()}
                       {currentStep === 'parsing' && renderParsingStep()}
