@@ -21,7 +21,6 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useDropzone } from 'react-dropzone';
 
 import wingManApi from '@/lib/axios';
 
