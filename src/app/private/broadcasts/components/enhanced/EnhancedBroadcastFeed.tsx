@@ -549,16 +549,28 @@ const EnhancedPostCard: React.FC<{
                           <Icon icon="solar:menu-dots-linear" className="h-4 w-4" />
                         </Button>
                       </DropdownTrigger>
-                      <DropdownMenu>
-                        <DropdownItem key="save" startContent={<Icon icon="solar:bookmark-linear" />}>
+                      <DropdownMenu
+                        classNames={{
+                          content: "bg-background text-foreground border border-default-200"
+                        }}
+                      >
+                        <DropdownItem
+                          key="save"
+                          startContent={<Icon icon="solar:bookmark-linear" />}
+                          className="text-foreground hover:bg-default-100"
+                        >
                           {tActions('bookmark')}
                         </DropdownItem>
-                        <DropdownItem key="share" startContent={<Icon icon="solar:share-linear" />}>
+                        <DropdownItem
+                          key="share"
+                          startContent={<Icon icon="solar:share-linear" />}
+                          className="text-foreground hover:bg-default-100"
+                        >
                           {tActions('share')}
                         </DropdownItem>
                         <DropdownItem
                           key="report"
-                          className="text-danger"
+                          className="text-danger hover:bg-danger/10"
                           startContent={<Icon icon="solar:flag-linear" />}
                         >
                           {tActions('reportPost')}
