@@ -50,10 +50,6 @@ export default function BroadcastsPage() {
     setIsContentCreatorOpen(true);
   };
 
-  const handleViewAnalytics = () => {
-    setIsAnalyticsOpen(true);
-  };
-
   if (!isLoaded) {
     return (
       <DashboardLayout
