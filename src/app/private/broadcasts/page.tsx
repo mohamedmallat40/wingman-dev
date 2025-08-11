@@ -92,16 +92,6 @@ export default function BroadcastsPage() {
         pageDescription={t('description')}
         headerActions={
           <div className='flex items-center gap-2'>
-            {/* Analytics Button */}
-            <Button
-              variant='flat'
-              size='sm'
-              startContent={<Icon icon='solar:chart-square-linear' className='h-4 w-4' />}
-              onPress={handleViewAnalytics}
-            >
-              Analytics
-            </Button>
-            
             {/* Notifications Button */}
             <Button
               variant='flat'
