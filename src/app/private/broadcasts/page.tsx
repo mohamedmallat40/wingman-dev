@@ -76,35 +76,6 @@ export default function BroadcastsPage() {
     return <BroadcastOnboarding onComplete={handleOnboardingComplete} />;
   }
 
-  // Show analytics dashboard if requested
-  if (isAnalyticsOpen) {
-    return (
-      <DashboardLayout
-        pageTitle="Analytics Dashboard"
-        pageIcon='solar:chart-square-linear'
-        breadcrumbs={[
-          { label: tNav('home'), href: '/private/dashboard', icon: 'solar:home-linear' },
-          { label: tNav('broadcasts'), href: '/private/broadcasts', icon: 'solar:satellite-linear' },
-          { label: 'Analytics', icon: 'solar:chart-square-linear' }
-        ]}
-        pageDescription="Track your content performance and audience insights"
-        headerActions={
-          <div className='flex items-center gap-2'>
-            <Button
-              variant='flat'
-              size='sm'
-              startContent={<Icon icon='solar:arrow-left-linear' className='h-4 w-4' />}
-              onPress={() => setIsAnalyticsOpen(false)}
-            >
-              Back to Feed
-            </Button>
-          </div>
-        }
-      >
-        <AnalyticsDashboard />
-      </DashboardLayout>
-    );
-  }
 
   return (
     <>
