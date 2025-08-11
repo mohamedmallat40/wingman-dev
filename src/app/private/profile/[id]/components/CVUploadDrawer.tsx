@@ -540,7 +540,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             type="email"
             value={reviewData.personalInfo.email || ''}
             onChange={(e) => handleUpdateItem('personalInfo', -1, { email: e.target.value })}
-            startContent={<Icon icon="solar:letter-linear" className="h-4 w-4 text-default-400" />}
+            startContent={<Icon icon="solar:letter-outline" className="h-4 w-4 text-default-400" />}
           />
           <Input
             label="Phone Number"
