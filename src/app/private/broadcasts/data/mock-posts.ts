@@ -1,6 +1,6 @@
 import { BroadcastPost } from '../types';
 
-export const generateEnhancedMockPosts = (): BroadcastPost[] => {
+export const generateMockPosts = (): BroadcastPost[] => {
   const authors = [
     {
       name: 'Sarah Chen',

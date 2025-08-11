@@ -2,39 +2,43 @@
 
 import React, { useState } from 'react';
 
-import { Button, Badge } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import { BroadcastOnboarding } from './components';
+import BroadcastFeed from './components/lists/BroadcastFeed';
+import ContentCreator from './components/modals/ContentCreator';
+import NotificationCenter from './components/modals/NotificationCenter';
+import LiveActivityBar from './components/navigation/LiveActivityBar';
+import SubcastSidebar from './components/navigation/SubcastSidebar';
 import { useBroadcastPreferences } from './hooks';
-import type { Topic } from './types';
-
-// Enhanced components
-import EnhancedBroadcastFeed from './components/enhanced/EnhancedBroadcastFeed';
-import EnhancedSubcastSidebar from './components/enhanced/EnhancedSubcastSidebar';
-import NotificationCenter from './components/enhanced/NotificationCenter';
-import LiveActivityBar from './components/enhanced/LiveActivityBar';
-import ContentCreator from './components/enhanced/ContentCreator';
+import { type Topic } from './types';
 
 export default function BroadcastsPage() {
   const t = useTranslations('broadcasts');
   const tActions = useTranslations('broadcasts.actions');
   const tNav = useTranslations('navigation');
-  
-  const { preferences, isLoaded, completeOnboarding, resetPreferences } = useBroadcastPreferences();
-  const [selectedSubcast, setSelectedSubcast] = useState<string | null>(null);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isContentCreatorOpen, setIsContentCreatorOpen] = useState(false);
-  const [unreadNotifications] = useState(8);
+
+  const {
+    preferences: broadcastPreferences,
+    isLoaded: preferencesLoaded,
+    completeOnboarding,
+    resetPreferences
+  } = useBroadcastPreferences();
+
+  const [activeSubcast, setActiveSubcast] = useState<string | null>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showContentCreator, setShowContentCreator] = useState(false);
+  const [unreadCount] = useState(8);
 
   const handleOnboardingComplete = (selectedTopics: Topic[]) => {
     completeOnboarding(selectedTopics);
   };
 
-  const handleReset = () => {
+  const handlePreferencesReset = () => {
     resetPreferences();
   };
 
@@ -43,14 +47,25 @@ export default function BroadcastsPage() {
   };
 
   const handleSubcastSelect = (subcastId: string | null) => {
-    setSelectedSubcast(subcastId);
+    setActiveSubcast(subcastId);
   };
 
   const handleCreatePost = () => {
-    setIsContentCreatorOpen(true);
+    setShowContentCreator(true);
   };
 
-  if (!isLoaded) {
+  const handlePublishPost = (postData: any) => {
+    console.log('Published post:', postData);
+    setShowContentCreator(false);
+    // TODO: Add to feed
+  };
+
+  const handleSaveDraft = (draftData: any) => {
+    console.log('Saved draft:', draftData);
+    // TODO: Save to drafts
+  };
+
+  if (!preferencesLoaded) {
     return (
       <DashboardLayout
         pageTitle={t('title')}
@@ -72,15 +87,14 @@ export default function BroadcastsPage() {
     );
   }
 
-  if (preferences.isFirstTime) {
+  if (broadcastPreferences.isFirstTime) {
     return <BroadcastOnboarding onComplete={handleOnboardingComplete} />;
   }
-
 
   return (
     <>
       {/* Live Activity Bar */}
-      <LiveActivityBar onNotificationClick={() => setIsNotificationOpen(true)} />
+      <LiveActivityBar onNotificationClick={() => setShowNotifications(true)} />
 
       <DashboardLayout
         pageTitle={t('title')}
@@ -102,72 +116,81 @@ export default function BroadcastsPage() {
               Create Post
             </Button>
 
-            {/* Settings Dropdown */}
+            {/* Settings Button */}
             <Button
               variant='flat'
               size='sm'
               startContent={<Icon icon='solar:settings-linear' className='h-4 w-4' />}
-              onPress={handleReset}
+              onPress={handlePreferencesReset}
             >
               {tActions('resetTopics')}
             </Button>
           </div>
         }
       >
-        <div className='mx-auto flex w-full xl:w-[90%] 2xl:w-[80%] gap-6'>
-          {/* Left Sidebar - Enhanced Subcast */}
-          <div className='w-80 flex-shrink-0 hidden lg:block overflow-visible'>
+        <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
+          {/* Left Sidebar - Subcast */}
+          <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
             <div className='sticky top-4 overflow-visible'>
-              <EnhancedSubcastSidebar
+              <SubcastSidebar
                 onSubcastToggle={handleSubcastToggle}
                 onSubcastSelect={handleSubcastSelect}
-                selectedSubcast={selectedSubcast}
+                selectedSubcast={activeSubcast}
               />
             </div>
           </div>
 
-          {/* Main Content - Enhanced Feed */}
+          {/* Main Content - Feed */}
           <div className='min-w-0 flex-1'>
             <div className='py-6'>
-              <EnhancedBroadcastFeed
-                selectedTopics={preferences.selectedTopics}
-                selectedSubcast={selectedSubcast}
+              <BroadcastFeed
+                selectedTopics={broadcastPreferences.selectedTopics}
+                selectedSubcast={activeSubcast}
               />
             </div>
           </div>
 
           {/* Right Sidebar - Quick Actions & Trending (on larger screens) */}
-          <div className='w-64 flex-shrink-0 hidden xl:block'>
+          <div className='hidden w-64 flex-shrink-0 xl:block'>
             <div className='sticky top-4 space-y-4'>
               {/* Quick Actions Card */}
-              <div className="bg-content1 border border-default-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-foreground mb-3">Quick Actions</h3>
-                <div className="space-y-3">
+              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
+                <h3 className='text-foreground mb-3 text-sm font-semibold'>Quick Actions</h3>
+                <div className='space-y-3'>
                   <Button
-                    variant="flat"
-                    size="sm"
+                    variant='flat'
+                    size='sm'
                     fullWidth
-                    startContent={<Icon icon="solar:pen-new-square-linear" className="h-4 w-4 text-blue-600" />}
+                    startContent={
+                      <Icon icon='solar:pen-new-square-linear' className='h-4 w-4 text-blue-600' />
+                    }
                     onPress={handleCreatePost}
-                    className="justify-start bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+                    className='justify-start border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100'
                   >
                     Create Post
                   </Button>
                   <Button
-                    variant="flat"
-                    size="sm"
+                    variant='flat'
+                    size='sm'
                     fullWidth
-                    startContent={<Icon icon="solar:bookmark-linear" className="h-4 w-4 text-emerald-600" />}
-                    className="justify-start bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200"
+                    startContent={
+                      <Icon icon='solar:bookmark-linear' className='h-4 w-4 text-emerald-600' />
+                    }
+                    className='justify-start border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                   >
                     Saved Posts
                   </Button>
                   <Button
-                    variant="flat"
-                    size="sm"
+                    variant='flat'
+                    size='sm'
                     fullWidth
-                    startContent={<Icon icon="solar:users-group-rounded-linear" className="h-4 w-4 text-rose-600" />}
-                    className="justify-start bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-200"
+                    startContent={
+                      <Icon
+                        icon='solar:users-group-rounded-linear'
+                        className='h-4 w-4 text-rose-600'
+                      />
+                    }
+                    className='justify-start border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100'
                   >
                     Following
                   </Button>
@@ -175,65 +198,59 @@ export default function BroadcastsPage() {
               </div>
 
               {/* Trending Topics Mini Card */}
-              <div className="bg-content1 border border-default-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <Icon icon="solar:fire-linear" className="h-4 w-4 text-warning" />
+              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
+                <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
+                  <Icon icon='solar:fire-linear' className='text-warning h-4 w-4' />
                   Trending
                 </h3>
-                <div className="space-y-2">
+                <div className='space-y-2'>
                   {['React 19', 'AI First', 'Design Systems', 'Remote Work'].map((topic, index) => (
-                    <div key={topic} className="flex items-center justify-between">
-                      <span className="text-sm text-foreground-600">{topic}</span>
-                      <span className="text-xs text-success">+{(Math.random() * 50 + 10).toFixed(0)}%</span>
+                    <div key={topic} className='flex items-center justify-between'>
+                      <span className='text-foreground-600 text-sm'>{topic}</span>
+                      <span className='text-success text-xs'>
+                        +{(Math.random() * 50 + 10).toFixed(0)}%
+                      </span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Active Users Mini Card */}
-              <div className="bg-content1 border border-default-200 rounded-lg p-4">
-                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                  <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
+              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
+                <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
+                  <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
                   Active Now
                 </h3>
-                <div className="flex -space-x-2">
+                <div className='flex -space-x-2'>
                   {[1, 2, 3, 4, 5].map((i) => (
                     <div
                       key={i}
-                      className="w-8 h-8 rounded-full bg-primary border-2 border-background"
+                      className='bg-primary border-background h-8 w-8 rounded-full border-2'
                       style={{
                         backgroundImage: `url(https://i.pravatar.cc/150?img=${i})`,
                         backgroundSize: 'cover'
                       }}
                     />
                   ))}
-                  <div className="w-8 h-8 rounded-full bg-default-200 border-2 border-background flex items-center justify-center">
-                    <span className="text-xs font-medium">+12</span>
+                  <div className='bg-default-200 border-background flex h-8 w-8 items-center justify-center rounded-full border-2'>
+                    <span className='text-xs font-medium'>+12</span>
                   </div>
                 </div>
-                <p className="text-xs text-foreground-500 mt-2">17 users active in the last hour</p>
+                <p className='text-foreground-500 mt-2 text-xs'>17 users active in the last hour</p>
               </div>
             </div>
           </div>
         </div>
       </DashboardLayout>
 
-      {/* Modals and Overlays */}
-      <NotificationCenter
-        isOpen={isNotificationOpen}
-        onClose={() => setIsNotificationOpen(false)}
-      />
+      {/* Modals */}
+      <NotificationCenter isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
 
       <ContentCreator
-        isOpen={isContentCreatorOpen}
-        onClose={() => setIsContentCreatorOpen(false)}
-        onPublish={(post) => {
-          console.log('Published post:', post);
-          setIsContentCreatorOpen(false);
-        }}
-        onSaveDraft={(draft) => {
-          console.log('Saved draft:', draft);
-        }}
+        isOpen={showContentCreator}
+        onClose={() => setShowContentCreator(false)}
+        onPublish={handlePublishPost}
+        onSaveDraft={handleSaveDraft}
       />
     </>
   );

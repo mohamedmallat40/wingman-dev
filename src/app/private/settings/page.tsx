@@ -15,11 +15,7 @@ import GeneralInfoTab from './components/general-info-tab';
 import ProjectsTab from './components/projects-tab';
 import ServicesTab from './components/services-tab';
 
-interface SettingsPageProperties {
-  userId?: string;
-}
-
-export default function SettingsPage({ userId }: Readonly<SettingsPageProperties>) {
+export default function SettingsPage() {
   const [selectedTab, setSelectedTab] = useState('general');
   const searchParameters = useSearchParams();
 
@@ -39,8 +35,8 @@ export default function SettingsPage({ userId }: Readonly<SettingsPageProperties
     staleTime: Infinity // Use cached data if available
   });
 
-  // Use provided userId or extract from profile data
-  const currentUserId = userId ?? profileData?.data?.id ?? '';
+  // Extract userId from profile data
+  const currentUserId = profileData?.data?.id ?? '';
 
   const {
     profile: user,
