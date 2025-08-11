@@ -193,22 +193,20 @@ const TalentPoolPage: React.FC = () => {
       pageTitle='Talent Pool'
       pageDescription='Discover and connect with top professionals and teams'
       pageIcon='solar:users-group-rounded-linear'
-      contentPadding="md"
-      maxWidth="default"
       breadcrumbs={getBreadcrumbs()}
       headerActions={
-        <div className='flex items-center gap-3'>
+        <div className='flex items-center gap-2'>
           {actionItems.map((action) => (
             <Button
               key={action.key}
               color={action.color}
               variant={action.variant}
-              size='md'
+              size='sm'
               startContent={
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
               onPress={() => action.onClick?.()}
-              className='transition-all duration-200 hover:shadow-lg shadow-md'
+              className='transition-all duration-200 hover:shadow-md'
             >
               {action.label}
             </Button>
@@ -216,7 +214,7 @@ const TalentPoolPage: React.FC = () => {
         </div>
       }
     >
-      <div className='component-spacing-large'>
+      <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
         {/* Enhanced Tabs Navigation with Integrated Search */}
         <div className='space-y-6'>
           <TalentPoolTabs

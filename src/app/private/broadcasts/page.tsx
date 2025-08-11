@@ -104,17 +104,14 @@ export default function BroadcastsPage() {
           { label: tNav('broadcasts'), icon: 'solar:satellite-linear' }
         ]}
         pageDescription={t('description')}
-        contentPadding='none'
-        maxWidth='full'
         headerActions={
-          <div className='flex items-center gap-3'>
+          <div className='flex items-center gap-2'>
             {/* Create Post Button */}
             <Button
               color='primary'
-              size='md'
+              size='sm'
               startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
               onPress={handleCreatePost}
-              className='shadow-sm transition-all duration-200 hover:shadow-md'
             >
               Create Post
             </Button>
@@ -122,139 +119,124 @@ export default function BroadcastsPage() {
             {/* Settings Button */}
             <Button
               variant='flat'
-              size='md'
+              size='sm'
               startContent={<Icon icon='solar:settings-linear' className='h-4 w-4' />}
-              onPress={handlePreferencesReset}
-              className='transition-all duration-200 hover:shadow-sm'
+              onPress={handleReset}
             >
               {tActions('resetTopics')}
             </Button>
           </div>
         }
       >
-        <div className='flex h-full'>
-          {/* Left Sidebar */}
-          <div className='border-divider/30 hidden w-80 flex-shrink-0 border-r lg:block'>
-            <div className='h-full overflow-y-auto'>
-              <div className='sticky top-0 p-6'>
-                <SubcastSidebar
-                  onSubcastToggle={handleSubcastToggle}
-                  onSubcastSelect={handleSubcastSelect}
-                  selectedSubcast={activeSubcast}
-                />
-              </div>
+        <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
+          {/* Left Sidebar - Enhanced Subcast */}
+          <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
+            <div className='sticky top-4 overflow-visible'>
+              <EnhancedSubcastSidebar
+                onSubcastToggle={handleSubcastToggle}
+                onSubcastSelect={handleSubcastSelect}
+                selectedSubcast={selectedSubcast}
+              />
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className='flex min-w-0 flex-1 flex-col'>
-            <div className='flex-1 overflow-y-auto'>
-              <div className='mx-auto max-w-4xl px-6 py-8 lg:px-8'>
-                <BroadcastFeed
-                  selectedTopics={broadcastPreferences.selectedTopics}
-                  selectedSubcast={activeSubcast}
-                />
-              </div>
+          {/* Main Content - Enhanced Feed */}
+          <div className='min-w-0 flex-1'>
+            <div className='py-6'>
+              <EnhancedBroadcastFeed
+                selectedTopics={preferences.selectedTopics}
+                selectedSubcast={selectedSubcast}
+              />
             </div>
           </div>
 
-          {/* Right Sidebar */}
-          <div className='border-divider/30 hidden w-72 flex-shrink-0 border-l xl:block'>
-            <div className='h-full overflow-y-auto'>
-              <div className='space-y-6 p-6'>
-                {/* Quick Actions Card */}
-                <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm transition-all duration-200 hover:shadow-md'>
-                  <h3 className='text-foreground mb-4 flex items-center gap-2 text-base font-semibold'>
-                    <Icon icon='solar:flash-linear' className='text-primary h-5 w-5' />
-                    Quick Actions
-                  </h3>
-                  <div className='space-y-3'>
-                    <Button
-                      variant='flat'
-                      size='md'
-                      fullWidth
-                      startContent={
-                        <Icon icon='solar:pen-new-square-linear' className='text-primary h-4 w-4' />
-                      }
-                      onPress={handleCreatePost}
-                      className='bg-primary/10 hover:bg-primary/20 text-primary h-auto justify-start py-3 transition-colors'
-                    >
-                      Create Post
-                    </Button>
-                    <Button
-                      variant='flat'
-                      size='md'
-                      fullWidth
-                      startContent={
-                        <Icon icon='solar:bookmark-linear' className='text-success h-4 w-4' />
-                      }
-                      className='bg-success/10 hover:bg-success/20 text-success h-auto justify-start py-3 transition-colors'
-                    >
-                      Saved Posts
-                    </Button>
-                    <Button
-                      variant='flat'
-                      size='md'
-                      fullWidth
-                      startContent={
-                        <Icon
-                          icon='solar:users-group-rounded-linear'
-                          className='text-secondary h-4 w-4'
-                        />
-                      }
-                      className='bg-secondary/10 hover:bg-secondary/20 text-secondary h-auto justify-start py-3 transition-colors'
-                    >
-                      Following
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Trending Topics Card */}
-                <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm transition-all duration-200 hover:shadow-md'>
-                  <h3 className='text-foreground mb-4 flex items-center gap-2 text-base font-semibold'>
-                    <Icon icon='solar:fire-linear' className='text-warning h-5 w-5' />
-                    Trending
-                  </h3>
-                  <div className='space-y-3'>
-                    {['React 19', 'AI First', 'Design Systems', 'Remote Work'].map(
-                      (topic, index) => (
-                        <div
-                          key={topic}
-                          className='hover:bg-default-50 flex items-center justify-between rounded-lg p-2 transition-colors'
-                        >
-                          <span className='text-foreground-700 text-sm font-medium'>{topic}</span>
-                          <span className='text-success bg-success/10 rounded-full px-2 py-1 text-xs font-semibold'>
-                            +{(Math.random() * 50 + 10).toFixed(0)}%
-                          </span>
-                        </div>
-                      )
-                    )}
-                  </div>
-                </div>
-
-                {/* Active Users Card */}
-                <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm transition-all duration-200 hover:shadow-md'>
-                  <h3 className='text-foreground mb-4 flex items-center gap-2 text-base font-semibold'>
-                    <div className='bg-success h-2.5 w-2.5 animate-pulse rounded-full' />
-                    Active Now
-                  </h3>
-                  <div className='mb-4 flex -space-x-2'>
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <div
-                        key={i}
-                        className='bg-primary border-background h-9 w-9 rounded-full border-2 shadow-sm'
-                        style={{
-                          backgroundImage: `url(https://i.pravatar.cc/150?img=${i})`,
-                          backgroundSize: 'cover'
-                        }}
+          {/* Right Sidebar - Quick Actions & Trending (on larger screens) */}
+          <div className='hidden w-64 flex-shrink-0 xl:block'>
+            <div className='sticky top-4 space-y-4'>
+              {/* Quick Actions Card */}
+              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
+                <h3 className='text-foreground mb-3 text-sm font-semibold'>Quick Actions</h3>
+                <div className='space-y-3'>
+                  <Button
+                    variant='flat'
+                    size='sm'
+                    fullWidth
+                    startContent={
+                      <Icon icon='solar:pen-new-square-linear' className='h-4 w-4 text-blue-600' />
+                    }
+                    onPress={handleCreatePost}
+                    className='justify-start border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100'
+                  >
+                    Create Post
+                  </Button>
+                  <Button
+                    variant='flat'
+                    size='sm'
+                    fullWidth
+                    startContent={
+                      <Icon icon='solar:bookmark-linear' className='h-4 w-4 text-emerald-600' />
+                    }
+                    className='justify-start border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                  >
+                    Saved Posts
+                  </Button>
+                  <Button
+                    variant='flat'
+                    size='sm'
+                    fullWidth
+                    startContent={
+                      <Icon
+                        icon='solar:users-group-rounded-linear'
+                        className='h-4 w-4 text-rose-600'
                       />
-                    ))}
-                    <div className='bg-default-200 border-background flex h-9 w-9 items-center justify-center rounded-full border-2 shadow-sm'>
-                      <span className='text-xs font-semibold'>+12</span>
-                    </div>
-                  </div>
-                  <p className='text-foreground-500 text-sm'>17 users active in the last hour</p>
+                    }
+                    className='justify-start border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100'
+                  >
+                    Following
+                  </Button>
                 </div>
+              </div>
+
+              {/* Trending Topics Mini Card */}
+              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
+                <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
+                  <Icon icon='solar:fire-linear' className='text-warning h-4 w-4' />
+                  Trending
+                </h3>
+                <div className='space-y-2'>
+                  {['React 19', 'AI First', 'Design Systems', 'Remote Work'].map((topic, index) => (
+                    <div key={topic} className='flex items-center justify-between'>
+                      <span className='text-foreground-600 text-sm'>{topic}</span>
+                      <span className='text-success text-xs'>
+                        +{(Math.random() * 50 + 10).toFixed(0)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Active Users Mini Card */}
+              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
+                <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
+                  <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
+                  Active Now
+                </h3>
+                <div className='flex -space-x-2'>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <div
+                      key={i}
+                      className='bg-primary border-background h-8 w-8 rounded-full border-2'
+                      style={{
+                        backgroundImage: `url(https://i.pravatar.cc/150?img=${i})`,
+                        backgroundSize: 'cover'
+                      }}
+                    />
+                  ))}
+                  <div className='bg-default-200 border-background flex h-8 w-8 items-center justify-center rounded-full border-2'>
+                    <span className='text-xs font-medium'>+12</span>
+                  </div>
+                </div>
+                <p className='text-foreground-500 mt-2 text-xs'>17 users active in the last hour</p>
               </div>
             </div>
           </div>
