@@ -22,8 +22,7 @@ export default function HeroUiProvider({ children }: Readonly<THeroUiProvider>) 
 
   return (
     <HeroUIProvider navigate={navigate}>
-      <ToastProvider />
-      {children}
+      {children} <ToastProvider placement='top-center'></ToastProvider>
     </HeroUIProvider>
   );
 }

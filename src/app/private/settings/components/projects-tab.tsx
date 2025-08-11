@@ -173,7 +173,6 @@ export default function ProjectsTab({ user, projects }: Readonly<ProjectsTabProp
 
   const handleUpdateSingleProject = async (fieldIndex: number) => {
     const projectId = getProjectId(fieldIndex);
-    console.log();
     const changedFields = getChangedFields(fieldIndex);
 
     if (Object.keys(changedFields).length <= 1) {
@@ -227,8 +226,7 @@ export default function ProjectsTab({ user, projects }: Readonly<ProjectsTabProp
   };
 
   const onError = (errors: unknown) => {
-    console.log('=== FORM VALIDATION ERRORS ===');
-    console.log('Form errors:', errors);
+    console.error('Form errors:', errors);
   };
 
   const shouldShowSaveButton = hasUnsavedNewProjects();

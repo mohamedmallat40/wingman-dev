@@ -22,93 +22,21 @@ import {
   Textarea
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { useNetworkUsers, useShareDocument } from '@root/modules/documents/hooks/use-documents';
+import { type IUserProfile } from '@root/modules/profile/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { IDocument } from '../../types';
+import { type IDocument } from '../../types';
 
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  avatar?: string;
-  role: 'Admin' | 'Manager' | 'User' | 'Guest';
-  department: string;
-  isOnline: boolean;
-}
-
-interface DocumentShareModalProps {
+interface DocumentShareModalProperties {
   isOpen: boolean;
   onClose: () => void;
   document: IDocument | null;
-  onShare?: (data: { userIds: string[]; message?: string; notifyUsers: boolean }) => Promise<void>;
+  onShare?: (data: { users: string[]; message?: string; notifyUsers: boolean }) => Promise<void>;
 }
 
-// Simple mock users data
-const MOCK_USERS: User[] = [
-  {
-    id: '1',
-    email: 'sarah.chen@company.com',
-    firstName: 'Sarah',
-    lastName: 'Chen',
-    avatar: 'https://i.pravatar.cc/150?u=sarah',
-    role: 'Manager',
-    department: 'Product Management',
-    isOnline: true
-  },
-  {
-    id: '2',
-    email: 'marcus.rodriguez@company.com',
-    firstName: 'Marcus',
-    lastName: 'Rodriguez',
-    avatar: 'https://i.pravatar.cc/150?u=marcus',
-    role: 'User',
-    department: 'Engineering',
-    isOnline: false
-  },
-  {
-    id: '3',
-    email: 'emma.watson@company.com',
-    firstName: 'Emma',
-    lastName: 'Watson',
-    avatar: 'https://i.pravatar.cc/150?u=emma',
-    role: 'Admin',
-    department: 'Operations',
-    isOnline: true
-  },
-  {
-    id: '4',
-    email: 'alex.kim@company.com',
-    firstName: 'Alex',
-    lastName: 'Kim',
-    role: 'User',
-    department: 'Design',
-    isOnline: true
-  },
-  {
-    id: '5',
-    email: 'lisa.thompson@company.com',
-    firstName: 'Lisa',
-    lastName: 'Thompson',
-    avatar: 'https://i.pravatar.cc/150?u=lisa',
-    role: 'Manager',
-    department: 'Marketing',
-    isOnline: false
-  },
-  {
-    id: '6',
-    email: 'david.parker@external.com',
-    firstName: 'David',
-    lastName: 'Parker',
-    avatar: 'https://i.pravatar.cc/150?u=david',
-    role: 'Guest',
-    department: 'External Partner',
-    isOnline: true
-  }
-];
-
-const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
+const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
   isOpen,
   onClose,
   document,
@@ -119,72 +47,93 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
   // State management
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUsers, setSelectedUsers] = useState<Set<string>>(new Set());
-  const [isSearching, setIsSearching] = useState(false);
-  const [isSharing, setIsSharing] = useState(false);
   const [message, setMessage] = useState('');
   const [notifyUsers, setNotifyUsers] = useState(true);
   const [success, setSuccess] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState('');
 
-  // Mock existing shared users
-  const [existingSharedUsers] = useState<User[]>([
-    MOCK_USERS[0] // Sarah is already shared
-  ]);
+  // API hooks
+  const {
+    data: networkResponse,
+    isLoading: isLoadingUsers,
+    error: networkError,
+    refetch: refetchUsers
+  } = useNetworkUsers(currentPage, 8, isOpen);
 
-  // Debounced search effect
+  const shareDocumentMutation = useShareDocument();
+
+  const networkUsers = networkResponse?.items;
+  const existingSharedUsers = useMemo(() => {
+    return (
+      document?.sharedWith.map((shared: IUserProfile) => ({
+        id: shared?.id,
+        email: shared?.email,
+        firstName: shared?.firstName,
+        lastName: shared?.lastName,
+        avatar: shared?.profileImage,
+        role: shared?.kind
+      })) ?? []
+    );
+  }, [document]);
+
+  // Set error from mutation or network error
   useEffect(() => {
-    if (searchQuery.trim()) {
-      setIsSearching(true);
-      const timer = setTimeout(() => setIsSearching(false), 400);
-      return () => clearTimeout(timer);
+    if (shareDocumentMutation.error) {
+      setError(
+        shareDocumentMutation.error.message || 'Failed to share document. Please try again.'
+      );
+    } else if (networkError) {
+      setError('Failed to load users. Please try again.');
     } else {
-      setIsSearching(false);
+      setError('');
     }
-  }, [searchQuery]);
+  }, [shareDocumentMutation.error, networkError]);
 
   // Filter and search users
   const filteredUsers = useMemo(() => {
-    const existingUserIds = existingSharedUsers.map((user) => user.id);
-    const selectedUserIds = Array.from(selectedUsers);
+    const existingUserIds = new Set(existingSharedUsers.map((user) => user.id));
+    const selectedUserIds = new Set(selectedUsers);
+    console.log(networkUsers);
+    return networkUsers?.filter((user: unknown) => {
+        if (existingUserIds.has(user.id) || selectedUserIds.has(user.id)) {
+          return false;
+        }
 
-    return MOCK_USERS.filter((user) => {
-      // Exclude already shared and selected users
-      if (existingUserIds.includes(user.id) || selectedUserIds.includes(user.id)) {
-        return false;
-      }
+        if (searchQuery.trim()) {
+          const query = searchQuery.toLowerCase();
+          return (
+            user.firstName?.toLowerCase().includes(query) ||
+            user.lastName?.toLowerCase().includes(query) ||
+            user.email?.toLowerCase().includes(query) ||
+            user.department?.toLowerCase().includes(query) ||
+            user.company?.toLowerCase().includes(query)
+          );
+        }
 
-      // Search filter
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        return (
-          user.firstName.toLowerCase().includes(query) ||
-          user.lastName.toLowerCase().includes(query) ||
-          user.email.toLowerCase().includes(query) ||
-          user.department.toLowerCase().includes(query)
-        );
-      }
-
-      return true;
-    }).slice(0, 8); // Limit results
-  }, [searchQuery, selectedUsers, existingSharedUsers]);
+        return true;
+      })
+      .slice(0, 8); // Limit results
+  }, [searchQuery, selectedUsers, existingSharedUsers, networkUsers]);
 
   // Reset state on close
   const handleClose = useCallback(() => {
-    if (!isSharing) {
+    if (!shareDocumentMutation.isPending) {
       setSearchQuery('');
       setSelectedUsers(new Set());
       setMessage('');
       setNotifyUsers(true);
       setSuccess(false);
       setError('');
+      setCurrentPage(1);
       onClose();
     }
-  }, [isSharing, onClose]);
+  }, [shareDocumentMutation.isPending, onClose]);
 
   // Handle user selection toggle
   const toggleUser = useCallback((userId: string) => {
-    setSelectedUsers((prev) => {
-      const newSet = new Set(prev);
+    setSelectedUsers((previous) => {
+      const newSet = new Set(previous);
       if (newSet.has(userId)) {
         newSet.delete(userId);
       } else {
@@ -203,20 +152,31 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
         return;
       }
 
-      setIsSharing(true);
+      if (!document?.id) {
+        setError('Document not found');
+        return;
+      }
+
       setError('');
 
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        await onShare?.({
-          userIds: Array.from(selectedUsers),
-          message: message.trim() || undefined,
-          notifyUsers
+        await shareDocumentMutation.mutateAsync({
+          documentId: document.id,
+          data: {
+            users: [...selectedUsers],
+            message: message.trim() || undefined,
+            notifyUsers
+          }
         });
 
         setSuccess(true);
+
+        // Call the optional onShare callback
+        await onShare?.({
+          users: [...selectedUsers],
+          message: message.trim() || undefined,
+          notifyUsers
+        });
 
         // Auto close after success delay
         setTimeout(() => {
@@ -224,29 +184,53 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
         }, 2000);
       } catch (error) {
         console.error('Share failed:', error);
-        setError('Failed to share document. Please try again.');
-      } finally {
-        setIsSharing(false);
       }
     },
-    [selectedUsers, message, notifyUsers, onShare, handleClose]
+    [selectedUsers, message, notifyUsers, document?.id, shareDocumentMutation, onShare, handleClose]
   );
 
+  // Handle search with debouncing
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchQuery]);
+
+  // Refetch users when search changes
+  useEffect(() => {
+    if (isOpen && debouncedSearch.trim()) {
+      refetchUsers();
+    }
+  }, [debouncedSearch, refetchUsers, isOpen]);
+
   // Get role color
-  const getRoleColor = (role: string) => {
+  const getRoleColor = (role?: string) => {
     switch (role) {
-      case 'Admin':
+      case 'Admin': {
         return 'danger';
-      case 'Manager':
+      }
+      case 'Manager': {
         return 'warning';
-      case 'User':
+      }
+      case 'User': {
         return 'primary';
-      case 'Guest':
+      }
+      case 'Guest': {
         return 'default';
-      default:
+      }
+      default: {
         return 'default';
+      }
     }
   };
+
+  // Loading states
+  const isSearching = isLoadingUsers;
+  const isSharing = shareDocumentMutation.isPending;
 
   if (!document) return null;
 
@@ -363,11 +347,12 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                             animate={{ rotate: [0, 10, -10, 0] }}
                             transition={{ duration: 0.5 }}
                           >
-                            <Icon icon='solar:danger-triangle-bold' className='text-danger h-4 w-4' />
+                            <Icon
+                              icon='solar:danger-triangle-bold'
+                              className='text-danger h-4 w-4'
+                            />
                           </motion.div>
-                          <p className='text-danger text-sm font-medium tracking-wide'>
-                            {error}
-                          </p>
+                          <p className='text-danger text-sm font-medium tracking-wide'>{error}</p>
                         </div>
                       </motion.div>
                     )}
@@ -397,10 +382,10 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                             key={user.id}
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className='bg-default-100/80 dark:bg-default-800/80 backdrop-blur-sm flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 ring-white/10 dark:ring-white/5'
+                            className='bg-default-100/80 dark:bg-default-800/80 flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 ring-white/10 backdrop-blur-sm dark:ring-white/5'
                           >
                             <Avatar
-                              src={user.avatar}
+                              src={user.avatar || user.profilePicture}
                               name={`${user.firstName} ${user.lastName}`}
                               size='sm'
                               className='h-6 w-6'
@@ -423,12 +408,12 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                     transition={{ delay: 0.2, duration: 0.4 }}
                     className='space-y-4'
                   >
-                    <motion.label 
+                    <motion.label
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
-                      className='text-foreground text-sm font-medium flex items-center gap-2'
+                      className='text-foreground flex items-center gap-2 text-sm font-medium'
                     >
-                      <Icon icon='solar:user-plus-linear' className='h-4 w-4 text-primary' />
+                      <Icon icon='solar:user-plus-linear' className='text-primary h-4 w-4' />
                       Add people
                     </motion.label>
 
@@ -467,7 +452,24 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                     className='min-h-0 flex-1 space-y-3'
                   >
                     <AnimatePresence mode='wait'>
-                      {!isSearching ? (
+                      {isSearching ? (
+                        <motion.div
+                          key='searching'
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className='flex h-full items-center justify-center'
+                        >
+                          <motion.div
+                            className='text-center'
+                            animate={{ scale: [0.95, 1.05, 0.95] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
+                            <Spinner size='md' color='primary' />
+                            <p className='text-default-500 mt-3 text-sm'>Searching users...</p>
+                          </motion.div>
+                        </motion.div>
+                      ) : (
                         <motion.div
                           key='users'
                           initial={{ opacity: 0 }}
@@ -477,19 +479,26 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                         >
                           {filteredUsers.length > 0 ? (
                             <div className='h-full w-full space-y-2 overflow-y-auto'>
-                              {filteredUsers.map((user, index) => (
+                              {filteredUsers.map((user: any, index) => (
                                 <motion.div
                                   key={user.id}
                                   initial={{ opacity: 0, y: 20, scale: 0.95 }}
                                   animate={{ opacity: 1, y: 0, scale: 1 }}
                                   whileHover={{ y: -2, transition: { duration: 0.2 } }}
-                                  transition={{ delay: index * 0.05, type: 'spring', stiffness: 300, damping: 20 }}
+                                  transition={{
+                                    delay: index * 0.05,
+                                    type: 'spring',
+                                    stiffness: 300,
+                                    damping: 20
+                                  }}
                                   className='w-full'
                                 >
                                   <Card
-                                    className='h-20 w-full cursor-pointer backdrop-blur-sm bg-default-50/50 dark:bg-default-900/30 border border-default-200/50 dark:border-default-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 hover:bg-primary/5'
+                                    className='bg-default-50/50 dark:bg-default-900/30 border-default-200/50 dark:border-default-700/50 hover:shadow-primary/10 hover:border-primary/30 hover:bg-primary/5 h-20 w-full cursor-pointer border backdrop-blur-sm transition-all duration-300 hover:shadow-lg'
                                     isPressable
-                                    onPress={() => toggleUser(user.id)}
+                                    onPress={() => {
+                                      toggleUser(user.id);
+                                    }}
                                   >
                                     <CardBody className='h-full p-4'>
                                       <div className='flex h-full items-center gap-4'>
@@ -502,7 +511,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                             size='sm'
                                           >
                                             <Avatar
-                                              src={user.avatar}
+                                              src={user.avatar || user.profilePicture}
                                               name={`${user.firstName} ${user.lastName}`}
                                               size='md'
                                               className='h-12 w-12'
@@ -510,7 +519,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                           </Badge>
                                         </div>
 
-                                        {/* User info - fixed layout */}
+                                        {/* User info - adapted to API structure */}
                                         <div className='flex min-w-0 flex-1 flex-col justify-center'>
                                           <div className='mb-1 flex items-center gap-2'>
                                             <h4 className='text-foreground truncate text-sm font-semibold'>
@@ -522,25 +531,29 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                               variant='flat'
                                               className='shrink-0 text-xs'
                                             >
-                                              {user.role}
+                                              {user.role || 'User'}
                                             </Chip>
                                           </div>
                                           <p className='text-default-500 truncate text-xs leading-tight'>
                                             {user.email}
                                           </p>
                                           <p className='text-default-400 truncate text-xs leading-tight'>
-                                            {user.department}
+                                            {user.department || user.company || 'N/A'}
                                           </p>
                                         </div>
 
-                                        {/* Selection indicator - fixed position */}
+                                        {/* Selection indicator */}
                                         <div className='shrink-0'>
                                           {selectedUsers.has(user.id) ? (
-                                            <motion.div 
-                                              className='bg-primary flex h-6 w-6 items-center justify-center rounded-full shadow-lg ring-2 ring-primary/20'
+                                            <motion.div
+                                              className='bg-primary ring-primary/20 flex h-6 w-6 items-center justify-center rounded-full shadow-lg ring-2'
                                               initial={{ scale: 0 }}
                                               animate={{ scale: 1 }}
-                                              transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                                              transition={{
+                                                type: 'spring',
+                                                stiffness: 500,
+                                                damping: 15
+                                              }}
                                             >
                                               <Icon
                                                 icon='solar:check-linear'
@@ -569,26 +582,20 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                     ? 'No users found matching your search'
                                     : 'No users available to share with'}
                                 </p>
+                                {networkError && (
+                                  <Button
+                                    size='sm'
+                                    variant='flat'
+                                    color='primary'
+                                    onPress={() => refetchUsers()}
+                                    className='mt-2'
+                                  >
+                                    Try Again
+                                  </Button>
+                                )}
                               </div>
                             </div>
                           )}
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          key='searching'
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          className='flex h-full items-center justify-center'
-                        >
-                          <motion.div 
-                            className='text-center'
-                            animate={{ scale: [0.95, 1.05, 0.95] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                          >
-                            <Spinner size='md' color='primary' />
-                            <p className='text-default-500 mt-3 text-sm'>Searching users...</p>
-                          </motion.div>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -618,8 +625,8 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                           </div>
 
                           <div className='flex flex-wrap gap-2'>
-                            {Array.from(selectedUsers).map((userId) => {
-                              const user = MOCK_USERS.find((u) => u.id === userId);
+                            {[...selectedUsers].map((userId) => {
+                              const user = networkUsers.find((u: any) => u.id === userId);
                               if (!user) return null;
 
                               return (
@@ -628,10 +635,10 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                   initial={{ opacity: 0, scale: 0.9 }}
                                   animate={{ opacity: 1, scale: 1 }}
                                   exit={{ opacity: 0, scale: 0.9 }}
-                                  className='bg-success-50/80 dark:bg-success-900/20 backdrop-blur-sm flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 ring-success/10 dark:ring-success/5'
+                                  className='bg-success-50/80 dark:bg-success-900/20 ring-success/10 dark:ring-success/5 flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 backdrop-blur-sm'
                                 >
                                   <Avatar
-                                    src={user.avatar}
+                                    src={user.avatar || user.profilePicture}
                                     name={`${user.firstName} ${user.lastName}`}
                                     size='sm'
                                     className='h-6 w-6'
@@ -645,7 +652,9 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                     variant='light'
                                     color='danger'
                                     className='h-5 w-5 min-w-5'
-                                    onPress={() => toggleUser(userId)}
+                                    onPress={() => {
+                                      toggleUser(userId);
+                                    }}
                                   >
                                     <Icon icon='solar:close-circle-bold' className='h-3 w-3' />
                                   </Button>
@@ -700,9 +709,9 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                               isDisabled={selectedUsers.size === 0}
                               isLoading={isSharing}
                               startContent={
-                                !isSharing ? (
+                                isSharing ? undefined : (
                                   <Icon icon='solar:share-linear' className='h-4 w-4' />
-                                ) : undefined
+                                )
                               }
                               className='from-primary to-primary-600 shadow-primary/20 hover:shadow-primary/30 h-14 rounded-2xl bg-gradient-to-r text-lg font-bold tracking-wide shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl'
                             >

@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https' as const,
+        hostname: 'dev.extraexpertise.be',
+        pathname: '/api/upload/**'
+      },
+      {
+        protocol: 'https' as const,
         hostname: 'i.pravatar.cc'
       },
       {

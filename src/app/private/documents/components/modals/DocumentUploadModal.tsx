@@ -2,6 +2,8 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
+import type { Tag } from '@/components/ui';
+
 import {
   Button,
   Divider,
@@ -17,22 +19,36 @@ import {
   SelectItem
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { useUpload } from '@root/modules/documents/hooks/useUpload';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { FileUpload, FormField, Tag, TagSelector } from '@/components/ui';
+import { type IDocument } from '@/app/private/documents/types';
+import { FileUpload, FormField, TagSelector } from '@/components/ui';
 import wingManApi from '@/lib/axios';
 
-interface DocumentUploadModalProps {
+interface DocumentUploadModalProperties {
   isOpen: boolean;
   onClose: () => void;
   onUpload?: (data: {
     name: string;
     tags: string[];
-    file: File;
-    type: string;
-    status: string;
+    file: string;
+    type: { id: string; name: string };
+    status: { id: string; name: string };
   }) => Promise<void>;
+  onUpdate?: (
+    documentId: string,
+    data: {
+      name: string;
+      tags: string[];
+      file: string;
+      type: { id: string; name: string };
+      status: { id: string; name: string };
+    }
+  ) => Promise<void>;
+  document?: IDocument | null; // Document to edit (null for upload mode)
+  mode?: 'upload' | 'edit';
 }
 
 interface UploadResponse {
@@ -107,14 +123,22 @@ const getTagColor = (
     'default'
   ];
   let hash = 0;
-  for (let i = 0; i < tagName.length; i++) {
-    hash = tagName.charCodeAt(i) + ((hash << 5) - hash);
+  for (let index = 0; index < tagName.length; index++) {
+    hash = tagName.codePointAt(index) + ((hash << 5) - hash);
   }
   return colors[Math.abs(hash) % colors.length];
 };
 
-const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClose, onUpload }) => {
+const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
+  isOpen,
+  onClose,
+  onUpload,
+  onUpdate,
+  document = null,
+  mode = 'upload'
+}) => {
   const t = useTranslations();
+  const isEditMode = mode === 'edit' && document;
 
   // Form state
   const [documentName, setDocumentName] = useState('');
@@ -135,6 +159,23 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
   const [isLoadingTypes, setIsLoadingTypes] = useState(true);
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [isLoadingTags, setIsLoadingTags] = useState(true);
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+
+  const upload = useUpload();
+  // Initialize form with document data in edit mode
+  useEffect(() => {
+    if (isEditMode) {
+      setDocumentName(document.documentName);
+      setSelectedTags(document.tags.map((tag) => tag.id));
+      setDocumentStatus(document.status.id);
+
+      // Find and set document type
+      const documentType = documentTypes.find((type) => type.id === document.type?.id);
+      if (documentType) {
+        setSelectedDocumentType(documentType);
+      }
+    }
+  }, [isEditMode, document, documentTypes]);
 
   // Fetch document types from API
   useEffect(() => {
@@ -196,7 +237,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
       const documentType = documentTypes.find((type) => type.id === typeId);
       if (documentType) {
         setSelectedDocumentType(documentType);
-        setDocumentStatus(''); // Reset status when type changes
+        setDocumentStatus('');
       }
     },
     [documentTypes]
@@ -210,13 +251,13 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
     (file: File) => {
       setSelectedFile(file);
       setError('');
-      // Auto-populate document name from filename if not set
-      if (!documentName) {
-        const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
-        setDocumentName(nameWithoutExt);
+      // Auto-populate document name from filename if not set and in upload mode
+      if (!documentName && !isEditMode) {
+        const nameWithoutExtension = file.name.replace(/\.[^/.]+$/, '');
+        setDocumentName(nameWithoutExtension);
       }
     },
-    [documentName]
+    [documentName, isEditMode]
   );
 
   const handleFileRemove = useCallback(() => {
@@ -245,7 +286,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
       e.preventDefault();
       setIsDragOver(false);
 
-      const files = Array.from(e.dataTransfer.files);
+      const files = [...e.dataTransfer.files];
       if (files.length > 0) {
         handleFileSelect(files[0]);
       }
@@ -255,18 +296,29 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
 
   // Tag handlers
   const handleTagSelect = useCallback((tagKey: string) => {
-    setSelectedTags((prev) => [...prev, tagKey]);
+    setSelectedTags((previous) => [...previous, tagKey]);
   }, []);
 
   const handleTagRemove = useCallback((tagKey: string) => {
-    setSelectedTags((prev) => prev.filter((key) => key !== tagKey));
+    setSelectedTags((previous) => previous.filter((key) => key !== tagKey));
   }, []);
 
   // Handle form submission
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      if (!selectedFile || !documentName.trim() || !selectedDocumentType || !documentStatus) {
+
+      // Validation for upload mode
+      if (
+        !isEditMode &&
+        (!selectedFile || !documentName.trim() || !selectedDocumentType || !documentStatus)
+      ) {
+        setError('Please fill in all required fields');
+        return;
+      }
+
+      // Validation for edit mode
+      if (isEditMode && (!documentName.trim() || !selectedDocumentType || !documentStatus)) {
         setError('Please fill in all required fields');
         return;
       }
@@ -276,57 +328,95 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
       setError('');
 
       try {
-        // Create form data with all document information and file
         setUploadProgress(20);
 
-        const typeId = selectedDocumentType.id;
-        const selectedStatusObj = selectedDocumentType.statuses.find(
+        const typeId = selectedDocumentType?.id;
+        const selectedStatusObject = selectedDocumentType?.statuses.find(
           (status) => status.id === documentStatus
         );
-        const statusId = selectedStatusObj?.id;
-        const tagIds = selectedTags; // selectedTags now contains actual tag IDs from API
+        const statusId = selectedStatusObject?.id;
+        const tagIds = selectedTags;
 
         if (!typeId) throw new Error(`Invalid document type selected`);
         if (!statusId) throw new Error(`Invalid status selected`);
 
-        const formData = new FormData();
-        formData.append('image', selectedFile);
-        formData.append('documentName', documentName.trim());
-        formData.append('typeId', typeId);
-        formData.append('statusId', statusId);
+        // Upload file first if there's a new file selected
 
-        // Append each tag ID separately
-        tagIds.forEach((tagId, index) => {
-          formData.append(`tags[${index}]`, tagId);
-        });
+        if (isEditMode && onUpdate) {
+          // Edit mode - PATCH request
+          setUploadProgress(60);
 
-        setUploadProgress(60);
+          // Create form data for update
+          const formData = new FormData();
+          formData.append('documentName', documentName.trim());
+          formData.append('typeId', typeId);
+          formData.append('statusId', statusId);
 
-        // Upload document with all data in single request
-        const uploadResponse = await wingManApi.post('/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
+          // Append each tag ID separately
+          for (const [index, tagId] of tagIds.entries()) {
+            formData.append(`tags`, tagId);
           }
-        });
 
-        setUploadProgress(100);
+          // Add file if provided
+          if (selectedFile) {
+            formData.append('image', selectedFile);
+          }
+          const requestData = {
+            name: documentName.trim(),
+            tags: tagIds,
+            type: selectedDocumentType.id,
+            status: selectedStatusObject.id,
+            fileName: document.fileName
+          };
+          // Update document
+          await wingManApi.patch(`/documents/${document.id}`, requestData);
 
-        await onUpload?.({
-          name: documentName.trim(),
-          tags: selectedTags,
-          file: selectedFile,
-          type: selectedDocumentType.name,
-          status: selectedStatusObj?.name || documentStatus
-        });
+          setUploadProgress(100);
+        } else if (!isEditMode && onUpload) {
+          let fileName = '';
+          if (selectedFile && !uploadedFileName) {
+            console.log(selectedFile);
+            const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
+            console.log('Upload response:', uploadResponse);
+            fileName = uploadResponse.filename;
+            setUploadedFileName(uploadResponse.filename);
+          }
+
+          const formData = new FormData();
+          formData.append('fileName', fileName);
+          formData.append('documentName', documentName.trim());
+          formData.append('typeId', typeId);
+          formData.append('statusId', statusId);
+
+          // Append each tag ID separately
+          for (const [index, tagId] of tagIds.entries()) {
+            formData.append(`tags`, tagId);
+          }
+
+          const requestData = {
+            documentName: documentName.trim(),
+            tags: tagIds,
+            type: selectedDocumentType.id,
+            status: selectedStatusObject.id,
+            fileName: document?.fileName
+          };
+
+          // Upload document
+          setUploadProgress(60);
+          await wingManApi.post('/documents', requestData);
+          setUploadProgress(100);
+        }
 
         setSuccess(true);
 
         // Auto close after success
-        setTimeout(handleClose, 2000);
+        setTimeout(handleClose, 500);
       } catch (error) {
-        console.error('Upload failed:', error);
+        console.error(`${isEditMode ? 'Update' : 'Upload'} failed:`, error);
         const errorMessage =
-          error instanceof Error ? error.message : 'Failed to upload document. Please try again.';
+          error instanceof Error
+            ? error.message
+            : `Failed to ${isEditMode ? 'update' : 'upload'} document. Please try again.`;
         setError(errorMessage);
         setUploadProgress(0);
       } finally {
@@ -334,17 +424,33 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
       }
     },
     [
+      isEditMode,
       selectedFile,
       documentName,
       selectedTags,
       selectedDocumentType,
       documentStatus,
+      document,
       onUpload,
+      onUpdate,
       handleClose
     ]
   );
 
-  const isFormValid = documentName.trim() && selectedFile && selectedDocumentType && documentStatus;
+  const isFormValid =
+    documentName.trim() && selectedDocumentType && documentStatus && (isEditMode || selectedFile); // File only required for upload mode
+
+  const modalTitle = isEditMode ? t('documents.edit.title') : t('documents.upload.title');
+
+  const modalSubtitle = isEditMode ? t('documents.edit.subtitle') : t('documents.upload.subtitle');
+
+  const buttonText = isEditMode
+    ? isUploading
+      ? t('documents.edit.buttons.updating')
+      : t('documents.edit.buttons.update')
+    : isUploading
+      ? t('documents.upload.buttons.uploading')
+      : t('documents.upload.buttons.upload');
 
   return (
     <Modal
@@ -403,18 +509,24 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                 >
                   <div className='from-primary/5 to-primary/10 absolute inset-0 rounded-2xl bg-gradient-to-br blur-xl' />
                   <Icon
-                    icon={success ? 'solar:check-circle-bold' : 'solar:upload-linear'}
+                    icon={
+                      success
+                        ? 'solar:check-circle-bold'
+                        : isEditMode
+                          ? 'solar:pen-linear'
+                          : 'solar:upload-linear'
+                    }
                     className='text-primary relative z-10 h-8 w-8 drop-shadow-sm'
                   />
                 </motion.div>
                 <div className='flex flex-col gap-1'>
                   <h2 className='text-foreground from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight'>
-                    {success ? 'Upload Successful!' : t('documents.upload.title')}
+                    {success ? `${isEditMode ? 'Update' : 'Upload'} Successful!` : modalTitle}
                   </h2>
                   <p className='text-default-500 text-sm font-medium tracking-wide opacity-90'>
                     {success
-                      ? `Document "${documentName}" uploaded successfully`
-                      : t('documents.upload.subtitle')}
+                      ? `Document "${documentName}" ${isEditMode ? 'updated' : 'uploaded'} successfully`
+                      : modalSubtitle}
                   </p>
                 </div>
               </motion.div>
@@ -429,11 +541,11 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                   className='bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800/30 rounded-2xl border p-6 text-center'
                 >
                   <Icon
-                    icon='solar:document-add-bold'
+                    icon={isEditMode ? 'solar:document-text-bold' : 'solar:document-add-bold'}
                     className='text-success mx-auto mb-3 h-12 w-12'
                   />
                   <p className='text-success-700 dark:text-success-400 mb-4 font-medium'>
-                    Document uploaded successfully!
+                    Document {isEditMode ? 'updated' : 'uploaded'} successfully!
                   </p>
                   <p className='text-default-600 dark:text-default-400 text-sm'>
                     Your document has been processed and is now available in your document library.
@@ -446,6 +558,22 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                   validationBehavior='native'
                   onSubmit={handleSubmit}
                 >
+                  {/* Error Display */}
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className='bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800/30 rounded-2xl border p-4'
+                    >
+                      <div className='flex items-center gap-2'>
+                        <Icon icon='solar:danger-circle-bold' className='text-danger h-5 w-5' />
+                        <p className='text-danger-700 dark:text-danger-400 text-sm font-medium'>
+                          {error}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+
                   {/* Document Name Input */}
                   <FormField label={t('documents.upload.documentName.label')} required delay={0.1}>
                     <Input
@@ -484,7 +612,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                         isLoading={isLoadingTypes}
                         selectedKeys={selectedDocumentType ? [selectedDocumentType.id] : []}
                         onSelectionChange={(keys) => {
-                          const selectedKey = Array.from(keys)[0];
+                          const selectedKey = [...keys][0];
                           if (selectedKey) handleTypeChange(selectedKey as string);
                         }}
                         placeholder={
@@ -534,13 +662,13 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                         isDisabled={!selectedDocumentType}
                         selectedKeys={documentStatus ? [documentStatus] : []}
                         onSelectionChange={(keys) => {
-                          const selectedKey = Array.from(keys)[0];
+                          const selectedKey = [...keys][0];
                           if (selectedKey) setDocumentStatus(selectedKey as string);
                         }}
                         placeholder={
-                          !selectedDocumentType
-                            ? 'Select document type first'
-                            : t('documents.upload.status.placeholder')
+                          selectedDocumentType
+                            ? t('documents.upload.status.placeholder')
+                            : 'Select document type first'
                         }
                         variant='bordered'
                         classNames={{
@@ -591,7 +719,23 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                   <Divider className='bg-default-200/50' />
 
                   {/* File Upload */}
-                  <FormField label={t('documents.upload.file.label')} required delay={0.5}>
+                  <FormField
+                    label={
+                      isEditMode ? 'Replace file (optional)' : t('documents.upload.file.label')
+                    }
+                    required={!isEditMode}
+                    delay={0.5}
+                  >
+                    {isEditMode && document?.fileName && !selectedFile && (
+                      <div className='bg-default-100 border-default-200 mb-3 rounded-xl border p-3'>
+                        <div className='flex items-center gap-2'>
+                          <Icon icon='solar:document-linear' className='text-default-600 h-4 w-4' />
+                          <span className='text-default-600 text-sm'>
+                            Current file: {document.fileName}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                     <FileUpload
                       selectedFile={selectedFile}
                       onFileSelect={handleFileSelect}
@@ -601,8 +745,9 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                       onDragLeave={handleDragLeave}
                       onDragOver={handleDragOver}
                       onDrop={handleDrop}
-                      acceptedFileTypes='.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.xlsx,.xls,.ppt,.pptx'
+                      acceptedFileTypes='.pdf,.jpg,.jpeg,.png'
                       maxFileSize={10 * 1024 * 1024}
+                      disabled={isEditMode}
                     />
                   </FormField>
 
@@ -617,7 +762,9 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                       >
                         <div className='flex justify-between text-sm'>
                           <span className='text-foreground'>
-                            {t('documents.upload.progress.uploading')}
+                            {isEditMode
+                              ? 'Updating document...'
+                              : t('documents.upload.progress.uploading')}
                           </span>
                           <span className='text-default-500'>{uploadProgress}%</span>
                         </div>
@@ -662,16 +809,17 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                     isDisabled={!isFormValid}
                     isLoading={isUploading}
                     startContent={
-                      !isUploading ? (
-                        <Icon icon='solar:upload-linear' className='h-4 w-4 drop-shadow-sm' />
-                      ) : undefined
+                      isUploading ? undefined : (
+                        <Icon
+                          icon={isEditMode ? 'solar:pen-linear' : 'solar:upload-linear'}
+                          className='h-4 w-4 drop-shadow-sm'
+                        />
+                      )
                     }
                     className='from-primary to-primary-600 shadow-primary/20 hover:shadow-primary/30 h-12 rounded-2xl bg-gradient-to-r text-lg font-bold tracking-wide shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl'
                     form='upload-form'
                   >
-                    {isUploading
-                      ? t('documents.upload.buttons.uploading')
-                      : t('documents.upload.buttons.upload')}
+                    {buttonText}
                   </Button>
                 </motion.div>
               )}

@@ -4,6 +4,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { useUpdateDocument, useUploadDocument } from '@root/modules/documents/hooks/use-documents';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
@@ -21,15 +22,20 @@ import {
   TAB_BREADCRUMB_ICONS,
   TAB_BREADCRUMB_LABELS
 } from './constants';
-import { useDocumentFilters, useDocuments, useDocumentState } from './hooks';
-import { type DocumentType } from './types';
-import { filterDocuments, getActiveFiltersCount } from './utils';
+import { useDocuments, useDocumentState } from './hooks';
+import { type DocumentType, type IDocument } from './types';
+import { filterDocuments } from './utils';
 
 export default function DocumentsPage() {
   const t = useTranslations('documents');
   const { data: result, isLoading, error, isError } = useDocuments();
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [editingDocument, setEditingDocument] = useState<IDocument | null>(null);
+  const [modalMode, setModalMode] = useState<'upload' | 'edit'>('upload');
 
+  // Add these mutations after existing hooks
+  const uploadMutation = useUploadDocument();
+  const updateMutation = useUpdateDocument();
   // Enhanced state management using custom hooks
   const documentState = useDocumentState();
   const {
@@ -46,9 +52,6 @@ export default function DocumentsPage() {
     handleSearch
   } = documentState;
 
-  // Get filter information for performance
-  const activeFiltersCount = useMemo(() => getActiveFiltersCount(filters), [filters]);
-
   // Filter documents based on active tab and search query
   const filteredDocuments = useMemo(() => {
     if (!result?.data) return [];
@@ -57,7 +60,7 @@ export default function DocumentsPage() {
 
     // Filter by tab
     if (activeTab === 'shared-with-me') {
-      documents = documents.filter((doc) => doc.sharedWith.length > 0);
+      documents = documents.filter((document_) => document_.sharedWith.length > 0);
     }
     // 'all-documents' shows all documents, so no additional filtering needed
 
@@ -65,35 +68,77 @@ export default function DocumentsPage() {
     return filterDocuments(documents, filters, searchQuery);
   }, [result?.data, activeTab, searchQuery, filters]);
 
-  // Event handlers following talent pool pattern
-  const handleUploadDocument = useCallback(() => {
-    setShowUploadModal(true);
-  }, []);
-
   const handleUploadModalClose = useCallback(() => {
     setShowUploadModal(false);
+  }, []);
+
+  const handleUploadDocument = useCallback(() => {
+    setModalMode('upload');
+    setEditingDocument(null);
+    setShowUploadModal(true);
   }, []);
 
   const handleUpload = useCallback(
     async (data: { name: string; tags: string[]; file: File; type: string; status: string }) => {
       try {
-        console.log('Uploading document:', data);
-        // Here you would integrate with your actual upload API
-        // await uploadDocument(data);
+        const formData = new FormData();
+        formData.append('image', data.file);
+        formData.append('documentName', data.name);
+        formData.append('typeId', data.type);
+        formData.append('statusId', data.status);
 
-        // For now, just log the data
-        alert(`Document "${data.name}" uploaded successfully with tags: ${data.tags.join(', ')}`);
+        for (const [index, tagId] of data.tags.entries()) {
+          formData.append(`tags`, tagId);
+        }
+
+        await uploadMutation.mutateAsync(formData);
+        console.log('Document uploaded successfully:', data);
       } catch (error) {
         console.error('Upload failed:', error);
-        alert('Upload failed. Please try again.');
+        throw error;
       }
     },
-    []
+    [uploadMutation]
+  );
+
+  const handleEditDocument = useCallback((document: IDocument) => {
+    setModalMode('edit');
+    setEditingDocument(document);
+    setShowUploadModal(true);
+  }, []);
+
+  const handleUpdate = useCallback(
+    async (
+      documentId: string,
+      data: { name: string; tags: string[]; file?: File; type: string; status: string }
+    ) => {
+      try {
+        const formData = new FormData();
+        formData.append('documentName', data.name);
+        formData.append('typeId', data.type);
+        formData.append('statusId', data.status);
+
+        if (data.file) {
+          formData.append('image', data.file);
+        }
+
+        for (const [index, tagId] of data.tags.entries()) {
+          formData.append(`tags`, tagId);
+        }
+
+        await updateMutation.mutateAsync({ documentId, formData });
+        console.log('Document updated successfully:', data);
+      } catch (error) {
+        console.error('Update failed:', error);
+        throw error;
+      }
+    },
+    [updateMutation]
   );
 
   const handleRefresh = useCallback(() => {
     // In a real app, this would refetch the data
-    window.location.reload();
+    globalThis.location.reload();
   }, []);
 
   // Breadcrumbs configuration
@@ -115,7 +160,9 @@ export default function DocumentsPage() {
     onClick:
       item.key === 'upload'
         ? handleUploadDocument
-        : () => console.log(`${item.label} clicked`)
+        : () => {
+            console.log(`${item.label} clicked`);
+          }
   }));
 
   return (
@@ -135,7 +182,9 @@ export default function DocumentsPage() {
               startContent={
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
-              onPress={() => action.onClick?.()}
+              onPress={() => {
+                action.onClick?.();
+              }}
               className='font-medium transition-all duration-200 hover:shadow-md'
             >
               {action.label}
@@ -144,12 +193,14 @@ export default function DocumentsPage() {
         </div>
       }
     >
-      <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
+      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
         <div className='space-y-6'>
           {/* Enhanced Tabs Navigation with Integrated Search */}
           <DocumentTabs
             activeTab={activeTab}
-            onTabChange={(tab) => setActiveTab(tab as DocumentType)}
+            onTabChange={(tab) => {
+              setActiveTab(tab as DocumentType);
+            }}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onSearch={handleSearch}
@@ -187,6 +238,7 @@ export default function DocumentsPage() {
                   error={isError ? error?.message || 'An error occurred' : null}
                   onUpload={handleUploadDocument}
                   onRefresh={handleRefresh}
+                  handleOnEdit={handleEditDocument}
                 />
               </motion.div>
             </AnimatePresence>
@@ -199,6 +251,9 @@ export default function DocumentsPage() {
         isOpen={showUploadModal}
         onClose={handleUploadModalClose}
         onUpload={handleUpload}
+        onUpdate={handleUpdate}
+        document={editingDocument}
+        mode={modalMode}
       />
     </DashboardLayout>
   );

@@ -131,7 +131,6 @@ const useSettings = (userId?: string) => {
   const createExperienceMutation = useMutation({
     ...createExperienceMutationOptions,
     onSuccess: async (data) => {
-      console.log(data);
       handleSuccess('Experience created successfully!');
       await queryClient.invalidateQueries({
         queryKey: ['experiences', userId]
@@ -212,7 +211,6 @@ const useSettings = (userId?: string) => {
   const createEducationMutation = useMutation({
     ...educationMutationOptions,
     onSuccess: async () => {
-      console.log('success');
       handleSuccess('Education created successfully!');
       await queryClient.invalidateQueries({
         queryKey: ['educations', userId]
@@ -226,7 +224,6 @@ const useSettings = (userId?: string) => {
   const updateEducationMutation = useMutation({
     ...updateEducationMutationOptions,
     onSuccess: async () => {
-      console.log('success');
       handleSuccess('Education updated successfully!');
       await queryClient.invalidateQueries({
         queryKey: ['educations', userId]
@@ -240,7 +237,6 @@ const useSettings = (userId?: string) => {
   const deleteEducationMutation = useMutation({
     ...deleteEducationMutationOptions,
     onSuccess: async () => {
-      console.log('success');
       handleSuccess('Education deleted successfully!');
       await queryClient.invalidateQueries({
         queryKey: ['educations', userId]
@@ -255,14 +251,12 @@ const useSettings = (userId?: string) => {
   const createServiceMutation = useMutation({
     ...createServiceMutationOptions,
     onSuccess: async () => {
-      console.log('success');
       handleSuccess('Service created successfully!');
       await queryClient.invalidateQueries({
         queryKey: ['services', userId]
       });
     },
     onError: (error) => {
-      console.log('error');
       handleError(error, 'Failed to create service');
     }
   });

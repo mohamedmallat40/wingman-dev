@@ -485,12 +485,6 @@
       "delete": "Supprimer",
       "moreOptions": "Plus d'options"
     },
-    "status": {
-      "awaitingSignature": "En Attente de Signature",
-      "underReview": "En Cours de Révision",
-      "sentToClient": "Envoyé au Client",
-      "inProgress": "En Cours"
-    },
     "types": {
       "proposal": "Proposition",
       "contract": "Contrat",
@@ -595,7 +589,15 @@
       "urgent": "Urgent",
       "draft": "Brouillon",
       "final": "Final"
-    }
+    },
+    "edit": {
+      "title": "Modifier le document",
+      "subtitle": "Mettre à jour les informations du document et le fichier",
+      "buttons": {
+        "update": "Mettre à jour le document",
+        "mise à jour": "Mise à jour..."
+      }
+  }
   },
   "broadcasts": {
     "title": "Flux de Diffusion",

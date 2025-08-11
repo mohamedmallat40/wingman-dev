@@ -3,7 +3,8 @@ export const API_ROUTES = {
     login: '/auth/local/signin',
     register: '/auth/local/signup',
     subscriptions: '/subscription',
-    checkValidEUVAT: '/invoices/validate-vat'
+    checkValidEUVAT: '/invoices/validate-vat',
+    completeProfile: '/auth/complete-account'
   },
   profile: {
     me: '/users/me',
@@ -24,9 +25,14 @@ export const API_ROUTES = {
   documents: {
     personal: '/documents',
     shared: '/documents/shared',
-    types: '/documents/types'
+    types: '/documents/types',
+    share: '/documents',
+    delete: '/documents'
   },
-  invitations: {
-    platform: '/invitations/platform'
+  network: {
+    myNetwork: '/network/my-network'
+  },
+  upload: {
+    single: '/upload'
   }
 };

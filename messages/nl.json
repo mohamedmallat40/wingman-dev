@@ -562,12 +562,6 @@
         "gb": "GB"
       }
     },
-    "status": {
-      "awaitingSignature": "Wacht op Handtekening",
-      "underReview": "In Beoordeling",
-      "sentToClient": "Naar Klant Gestuurd",
-      "inProgress": "In Behandeling"
-    },
     "actions": {
       "view": "Document Bekijken",
       "edit": "Bewerken",
@@ -595,7 +589,15 @@
       "urgent": "Urgent",
       "draft": "Concept",
       "final": "Definitief"
-    }
+    },
+    "bewerken": {
+      "titel": "Document bewerken",
+      "ondertitel": "Documentinformatie en bestand bijwerken",
+      "knoppen": {
+        "update": "Update document",
+        "updaten": "Updaten ..."
+      }
+  }
   },
   "broadcasts": {
     "title": "Broadcast Feed",

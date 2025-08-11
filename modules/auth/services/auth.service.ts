@@ -32,6 +32,15 @@ export const checkValidEUVAT = async (countryCode: string, vatNumber: string) =>
     `${API_ROUTES.auth.checkValidEUVAT}?countryCode=${countryCode}&vatNumber=${vatNumber}`
   );
 };
+
+export const completeProfileService = async (data: RegistrationData, token: string) => {
+  return wingManApi.post(API_ROUTES.auth.completeProfile, data, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+};
+
 export const handleOAuth = (provider: 'google' | 'linkedin'): Promise<unknown> => {
   return new Promise((resolve, reject) => {
     const authUrl = `${getBaseUrl()}/auth/${provider}`;
@@ -49,17 +58,15 @@ export const handleOAuth = (provider: 'google' | 'linkedin'): Promise<unknown> =
     }
 
     const messageListener = (event: MessageEvent<OAuthResponse>) => {
-      const baseUrl = getBaseUrl().endsWith('/') ? getBaseUrl().slice(0, -1) : getBaseUrl();
+      /*const baseUrl = getBaseUrl().endsWith('/api') ? getBaseUrl().slice(0, -4) : getBaseUrl();
 
-      // Verify origin for security
       if (event.origin !== baseUrl) {
         console.error('Untrusted origin:', event.origin);
         window.removeEventListener('message', messageListener);
         return;
-      }
+      } */
 
       const data = event.data;
-
       // Handle the OAuth response
       if (typeof data === 'object') {
         if (data.success) {
@@ -80,8 +87,6 @@ export const handleOAuth = (provider: 'google' | 'linkedin'): Promise<unknown> =
 
     // Listen for messages from the popup
     window.addEventListener('message', messageListener);
-
-    // Handle case where user closes popup manually
     const checkClosed = setInterval(() => {
       if (authWindow.closed) {
         clearInterval(checkClosed);

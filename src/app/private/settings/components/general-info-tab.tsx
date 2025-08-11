@@ -386,8 +386,7 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
   };
 
   const onError = (errors: unknown) => {
-    console.log('=== FORM VALIDATION ERRORS ===');
-    console.log('Form errors:', errors);
+    console.error('Form errors:', errors);
   };
 
   return (

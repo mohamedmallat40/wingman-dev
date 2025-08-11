@@ -46,7 +46,7 @@ export interface Plan {
 }
 export interface AddressDetails {
   VATNumber?: string;
-  companyName?: string;
+  companyName: string;
   street: string;
   country: string;
   postalCode: string;

@@ -14,6 +14,7 @@ import {
   Skeleton
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { useDeleteDocument } from '@root/modules/documents/hooks/use-documents';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
@@ -24,6 +25,7 @@ import { DocumentShareModal } from '../modals';
 
 interface DocumentCardProperties {
   document: IDocument;
+  onEdit?: (document: IDocument) => void;
   viewMode?: 'list' | 'grid';
 }
 
@@ -86,7 +88,9 @@ const getDocumentIcon = (typeName: string) => {
   );
 };
 
-const getStatusColor = (status: string): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
+const getStatusColor = (
+  status: string
+): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
   switch (status) {
     case 'Awaiting Signature':
       return 'warning';
@@ -101,10 +105,12 @@ const getStatusColor = (status: string): 'primary' | 'secondary' | 'success' | '
   }
 };
 
-const getTagColor = (tagName: string): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
+const getTagColor = (
+  tagName: string
+): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
   const colorMap: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'danger'> = {
     Contract: 'primary',
-    Proposal: 'secondary', 
+    Proposal: 'secondary',
     Invoice: 'success',
     Template: 'warning',
     Financial: 'success',
@@ -120,7 +126,7 @@ const getTagColor = (tagName: string): 'primary' | 'secondary' | 'success' | 'wa
     Draft: 'warning',
     Final: 'success'
   };
-  
+
   return colorMap[tagName] || 'secondary';
 };
 
@@ -158,26 +164,29 @@ const getTranslatedType = (type: string, t: any) => {
 
 export default function DocumentCard({
   document,
+  onEdit,
   viewMode = 'list'
 }: Readonly<DocumentCardProperties>) {
   const t = useTranslations('documents');
   const [showShareModal, setShowShareModal] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const deleteMutation = useDeleteDocument();
 
-  const handleShare = async (data: {
-    userIds: string[];
-    message?: string;
-    notifyUsers: boolean;
-  }) => {
+  const handleDelete = async () => {
+    try {
+      await deleteMutation.mutateAsync(document.id);
+      console.log('Document deleted successfully');
+    } catch (error) {
+      console.error('Delete failed:', error);
+    }
+  };
+  const handleShare = async (data: { users: string[]; message?: string; notifyUsers: boolean }) => {
     try {
       console.log('Sharing document:', data);
       // Here you would integrate with your actual sharing API
       // await shareDocument(data);
-
-      alert(t('share.success', { count: data.userIds.length }));
     } catch (error) {
       console.error('Share failed:', error);
-      alert(t('share.failed'));
     }
   };
 
@@ -227,14 +236,16 @@ export default function DocumentCard({
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <Card className={`group border-default-200 dark:border-default-700 bg-content1 dark:bg-content1 hover:border-primary/30 dark:hover:border-primary/50 relative overflow-hidden transition-all duration-300 hover:shadow-xl ${viewMode === 'grid' ? 'h-[165px]' : 'h-auto'}`}>
+      <Card
+        className={`group border-default-200 dark:border-default-700 bg-content1 dark:bg-content1 hover:border-primary/30 dark:hover:border-primary/50 relative overflow-hidden transition-all duration-300 hover:shadow-xl ${viewMode === 'grid' ? 'h-[165px]' : 'h-auto'}`}
+      >
         {/* Gradient overlay */}
         <div className='from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
 
         <CardBody className='relative p-5'>
           <div className='mb-4 flex items-start justify-between'>
             <div className='flex flex-1 items-start gap-4'>
-              {getDocumentIcon(document.type.name)}
+              {getDocumentIcon(document.type?.name)}
 
               <div className='min-w-0 flex-1'>
                 <div className='mb-2 flex items-center gap-2'>
@@ -262,12 +273,12 @@ export default function DocumentCard({
                     <span>{formatDate(document.createdAt)}</span>
                   </div>
                   <div className='bg-default-300 h-1 w-1 rounded-full' />
-                  <span>{getTranslatedType(document.type.name, t)}</span>
+                  <span>{getTranslatedType(document.type?.name, t)}</span>
                 </div>
 
                 {/* Tags */}
                 <div className='mb-1 flex items-center gap-1.5'>
-                  <span className='text-xs text-default-500 flex-shrink-0'>Tags:</span>
+                  <span className='text-default-500 flex-shrink-0 text-xs'>Tags:</span>
                   {document.tags.length > 0 ? (
                     <div className='flex gap-1'>
                       {document.tags.slice(0, 2).map((tag) => (
@@ -276,37 +287,32 @@ export default function DocumentCard({
                           size='sm'
                           variant='flat'
                           color={getTagColor(tag.name)}
-                          className='text-xs h-5'
+                          className='h-5 text-xs'
                         >
                           {tag.name}
                         </Chip>
                       ))}
                       {document.tags.length > 2 && (
-                        <Chip
-                          size='sm'
-                          variant='flat'
-                          color='default'
-                          className='text-xs h-5'
-                        >
+                        <Chip size='sm' variant='flat' color='default' className='h-5 text-xs'>
                           +{document.tags.length - 2}
                         </Chip>
                       )}
                     </div>
                   ) : (
-                    <span className='text-xs text-default-400'>—</span>
+                    <span className='text-default-400 text-xs'>—</span>
                   )}
                 </div>
-                
+
                 {/* Status */}
                 <div className='flex items-center gap-1.5'>
-                  <span className='text-xs text-default-500 flex-shrink-0'>Status:</span>
+                  <span className='text-default-500 flex-shrink-0 text-xs'>Status:</span>
                   <Chip
                     size='sm'
                     variant='flat'
-                    color={getStatusColor(document.status.name)}
-                    className='text-xs h-5'
+                    color={getStatusColor(document.status?.name)}
+                    className='h-5 text-xs'
                   >
-                    {getTranslatedStatus(document.status.name, t)}
+                    {getTranslatedStatus(document.status?.name, t)}
                   </Chip>
                 </div>
               </div>
@@ -351,6 +357,7 @@ export default function DocumentCard({
                   <DropdownItem
                     key='edit'
                     startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
+                    onPress={() => onEdit?.(document)}
                   >
                     {t('actions.edit')}
                   </DropdownItem>
@@ -373,6 +380,7 @@ export default function DocumentCard({
                     startContent={
                       <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
                     }
+                    onPress={handleDelete}
                   >
                     {t('actions.delete')}
                   </DropdownItem>

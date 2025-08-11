@@ -80,8 +80,6 @@ export default function ExperienceTab({ user, experiences }: Readonly<Experience
     const currentData = form.watch(`items.${fieldIndex}`);
 
     if (!originalExperienceData) return false;
-    console.log('currentData', currentData);
-    console.log('originalExperienceData', originalExperienceData);
     return (
       currentData.company !== originalExperienceData?.company ||
       currentData.position !== originalExperienceData.position ||
@@ -164,14 +162,11 @@ export default function ExperienceTab({ user, experiences }: Readonly<Experience
     const changedFields = getChangedFields(fieldIndex);
 
     if (Object.keys(changedFields).length <= 1) {
-      // Only has ID
-      console.log('No changes to save');
       return;
     }
 
     setUpdatingExperienceId(experienceId ?? '');
     try {
-      console.log('changedFields', changedFields);
       await updateExperience(changedFields);
       setEditingExperienceId(null);
       setOriginalExperienceData(null);

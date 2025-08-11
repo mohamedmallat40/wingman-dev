@@ -4,14 +4,17 @@ import { useEffect } from 'react';
 
 import { addToast } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { register as registerService } from '@root/modules/auth/services/auth.service';
+import {
+  completeProfileService,
+  register as registerService
+} from '@root/modules/auth/services/auth.service';
 import useUserStore from '@root/modules/auth/store/use-user-store';
 import { type IUserProfile } from '@root/modules/profile/types';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { AddressDetails, type RegistrationData } from '@/lib/types/auth';
+import { type AddressDetails, type RegistrationData } from '@/lib/types/auth';
 
 import { registerSchema } from '../schema/register-schema';
 
@@ -54,15 +57,14 @@ const useRegister = () => {
     onSuccess: (responseData: {
       data: { status: number; token?: string; user?: unknown; message: string };
     }) => {
-      console.log('Registration successful:', responseData.data);
       if (responseData.data.status >= 200 && responseData.data.status < 300) {
-        router.push('/');
         addToast({
           title: 'Success',
           description: 'Account created successfully!',
           color: 'success',
           timeout: 3000
         });
+        router.push('/');
       } else {
         const formattedMessage = formatErrorMessage(responseData.data.message);
 
@@ -76,7 +78,6 @@ const useRegister = () => {
       }
     },
     onError: (error: Error) => {
-      console.log('Registration failed:', error);
       addToast({
         title: 'Registration Failed',
         description: error.message,
@@ -103,16 +104,60 @@ const useRegister = () => {
     }
   }, [isSuccess, data, setUser, router]);
 
+  const completeProfileMutation = useMutation({
+    mutationFn: ({ data, token }: { data: RegistrationData; token: string }) =>
+      completeProfileService(data, token),
+    onSuccess: (responseData: {
+      data: { status: number; token?: string; user?: unknown; message: string };
+    }) => {
+      if (responseData.data.status >= 200 && responseData.data.status < 300) {
+        if (responseData.data.token) {
+          localStorage.setItem('token', responseData.data.token);
+        }
+        addToast({
+          title: 'Success',
+          description: 'Profile completed successfully!',
+          color: 'success',
+          timeout: 3000
+        });
+
+        router.push('/private/dashboard');
+      } else {
+        const formattedMessage = formatErrorMessage(responseData.data.message);
+
+        addToast({
+          title: 'Registration Failed',
+          description: formattedMessage,
+          color: 'danger',
+          timeout: 3000
+        });
+        router.push('/');
+      }
+    },
+    onError: (error: Error) => {
+      addToast({
+        title: 'Registration Failed',
+        description: error.message,
+        color: 'danger'
+      });
+    }
+  });
+
+  const completeProfile = async (data: RegistrationData, token: string) => {
+    completeProfileMutation.mutate({ data, token });
+  };
+
   return {
     form: {
       register,
       handleSubmit,
       registerUser,
+      completeProfile,
       errors
     },
     mutation: {
-      isLoading,
-      isSuccess
+      isLoading: isLoading || completeProfileMutation.isPending,
+      isSuccess: isSuccess || completeProfileMutation.isSuccess
     }
   };
 };
