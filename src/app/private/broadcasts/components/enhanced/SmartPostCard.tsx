@@ -543,9 +543,6 @@ export default function SmartPostCard({
   onVoteComment,
   className = ''
 }: SmartPostCardProps) {
-  const t = useTranslations('broadcasts.feed');
-  const tPost = useTranslations('broadcasts.post');
-  const tActions = useTranslations('broadcasts.actions');
   
   const [isExpanded, setIsExpanded] = useState(false);
   const [showComments, setShowComments] = useState(false);
