@@ -598,23 +598,21 @@ export default function EnhancedSubcastSidebar({
                                   />
                                 )}
                                 <Button
-                                  isIconOnly
-                                  size="sm"
-                                  variant={subcast.isFollowing ? 'solid' : 'bordered'}
-                                  color={subcast.isFollowing ? 'primary' : 'default'}
-                                  className="h-4 w-4 min-w-4"
-                                  onPress={(e) => {
-                                    e.stopPropagation();
-                                    handleFollowToggle(subcast.id);
-                                  }}
-                                >
-                                  <Icon
-                                    icon={
-                                      subcast.isFollowing ? 'solar:heart-bold' : 'solar:heart-linear'
-                                    }
-                                    className="h-2 w-2"
-                                  />
-                                </Button>
+                              size="sm"
+                              variant={subcast.isFollowing ? 'solid' : 'flat'}
+                              color={subcast.isFollowing ? 'success' : 'default'}
+                              className={`h-6 px-2 min-w-16 text-xs transition-colors ${
+                                subcast.isFollowing
+                                  ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                                  : 'bg-default-100 text-default-600 hover:bg-emerald-50 hover:text-emerald-600'
+                              }`}
+                              onPress={(e) => {
+                                e.stopPropagation();
+                                handleFollowToggle(subcast.id);
+                              }}
+                            >
+                              {subcast.isFollowing ? 'Following' : 'Follow'}
+                            </Button>
                               </div>
                             </div>
 
