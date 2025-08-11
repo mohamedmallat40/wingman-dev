@@ -72,9 +72,6 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
     setUploadProgress(0);
 
     try {
-      const formData = new FormData();
-      formData.append('cv', file);
-
       // Simulate upload progress
       const progressInterval = setInterval(() => {
         setUploadProgress(prev => {
@@ -86,94 +83,36 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
         });
       }, 200);
 
-      // Call the backend API to parse CV
-      const response = await wingManApi.post('/cv/parse', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      // Try to parse CV with backend API
+      try {
+        const parsedData = await CVService.parseCV(file);
+        clearInterval(progressInterval);
+        setUploadProgress(100);
 
-      clearInterval(progressInterval);
-      setUploadProgress(100);
+        setTimeout(() => {
+          setParsedData(parsedData);
+          setSelectedSections(new Set(['personalInfo', 'skills', 'experience', 'education', 'languages']));
+          setCurrentStep('review');
+        }, 500);
+      } catch (apiError) {
+        // If API fails, use mock data for demonstration
+        console.log('API not available, using mock data for demo');
+        clearInterval(progressInterval);
+        setUploadProgress(100);
 
-      setTimeout(() => {
-        setParsedData(response.data);
-        setSelectedSections(new Set(['personalInfo', 'skills', 'experience', 'education', 'languages']));
-        setCurrentStep('review');
-      }, 500);
+        setTimeout(() => {
+          const mockData = CVService.getMockCVData();
+          setParsedData(mockData);
+          setSelectedSections(new Set(['personalInfo', 'skills', 'experience', 'education', 'languages']));
+          setCurrentStep('review');
+        }, 1500);
+      }
 
     } catch (error) {
       console.error('Error parsing CV:', error);
-      // For demo purposes, let's use mock data
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-
-      setTimeout(() => {
-        // Mock parsed data for demonstration
-        const mockData: ParsedCVData = {
-          personalInfo: {
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com',
-            phone: '+1 (555) 123-4567',
-            location: 'San Francisco, CA',
-            linkedIn: 'https://linkedin.com/in/johndoe',
-            summary: 'Experienced software engineer with 5+ years in full-stack development.'
-          },
-          skills: [
-            { name: 'JavaScript', category: 'Programming', level: 'Expert', years: 5 },
-            { name: 'React', category: 'Frontend', level: 'Advanced', years: 4 },
-            { name: 'Node.js', category: 'Backend', level: 'Advanced', years: 3 },
-            { name: 'Python', category: 'Programming', level: 'Intermediate', years: 2 }
-          ],
-          experience: [
-            {
-              company: 'Tech Corp',
-              position: 'Senior Software Engineer',
-              startDate: '2021-01-01',
-              endDate: '2024-01-01',
-              location: 'San Francisco, CA',
-              description: 'Led development of web applications',
-              responsibilities: ['Built scalable web apps', 'Mentored junior developers']
-            }
-          ],
-          education: [
-            {
-              institution: 'University of Technology',
-              degree: 'Bachelor of Science',
-              field: 'Computer Science',
-              startDate: '2015-09-01',
-              endDate: '2019-06-01',
-              grade: '3.8 GPA'
-            }
-          ],
-          languages: [
-            { name: 'English', level: 'Native', proficiency: 'Native' },
-            { name: 'Spanish', level: 'Intermediate', proficiency: 'B2' }
-          ],
-          certifications: [
-            {
-              name: 'AWS Certified Developer',
-              issuer: 'Amazon Web Services',
-              issueDate: '2023-01-01',
-              credentialId: 'AWS-123456'
-            }
-          ],
-          projects: [
-            {
-              name: 'E-commerce Platform',
-              description: 'Built a full-stack e-commerce platform',
-              technologies: ['React', 'Node.js', 'MongoDB'],
-              startDate: '2023-01-01',
-              endDate: '2023-06-01'
-            }
-          ]
-        };
-
-        setParsedData(mockData);
-        setSelectedSections(new Set(['personalInfo', 'skills', 'experience', 'education', 'languages']));
-        setCurrentStep('review');
-      }, 1500);
+      // Reset to upload step on error
+      setCurrentStep('upload');
+      setUploadProgress(0);
     }
   }, []);
 
