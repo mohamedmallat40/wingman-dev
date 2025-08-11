@@ -393,25 +393,12 @@ export default function EnhancedSubcastSidebar({
                 <Icon icon="solar:satellite-linear" className="text-primary h-4 w-4" />
               </div>
               <div>
-                <h2 className="text-foreground font-semibold">{t('title')}</h2>
+                <h2 className="text-foreground font-semibold">Topics</h2>
                 <p className="text-foreground-500 text-xs">
-                  {t('following', { count: followingCount })}
+                  Following {followingCount}
                 </p>
               </div>
             </div>
-
-            {/* All Posts Button */}
-            <Button
-              variant={selectedSubcast === null ? 'solid' : 'flat'}
-              color={selectedSubcast === null ? 'primary' : 'default'}
-              size="sm"
-              fullWidth
-              startContent={<Icon icon="solar:home-linear" className="h-4 w-4" />}
-              onPress={() => onSubcastSelect?.(null)}
-              className="justify-start mb-3"
-            >
-              {t('allSubcasts')}
-            </Button>
           </div>
 
           {/* Tabs */}
