@@ -35,13 +35,6 @@ export const ACTION_ITEMS = [
     icon: 'solar:upload-linear',
     color: 'primary' as const,
     variant: 'solid' as const
-  },
-  {
-    key: 'new-folder',
-    label: 'New Folder',
-    icon: 'solar:folder-plus-linear',
-    color: 'secondary' as const,
-    variant: 'bordered' as const
   }
 ];
 

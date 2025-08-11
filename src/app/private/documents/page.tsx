@@ -91,11 +91,6 @@ export default function DocumentsPage() {
     []
   );
 
-  const handleCreateFolder = useCallback(() => {
-    console.log('Create new folder');
-    // In real app: open create folder modal or navigate to create folder page
-  }, []);
-
   const handleRefresh = useCallback(() => {
     // In a real app, this would refetch the data
     window.location.reload();
@@ -120,9 +115,7 @@ export default function DocumentsPage() {
     onClick:
       item.key === 'upload'
         ? handleUploadDocument
-        : item.key === 'new-folder'
-          ? handleCreateFolder
-          : () => console.log(`${item.label} clicked`)
+        : () => console.log(`${item.label} clicked`)
   }));
 
   return (

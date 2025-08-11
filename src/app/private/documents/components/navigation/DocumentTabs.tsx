@@ -332,15 +332,19 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
             </Tooltip>
 
             {/* View Toggle Buttons */}
-            <div className='border-default-200 dark:border-default-700 bg-background/60 dark:bg-content1/60 flex items-center gap-1 rounded-lg border p-1'>
+            <div className='border-default-200 dark:border-default-700 bg-content1 dark:bg-content2 flex items-center gap-1 rounded-lg border p-1 shadow-sm'>
               <Tooltip content={t('documents.views.list')} placement='bottom'>
                 <Button
                   isIconOnly
                   size='sm'
-                  variant={viewMode === 'list' ? 'solid' : 'light'}
+                  variant={viewMode === 'list' ? 'solid' : 'ghost'}
                   color={viewMode === 'list' ? 'primary' : 'default'}
                   onPress={() => onViewModeChange?.('list')}
-                  className='h-8 w-8'
+                  className={`h-8 w-8 transition-all duration-200 ${
+                    viewMode === 'list' 
+                      ? 'shadow-md text-white' 
+                      : 'hover:bg-default-100 dark:hover:bg-default-800 text-default-600 dark:text-default-400 opacity-70 hover:opacity-100'
+                  }`}
                 >
                   <Icon icon='solar:list-bold' className='h-4 w-4' />
                 </Button>
@@ -349,10 +353,14 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                 <Button
                   isIconOnly
                   size='sm'
-                  variant={viewMode === 'grid' ? 'solid' : 'light'}
+                  variant={viewMode === 'grid' ? 'solid' : 'ghost'}
                   color={viewMode === 'grid' ? 'primary' : 'default'}
                   onPress={() => onViewModeChange?.('grid')}
-                  className='h-8 w-8'
+                  className={`h-8 w-8 transition-all duration-200 ${
+                    viewMode === 'grid' 
+                      ? 'shadow-md text-white' 
+                      : 'hover:bg-default-100 dark:hover:bg-default-800 text-default-600 dark:text-default-400 opacity-70 hover:opacity-100'
+                  }`}
                 >
                   <Icon icon='solar:widget-4-bold' className='h-4 w-4' />
                 </Button>
@@ -397,24 +405,32 @@ const DocumentTabs: React.FC<DocumentTabsProps> = ({
                   {t('documents.filters.button')}
                 </Button>
                 {/* Mobile View Toggle */}
-                <div className='border-default-200 dark:border-default-700 bg-background/60 dark:bg-content1/60 flex items-center gap-1 rounded-lg border p-1'>
+                <div className='border-default-200 dark:border-default-700 bg-content1 dark:bg-content2 flex items-center gap-1 rounded-lg border p-1 shadow-sm'>
                   <Button
                     isIconOnly
                     size='sm'
-                    variant={viewMode === 'list' ? 'solid' : 'light'}
+                    variant={viewMode === 'list' ? 'solid' : 'ghost'}
                     color={viewMode === 'list' ? 'primary' : 'default'}
                     onPress={() => onViewModeChange?.('list')}
-                    className='h-8 w-8'
+                    className={`h-8 w-8 transition-all duration-200 ${
+                      viewMode === 'list' 
+                        ? 'shadow-md text-white' 
+                        : 'hover:bg-default-100 dark:hover:bg-default-800 text-default-600 dark:text-default-400 opacity-70 hover:opacity-100'
+                    }`}
                   >
                     <Icon icon='solar:list-bold' className='h-4 w-4' />
                   </Button>
                   <Button
                     isIconOnly
                     size='sm'
-                    variant={viewMode === 'grid' ? 'solid' : 'light'}
+                    variant={viewMode === 'grid' ? 'solid' : 'ghost'}
                     color={viewMode === 'grid' ? 'primary' : 'default'}
                     onPress={() => onViewModeChange?.('grid')}
-                    className='h-8 w-8'
+                    className={`h-8 w-8 transition-all duration-200 ${
+                      viewMode === 'grid' 
+                        ? 'shadow-md text-white' 
+                        : 'hover:bg-default-100 dark:hover:bg-default-800 text-default-600 dark:text-default-400 opacity-70 hover:opacity-100'
+                    }`}
                   >
                     <Icon icon='solar:widget-4-bold' className='h-4 w-4' />
                   </Button>

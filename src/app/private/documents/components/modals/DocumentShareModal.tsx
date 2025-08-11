@@ -254,12 +254,15 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      size='xl'
+      size='2xl'
       scrollBehavior='inside'
-      backdrop='opaque'
+      backdrop='blur'
+      isDismissable={!isSharing}
+      hideCloseButton
       classNames={{
-        base: 'bg-background dark:bg-content1',
-        backdrop: 'bg-black/50 backdrop-blur-sm'
+        wrapper: 'p-4 sm:p-6',
+        base: 'bg-background/95 dark:bg-content1/95 backdrop-blur-md border-0',
+        backdrop: 'bg-gradient-to-br from-black/40 via-black/30 to-black/40 backdrop-blur-lg'
       }}
       motionProps={{
         variants: {
@@ -268,26 +271,28 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
             opacity: 1,
             scale: 1,
             transition: {
-              duration: 0.3,
-              ease: 'easeOut'
+              type: 'spring',
+              stiffness: 300,
+              damping: 30,
+              duration: 0.4
             }
           },
           exit: {
-            y: -20,
+            y: -30,
             opacity: 0,
-            scale: 0.95,
+            scale: 0.9,
             transition: {
-              duration: 0.2,
-              ease: 'easeIn'
+              duration: 0.25,
+              ease: 'easeInOut'
             }
           }
         }
       }}
     >
-      <ModalContent className='w-full max-w-xl rounded-[24px] shadow-[0px_12px_24px_rgba(0,0,0,0.08)]'>
+      <ModalContent className='border-default-200/50 dark:border-default-700/50 w-full max-w-2xl overflow-hidden rounded-3xl border shadow-2xl ring-1 ring-white/10 backdrop-blur-xl dark:ring-white/5'>
         {() => (
           <>
-            <ModalHeader className='flex flex-col gap-1 pt-8 pb-6'>
+            <ModalHeader className='via-default-50/20 to-default-50/40 dark:via-default-900/10 dark:to-default-900/20 flex flex-col gap-2 bg-gradient-to-b from-transparent px-8 pt-8 pb-6'>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -295,20 +300,22 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                 className='flex items-center gap-3'
               >
                 <motion.div
-                  className='from-primary/20 to-secondary/20 ring-primary/30 flex h-16 w-16 items-center justify-center rounded-[24px] bg-gradient-to-br ring-1'
-                  whileHover={{ scale: 1.05, rotate: 5 }}
-                  whileTap={{ scale: 0.95 }}
+                  className='from-primary/10 via-primary/5 ring-primary/20 relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent shadow-lg ring-1 backdrop-blur-sm'
+                  whileHover={{ scale: 1.08, rotate: 8 }}
+                  whileTap={{ scale: 0.92 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                 >
+                  <div className='from-primary/5 to-primary/10 absolute inset-0 rounded-2xl bg-gradient-to-br blur-xl' />
                   <Icon
                     icon={success ? 'solar:check-circle-bold' : 'solar:share-linear'}
-                    className='text-primary h-8 w-8'
+                    className='text-primary relative z-10 h-8 w-8 drop-shadow-sm'
                   />
                 </motion.div>
-                <div>
-                  <h2 className='text-foreground text-2xl font-bold tracking-[0.02em]'>
+                <div className='flex flex-col gap-1'>
+                  <h2 className='text-foreground from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight'>
                     {success ? 'Shared Successfully!' : 'Share Document'}
                   </h2>
-                  <p className='text-default-500 font-normal tracking-[0.02em]'>
+                  <p className='text-default-500 text-sm font-medium tracking-wide opacity-90'>
                     {success
                       ? `Document shared with ${selectedUsers.size} ${selectedUsers.size === 1 ? 'person' : 'people'}`
                       : `Share "${document.documentName}" with your team`}
@@ -317,14 +324,14 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
               </motion.div>
             </ModalHeader>
 
-            <ModalBody className='flex h-[600px] flex-col gap-6 overflow-hidden py-6'>
+            <ModalBody className='via-default-50/20 to-default-50/40 dark:via-default-900/10 dark:to-default-900/20 flex h-[600px] flex-col gap-6 overflow-hidden bg-gradient-to-b from-transparent px-8 py-6'>
               {success ? (
                 // Success state
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4 }}
-                  className='bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800/30 rounded-[16px] border p-6 text-center'
+                  className='bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800/30 rounded-2xl border p-6 text-center'
                 >
                   <Icon icon='solar:share-bold' className='text-success mx-auto mb-3 h-12 w-12' />
                   <p className='text-success-700 dark:text-success-400 mb-4 font-medium'>
@@ -349,11 +356,16 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className='bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800/30 mb-4 rounded-[16px] border p-4'
+                        className='bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800/30 mb-4 rounded-2xl border p-4'
                       >
                         <div className='flex items-center gap-2'>
-                          <Icon icon='solar:danger-triangle-bold' className='text-danger h-4 w-4' />
-                          <p className='text-danger text-sm font-medium tracking-[0.02em]'>
+                          <motion.div
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ duration: 0.5 }}
+                          >
+                            <Icon icon='solar:danger-triangle-bold' className='text-danger h-4 w-4' />
+                          </motion.div>
+                          <p className='text-danger text-sm font-medium tracking-wide'>
                             {error}
                           </p>
                         </div>
@@ -385,7 +397,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                             key={user.id}
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className='bg-default-100 dark:bg-default-800 flex items-center gap-2 rounded-full px-3 py-2'
+                            className='bg-default-100/80 dark:bg-default-800/80 backdrop-blur-sm flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 ring-white/10 dark:ring-white/5'
                           >
                             <Avatar
                               src={user.avatar}
@@ -411,20 +423,28 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                     transition={{ delay: 0.2, duration: 0.4 }}
                     className='space-y-4'
                   >
-                    <label className='text-foreground text-sm font-medium'>Add people</label>
+                    <motion.label 
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      className='text-foreground text-sm font-medium flex items-center gap-2'
+                    >
+                      <Icon icon='solar:user-plus-linear' className='h-4 w-4 text-primary' />
+                      Add people
+                    </motion.label>
 
                     <Input
                       value={searchQuery}
                       onValueChange={setSearchQuery}
                       placeholder='Search by name, email, or department...'
                       variant='bordered'
+                      className='w-full'
                       classNames={{
                         base: 'w-full',
                         mainWrapper: 'w-full',
                         inputWrapper:
-                          'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] h-14 bg-default-100 dark:bg-default-50 pl-4',
+                          'border-default-300/60 data-[hover=true]:border-primary/60 data-[hover=true]:bg-primary/5 group-data-[focus=true]:border-primary group-data-[focus=true]:bg-primary/5 group-data-[focus=true]:shadow-lg group-data-[focus=true]:shadow-primary/10 rounded-2xl h-14 bg-default-100/50 dark:bg-default-50/50 backdrop-blur-sm transition-all duration-300',
                         input:
-                          'text-foreground font-normal tracking-[0.02em] placeholder:text-default-400 pl-2 text-base'
+                          'text-foreground font-medium tracking-wide placeholder:text-default-400 pl-2 text-base'
                       }}
                       startContent={
                         isSearching ? (
@@ -460,13 +480,14 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                               {filteredUsers.map((user, index) => (
                                 <motion.div
                                   key={user.id}
-                                  initial={{ opacity: 0, y: 20 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  transition={{ delay: index * 0.05 }}
+                                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  whileHover={{ y: -2, transition: { duration: 0.2 } }}
+                                  transition={{ delay: index * 0.05, type: 'spring', stiffness: 300, damping: 20 }}
                                   className='w-full'
                                 >
                                   <Card
-                                    className='h-20 w-full cursor-pointer transition-all hover:shadow-md'
+                                    className='h-20 w-full cursor-pointer backdrop-blur-sm bg-default-50/50 dark:bg-default-900/30 border border-default-200/50 dark:border-default-700/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/30 hover:bg-primary/5'
                                     isPressable
                                     onPress={() => toggleUser(user.id)}
                                   >
@@ -515,14 +536,19 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                         {/* Selection indicator - fixed position */}
                                         <div className='shrink-0'>
                                           {selectedUsers.has(user.id) ? (
-                                            <div className='bg-primary flex h-6 w-6 items-center justify-center rounded-full'>
+                                            <motion.div 
+                                              className='bg-primary flex h-6 w-6 items-center justify-center rounded-full shadow-lg ring-2 ring-primary/20'
+                                              initial={{ scale: 0 }}
+                                              animate={{ scale: 1 }}
+                                              transition={{ type: 'spring', stiffness: 500, damping: 15 }}
+                                            >
                                               <Icon
                                                 icon='solar:check-linear'
-                                                className='h-4 w-4 text-white'
+                                                className='h-4 w-4 text-white drop-shadow-sm'
                                               />
-                                            </div>
+                                            </motion.div>
                                           ) : (
-                                            <div className='border-default-300 h-6 w-6 rounded-full border-2'></div>
+                                            <div className='border-default-300 hover:border-primary/60 h-6 w-6 rounded-full border-2 transition-colors duration-200'></div>
                                           )}
                                         </div>
                                       </div>
@@ -555,10 +581,14 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                           exit={{ opacity: 0 }}
                           className='flex h-full items-center justify-center'
                         >
-                          <div className='text-center'>
+                          <motion.div 
+                            className='text-center'
+                            animate={{ scale: [0.95, 1.05, 0.95] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                          >
                             <Spinner size='md' color='primary' />
                             <p className='text-default-500 mt-3 text-sm'>Searching users...</p>
-                          </div>
+                          </motion.div>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -598,7 +628,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                   initial={{ opacity: 0, scale: 0.9 }}
                                   animate={{ opacity: 1, scale: 1 }}
                                   exit={{ opacity: 0, scale: 0.9 }}
-                                  className='bg-success-50 dark:bg-success-900/20 flex items-center gap-2 rounded-full px-3 py-2'
+                                  className='bg-success-50/80 dark:bg-success-900/20 backdrop-blur-sm flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 ring-success/10 dark:ring-success/5'
                                 >
                                   <Avatar
                                     src={user.avatar}
@@ -632,13 +662,14 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                               placeholder='Add a personal message...'
                               variant='bordered'
                               maxRows={3}
+                              className='w-full'
                               classNames={{
                                 base: 'w-full',
                                 mainWrapper: 'w-full',
                                 inputWrapper:
-                                  'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary rounded-[16px] bg-default-100 dark:bg-default-50 p-4',
+                                  'border-default-300/60 data-[hover=true]:border-primary/60 data-[hover=true]:bg-primary/5 group-data-[focus=true]:border-primary group-data-[focus=true]:bg-primary/5 group-data-[focus=true]:shadow-lg group-data-[focus=true]:shadow-primary/10 rounded-2xl bg-default-100/50 dark:bg-default-50/50 backdrop-blur-sm transition-all duration-300 p-4',
                                 input:
-                                  'text-foreground font-normal tracking-[0.02em] placeholder:text-default-400 text-base resize-none'
+                                  'text-foreground font-medium tracking-wide placeholder:text-default-400 text-base resize-none'
                               }}
                             />
 
@@ -673,7 +704,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                                   <Icon icon='solar:share-linear' className='h-4 w-4' />
                                 ) : undefined
                               }
-                              className='h-14 rounded-[16px] text-lg font-bold tracking-[0.02em] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] transition-all duration-300 hover:shadow-[0px_12px_24px_rgba(59,130,246,0.2)]'
+                              className='from-primary to-primary-600 shadow-primary/20 hover:shadow-primary/30 h-14 rounded-2xl bg-gradient-to-r text-lg font-bold tracking-wide shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl'
                             >
                               {isSharing
                                 ? 'Sharing...'
@@ -688,7 +719,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
               )}
             </ModalBody>
 
-            <ModalFooter className='justify-center pt-4 pb-8'>
+            <ModalFooter className='from-background/70 to-background/90 dark:from-content1/70 dark:to-content1/90 border-divider/30 justify-center border-t bg-gradient-to-r px-8 pt-6 pb-8 backdrop-blur-sm'>
               {!success && selectedUsers.size === 0 && (
                 <motion.div
                   initial={{ opacity: 0 }}
@@ -699,7 +730,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProps> = ({
                     variant='bordered'
                     onPress={handleClose}
                     disabled={isSharing}
-                    className='border-default-300 hover:border-primary hover:bg-primary/5 h-12 rounded-[16px] font-medium tracking-[0.02em] transition-all duration-300'
+                    className='border-default-300/60 hover:border-primary/60 hover:bg-primary/5 hover:shadow-primary/10 h-12 rounded-2xl font-medium tracking-wide backdrop-blur-sm transition-all duration-300 hover:shadow-lg'
                   >
                     Cancel
                   </Button>

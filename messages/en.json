@@ -603,6 +603,235 @@
       "final": "Final"
     }
   },
+  "broadcasts": {
+    "title": "Broadcast Feed",
+    "description": "Stay updated with the latest content from your selected topics and favorite subcasts",
+    "onboarding": {
+      "title": "Craft Your Perfect Broadcast Feed",
+      "subtitle": "Choose topics that match your interests and expertise to get personalized content recommendations",
+      "selectTopics": "Select at least {minSelect} topics to get started with your personalized feed",
+      "selectedCount": "{selected} of {max} selected (minimum {min} required)",
+      "shuffleButton": "Pick 5 for Me",
+      "shuffleTooltip": "Let us select 5 popular topics for you",
+      "clearButton": "Clear All",
+      "confirmButton": "Create My Feed",
+      "noTopicsSelected": "No topics selected yet. Choose topics that interest you!",
+      "moreTopics": "+{count} more selected",
+      "searchPlaceholder": "Search for topics...",
+      "searchTooltip": "Search through available topics",
+      "filterBy": "Filter by category",
+      "allTopics": "All Categories",
+      "featured": "Featured Topics",
+      "showMore": "Show More Options",
+      "showLess": "Show Fewer Options"
+    },
+    "categories": {
+      "all": "All",
+      "ai": "AI & Agents",
+      "development": "Dev & Cloud",
+      "cloud": "Cloud",
+      "devops": "DevOps",
+      "data": "Data",
+      "design": "Design",
+      "product": "Product",
+      "marketing": "Marketing Growth",
+      "sales": "Sales Playbook",
+      "freelance": "Freelance Ops",
+      "business": "Business",
+      "tech": "Technology",
+      "lifestyle": "Lifestyle",
+      "education": "Education"
+    },
+    "actions": {
+      "resetTopics": "Reset Topic Selection",
+      "refreshFeed": "Refresh Feed",
+      "viewPost": "View Full Post",
+      "readMore": "Read More",
+      "readLess": "Read Less",
+      "share": "Share Post",
+      "bookmark": "Save for Later",
+      "bookmarked": "Saved",
+      "like": "Like",
+      "liked": "Liked",
+      "comment": "Add Comment",
+      "reply": "Reply",
+      "savePost": "Save Post",
+      "reportPost": "Report Content"
+    },
+    "feed": {
+      "title": "Your Broadcast Feed",
+      "subtitle": "Latest updates from your selected topics and followed subcasts",
+      "filterBy": "Filter by topic",
+      "sortBy": "Sort by",
+      "allPosts": "All Posts",
+      "recentPosts": "Recent",
+      "popularPosts": "Popular",
+      "bookmarkedPosts": "Saved Posts",
+      "noPostsFound": "No posts found",
+      "noPostsFoundDescription": "Try adjusting your filters, selecting different topics, or following more subcasts",
+      "loadMore": "Load More Posts",
+      "loading": "Loading posts...",
+      "refreshing": "Refreshing your feed...",
+      "newPostsAvailable": "{count} new {count, plural, one {post} other {posts}} available",
+      "showNewPosts": "Show New Posts"
+    },
+    "post": {
+      "publishedOn": "Published on {date}",
+      "readTime": "{minutes} min read",
+      "author": "By {author}",
+      "tags": "Topics",
+      "relatedPosts": "You might also like",
+      "types": {
+        "article": "Article",
+        "video": "Video",
+        "image": "Image",
+        "poll": "Poll",
+        "quote": "Quote"
+      },
+      "engagement": {
+        "likes": "{count, plural, =0 {No likes} one {# like} other {# likes}}",
+        "comments": "{count, plural, =0 {No comments} one {# comment} other {# comments}}",
+        "shares": "{count, plural, =0 {No shares} one {# share} other {# shares}}",
+        "bookmarks": "{count, plural, =0 {Not saved} one {# save} other {# saves}}"
+      },
+      "actions": {
+        "share": "Share this post",
+        "copyLink": "Copy post link",
+        "reportPost": "Report inappropriate content",
+        "hidePost": "Hide this post"
+      }
+    },
+    "sidebar": {
+      "title": "Subcasts",
+      "subtitle": "Follow specialized content channels for focused updates",
+      "searchPlaceholder": "Search for subcasts...",
+      "popularSubcasts": "Popular Subcasts",
+      "followedSubcasts": "Following",
+      "recommendedSubcasts": "Recommended for You",
+      "allSubcasts": "All Posts",
+      "follow": "Follow",
+      "following": "Following {count}",
+      "unfollow": "Unfollow",
+      "followers": "{count, plural, =0 {No followers} one {# follower} other {# followers}}",
+      "posts": "{count, plural, =0 {No posts} one {# post} other {# posts}}",
+      "newPosts": "{count} new {count, plural, one {post} other {posts}}",
+      "lastPost": "Last post {time} ago",
+      "noSubcasts": "No subcasts found",
+      "noFollowedSubcasts": "You're not following any subcasts yet. Discover channels that match your interests!",
+      "exploreSubcasts": "Discover More",
+      "createSubcast": "Create New Subcast",
+      "manageSubcasts": "Manage My Subcasts"
+    },
+    "subcast": {
+      "about": "About",
+      "description": "Description",
+      "moderators": "Moderators",
+      "rules": "Rules",
+      "recentActivity": "Recent Activity",
+      "topContributors": "Top Contributors",
+      "stats": {
+        "followers": "Followers",
+        "posts": "Posts",
+        "comments": "Comments",
+        "created": "Created"
+      }
+    },
+    "comments": {
+      "title": "Discussion",
+      "subtitle": "{count, plural, =0 {No comments yet} one {# comment} other {# comments}}",
+      "noComments": "No comments yet",
+      "beFirstToComment": "Be the first to start the discussion",
+      "writeComment": "Share your thoughts...",
+      "postComment": "Post Comment",
+      "cancel": "Cancel",
+      "edit": "Edit Comment",
+      "delete": "Delete Comment",
+      "reply": "Reply",
+      "showReplies": "Show {count, plural, one {# reply} other {# replies}}",
+      "hideReplies": "Hide replies",
+      "loadMoreComments": "Load more comments",
+      "sortBy": "Sort by",
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+      "popular": "Most Popular"
+    },
+    "notifications": {
+      "newPost": "New post in {subcast}",
+      "newComment": "{author} commented on your post",
+      "newReply": "{author} replied to your comment",
+      "postLiked": "{author} liked your post",
+      "commentLiked": "{author} liked your comment",
+      "newFollower": "{author} started following {subcast}",
+      "mentionedInPost": "{author} mentioned you in a post",
+      "mentionedInComment": "{author} mentioned you in a comment"
+    },
+    "loading": {
+      "title": "Loading your broadcast feed...",
+      "subtitle": "Preparing personalized content based on your interests",
+      "posts": "Loading posts...",
+      "comments": "Loading discussion...",
+      "subcasts": "Loading subcasts...",
+      "loadingMore": "Loading more posts...",
+      "refreshing": "Refreshing content..."
+    },
+    "empty": {
+      "title": "Your feed is empty",
+      "subtitle": "Select some topics or follow subcasts to see relevant content here",
+      "posts": {
+        "title": "No posts to show",
+        "subtitle": "Try selecting different topics, following more subcasts, or adjusting your filters"
+      },
+      "subcasts": {
+        "title": "No subcasts match your search",
+        "subtitle": "Try different keywords or browse all available subcasts"
+      },
+      "comments": {
+        "title": "No discussion yet",
+        "subtitle": "Be the first to share your thoughts on this post"
+      }
+    },
+    "error": {
+      "title": "Something went wrong",
+      "subtitle": "We couldn't load your broadcast feed. Please check your connection and try again.",
+      "retry": "Try Again",
+      "posts": {
+        "title": "Unable to load posts",
+        "subtitle": "There was a problem loading your feed content"
+      },
+      "comments": {
+        "title": "Comments unavailable", 
+        "subtitle": "We couldn't load the discussion for this post"
+      },
+      "subcasts": {
+        "title": "Subcasts unavailable",
+        "subtitle": "We couldn't load the available subcasts right now"
+      }
+    },
+    "accessibility": {
+      "openPost": "Open full post content",
+      "likePost": "Like this post", 
+      "bookmarkPost": "Save this post for later",
+      "sharePost": "Share this post with others",
+      "commentOnPost": "Add a comment to this post",
+      "followSubcast": "Follow this subcast for updates",
+      "unfollowSubcast": "Stop following this subcast",
+      "viewProfile": "View user profile and details",
+      "closeModal": "Close dialog window",
+      "openMenu": "Open options menu",
+      "closeMenu": "Close options menu",
+      "searchPosts": "Search through posts",
+      "filterTopics": "Filter posts by topic",
+      "sortPosts": "Change post sorting order"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "broadcasts": "Broadcasts",
+    "challenges": "Challenges",
+    "talentPool": "Talent Pool",
+    "documents": "Documents"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",
@@ -612,6 +841,15 @@
     "close": "Close",
     "back": "Back",
     "retry": "Retry"
+  },
+  "time": {
+    "now": "now",
+    "minutesAgo": "{minutes, plural, one {# minute ago} other {# minutes ago}}",
+    "hoursAgo": "{hours, plural, one {# hour ago} other {# hours ago}}",
+    "daysAgo": "{days, plural, one {# day ago} other {# days ago}}",
+    "weeksAgo": "{weeks, plural, one {# week ago} other {# weeks ago}}",
+    "monthsAgo": "{months, plural, one {# month ago} other {# months ago}}",
+    "yearsAgo": "{years, plural, one {# year ago} other {# years ago}}"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"

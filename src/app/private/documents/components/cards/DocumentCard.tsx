@@ -86,7 +86,7 @@ const getDocumentIcon = (typeName: string) => {
   );
 };
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: string): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
   switch (status) {
     case 'Awaiting Signature':
       return 'warning';
@@ -97,8 +97,31 @@ const getStatusColor = (status: string) => {
     case 'In Progress':
       return 'success';
     default:
-      return 'default';
+      return 'secondary';
   }
+};
+
+const getTagColor = (tagName: string): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' => {
+  const colorMap: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'danger'> = {
+    Contract: 'primary',
+    Proposal: 'secondary', 
+    Invoice: 'success',
+    Template: 'warning',
+    Financial: 'success',
+    Legal: 'primary',
+    Marketing: 'secondary',
+    HR: 'warning',
+    Technical: 'primary',
+    Design: 'secondary',
+    Project: 'warning',
+    Client: 'primary',
+    Internal: 'secondary',
+    Urgent: 'danger',
+    Draft: 'warning',
+    Final: 'success'
+  };
+  
+  return colorMap[tagName] || 'secondary';
 };
 
 const getTranslatedStatus = (status: string, t: any) => {
@@ -204,7 +227,7 @@ export default function DocumentCard({
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
     >
-      <Card className='group border-default-200 dark:border-default-700 bg-content1 dark:bg-content1 hover:border-primary/30 dark:hover:border-primary/50 relative overflow-hidden transition-all duration-300 hover:shadow-xl'>
+      <Card className={`group border-default-200 dark:border-default-700 bg-content1 dark:bg-content1 hover:border-primary/30 dark:hover:border-primary/50 relative overflow-hidden transition-all duration-300 hover:shadow-xl ${viewMode === 'grid' ? 'h-[165px]' : 'h-auto'}`}>
         {/* Gradient overlay */}
         <div className='from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
 
@@ -243,41 +266,49 @@ export default function DocumentCard({
                 </div>
 
                 {/* Tags */}
-                {document.tags.length > 0 && (
-                  <div className='mb-3 flex gap-1.5'>
-                    {document.tags.slice(0, 3).map((tag) => (
-                      <motion.div
-                        key={tag.id}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ delay: 0.1 }}
-                      >
+                <div className='mb-1 flex items-center gap-1.5'>
+                  <span className='text-xs text-default-500 flex-shrink-0'>Tags:</span>
+                  {document.tags.length > 0 ? (
+                    <div className='flex gap-1'>
+                      {document.tags.slice(0, 2).map((tag) => (
                         <Chip
+                          key={tag.id}
                           size='sm'
                           variant='flat'
-                          className='bg-default-100 dark:bg-default-800 text-default-600 dark:text-default-300 text-xs'
-                          startContent={
-                            <Icon icon='solar:hashtag-linear' className='h-2.5 w-2.5' />
-                          }
+                          color={getTagColor(tag.name)}
+                          className='text-xs h-5'
                         >
                           {tag.name}
                         </Chip>
-                      </motion.div>
-                    ))}
-                    {document.tags.length > 3 && (
-                      <Chip
-                        size='sm'
-                        variant='flat'
-                        className='bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-xs'
-                      >
-                        +{document.tags.length - 3}
-                      </Chip>
-                    )}
-                  </div>
-                )}
-
+                      ))}
+                      {document.tags.length > 2 && (
+                        <Chip
+                          size='sm'
+                          variant='flat'
+                          color='default'
+                          className='text-xs h-5'
+                        >
+                          +{document.tags.length - 2}
+                        </Chip>
+                      )}
+                    </div>
+                  ) : (
+                    <span className='text-xs text-default-400'>—</span>
+                  )}
+                </div>
+                
                 {/* Status */}
-                {getStatusBadge(document.status.name)}
+                <div className='flex items-center gap-1.5'>
+                  <span className='text-xs text-default-500 flex-shrink-0'>Status:</span>
+                  <Chip
+                    size='sm'
+                    variant='flat'
+                    color={getStatusColor(document.status.name)}
+                    className='text-xs h-5'
+                  >
+                    {getTranslatedStatus(document.status.name, t)}
+                  </Chip>
+                </div>
               </div>
             </div>
 

@@ -20,9 +20,9 @@ import { Icon } from '@iconify/react/dist/iconify.js';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { LoginModal } from '@/app/(public)/components/login';
 import Avatar from '@/app/private/components/avatar';
 import { WingmanIcon } from '@/components/icons/wingman';
-import { LoginModal } from '@/app/(public)/components/login';
 
 import NotificationsCard from '../../components/notifications/notifications-card';
 import { LanguageSwitcher } from '../../components/ui/language-switcher';
@@ -80,11 +80,11 @@ export default function PrivateNavBar() {
       maxWidth='full'
       position='sticky'
       onMenuOpenChange={setIsMenuOpen}
-      height="4rem"
+      height='4rem'
     >
-      <NavbarContent justify='start' className='gap-0'>
+      <NavbarContent justify='start' className='gap-0 space-x-0'>
         {/* Brand */}
-        <NavbarBrand className='gap-2 sm:gap-3'>
+        <NavbarBrand className='mr-[12%] grow-0 gap-2 sm:gap-3'>
           {/* Mobile Menu Toggle - ONLY toggle button */}
           <NavbarMenuToggle
             className='text-foreground hover:text-primary mr-2 h-8 w-8 transition-colors xl:hidden'
@@ -104,19 +104,18 @@ export default function PrivateNavBar() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <p className='from-primary-500 to-secondary-500 bg-gradient-to-r bg-clip-text text-sm font-bold leading-tight tracking-[0.3em] text-inherit sm:text-base'>
+            <p className='from-primary-500 to-secondary-500 bg-gradient-to-r bg-clip-text text-sm leading-tight font-bold tracking-[0.3em] text-inherit sm:text-base'>
               WINGMAN
             </p>
-            <p className='text-xs leading-tight text-inherit opacity-70 sm:text-xs'>BY EXTRAEXPERTISE</p>
+            <p className='text-xs leading-tight text-inherit opacity-70 sm:text-xs'>
+              BY EXTRAEXPERTISE
+            </p>
           </motion.div>
         </NavbarBrand>
 
         {/* Desktop Navigation - Hidden on mobile and tablet */}
-        <NavbarContent
-          className='ml-4 hidden w-full max-w-none gap-1 xl:flex'
-          justify='start'
-        >
-          <div className='from-default-100/30 to-default-50/20 border-divider/20 flex h-10 items-center gap-1 rounded-2xl border bg-gradient-to-r px-2 backdrop-blur-md'>
+        <NavbarContent className='hidden w-full max-w-none gap-1 xl:flex' justify='start'>
+          <div className='from-default-100/30 to-default-50/20 border-divider/20 -ml-4 flex h-10 items-center gap-1 rounded-2xl border bg-gradient-to-r px-2 backdrop-blur-md'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -131,7 +130,7 @@ export default function PrivateNavBar() {
                       href={item.href}
                       className={`group relative flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-200 ${
                         isActive
-                          ? 'text-primary bg-background shadow-small ring-1 ring-primary/15'
+                          ? 'text-primary bg-background shadow-small ring-primary/15 ring-1'
                           : 'text-foreground-600 hover:text-primary hover:bg-background/60'
                       }`}
                     >
@@ -143,7 +142,9 @@ export default function PrivateNavBar() {
                         <Icon
                           icon={item.icon}
                           className={`text-[16px] transition-all duration-200 ${
-                            isActive ? 'text-primary' : 'text-foreground-500 group-hover:text-primary'
+                            isActive
+                              ? 'text-primary'
+                              : 'text-foreground-500 group-hover:text-primary'
                           }`}
                         />
                       </motion.div>
@@ -171,11 +172,8 @@ export default function PrivateNavBar() {
         </NavbarContent>
 
         {/* Tablet Navigation - Visible on larger tablets only */}
-        <NavbarContent
-          className='ml-2 hidden w-full max-w-none gap-1 lg:flex xl:hidden'
-          justify='start'
-        >
-          <div className='from-default-100/20 to-default-50/15 border-divider/15 flex h-10 items-center gap-1 rounded-xl border bg-gradient-to-r px-2 backdrop-blur-md'>
+        <NavbarContent className='hidden w-full max-w-none gap-1 lg:flex xl:hidden' justify='start'>
+          <div className='from-default-100/20 to-default-50/15 border-divider/15 -ml-4 flex h-10 items-center gap-1 rounded-xl border bg-gradient-to-r px-2 backdrop-blur-md'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -190,7 +188,7 @@ export default function PrivateNavBar() {
                       href={item.href}
                       className={`group relative flex items-center justify-center rounded-lg p-2.5 transition-all duration-200 ${
                         isActive
-                          ? 'text-primary bg-background shadow-small ring-1 ring-primary/20'
+                          ? 'text-primary bg-background shadow-small ring-primary/20 ring-1'
                           : 'text-foreground-500 hover:text-primary hover:bg-background/60'
                       }`}
                     >
@@ -202,7 +200,9 @@ export default function PrivateNavBar() {
                         <Icon
                           icon={item.icon}
                           className={`text-[18px] transition-all duration-200 ${
-                            isActive ? 'text-primary' : 'text-foreground-500 group-hover:text-primary'
+                            isActive
+                              ? 'text-primary'
+                              : 'text-foreground-500 group-hover:text-primary'
                           }`}
                         />
                       </motion.div>
@@ -274,7 +274,13 @@ export default function PrivateNavBar() {
                 >
                   <Badge
                     color='danger'
-                    content={notificationCount > 0 ? (notificationCount > 9 ? '9+' : notificationCount) : ''}
+                    content={
+                      notificationCount > 0
+                        ? notificationCount > 9
+                          ? '9+'
+                          : notificationCount
+                        : ''
+                    }
                     showOutline={false}
                     size='sm'
                     className={notificationCount > 0 ? 'animate-pulse' : ''}
@@ -315,14 +321,16 @@ export default function PrivateNavBar() {
       </NavbarContent>
 
       {/* Enhanced Mobile Menu */}
-      <NavbarMenu className='bg-background/95 border-divider/40 shadow-2xl border-r pt-4 backdrop-blur-2xl'>
+      <NavbarMenu className='bg-background/95 border-divider/40 border-r pt-4 shadow-2xl backdrop-blur-2xl'>
         <div className='flex h-full flex-col px-2'>
           {/* Navigation Section */}
           <div className='flex-1'>
             <div className='mb-4 px-2'>
-              <p className='text-foreground-600 text-sm font-semibold tracking-wide uppercase'>Navigation</p>
+              <p className='text-foreground-600 text-sm font-semibold tracking-wide uppercase'>
+                Navigation
+              </p>
             </div>
-            
+
             <div className='flex flex-col gap-1'>
               <AnimatePresence>
                 {navItems.map((item, index) => {
@@ -333,8 +341,8 @@ export default function PrivateNavBar() {
                         initial={{ opacity: 0, x: -30, scale: 0.95 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: -30, scale: 0.95 }}
-                        transition={{ 
-                          duration: 0.2, 
+                        transition={{
+                          duration: 0.2,
                           delay: index * 0.05,
                           type: 'spring',
                           stiffness: 400,
@@ -354,7 +362,9 @@ export default function PrivateNavBar() {
                         >
                           <motion.div
                             className={`rounded-lg p-2 transition-all duration-200 ${
-                              isActive ? 'bg-primary/15 shadow-small' : 'bg-default-100/60 group-hover:bg-primary/10'
+                              isActive
+                                ? 'bg-primary/15 shadow-small'
+                                : 'bg-default-100/60 group-hover:bg-primary/10'
                             }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -377,8 +387,8 @@ export default function PrivateNavBar() {
                             </span>
                           </div>
                           {isActive && (
-                            <motion.div 
-                              className='bg-primary h-6 w-1 rounded-full shadow-small' 
+                            <motion.div
+                              className='bg-primary shadow-small h-6 w-1 rounded-full'
                               layoutId='mobile-active'
                               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                             />
@@ -410,14 +420,14 @@ export default function PrivateNavBar() {
                     <span className='text-foreground text-sm font-medium'>Settings</span>
                   </div>
                   <div className='flex items-center gap-1'>
-                    <motion.div 
+                    <motion.div
                       className='hover:bg-background/60 rounded-lg p-1.5 transition-all duration-200'
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
                       <LanguageSwitcher />
                     </motion.div>
-                    <motion.div 
+                    <motion.div
                       className='hover:bg-background/60 rounded-lg p-1.5 transition-all duration-200'
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
@@ -462,10 +472,7 @@ export default function PrivateNavBar() {
       </NavbarMenu>
 
       {/* Login Modal */}
-      <LoginModal
-        isOpen={showLoginModal}
-        onOpenChange={setShowLoginModal}
-      />
+      <LoginModal isOpen={showLoginModal} onOpenChange={setShowLoginModal} />
     </Navbar>
   );
 }

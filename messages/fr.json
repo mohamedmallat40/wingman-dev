@@ -597,6 +597,235 @@
       "final": "Final"
     }
   },
+  "broadcasts": {
+    "title": "Flux de Diffusion",
+    "description": "Restez informé avec le dernier contenu de vos sujets sélectionnés et subcasts favoris",
+    "onboarding": {
+      "title": "Créez Votre Flux de Diffusion Parfait",
+      "subtitle": "Choisissez des sujets qui correspondent à vos intérêts et expertise pour obtenir des recommandations de contenu personnalisées",
+      "selectTopics": "Sélectionnez au moins {minSelect} sujets pour commencer avec votre flux personnalisé",
+      "selectedCount": "{selected} sur {max} sélectionnés (minimum {min} requis)",
+      "shuffleButton": "Choisir 5 pour Moi",
+      "shuffleTooltip": "Laissez-nous sélectionner 5 sujets populaires pour vous",
+      "clearButton": "Tout Effacer",
+      "confirmButton": "Créer Mon Flux",
+      "noTopicsSelected": "Aucun sujet sélectionné pour le moment. Choisissez des sujets qui vous intéressent !",
+      "moreTopics": "+{count} autres sélectionnés",
+      "searchPlaceholder": "Rechercher des sujets...",
+      "searchTooltip": "Parcourir les sujets disponibles",
+      "filterBy": "Filtrer par catégorie",
+      "allTopics": "Toutes les Catégories",
+      "featured": "Sujets Vedettes",
+      "showMore": "Afficher Plus d'Options",
+      "showLess": "Afficher Moins d'Options"
+    },
+    "categories": {
+      "all": "Tous",
+      "ai": "IA & Agents",
+      "development": "Dév & Cloud",
+      "cloud": "Cloud",
+      "devops": "DevOps",
+      "data": "Données",
+      "design": "Design",
+      "product": "Produit",
+      "marketing": "Croissance Marketing",
+      "sales": "Guide de Vente",
+      "freelance": "Ops Freelance",
+      "business": "Business",
+      "tech": "Technologie",
+      "lifestyle": "Style de Vie",
+      "education": "Éducation"
+    },
+    "actions": {
+      "resetTopics": "Réinitialiser la Sélection de Sujets",
+      "refreshFeed": "Actualiser le Flux",
+      "viewPost": "Voir l'Article Complet",
+      "readMore": "Lire Plus",
+      "readLess": "Lire Moins",
+      "share": "Partager l'Article",
+      "bookmark": "Sauvegarder pour Plus Tard",
+      "bookmarked": "Sauvegardé",
+      "like": "J'aime",
+      "liked": "Aimé",
+      "comment": "Ajouter un Commentaire",
+      "reply": "Répondre",
+      "savePost": "Sauvegarder l'Article",
+      "reportPost": "Signaler le Contenu"
+    },
+    "feed": {
+      "title": "Votre Flux de Diffusion",
+      "subtitle": "Dernières mises à jour de vos sujets sélectionnés et subcasts suivis",
+      "filterBy": "Filtrer par sujet",
+      "sortBy": "Trier par",
+      "allPosts": "Tous les Articles",
+      "recentPosts": "Récents",
+      "popularPosts": "Populaires",
+      "bookmarkedPosts": "Articles Sauvegardés",
+      "noPostsFound": "Aucun article trouvé",
+      "noPostsFoundDescription": "Essayez d'ajuster vos filtres, de sélectionner différents sujets ou de suivre plus de subcasts",
+      "loadMore": "Charger Plus d'Articles",
+      "loading": "Chargement des articles...",
+      "refreshing": "Actualisation de votre flux...",
+      "newPostsAvailable": "{count} {count, plural, one {nouvel article} other {nouveaux articles}} disponible{count, plural, one {} other {s}}",
+      "showNewPosts": "Afficher les Nouveaux Articles"
+    },
+    "post": {
+      "publishedOn": "Publié le {date}",
+      "readTime": "{minutes} min de lecture",
+      "author": "Par {author}",
+      "tags": "Sujets",
+      "relatedPosts": "Vous pourriez aussi aimer",
+      "types": {
+        "article": "Article",
+        "video": "Vidéo",
+        "image": "Image",
+        "poll": "Sondage",
+        "quote": "Citation"
+      },
+      "engagement": {
+        "likes": "{count, plural, =0 {Aucun j'aime} one {# j'aime} other {# j'aime}}",
+        "comments": "{count, plural, =0 {Aucun commentaire} one {# commentaire} other {# commentaires}}",
+        "shares": "{count, plural, =0 {Aucun partage} one {# partage} other {# partages}}",
+        "bookmarks": "{count, plural, =0 {Non sauvegardé} one {# sauvegarde} other {# sauvegardes}}"
+      },
+      "actions": {
+        "share": "Partager cet article",
+        "copyLink": "Copier le lien de l'article",
+        "reportPost": "Signaler un contenu inapproprié",
+        "hidePost": "Masquer cet article"
+      }
+    },
+    "sidebar": {
+      "title": "Subcasts",
+      "subtitle": "Suivez des chaînes de contenu spécialisées pour des mises à jour ciblées",
+      "searchPlaceholder": "Rechercher des subcasts...",
+      "popularSubcasts": "Subcasts Populaires",
+      "followedSubcasts": "Suivis",
+      "recommendedSubcasts": "Recommandés pour Vous",
+      "allSubcasts": "Tous les Articles",
+      "follow": "Suivre",
+      "following": "Suivi {count}",
+      "unfollow": "Ne Plus Suivre",
+      "followers": "{count, plural, =0 {Aucun abonné} one {# abonné} other {# abonnés}}",
+      "posts": "{count, plural, =0 {Aucun article} one {# article} other {# articles}}",
+      "newPosts": "{count} {count, plural, one {nouvel article} other {nouveaux articles}}",
+      "lastPost": "Dernier article il y a {time}",
+      "noSubcasts": "Aucun subcast trouvé",
+      "noFollowedSubcasts": "Vous ne suivez encore aucun subcast. Découvrez des chaînes qui correspondent à vos intérêts !",
+      "exploreSubcasts": "Découvrir Plus",
+      "createSubcast": "Créer un Nouveau Subcast",
+      "manageSubcasts": "Gérer Mes Subcasts"
+    },
+    "subcast": {
+      "about": "À propos",
+      "description": "Description",
+      "moderators": "Modérateurs",
+      "rules": "Règles",
+      "recentActivity": "Activité Récente",
+      "topContributors": "Principaux Contributeurs",
+      "stats": {
+        "followers": "Abonnés",
+        "posts": "Articles",
+        "comments": "Commentaires",
+        "created": "Créé"
+      }
+    },
+    "comments": {
+      "title": "Discussion",
+      "subtitle": "{count, plural, =0 {Aucun commentaire pour le moment} one {# commentaire} other {# commentaires}}",
+      "noComments": "Aucun commentaire pour le moment",
+      "beFirstToComment": "Soyez le premier à lancer la discussion",
+      "writeComment": "Partagez vos réflexions...",
+      "postComment": "Publier le Commentaire",
+      "cancel": "Annuler",
+      "edit": "Modifier le Commentaire",
+      "delete": "Supprimer le Commentaire",
+      "reply": "Répondre",
+      "showReplies": "Afficher {count, plural, one {# réponse} other {# réponses}}",
+      "hideReplies": "Masquer les réponses",
+      "loadMoreComments": "Charger plus de commentaires",
+      "sortBy": "Trier par",
+      "newest": "Plus Récents",
+      "oldest": "Plus Anciens",
+      "popular": "Les Plus Populaires"
+    },
+    "notifications": {
+      "newPost": "Nouvel article dans {subcast}",
+      "newComment": "{author} a commenté votre article",
+      "newReply": "{author} a répondu à votre commentaire",
+      "postLiked": "{author} a aimé votre article",
+      "commentLiked": "{author} a aimé votre commentaire",
+      "newFollower": "{author} a commencé à suivre {subcast}",
+      "mentionedInPost": "{author} vous a mentionné dans un article",
+      "mentionedInComment": "{author} vous a mentionné dans un commentaire"
+    },
+    "loading": {
+      "title": "Chargement de votre flux de diffusion...",
+      "subtitle": "Préparation du contenu personnalisé basé sur vos intérêts",
+      "posts": "Chargement des articles...",
+      "comments": "Chargement de la discussion...",
+      "subcasts": "Chargement des subcasts...",
+      "loadingMore": "Chargement de plus d'articles...",
+      "refreshing": "Actualisation du contenu..."
+    },
+    "empty": {
+      "title": "Votre flux est vide",
+      "subtitle": "Sélectionnez des sujets ou suivez des subcasts pour voir du contenu pertinent ici",
+      "posts": {
+        "title": "Aucun article à afficher",
+        "subtitle": "Essayez de sélectionner différents sujets, de suivre plus de subcasts ou d'ajuster vos filtres"
+      },
+      "subcasts": {
+        "title": "Aucun subcast ne correspond à votre recherche",
+        "subtitle": "Essayez des mots-clés différents ou parcourez tous les subcasts disponibles"
+      },
+      "comments": {
+        "title": "Aucune discussion pour le moment",
+        "subtitle": "Soyez le premier à partager vos réflexions sur cet article"
+      }
+    },
+    "error": {
+      "title": "Quelque chose s'est mal passé",
+      "subtitle": "Nous n'avons pas pu charger votre flux de diffusion. Veuillez vérifier votre connexion et réessayer.",
+      "retry": "Réessayer",
+      "posts": {
+        "title": "Impossible de charger les articles",
+        "subtitle": "Il y a eu un problème lors du chargement du contenu de votre flux"
+      },
+      "comments": {
+        "title": "Commentaires indisponibles",
+        "subtitle": "Nous n'avons pas pu charger la discussion pour cet article"
+      },
+      "subcasts": {
+        "title": "Subcasts indisponibles",
+        "subtitle": "Nous n'avons pas pu charger les subcasts disponibles en ce moment"
+      }
+    },
+    "accessibility": {
+      "openPost": "Ouvrir le contenu complet de l'article",
+      "likePost": "Aimer cet article",
+      "bookmarkPost": "Sauvegarder cet article pour plus tard",
+      "sharePost": "Partager cet article avec d'autres",
+      "commentOnPost": "Ajouter un commentaire à cet article",
+      "followSubcast": "Suivre ce subcast pour les mises à jour",
+      "unfollowSubcast": "Arrêter de suivre ce subcast",
+      "viewProfile": "Voir le profil utilisateur et les détails",
+      "closeModal": "Fermer la fenêtre de dialogue",
+      "openMenu": "Ouvrir le menu d'options",
+      "closeMenu": "Fermer le menu d'options",
+      "searchPosts": "Rechercher parmi les articles",
+      "filterTopics": "Filtrer les articles par sujet",
+      "sortPosts": "Changer l'ordre de tri des articles"
+    }
+  },
+  "navigation": {
+    "home": "Accueil",
+    "dashboard": "Tableau de Bord",
+    "broadcasts": "Diffusions",
+    "challenges": "Défis",
+    "talentPool": "Bassin de Talents",
+    "documents": "Documents"
+  },
   "common": {
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -606,6 +835,15 @@
     "close": "Fermer",
     "back": "Retour",
     "retry": "Réessayer"
+  },
+  "time": {
+    "now": "maintenant",
+    "minutesAgo": "{minutes, plural, one {il y a # minute} other {il y a # minutes}}",
+    "hoursAgo": "{hours, plural, one {il y a # heure} other {il y a # heures}}",
+    "daysAgo": "{days, plural, one {il y a # jour} other {il y a # jours}}",
+    "weeksAgo": "{weeks, plural, one {il y a # semaine} other {il y a # semaines}}",
+    "monthsAgo": "{months, plural, one {il y a # mois} other {il y a # mois}}",
+    "yearsAgo": "{years, plural, one {il y a # an} other {il y a # ans}}"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"

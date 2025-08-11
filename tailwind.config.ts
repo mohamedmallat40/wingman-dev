@@ -17,7 +17,11 @@ export default {
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',
-        'bounce-gentle': 'bounceGentle 2s infinite'
+        'bounce-gentle': 'bounceGentle 2s infinite',
+        'scrolling-banner': 'scrolling-banner var(--duration) linear infinite',
+        'scrolling-banner-vertical': 'scrolling-banner-vertical var(--duration) linear infinite',
+        'marquee-x': 'marqueeX var(--duration) linear infinite',
+        'marquee-x-reverse': 'marqueeXReverse var(--duration) linear infinite'
       },
       keyframes: {
         fadeIn: {
@@ -31,6 +35,22 @@ export default {
         bounceGentle: {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' }
+        },
+        'scrolling-banner': {
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(calc(-50% - var(--gap)/2))' }
+        },
+        'scrolling-banner-vertical': {
+          from: { transform: 'translateY(0)' },
+          to: { transform: 'translateY(calc(-50% - var(--gap)/2))' }
+        },
+        marqueeX: {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' }
+        },
+        marqueeXReverse: {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0%)' }
         }
       },
       boxShadow: {
