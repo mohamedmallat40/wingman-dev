@@ -620,27 +620,16 @@ export default function EnhancedSubcastSidebar({
                               {subcast.description}
                             </p>
 
-                            {/* Stats */}
-                            <div className="mb-2 flex items-center justify-between text-xs">
-                              <div className="flex items-center gap-3">
-                                <div className="flex items-center gap-1">
-                                  <Icon
-                                    icon="solar:users-group-rounded-linear"
-                                    className="text-foreground-400 h-3 w-3"
-                                  />
-                                  <span className="text-foreground-500 font-medium">
-                                    {formatCount(subcast.followerCount)}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <Icon
-                                    icon="solar:document-text-linear"
-                                    className="text-foreground-400 h-3 w-3"
-                                  />
-                                  <span className="text-foreground-500">
-                                    {formatCount(subcast.postCount)}
-                                  </span>
-                                </div>
+                            {/* Simplified Stats */}
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-1">
+                                <Icon
+                                  icon="solar:users-group-rounded-linear"
+                                  className="text-foreground-400 h-3 w-3"
+                                />
+                                <span className="text-foreground-500 text-xs font-medium">
+                                  {formatCount(subcast.followerCount)}
+                                </span>
                               </div>
 
                               <Chip
@@ -652,76 +641,6 @@ export default function EnhancedSubcastSidebar({
                                 {getCategoryLabel(subcast.category)}
                               </Chip>
                             </div>
-
-                            {/* Growth indicator */}
-                            {subcast.engagement && (
-                              <div className="mb-2 space-y-1">
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className="text-foreground-500">Weekly growth</span>
-                                  <span className={`font-medium ${
-                                    subcast.engagement.weeklyGrowth > 10 ? 'text-success' :
-                                    subcast.engagement.weeklyGrowth > 5 ? 'text-warning' : 'text-foreground'
-                                  }`}>
-                                    +{subcast.engagement.weeklyGrowth}%
-                                  </span>
-                                </div>
-                                <Progress
-                                  size="sm"
-                                  value={Math.min(subcast.engagement.weeklyGrowth, 20)}
-                                  maxValue={20}
-                                  color={
-                                    subcast.engagement.weeklyGrowth > 10 ? 'success' :
-                                    subcast.engagement.weeklyGrowth > 5 ? 'warning' : 'default'
-                                  }
-                                  className="h-1"
-                                />
-                              </div>
-                            )}
-
-                            {/* Tags */}
-                            {subcast.tags && subcast.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-2">
-                                {subcast.tags.slice(0, 2).map((tag, tagIndex) => (
-                                  <Chip
-                                    key={tagIndex}
-                                    size="sm"
-                                    variant="flat"
-                                    className="bg-default-100 text-foreground-600 h-4 px-1.5 text-xs"
-                                  >
-                                    {tag}
-                                  </Chip>
-                                ))}
-                                {subcast.tags.length > 2 && (
-                                  <span className="text-foreground-400 text-xs">
-                                    +{subcast.tags.length - 2}
-                                  </span>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Last activity */}
-                            {subcast.lastActivity && (
-                              <div className="text-foreground-400 text-xs mt-1">
-                                Last post: {subcast.lastActivity}
-                              </div>
-                            )}
-
-                            {/* Moderators */}
-                            {subcast.moderators && subcast.moderators.length > 0 && (
-                              <div className="mt-2 flex items-center gap-1">
-                                <span className="text-foreground-400 text-xs">Mods:</span>
-                                <div className="flex -space-x-1">
-                                  {subcast.moderators.slice(0, 3).map((mod, modIndex) => (
-                                    <Avatar
-                                      key={modIndex}
-                                      src={mod.avatar}
-                                      size="sm"
-                                      className="h-4 w-4 border border-background"
-                                    />
-                                  ))}
-                                </div>
-                              </div>
-                            )}
                           </div>
                         </div>
                       </CardBody>
