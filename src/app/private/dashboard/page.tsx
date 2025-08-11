@@ -159,6 +159,8 @@ const DashboardPage = () => {
       pageTitle={t('pageTitle')}
       pageDescription={t('pageDescription')}
       pageIcon='solar:home-smile-angle-linear'
+      contentPadding="lg"
+      maxWidth="default"
       breadcrumbs={[
         { label: 'Home', href: '/private/dashboard', icon: 'solar:home-linear' },
         { label: 'Dashboard' }
