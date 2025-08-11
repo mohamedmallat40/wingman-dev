@@ -178,9 +178,9 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
               >
                 <Icon
                   icon={getActivityIcon(currentActivity.type)}
-                  className={`h-4 w-4 text-${getActivityColor(currentActivity.priority)} flex-shrink-0`}
+                  className={`h-5 w-5 text-${getActivityColor(currentActivity.priority)} flex-shrink-0`}
                 />
-                <span className="text-sm text-foreground truncate">
+                <span className="text-sm font-medium text-foreground truncate">
                   {currentActivity.message}
                 </span>
                 {currentActivity.count && (
@@ -188,7 +188,7 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
                     size="sm"
                     color={getActivityColor(currentActivity.priority)}
                     variant="flat"
-                    className="h-5 text-xs"
+                    className="h-6 text-xs font-semibold px-2"
                   >
                     {currentActivity.count}
                   </Chip>
