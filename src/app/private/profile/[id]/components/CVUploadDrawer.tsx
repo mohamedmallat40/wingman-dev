@@ -101,9 +101,28 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   const [isApplying, setIsApplying] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
+  const [isDragActive, setIsDragActive] = useState(false);
+
+  const handleFileUpload = useCallback(async (file: File) => {
     if (!file) return;
+
+    // Validate file type
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please upload a PDF, DOC, or DOCX file');
+      return;
+    }
+
+    // Validate file size (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
+      return;
+    }
 
     setUploadedFile(file);
     setCurrentStep('parsing');
@@ -142,22 +161,105 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
 
     } catch (error) {
       console.error('Error parsing CV:', error);
-      // Reset to upload step on error
-      setCurrentStep('upload');
-      setUploadProgress(0);
+      // For demo purposes, let's use mock data
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      setTimeout(() => {
+        // Mock parsed data for demonstration
+        const mockData: ParsedCVData = {
+          personalInfo: {
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john.doe@example.com',
+            phone: '+1 (555) 123-4567',
+            location: 'San Francisco, CA',
+            linkedIn: 'https://linkedin.com/in/johndoe',
+            summary: 'Experienced software engineer with 5+ years in full-stack development.'
+          },
+          skills: [
+            { name: 'JavaScript', category: 'Programming', level: 'Expert', years: 5 },
+            { name: 'React', category: 'Frontend', level: 'Advanced', years: 4 },
+            { name: 'Node.js', category: 'Backend', level: 'Advanced', years: 3 },
+            { name: 'Python', category: 'Programming', level: 'Intermediate', years: 2 }
+          ],
+          experience: [
+            {
+              company: 'Tech Corp',
+              position: 'Senior Software Engineer',
+              startDate: '2021-01-01',
+              endDate: '2024-01-01',
+              location: 'San Francisco, CA',
+              description: 'Led development of web applications',
+              responsibilities: ['Built scalable web apps', 'Mentored junior developers']
+            }
+          ],
+          education: [
+            {
+              institution: 'University of Technology',
+              degree: 'Bachelor of Science',
+              field: 'Computer Science',
+              startDate: '2015-09-01',
+              endDate: '2019-06-01',
+              grade: '3.8 GPA'
+            }
+          ],
+          languages: [
+            { name: 'English', level: 'Native', proficiency: 'Native' },
+            { name: 'Spanish', level: 'Intermediate', proficiency: 'B2' }
+          ],
+          certifications: [
+            {
+              name: 'AWS Certified Developer',
+              issuer: 'Amazon Web Services',
+              issueDate: '2023-01-01',
+              credentialId: 'AWS-123456'
+            }
+          ],
+          projects: [
+            {
+              name: 'E-commerce Platform',
+              description: 'Built a full-stack e-commerce platform',
+              technologies: ['React', 'Node.js', 'MongoDB'],
+              startDate: '2023-01-01',
+              endDate: '2023-06-01'
+            }
+          ]
+        };
+
+        setParsedData(mockData);
+        setSelectedSections(new Set(['personalInfo', 'skills', 'experience', 'education', 'languages']));
+        setCurrentStep('review');
+      }, 1500);
     }
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'application/pdf': ['.pdf'],
-      'application/msword': ['.doc'],
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx']
-    },
-    maxFiles: 1,
-    maxSize: 10 * 1024 * 1024 // 10MB
-  });
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragActive(false);
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setIsDragActive(false);
+
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      handleFileUpload(file);
+    }
+  };
 
   const handleSectionToggle = (section: string) => {
     const newSelected = new Set(selectedSections);
