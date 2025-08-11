@@ -548,7 +548,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             variant="bordered"
             value={reviewData.personalInfo.phoneNumber || ''}
             onChange={(e) => handleUpdateItem('personalInfo', -1, { phoneNumber: e.target.value })}
-            startContent={<Icon icon="solar:phone-linear" className="h-4 w-4 text-default-400" />}
+            startContent={<Icon icon="solar:phone-outline" className="h-4 w-4 text-default-400" />}
           />
           <Input
             label="Location"
