@@ -582,7 +582,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
           value={reviewData.personalInfo.aboutMe || ''}
           onChange={(e) => handleUpdateItem('personalInfo', -1, { aboutMe: e.target.value })}
           minRows={4}
-          startContent={<Icon icon="solar:notes-linear" className="h-4 w-4 text-default-400" />}
+          startContent={<Icon icon="solar:notes-outline" className="h-4 w-4 text-default-400" />}
         />
       </div>
     );
