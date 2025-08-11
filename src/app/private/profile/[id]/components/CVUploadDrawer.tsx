@@ -1436,15 +1436,15 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
               </div>
             </DrawerBody>
 
-            <DrawerFooter className="border-t border-divider/30 bg-gradient-to-r from-background/95 to-default-50/30 backdrop-blur-xl">
-              <div className="flex justify-end gap-3 w-full">
+            <DrawerFooter className="border-t border-divider/20 bg-gradient-to-r from-background/98 to-default-50/40 backdrop-blur-2xl py-6">
+              <div className="flex justify-end gap-4 w-full">
                 {currentStep === 'upload' && (
                   <Button
                     variant="flat"
                     onPress={handleClose}
                     size="lg"
-                    startContent={<Icon icon="solar:close-circle-outline" className="h-4 w-4" />}
-                    className="hover:bg-default-200/50"
+                    startContent={<Icon icon="solar:close-circle-outline" className="h-5 w-5" />}
+                    className="hover:bg-default-200/60 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-semibold"
                   >
                     Cancel
                   </Button>
@@ -1456,8 +1456,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                       variant="flat"
                       onPress={() => setCurrentStep('upload')}
                       size="lg"
-                      startContent={<Icon icon="solar:arrow-left-outline" className="h-4 w-4" />}
-                      className="hover:bg-default-200/50"
+                      startContent={<Icon icon="solar:arrow-left-outline" className="h-5 w-5" />}
+                      className="hover:bg-default-200/60 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-semibold"
                     >
                       Upload Different CV
                     </Button>
@@ -1466,8 +1466,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                       onPress={handleApplyData}
                       isDisabled={selectedSections.size === 0}
                       size="lg"
-                      endContent={<Icon icon="solar:arrow-right-outline" className="h-4 w-4" />}
-                      className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
+                      endContent={<Icon icon="solar:arrow-right-outline" className="h-5 w-5" />}
+                      className="bg-gradient-to-r from-primary via-primary/95 to-primary/90 hover:from-primary/95 hover:to-primary/85 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-bold shadow-lg shadow-primary/25"
                     >
                       Apply to Profile ({Object.keys(reviewData || {}).length} sections)
                     </Button>
@@ -1480,8 +1480,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                     onPress={handleClose}
                     size="lg"
                     variant="solid"
-                    endContent={<Icon icon="solar:check-circle-outline" className="h-4 w-4" />}
-                    className="bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80"
+                    endContent={<Icon icon="solar:check-circle-outline" className="h-5 w-5" />}
+                    className="bg-gradient-to-r from-success via-success/95 to-success/90 hover:from-success/95 hover:to-success/85 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-bold shadow-lg shadow-success/25"
                   >
                     Done
                   </Button>
