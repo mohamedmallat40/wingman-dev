@@ -252,10 +252,10 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
               isIconOnly
               size="sm"
               variant="light"
-              className="h-6 w-6"
+              className="h-7 w-7 hover:bg-danger/10 hover:text-danger transition-colors"
               onPress={() => setIsVisible(false)}
             >
-              <Icon icon="solar:close-circle-linear" className="h-3 w-3" />
+              <Icon icon="solar:close-circle-linear" className="h-4 w-4" />
             </Button>
           </div>
         </div>
