@@ -475,15 +475,15 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
           />
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div className={`transition-colors ${uploadProgress > 20 ? 'text-primary font-medium' : 'text-default-500'}`}>
-              <Icon icon="solar:upload-linear" className="h-4 w-4 inline mr-1" />
+              <Icon icon="solar:upload-outline" className="h-4 w-4 inline mr-1" />
               Uploading
             </div>
             <div className={`transition-colors ${uploadProgress > 60 ? 'text-primary font-medium' : 'text-default-500'}`}>
-              <Icon icon="solar:eye-scan-linear" className="h-4 w-4 inline mr-1" />
+              <Icon icon="solar:eye-scan-outline" className="h-4 w-4 inline mr-1" />
               Analyzing
             </div>
             <div className={`transition-colors ${uploadProgress > 90 ? 'text-primary font-medium' : 'text-default-500'}`}>
-              <Icon icon="solar:check-circle-linear" className="h-4 w-4 inline mr-1" />
+              <Icon icon="solar:check-circle-outline" className="h-4 w-4 inline mr-1" />
               Finalizing
             </div>
           </div>
