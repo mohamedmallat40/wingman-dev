@@ -573,7 +573,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
           variant="bordered"
           value={reviewData.personalInfo.profileWebsite || ''}
           onChange={(e) => handleUpdateItem('personalInfo', -1, { profileWebsite: e.target.value })}
-          startContent={<Icon icon="solar:global-linear" className="h-4 w-4 text-default-400" />}
+          startContent={<Icon icon="solar:global-outline" className="h-4 w-4 text-default-400" />}
         />
         <Textarea
           label="Professional Summary"
