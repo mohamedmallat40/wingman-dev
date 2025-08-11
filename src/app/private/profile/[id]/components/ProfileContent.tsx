@@ -50,6 +50,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 }) => {
   const t = useTranslations();
   const router = useRouter();
+  const [isCVUploadOpen, setIsCVUploadOpen] = useState(false);
 
   const formatDate = (dateString: string) => {
     try {
