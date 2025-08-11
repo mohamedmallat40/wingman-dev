@@ -82,6 +82,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
     router.push('/private/settings?tab=general');
   };
 
+  const handleCVDataParsed = (data: any) => {
+    console.log('CV data parsed:', data);
+    // Here you would typically refresh the profile data or update the UI
+    // to reflect the newly imported information
+  };
+
   return (
     <section className='container mx-auto px-6 pb-20'>
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
