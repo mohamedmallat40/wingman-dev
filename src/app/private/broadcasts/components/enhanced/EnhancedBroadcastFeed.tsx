@@ -975,6 +975,12 @@ export default function EnhancedBroadcastFeed({
               onSelectionChange={(key) => handleViewOptionChange('layout', key)}
               size="sm"
               variant="bordered"
+              classNames={{
+                tab: "text-foreground",
+                tabContent: "text-foreground group-data-[selected=true]:text-primary",
+                cursor: "bg-primary",
+                panel: "text-foreground"
+              }}
             >
               <Tab
                 key="card"
