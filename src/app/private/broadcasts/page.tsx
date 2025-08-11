@@ -18,7 +18,6 @@ import EnhancedSubcastSidebar from './components/enhanced/EnhancedSubcastSidebar
 import NotificationCenter from './components/enhanced/NotificationCenter';
 import LiveActivityBar from './components/enhanced/LiveActivityBar';
 import ContentCreator from './components/enhanced/ContentCreator';
-import AnalyticsDashboard from './components/enhanced/AnalyticsDashboard';
 
 export default function BroadcastsPage() {
   const t = useTranslations('broadcasts');
