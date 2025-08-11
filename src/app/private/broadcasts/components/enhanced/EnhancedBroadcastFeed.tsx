@@ -445,7 +445,7 @@ export default function EnhancedBroadcastFeed({
                 startContent={<Icon icon="solar:refresh-linear" className="h-4 w-4" />}
                 className="px-8"
               >
-                {t('loadMore')}
+                Load More
               </Button>
             </div>
           )}
