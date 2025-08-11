@@ -597,6 +597,235 @@
       "final": "Definitief"
     }
   },
+  "broadcasts": {
+    "title": "Broadcast Feed",
+    "description": "Blijf op de hoogte met de laatste content van jouw geselecteerde onderwerpen en favoriete subcasts",
+    "onboarding": {
+      "title": "Maak Je Perfecte Broadcast Feed",
+      "subtitle": "Kies onderwerpen die passen bij jouw interesses en expertise om gepersonaliseerde content aanbevelingen te krijgen",
+      "selectTopics": "Selecteer minimaal {minSelect} onderwerpen om te starten met jouw gepersonaliseerde feed",
+      "selectedCount": "{selected} van {max} geselecteerd (minimum {min} vereist)",
+      "shuffleButton": "Kies 5 voor Mij",
+      "shuffleTooltip": "Laat ons 5 populaire onderwerpen voor je selecteren",
+      "clearButton": "Alles Wissen",
+      "confirmButton": "Maak Mijn Feed",
+      "noTopicsSelected": "Nog geen onderwerpen geselecteerd. Kies onderwerpen die je interesseren!",
+      "moreTopics": "+{count} meer geselecteerd",
+      "searchPlaceholder": "Zoek naar onderwerpen...",
+      "searchTooltip": "Zoek door beschikbare onderwerpen",
+      "filterBy": "Filter op categorie",
+      "allTopics": "Alle Categorieën",
+      "featured": "Uitgelichte Onderwerpen",
+      "showMore": "Meer Opties Tonen",
+      "showLess": "Minder Opties Tonen"
+    },
+    "categories": {
+      "all": "Allemaal",
+      "ai": "AI & Agents",
+      "development": "Dev & Cloud",
+      "cloud": "Cloud",
+      "devops": "DevOps",
+      "data": "Data",
+      "design": "Design",
+      "product": "Product",
+      "marketing": "Marketing Groei",
+      "sales": "Sales Playbook",
+      "freelance": "Freelance Ops",
+      "business": "Business",
+      "tech": "Technologie",
+      "lifestyle": "Lifestyle",
+      "education": "Onderwijs"
+    },
+    "actions": {
+      "resetTopics": "Onderwerpselectie Resetten",
+      "refreshFeed": "Feed Vernieuwen",
+      "viewPost": "Volledig Artikel Bekijken",
+      "readMore": "Meer Lezen",
+      "readLess": "Minder Lezen",
+      "share": "Artikel Delen",
+      "bookmark": "Opslaan voor Later",
+      "bookmarked": "Opgeslagen",
+      "like": "Leuk vinden",
+      "liked": "Leuk gevonden",
+      "comment": "Reactie Toevoegen",
+      "reply": "Reageren",
+      "savePost": "Artikel Opslaan",
+      "reportPost": "Content Melden"
+    },
+    "feed": {
+      "title": "Jouw Broadcast Feed",
+      "subtitle": "Laatste updates van jouw geselecteerde onderwerpen en gevolgde subcasts",
+      "filterBy": "Filter op onderwerp",
+      "sortBy": "Sorteren op",
+      "allPosts": "Alle Artikelen",
+      "recentPosts": "Recent",
+      "popularPosts": "Populair",
+      "bookmarkedPosts": "Opgeslagen Artikelen",
+      "noPostsFound": "Geen artikelen gevonden",
+      "noPostsFoundDescription": "Probeer je filters aan te passen, andere onderwerpen te selecteren of meer subcasts te volgen",
+      "loadMore": "Meer Artikelen Laden",
+      "loading": "Artikelen laden...",
+      "refreshing": "Jouw feed vernieuwen...",
+      "newPostsAvailable": "{count} {count, plural, one {nieuw artikel} other {nieuwe artikelen}} beschikbaar",
+      "showNewPosts": "Nieuwe Artikelen Tonen"
+    },
+    "post": {
+      "publishedOn": "Gepubliceerd op {date}",
+      "readTime": "{minutes} min lezen",
+      "author": "Door {author}",
+      "tags": "Onderwerpen",
+      "relatedPosts": "Dit vind je misschien ook leuk",
+      "types": {
+        "article": "Artikel",
+        "video": "Video",
+        "image": "Afbeelding",
+        "poll": "Poll",
+        "quote": "Citaat"
+      },
+      "engagement": {
+        "likes": "{count, plural, =0 {Geen likes} one {# like} other {# likes}}",
+        "comments": "{count, plural, =0 {Geen reacties} one {# reactie} other {# reacties}}",
+        "shares": "{count, plural, =0 {Niet gedeeld} one {# keer gedeeld} other {# keer gedeeld}}",
+        "bookmarks": "{count, plural, =0 {Niet opgeslagen} one {# keer opgeslagen} other {# keer opgeslagen}}"
+      },
+      "actions": {
+        "share": "Dit artikel delen",
+        "copyLink": "Artikel link kopiëren",
+        "reportPost": "Ongepaste content melden",
+        "hidePost": "Dit artikel verbergen"
+      }
+    },
+    "sidebar": {
+      "title": "Subcasts",
+      "subtitle": "Volg gespecialiseerde content kanalen voor gerichte updates",
+      "searchPlaceholder": "Zoek naar subcasts...",
+      "popularSubcasts": "Populaire Subcasts",
+      "followedSubcasts": "Gevolgd",
+      "recommendedSubcasts": "Aanbevolen voor Jou",
+      "allSubcasts": "Alle Artikelen",
+      "follow": "Volgen",
+      "following": "Volgend {count}",
+      "unfollow": "Ontvolgen",
+      "followers": "{count, plural, =0 {Geen volgers} one {# volger} other {# volgers}}",
+      "posts": "{count, plural, =0 {Geen artikelen} one {# artikel} other {# artikelen}}",
+      "newPosts": "{count} {count, plural, one {nieuw artikel} other {nieuwe artikelen}}",
+      "lastPost": "Laatste artikel {time} geleden",
+      "noSubcasts": "Geen subcasts gevonden",
+      "noFollowedSubcasts": "Je volgt nog geen subcasts. Ontdek kanalen die bij jouw interesses passen!",
+      "exploreSubcasts": "Meer Ontdekken",
+      "createSubcast": "Nieuwe Subcast Maken",
+      "manageSubcasts": "Mijn Subcasts Beheren"
+    },
+    "subcast": {
+      "about": "Over",
+      "description": "Beschrijving",
+      "moderators": "Moderators",
+      "rules": "Regels",
+      "recentActivity": "Recente Activiteit",
+      "topContributors": "Top Bijdragers",
+      "stats": {
+        "followers": "Volgers",
+        "posts": "Artikelen",
+        "comments": "Reacties",
+        "created": "Aangemaakt"
+      }
+    },
+    "comments": {
+      "title": "Discussie",
+      "subtitle": "{count, plural, =0 {Nog geen reacties} one {# reactie} other {# reacties}}",
+      "noComments": "Nog geen reacties",
+      "beFirstToComment": "Wees de eerste om de discussie te starten",
+      "writeComment": "Deel jouw gedachten...",
+      "postComment": "Reactie Plaatsen",
+      "cancel": "Annuleren",
+      "edit": "Reactie Bewerken",
+      "delete": "Reactie Verwijderen",
+      "reply": "Reageren",
+      "showReplies": "Toon {count, plural, one {# antwoord} other {# antwoorden}}",
+      "hideReplies": "Antwoorden verbergen",
+      "loadMoreComments": "Meer reacties laden",
+      "sortBy": "Sorteren op",
+      "newest": "Nieuwste Eerst",
+      "oldest": "Oudste Eerst",
+      "popular": "Meest Populair"
+    },
+    "notifications": {
+      "newPost": "Nieuw artikel in {subcast}",
+      "newComment": "{author} heeft gereageerd op jouw artikel",
+      "newReply": "{author} heeft geantwoord op jouw reactie",
+      "postLiked": "{author} vindt jouw artikel leuk",
+      "commentLiked": "{author} vindt jouw reactie leuk",
+      "newFollower": "{author} is {subcast} gaan volgen",
+      "mentionedInPost": "{author} heeft je genoemd in een artikel",
+      "mentionedInComment": "{author} heeft je genoemd in een reactie"
+    },
+    "loading": {
+      "title": "Jouw broadcast feed laden...",
+      "subtitle": "Gepersonaliseerde content voorbereiden op basis van jouw interesses",
+      "posts": "Artikelen laden...",
+      "comments": "Discussie laden...",
+      "subcasts": "Subcasts laden...",
+      "loadingMore": "Meer artikelen laden...",
+      "refreshing": "Content vernieuwen..."
+    },
+    "empty": {
+      "title": "Jouw feed is leeg",
+      "subtitle": "Selecteer onderwerpen of volg subcasts om relevante content hier te zien",
+      "posts": {
+        "title": "Geen artikelen om te tonen",
+        "subtitle": "Probeer andere onderwerpen te selecteren, meer subcasts te volgen of je filters aan te passen"
+      },
+      "subcasts": {
+        "title": "Geen subcasts komen overeen met jouw zoekopdracht",
+        "subtitle": "Probeer andere zoekwoorden of bekijk alle beschikbare subcasts"
+      },
+      "comments": {
+        "title": "Nog geen discussie",
+        "subtitle": "Wees de eerste om jouw gedachten over dit artikel te delen"
+      }
+    },
+    "error": {
+      "title": "Er is iets misgegaan",
+      "subtitle": "We konden jouw broadcast feed niet laden. Controleer je verbinding en probeer opnieuw.",
+      "retry": "Opnieuw Proberen",
+      "posts": {
+        "title": "Kan artikelen niet laden",
+        "subtitle": "Er was een probleem bij het laden van jouw feed content"
+      },
+      "comments": {
+        "title": "Reacties niet beschikbaar",
+        "subtitle": "We konden de discussie voor dit artikel niet laden"
+      },
+      "subcasts": {
+        "title": "Subcasts niet beschikbaar",
+        "subtitle": "We konden de beschikbare subcasts op dit moment niet laden"
+      }
+    },
+    "accessibility": {
+      "openPost": "Volledige artikel content openen",
+      "likePost": "Dit artikel leuk vinden",
+      "bookmarkPost": "Dit artikel opslaan voor later",
+      "sharePost": "Dit artikel delen met anderen",
+      "commentOnPost": "Een reactie toevoegen aan dit artikel",
+      "followSubcast": "Deze subcast volgen voor updates",
+      "unfollowSubcast": "Deze subcast niet meer volgen",
+      "viewProfile": "Gebruikersprofiel en details bekijken",
+      "closeModal": "Dialoogvenster sluiten",
+      "openMenu": "Optiemenu openen",
+      "closeMenu": "Optiemenu sluiten",
+      "searchPosts": "Zoeken door artikelen",
+      "filterTopics": "Artikelen filteren op onderwerp",
+      "sortPosts": "Sorteervolgorde van artikelen wijzigen"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "broadcasts": "Broadcasts",
+    "challenges": "Uitdagingen",
+    "talentPool": "Talent Pool",
+    "documents": "Documenten"
+  },
   "common": {
     "save": "Opslaan",
     "cancel": "Annuleren",
@@ -606,6 +835,15 @@
     "close": "Sluiten",
     "back": "Terug",
     "retry": "Opnieuw Proberen"
+  },
+  "time": {
+    "now": "nu",
+    "minutesAgo": "{minutes, plural, one {# minuut geleden} other {# minuten geleden}}",
+    "hoursAgo": "{hours, plural, one {# uur geleden} other {# uur geleden}}",
+    "daysAgo": "{days, plural, one {# dag geleden} other {# dagen geleden}}",
+    "weeksAgo": "{weeks, plural, one {# week geleden} other {# weken geleden}}",
+    "monthsAgo": "{months, plural, one {# maand geleden} other {# maanden geleden}}",
+    "yearsAgo": "{years, plural, one {# jaar geleden} other {# jaar geleden}}"
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet"

@@ -17,9 +17,10 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Tooltip } from '@heroui/tooltip';
 import { Icon } from '@iconify/react/dist/iconify.js';
-import { motion } from 'framer-motion';
-import { usePathname } from 'next/navigation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { usePathname, useRouter } from 'next/navigation';
 
+import { LoginModal } from '@/app/(public)/components/login';
 import Avatar from '@/app/private/components/avatar';
 import { WingmanIcon } from '@/components/icons/wingman';
 
@@ -32,180 +33,256 @@ const navItems = [
     href: '/private/dashboard',
     label: 'Dashboard',
     icon: 'solar:chart-square-linear',
-    description: 'Overview & Analytics'
+    description: 'Overview & Analytics',
+    shortLabel: 'Dashboard'
   },
   {
     href: '/private/my-challenges',
     label: 'My Challenges',
     icon: 'solar:cup-star-linear',
-    description: 'Your Programming Challenges'
+    description: 'Your Programming Challenges',
+    shortLabel: 'Challenges'
   },
   {
     href: '/private/broadcasts',
     label: 'Broadcasts',
     icon: 'solar:dialog-2-linear',
-    description: 'Team updates, announcements & async reviews'
+    description: 'Team updates, announcements & async reviews',
+    shortLabel: 'Broadcasts'
   },
   {
     href: '/private/talent-pool',
     label: 'Talent Pool',
     icon: 'solar:users-group-rounded-linear',
-    description: 'Find Skilled Freelancers'
+    description: 'Find Skilled Freelancers',
+    shortLabel: 'Talent'
   },
   {
     href: '/private/documents',
     label: 'Documents',
     icon: 'solar:document-text-linear',
-    description: 'Manage Your Documents'
+    description: 'Manage Your Documents',
+    shortLabel: 'Documents'
   }
 ];
 
 export default function PrivateNavBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [notificationCount] = useState(5);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   return (
     <Navbar
-      className='border-divider/50 shadow-small bg-background/80 supports-[backdrop-filter]:bg-background/60 grid w-full max-w-full grid-cols-1 border-b backdrop-blur-2xl'
+      className='border-divider/40 shadow-small bg-background/85 supports-[backdrop-filter]:bg-background/60 w-full max-w-full border-b backdrop-blur-xl'
       isBordered
       maxWidth='full'
       position='sticky'
       onMenuOpenChange={setIsMenuOpen}
+      height='4rem'
     >
-      <NavbarContent justify='start'>
-        <NavbarBrand className='gap-2'>
+      <NavbarContent justify='start' className='gap-0 space-x-0'>
+        {/* Brand */}
+        <NavbarBrand className='mr-[12%] grow-0 gap-2 sm:gap-3'>
+          {/* Mobile Menu Toggle - ONLY toggle button */}
           <NavbarMenuToggle
-            className='text-foreground hover:text-primary h-6 transition-colors sm:hidden'
+            className='text-foreground hover:text-primary mr-2 h-8 w-8 transition-colors xl:hidden'
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           />
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+            className='flex-shrink-0'
           >
             <WingmanIcon />
           </motion.div>
           <motion.div
-            className='hidden flex-col sm:flex'
+            className='hidden min-w-0 flex-col sm:flex'
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <p className='from-primary-500 to-secondary-500 bg-gradient-to-r bg-clip-text leading-tight font-bold tracking-[0.4em] text-inherit'>
+            <p className='from-primary-500 to-secondary-500 bg-gradient-to-r bg-clip-text text-sm leading-tight font-bold tracking-[0.3em] text-inherit sm:text-base'>
               WINGMAN
             </p>
-            <p className='text-xs leading-tight text-inherit opacity-70'>BY EXTRAEXPERTISE</p>
+            <p className='text-xs leading-tight text-inherit opacity-70 sm:text-xs'>
+              BY EXTRAEXPERTISE
+            </p>
           </motion.div>
         </NavbarBrand>
 
-        <NavbarContent
-          className='from-default-100/50 to-default-50/30 border-divider/30 mx-8 hidden h-12 w-full max-w-full gap-1 rounded-2xl bg-transparent px-4 backdrop-blur-md sm:flex'
-          justify='start'
-        >
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <NavbarItem key={item.href} className='relative'>
-                <Tooltip
-                  content={item.description}
-                  placement='bottom'
-                  delay={500}
-                  className='text-tiny'
-                >
-                  <Link
-                    href={item.href}
-                    className={`group relative flex items-center gap-2 rounded-xl px-1.5 py-2.5 transition-all duration-300 ${
-                      isActive
-                        ? 'text-primary bg-background ring-primary/20 ring-offset-background'
-                        : 'text-foreground-600 hover:text-primary hover:bg-background/70'
-                    }`}
+        {/* Desktop Navigation - Hidden on mobile and tablet */}
+        <NavbarContent className='hidden w-full max-w-none gap-1 xl:flex' justify='start'>
+          <div className='from-default-100/30 to-default-50/20 border-divider/20 -ml-4 flex h-10 items-center gap-1 rounded-2xl border bg-gradient-to-r px-2 backdrop-blur-md'>
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <NavbarItem key={item.href} className='relative'>
+                  <Tooltip
+                    content={item.description}
+                    placement='bottom'
+                    delay={500}
+                    className='text-tiny'
                   >
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.95 }}
-                      transition={{ duration: 0.1 }}
-                    >
-                      <Icon
-                        icon={item.icon}
-                        className={`text-[18px] transition-all duration-300 ${
-                          isActive ? 'text-primary' : 'text-foreground-500 group-hover:text-primary'
-                        }`}
-                      />
-                    </motion.div>
-                    <span
-                      className={`text-sm font-semibold transition-all duration-300 ${
-                        isActive ? 'text-primary' : 'text-foreground-600 group-hover:text-primary'
+                    <Link
+                      href={item.href}
+                      className={`group relative flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-200 ${
+                        isActive
+                          ? 'text-primary bg-background shadow-small ring-primary/15 ring-1'
+                          : 'text-foreground-600 hover:text-primary hover:bg-background/60'
                       }`}
                     >
-                      {item.label}
-                    </span>
-                    {isActive && (
                       <motion.div
-                        className='absolute inset-0 rounded-xl'
-                        layoutId='navbar-active'
-                        initial={false}
-                        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                      />
-                    )}
-                  </Link>
-                </Tooltip>
-              </NavbarItem>
-            );
-          })}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ duration: 0.1 }}
+                      >
+                        <Icon
+                          icon={item.icon}
+                          className={`text-[16px] transition-all duration-200 ${
+                            isActive
+                              ? 'text-primary'
+                              : 'text-foreground-500 group-hover:text-primary'
+                          }`}
+                        />
+                      </motion.div>
+                      <span
+                        className={`text-sm font-medium transition-all duration-200 ${
+                          isActive ? 'text-primary' : 'text-foreground-600 group-hover:text-primary'
+                        }`}
+                      >
+                        {item.shortLabel}
+                      </span>
+                      {isActive && (
+                        <motion.div
+                          className='bg-primary/5 absolute inset-0 rounded-xl'
+                          layoutId='navbar-active'
+                          initial={false}
+                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                    </Link>
+                  </Tooltip>
+                </NavbarItem>
+              );
+            })}
+          </div>
+        </NavbarContent>
+
+        {/* Tablet Navigation - Visible on larger tablets only */}
+        <NavbarContent className='hidden w-full max-w-none gap-1 lg:flex xl:hidden' justify='start'>
+          <div className='from-default-100/20 to-default-50/15 border-divider/15 -ml-4 flex h-10 items-center gap-1 rounded-xl border bg-gradient-to-r px-2 backdrop-blur-md'>
+            {navItems.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <NavbarItem key={item.href} className='relative'>
+                  <Tooltip
+                    content={`${item.label} - ${item.description}`}
+                    placement='bottom'
+                    delay={300}
+                    className='text-tiny'
+                  >
+                    <Link
+                      href={item.href}
+                      className={`group relative flex items-center justify-center rounded-lg p-2.5 transition-all duration-200 ${
+                        isActive
+                          ? 'text-primary bg-background shadow-small ring-primary/20 ring-1'
+                          : 'text-foreground-500 hover:text-primary hover:bg-background/60'
+                      }`}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        transition={{ duration: 0.1 }}
+                      >
+                        <Icon
+                          icon={item.icon}
+                          className={`text-[18px] transition-all duration-200 ${
+                            isActive
+                              ? 'text-primary'
+                              : 'text-foreground-500 group-hover:text-primary'
+                          }`}
+                        />
+                      </motion.div>
+                      {isActive && (
+                        <motion.div
+                          className='bg-primary/5 absolute inset-0 rounded-lg'
+                          layoutId='tablet-active'
+                          initial={false}
+                          transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                        />
+                      )}
+                    </Link>
+                  </Tooltip>
+                </NavbarItem>
+              );
+            })}
+          </div>
         </NavbarContent>
       </NavbarContent>
 
-      <NavbarContent as='div' className='items-center gap-3' justify='end'>
-        <div className='from-default-100/40 to-default-50/20 border-divider/20 flex items-center gap-2 rounded-2xl border bg-gradient-to-r p-1 backdrop-blur-sm'>
+      {/* Right Side Actions */}
+      <NavbarContent as='div' className='flex items-center gap-2 sm:gap-3' justify='end'>
+        {/* Settings Group - Hidden on mobile */}
+        <div className='from-default-100/30 to-default-50/20 border-divider/20 hidden items-center gap-1 rounded-xl border bg-gradient-to-r p-1 backdrop-blur-sm sm:flex'>
           <motion.div
-            whileHover={{ scale: 1.08 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='hover:bg-background/60 rounded-xl p-1.5 transition-colors duration-200'
+            className='hover:bg-background/50 rounded-lg p-1.5 transition-all duration-200'
           >
             <LanguageSwitcher />
           </motion.div>
 
           <motion.div
-            whileHover={{ scale: 1.08 }}
+            whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='hover:bg-background/60 rounded-xl p-1.5 transition-colors duration-200'
+            className='hover:bg-background/50 rounded-lg p-1.5 transition-all duration-200'
           >
             <ThemeToggle />
           </motion.div>
         </div>
 
-        <div className='bg-divider/60 h-8 w-px rounded-full' />
+        {/* Divider - Hidden on mobile */}
+        <div className='bg-divider/60 hidden h-6 w-px rounded-full sm:block' />
 
+        {/* Notifications */}
         <NavbarItem className='flex'>
           <Popover offset={12} placement='bottom-end'>
             <PopoverTrigger>
               <Button
                 disableRipple
                 isIconOnly
-                className='hover:bg-primary/10 hover:shadow-small overflow-visible transition-all duration-200'
+                className='hover:bg-primary/10 hover:shadow-small h-9 w-9 overflow-visible transition-all duration-200 sm:h-10 sm:w-10'
                 radius='full'
                 variant='light'
                 aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
                 as={motion.button}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 <motion.div
                   animate={{
-                    rotate: notificationCount > 0 ? [0, -10, 10, -5, 5, 0] : 0
+                    rotate: notificationCount > 0 ? [0, -8, 8, -4, 4, 0] : 0
                   }}
                   transition={{
-                    duration: 0.6,
+                    duration: 0.5,
                     repeat: notificationCount > 0 ? Number.POSITIVE_INFINITY : 0,
-                    repeatDelay: 3
+                    repeatDelay: 4
                   }}
                 >
                   <Badge
                     color='danger'
-                    content={notificationCount > 0 ? notificationCount : ''}
+                    content={
+                      notificationCount > 0
+                        ? notificationCount > 9
+                          ? '9+'
+                          : notificationCount
+                        : ''
+                    }
                     showOutline={false}
-                    size='md'
+                    size='sm'
                     className={notificationCount > 0 ? 'animate-pulse' : ''}
                   >
                     <Icon
@@ -213,18 +290,18 @@ export default function PrivateNavBar() {
                         notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
                       }`}
                       icon='solar:bell-linear'
-                      width={22}
+                      width={20}
                     />
                   </Badge>
                 </motion.div>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className='max-w-[90vw] p-0 sm:max-w-[380px]'>
+            <PopoverContent className='max-w-[95vw] p-0 sm:max-w-[400px]'>
               <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                initial={{ opacity: 0, y: -10, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, y: -10, scale: 0.96 }}
+                transition={{ duration: 0.15 }}
               >
                 <NotificationsCard className='w-full shadow-none' />
               </motion.div>
@@ -232,6 +309,7 @@ export default function PrivateNavBar() {
           </Popover>
         </NavbarItem>
 
+        {/* User Avatar */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -243,80 +321,158 @@ export default function PrivateNavBar() {
       </NavbarContent>
 
       {/* Enhanced Mobile Menu */}
-      <NavbarMenu className='bg-background/98 border-divider/50 shadow-large border-r pt-8 backdrop-blur-2xl'>
-        <div className='flex flex-col gap-2'>
-          {navItems.map((item, index) => {
-            const isActive = pathname === item.href;
-            return (
-              <NavbarMenuItem key={item.href}>
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.1 }}
-                >
-                  <Link
-                    href={item.href}
-                    className={`flex w-full items-center gap-4 rounded-2xl p-4 transition-all duration-300 ${
-                      isActive
-                        ? 'from-primary/10 to-primary/5 text-primary border-primary/20 shadow-small border bg-gradient-to-r'
-                        : 'text-foreground hover:from-default-100/60 hover:to-default-50/30 hover:shadow-small hover:border-divider/30 hover:border hover:bg-gradient-to-r'
-                    }`}
-                  >
-                    <div
-                      className={`rounded-xl p-2 transition-colors duration-300 ${
-                        isActive ? 'bg-primary/10' : 'bg-default-100/50'
-                      }`}
-                    >
-                      <Icon
-                        icon={item.icon}
-                        className={`text-xl ${isActive ? 'text-primary' : 'text-foreground-600'}`}
-                      />
-                    </div>
-                    <div className='flex flex-1 flex-col'>
-                      <span
-                        className={`font-semibold ${isActive ? 'text-primary' : 'text-foreground'}`}
-                      >
-                        {item.label}
-                      </span>
-                      <span
-                        className={`text-tiny ${isActive ? 'text-primary/70' : 'text-foreground-500'}`}
-                      >
-                        {item.description}
-                      </span>
-                    </div>
-                    {isActive && <div className='bg-primary h-8 w-1 rounded-full' />}
-                  </Link>
-                </motion.div>
-              </NavbarMenuItem>
-            );
-          })}
+      <NavbarMenu className='bg-background/95 border-divider/40 border-r pt-4 shadow-2xl backdrop-blur-2xl'>
+        <div className='flex h-full flex-col px-2'>
+          {/* Navigation Section */}
+          <div className='flex-1'>
+            <div className='mb-4 px-2'>
+              <p className='text-foreground-600 text-sm font-semibold tracking-wide uppercase'>
+                Navigation
+              </p>
+            </div>
 
-          {/* Mobile Settings Section */}
+            <div className='flex flex-col gap-1'>
+              <AnimatePresence>
+                {navItems.map((item, index) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <NavbarMenuItem key={item.href}>
+                      <motion.div
+                        initial={{ opacity: 0, x: -30, scale: 0.95 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: -30, scale: 0.95 }}
+                        transition={{
+                          duration: 0.2,
+                          delay: index * 0.05,
+                          type: 'spring',
+                          stiffness: 400,
+                          damping: 25
+                        }}
+                      >
+                        <button
+                          className={`group flex w-full items-center gap-3 rounded-xl p-3 transition-all duration-200 ${
+                            isActive
+                              ? 'from-primary/15 to-primary/5 text-primary border-primary/20 shadow-small border bg-gradient-to-r'
+                              : 'text-foreground hover:from-default-100/50 hover:to-default-50/25 hover:shadow-small hover:border-divider/30 hover:border hover:bg-gradient-to-r active:scale-[0.98]'
+                          }`}
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            router.push(item.href);
+                          }}
+                        >
+                          <motion.div
+                            className={`rounded-lg p-2 transition-all duration-200 ${
+                              isActive
+                                ? 'bg-primary/15 shadow-small'
+                                : 'bg-default-100/60 group-hover:bg-primary/10'
+                            }`}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <Icon
+                              icon={item.icon}
+                              className={`text-lg transition-colors ${isActive ? 'text-primary' : 'text-foreground-600 group-hover:text-primary'}`}
+                            />
+                          </motion.div>
+                          <div className='flex flex-1 flex-col gap-0.5'>
+                            <span
+                              className={`font-medium transition-colors ${isActive ? 'text-primary' : 'text-foreground group-hover:text-primary'}`}
+                            >
+                              {item.label}
+                            </span>
+                            <span
+                              className={`text-xs transition-colors ${isActive ? 'text-primary/70' : 'text-foreground-500 group-hover:text-foreground-600'}`}
+                            >
+                              {item.description}
+                            </span>
+                          </div>
+                          {isActive && (
+                            <motion.div
+                              className='bg-primary shadow-small h-6 w-1 rounded-full'
+                              layoutId='mobile-active'
+                              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                            />
+                          )}
+                        </button>
+                      </motion.div>
+                    </NavbarMenuItem>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Bottom Section - Settings & User */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.5 }}
-            className='border-divider/50 mt-8 border-t pt-6'
+            transition={{ duration: 0.3, delay: 0.3 }}
+            className='border-divider/50 mt-4 border-t pt-4'
           >
-            <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-small rounded-2xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
-              <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
-                  <div className='bg-primary h-2 w-2 animate-pulse rounded-full' />
-                  <span className='text-foreground text-sm font-semibold'>Preferences</span>
+            {/* Settings */}
+            <div className='mb-4'>
+              <div className='from-default-100/50 to-default-50/25 border-divider/30 shadow-small rounded-xl border bg-gradient-to-r p-3 backdrop-blur-sm'>
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center gap-2'>
+                    <div className='bg-primary/20 flex h-6 w-6 items-center justify-center rounded-lg'>
+                      <Icon icon='solar:settings-bold' className='text-primary h-3 w-3' />
+                    </div>
+                    <span className='text-foreground text-sm font-medium'>Settings</span>
+                  </div>
+                  <div className='flex items-center gap-1'>
+                    <motion.div
+                      className='hover:bg-background/60 rounded-lg p-1.5 transition-all duration-200'
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <LanguageSwitcher />
+                    </motion.div>
+                    <motion.div
+                      className='hover:bg-background/60 rounded-lg p-1.5 transition-all duration-200'
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <ThemeToggle />
+                    </motion.div>
+                  </div>
                 </div>
-                <div className='flex items-center gap-3'>
-                  <div className='hover:bg-background/60 rounded-xl p-2 transition-colors'>
-                    <LanguageSwitcher />
+              </div>
+            </div>
+
+            {/* User Profile Display Only - No Dropdown in Mobile */}
+            <div className='pb-4'>
+              <div className='from-default-100/50 to-default-50/25 border-divider/30 shadow-small rounded-xl border bg-gradient-to-r p-3 backdrop-blur-sm'>
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center gap-3'>
+                    <div className='bg-primary/20 flex h-8 w-8 items-center justify-center rounded-lg'>
+                      <Icon icon='solar:user-bold' className='text-primary h-4 w-4' />
+                    </div>
+                    <div>
+                      <span className='text-foreground text-sm font-medium'>Account</span>
+                      <p className='text-foreground-500 text-xs'>Profile & Settings</p>
+                    </div>
                   </div>
-                  <div className='hover:bg-background/60 rounded-xl p-2 transition-colors'>
-                    <ThemeToggle />
-                  </div>
+                  <Button
+                    size='sm'
+                    variant='flat'
+                    className='text-primary hover:bg-primary/10'
+                    onPress={() => {
+                      setIsMenuOpen(false);
+                      // Navigate to profile or open settings
+                      router.push('/private/profile');
+                    }}
+                  >
+                    <Icon icon='solar:alt-arrow-right-linear' width={16} />
+                  </Button>
                 </div>
               </div>
             </div>
           </motion.div>
         </div>
       </NavbarMenu>
+
+      {/* Login Modal */}
+      <LoginModal isOpen={showLoginModal} onOpenChange={setShowLoginModal} />
     </Navbar>
   );
 }

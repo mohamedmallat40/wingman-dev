@@ -24,3 +24,12 @@
   animation: ping-slow 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
   animation-delay: 1.25s;
 }
+
+/* Responsive container utilities for consistent mobile/tablet spacing */
+.responsive-container {
+  @apply w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 mx-auto;
+}
+
+.responsive-section-padding {
+  @apply px-2 sm:px-4 xl:px-6;
+}
