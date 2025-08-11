@@ -152,7 +152,7 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
       exit={{ y: -100, opacity: 0 }}
       className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-4 ${className}`}
     >
-      <div className="bg-white/10 dark:bg-black/10 backdrop-blur-2xl border-0 rounded-full shadow-2xl px-6 py-3 max-w-lg mx-auto ring-1 ring-white/20 dark:ring-white/10 before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-r before:from-primary/20 before:to-secondary/20 before:opacity-50 relative before:-z-10">
+      <div className="bg-black/20 dark:bg-black/10 backdrop-blur-2xl border-0 rounded-full shadow-2xl px-6 py-3 max-w-lg mx-auto ring-1 ring-black/20 dark:ring-white/10 before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-r before:from-primary/20 before:to-secondary/20 before:opacity-50 relative before:-z-10">
         <div className="flex items-center gap-4">
           {/* Live indicator */}
           <div className="flex items-center gap-2">
