@@ -2,39 +2,43 @@
 
 import React, { useState } from 'react';
 
-import { Button, Badge } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import { BroadcastOnboarding } from './components';
+import BroadcastFeed from './components/lists/BroadcastFeed';
+import ContentCreator from './components/modals/ContentCreator';
+import NotificationCenter from './components/modals/NotificationCenter';
+import LiveActivityBar from './components/navigation/LiveActivityBar';
+import SubcastSidebar from './components/navigation/SubcastSidebar';
 import { useBroadcastPreferences } from './hooks';
-import type { Topic } from './types';
-
-// Enhanced components
-import EnhancedBroadcastFeed from './components/enhanced/EnhancedBroadcastFeed';
-import EnhancedSubcastSidebar from './components/enhanced/EnhancedSubcastSidebar';
-import NotificationCenter from './components/enhanced/NotificationCenter';
-import LiveActivityBar from './components/enhanced/LiveActivityBar';
-import ContentCreator from './components/enhanced/ContentCreator';
+import { type Topic } from './types';
 
 export default function BroadcastsPage() {
   const t = useTranslations('broadcasts');
   const tActions = useTranslations('broadcasts.actions');
   const tNav = useTranslations('navigation');
-  
-  const { preferences, isLoaded, completeOnboarding, resetPreferences } = useBroadcastPreferences();
-  const [selectedSubcast, setSelectedSubcast] = useState<string | null>(null);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isContentCreatorOpen, setIsContentCreatorOpen] = useState(false);
-  const [unreadNotifications] = useState(8);
+
+  const {
+    preferences: broadcastPreferences,
+    isLoaded: preferencesLoaded,
+    completeOnboarding,
+    resetPreferences
+  } = useBroadcastPreferences();
+
+  const [activeSubcast, setActiveSubcast] = useState<string | null>(null);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showContentCreator, setShowContentCreator] = useState(false);
+  const [unreadCount] = useState(8);
 
   const handleOnboardingComplete = (selectedTopics: Topic[]) => {
     completeOnboarding(selectedTopics);
   };
 
-  const handleReset = () => {
+  const handlePreferencesReset = () => {
     resetPreferences();
   };
 
@@ -43,14 +47,25 @@ export default function BroadcastsPage() {
   };
 
   const handleSubcastSelect = (subcastId: string | null) => {
-    setSelectedSubcast(subcastId);
+    setActiveSubcast(subcastId);
   };
 
   const handleCreatePost = () => {
-    setIsContentCreatorOpen(true);
+    setShowContentCreator(true);
   };
 
-  if (!isLoaded) {
+  const handlePublishPost = (postData: any) => {
+    console.log('Published post:', postData);
+    setShowContentCreator(false);
+    // TODO: Add to feed
+  };
+
+  const handleSaveDraft = (draftData: any) => {
+    console.log('Saved draft:', draftData);
+    // TODO: Save to drafts
+  };
+
+  if (!preferencesLoaded) {
     return (
       <DashboardLayout
         pageTitle={t('title')}
@@ -72,15 +87,14 @@ export default function BroadcastsPage() {
     );
   }
 
-  if (preferences.isFirstTime) {
+  if (broadcastPreferences.isFirstTime) {
     return <BroadcastOnboarding onComplete={handleOnboardingComplete} />;
   }
-
 
   return (
     <>
       {/* Live Activity Bar */}
-      <LiveActivityBar onNotificationClick={() => setIsNotificationOpen(true)} />
+      <LiveActivityBar onNotificationClick={() => setShowNotifications(true)} />
 
       <DashboardLayout
         pageTitle={t('title')}
@@ -90,8 +104,8 @@ export default function BroadcastsPage() {
           { label: tNav('broadcasts'), icon: 'solar:satellite-linear' }
         ]}
         pageDescription={t('description')}
-        contentPadding="none"
-        maxWidth="full"
+        contentPadding='none'
+        maxWidth='full'
         headerActions={
           <div className='flex items-center gap-3'>
             {/* Create Post Button */}
@@ -100,86 +114,95 @@ export default function BroadcastsPage() {
               size='md'
               startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
               onPress={handleCreatePost}
-              className="shadow-md hover:shadow-lg transition-all duration-200"
+              className='shadow-sm transition-all duration-200 hover:shadow-md'
             >
               Create Post
             </Button>
 
-            {/* Settings Dropdown */}
+            {/* Settings Button */}
             <Button
               variant='flat'
               size='md'
               startContent={<Icon icon='solar:settings-linear' className='h-4 w-4' />}
-              onPress={handleReset}
-              className="hover:shadow-md transition-all duration-200"
+              onPress={handlePreferencesReset}
+              className='transition-all duration-200 hover:shadow-sm'
             >
               {tActions('resetTopics')}
             </Button>
           </div>
         }
       >
-        <div className='h-full flex'>
-          {/* Left Sidebar - Enhanced with Professional Spacing */}
-          <div className='w-80 flex-shrink-0 hidden lg:block border-r border-divider/30'>
+        <div className='flex h-full'>
+          {/* Left Sidebar */}
+          <div className='border-divider/30 hidden w-80 flex-shrink-0 border-r lg:block'>
             <div className='h-full overflow-y-auto'>
-              <div className='p-6 sticky top-0'>
-                <EnhancedSubcastSidebar
+              <div className='sticky top-0 p-6'>
+                <SubcastSidebar
                   onSubcastToggle={handleSubcastToggle}
                   onSubcastSelect={handleSubcastSelect}
-                  selectedSubcast={selectedSubcast}
+                  selectedSubcast={activeSubcast}
                 />
               </div>
             </div>
           </div>
 
-          {/* Main Content - Enhanced Feed with Professional Spacing */}
-          <div className='min-w-0 flex-1 flex flex-col'>
+          {/* Main Content */}
+          <div className='flex min-w-0 flex-1 flex-col'>
             <div className='flex-1 overflow-y-auto'>
-              <div className='max-w-4xl mx-auto px-6 py-8 lg:px-8'>
-                <EnhancedBroadcastFeed
-                  selectedTopics={preferences.selectedTopics}
-                  selectedSubcast={selectedSubcast}
+              <div className='mx-auto max-w-4xl px-6 py-8 lg:px-8'>
+                <BroadcastFeed
+                  selectedTopics={broadcastPreferences.selectedTopics}
+                  selectedSubcast={activeSubcast}
                 />
               </div>
             </div>
           </div>
 
-          {/* Right Sidebar - Enhanced with Professional Spacing */}
-          <div className='w-72 flex-shrink-0 hidden xl:block border-l border-divider/30'>
+          {/* Right Sidebar */}
+          <div className='border-divider/30 hidden w-72 flex-shrink-0 border-l xl:block'>
             <div className='h-full overflow-y-auto'>
-              <div className='p-6 space-y-6'>
+              <div className='space-y-6 p-6'>
                 {/* Quick Actions Card */}
-                <div className="bg-content1 border border-default-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
-                  <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <Icon icon="solar:flash-linear" className="h-5 w-5 text-primary" />
+                <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm transition-all duration-200 hover:shadow-md'>
+                  <h3 className='text-foreground mb-4 flex items-center gap-2 text-base font-semibold'>
+                    <Icon icon='solar:flash-linear' className='text-primary h-5 w-5' />
                     Quick Actions
                   </h3>
-                  <div className="space-y-3">
+                  <div className='space-y-3'>
                     <Button
-                      variant="flat"
-                      size="md"
+                      variant='flat'
+                      size='md'
                       fullWidth
-                      startContent={<Icon icon="solar:pen-new-square-linear" className="h-4 w-4 text-blue-600" />}
+                      startContent={
+                        <Icon icon='solar:pen-new-square-linear' className='text-primary h-4 w-4' />
+                      }
                       onPress={handleCreatePost}
-                      className="justify-start bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200 py-3 h-auto"
+                      className='bg-primary/10 hover:bg-primary/20 text-primary h-auto justify-start py-3 transition-colors'
                     >
                       Create Post
                     </Button>
                     <Button
-                      variant="flat"
-                      size="md"
+                      variant='flat'
+                      size='md'
                       fullWidth
-                      startContent={<Icon icon="solar:bookmark-linear" className="h-4 w-4 text-emerald-600" />}
-                      className="justify-start bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200 py-3 h-auto"
+                      startContent={
+                        <Icon icon='solar:bookmark-linear' className='text-success h-4 w-4' />
+                      }
+                      className='bg-success/10 hover:bg-success/20 text-success h-auto justify-start py-3 transition-colors'
                     >
                       Saved Posts
                     </Button>
                     <Button
-                      variant="flat"
-                      size="md"
+                      variant='flat'
+                      size='md'
                       fullWidth
-                      startContent={<Icon icon="solar:users-group-rounded-linear" className="h-4 w-4 text-rose-600" />}
-                      className="justify-start bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-200 py-3 h-auto"
+                      startContent={
+                        <Icon
+                          icon='solar:users-group-rounded-linear'
+                          className='text-secondary h-4 w-4'
+                        />
+                      }
+                      className='bg-secondary/10 hover:bg-secondary/20 text-secondary h-auto justify-start py-3 transition-colors'
                     >
                       Following
                     </Button>
@@ -187,45 +210,50 @@ export default function BroadcastsPage() {
                 </div>
 
                 {/* Trending Topics Card */}
-                <div className="bg-content1 border border-default-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
-                  <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <Icon icon="solar:fire-linear" className="h-5 w-5 text-warning" />
+                <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm transition-all duration-200 hover:shadow-md'>
+                  <h3 className='text-foreground mb-4 flex items-center gap-2 text-base font-semibold'>
+                    <Icon icon='solar:fire-linear' className='text-warning h-5 w-5' />
                     Trending
                   </h3>
-                  <div className="space-y-3">
-                    {['React 19', 'AI First', 'Design Systems', 'Remote Work'].map((topic, index) => (
-                      <div key={topic} className="flex items-center justify-between p-2 rounded-lg hover:bg-default-50 transition-colors">
-                        <span className="text-sm font-medium text-foreground-700">{topic}</span>
-                        <span className="text-xs font-semibold text-success bg-success/10 px-2 py-1 rounded-full">
-                          +{(Math.random() * 50 + 10).toFixed(0)}%
-                        </span>
-                      </div>
-                    ))}
+                  <div className='space-y-3'>
+                    {['React 19', 'AI First', 'Design Systems', 'Remote Work'].map(
+                      (topic, index) => (
+                        <div
+                          key={topic}
+                          className='hover:bg-default-50 flex items-center justify-between rounded-lg p-2 transition-colors'
+                        >
+                          <span className='text-foreground-700 text-sm font-medium'>{topic}</span>
+                          <span className='text-success bg-success/10 rounded-full px-2 py-1 text-xs font-semibold'>
+                            +{(Math.random() * 50 + 10).toFixed(0)}%
+                          </span>
+                        </div>
+                      )
+                    )}
                   </div>
                 </div>
 
                 {/* Active Users Card */}
-                <div className="bg-content1 border border-default-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200">
-                  <h3 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 bg-success rounded-full animate-pulse" />
+                <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm transition-all duration-200 hover:shadow-md'>
+                  <h3 className='text-foreground mb-4 flex items-center gap-2 text-base font-semibold'>
+                    <div className='bg-success h-2.5 w-2.5 animate-pulse rounded-full' />
                     Active Now
                   </h3>
-                  <div className="flex -space-x-2 mb-4">
+                  <div className='mb-4 flex -space-x-2'>
                     {[1, 2, 3, 4, 5].map((i) => (
                       <div
                         key={i}
-                        className="w-9 h-9 rounded-full bg-primary border-2 border-background shadow-sm"
+                        className='bg-primary border-background h-9 w-9 rounded-full border-2 shadow-sm'
                         style={{
                           backgroundImage: `url(https://i.pravatar.cc/150?img=${i})`,
                           backgroundSize: 'cover'
                         }}
                       />
                     ))}
-                    <div className="w-9 h-9 rounded-full bg-default-200 border-2 border-background flex items-center justify-center shadow-sm">
-                      <span className="text-xs font-semibold">+12</span>
+                    <div className='bg-default-200 border-background flex h-9 w-9 items-center justify-center rounded-full border-2 shadow-sm'>
+                      <span className='text-xs font-semibold'>+12</span>
                     </div>
                   </div>
-                  <p className="text-sm text-foreground-500">17 users active in the last hour</p>
+                  <p className='text-foreground-500 text-sm'>17 users active in the last hour</p>
                 </div>
               </div>
             </div>
@@ -233,22 +261,14 @@ export default function BroadcastsPage() {
         </div>
       </DashboardLayout>
 
-      {/* Modals and Overlays */}
-      <NotificationCenter
-        isOpen={isNotificationOpen}
-        onClose={() => setIsNotificationOpen(false)}
-      />
+      {/* Modals */}
+      <NotificationCenter isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
 
       <ContentCreator
-        isOpen={isContentCreatorOpen}
-        onClose={() => setIsContentCreatorOpen(false)}
-        onPublish={(post) => {
-          console.log('Published post:', post);
-          setIsContentCreatorOpen(false);
-        }}
-        onSaveDraft={(draft) => {
-          console.log('Saved draft:', draft);
-        }}
+        isOpen={showContentCreator}
+        onClose={() => setShowContentCreator(false)}
+        onPublish={handlePublishPost}
+        onSaveDraft={handleSaveDraft}
       />
     </>
   );
