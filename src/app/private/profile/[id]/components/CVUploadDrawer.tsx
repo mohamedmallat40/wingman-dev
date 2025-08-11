@@ -367,7 +367,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
           <div className="flex justify-center">
             <div className="relative">
               <div className="p-8 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl">
-                <Icon icon="solar:document-add-bold-duotone" className="h-20 w-20 text-primary" />
+                <Icon icon="solar:document-add-outline" className="h-20 w-20 text-primary/70" />
               </div>
               <div className="absolute -top-2 -right-2 p-2 bg-success rounded-full">
                 <Icon icon="solar:cloud-upload-bold" className="h-6 w-6 text-white" />
