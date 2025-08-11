@@ -524,8 +524,8 @@ export default function EnhancedSubcastSidebar({
           )}
 
           {/* Topics List */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="space-y-2">
+          <div className="flex-1 overflow-y-auto overflow-x-visible">
+            <div className="space-y-2 px-1">
               <AnimatePresence>
                 {filteredSubcasts.map((subcast, index) => (
                   <motion.div
