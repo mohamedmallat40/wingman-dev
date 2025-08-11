@@ -469,9 +469,14 @@ export default function EnhancedSubcastSidebar({
                 onSelectionChange={(keys) => setSelectedCategory(Array.from(keys)[0] as string)}
                 size="sm"
                 className="flex-1"
+                classNames={{
+                  trigger: "text-foreground",
+                  value: "text-foreground",
+                  popoverContent: "text-foreground bg-background"
+                }}
               >
                 {categories.map((category) => (
-                  <SelectItem key={category} value={category}>
+                  <SelectItem key={category} value={category} className="text-foreground">
                     {category === 'all' ? 'All Categories' : getCategoryLabel(category)}
                   </SelectItem>
                 ))}
@@ -483,11 +488,16 @@ export default function EnhancedSubcastSidebar({
                 onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
                 size="sm"
                 className="flex-1"
+                classNames={{
+                  trigger: "text-foreground",
+                  value: "text-foreground",
+                  popoverContent: "text-foreground bg-background"
+                }}
               >
-                <SelectItem key="popularity">Popular</SelectItem>
-                <SelectItem key="activity">Active</SelectItem>
-                <SelectItem key="growth">Growing</SelectItem>
-                <SelectItem key="alphabetical">A-Z</SelectItem>
+                <SelectItem key="popularity" className="text-foreground">Popular</SelectItem>
+                <SelectItem key="activity" className="text-foreground">Active</SelectItem>
+                <SelectItem key="growth" className="text-foreground">Growing</SelectItem>
+                <SelectItem key="alphabetical" className="text-foreground">A-Z</SelectItem>
               </Select>
             </div>
           </div>
