@@ -198,13 +198,13 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
           </div>
 
           {/* Controls */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {/* Notification bell */}
             <Button
               isIconOnly
               size="sm"
               variant="flat"
-              className="h-8 w-8"
+              className="h-9 w-9 hover:bg-primary/10 transition-colors"
               onPress={onNotificationClick}
             >
               <div className="relative">
