@@ -179,7 +179,7 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
                   icon={getActivityIcon(currentActivity.type)}
                   className={`h-4 w-4 text-${getActivityColor(currentActivity.priority)} flex-shrink-0 drop-shadow-sm`}
                 />
-                <span className="text-sm text-white/90 dark:text-white/80 truncate drop-shadow-sm">
+                <span className="text-sm text-foreground-800 dark:text-white/80 truncate drop-shadow-sm">
                   {currentActivity.message}
                 </span>
                 {currentActivity.count && (
