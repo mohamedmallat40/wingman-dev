@@ -1381,21 +1381,33 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                     </div>
 
                     {/* Progress Summary */}
-                    <div className="mt-8 p-4 bg-gradient-to-r from-default-100/50 to-default-50/50 rounded-2xl border border-default-200/50">
-                      <div className="flex items-center gap-3 mb-3">
-                        <Icon icon="solar:chart-outline" className="h-5 w-5 text-primary/70" />
-                        <span className="font-medium text-default-700">Progress Overview</span>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-default-600">Completed Steps</span>
-                          <span className="font-medium text-primary">{currentStepIndex} / {steps.length}</span>
+                    <div className="mt-auto p-6 bg-gradient-to-br from-default-100/70 to-default-50/50 rounded-3xl border border-default-200/60 shadow-lg backdrop-blur-sm">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl">
+                          <Icon icon="solar:chart-outline" className="h-5 w-5 text-primary" />
                         </div>
-                        <div className="w-full bg-default-200/50 rounded-full h-2">
-                          <div
-                            className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
-                          />
+                        <span className="font-bold text-default-800">Progress Overview</span>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <span className="text-default-700 font-medium">Completed Steps</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-lg text-primary">{currentStepIndex}</span>
+                            <span className="text-default-500 font-medium">/ {steps.length}</span>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="w-full bg-default-200/70 rounded-full h-3 shadow-inner">
+                            <div
+                              className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 h-3 rounded-full transition-all duration-700 shadow-sm"
+                              style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
+                            />
+                          </div>
+                          <div className="text-center">
+                            <span className="text-xs font-medium text-primary">
+                              {Math.round((currentStepIndex / steps.length) * 100)}% Complete
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
