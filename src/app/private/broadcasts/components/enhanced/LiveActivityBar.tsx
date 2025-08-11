@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Badge, Button, Chip } from '@heroui/react';
+import { Button, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
@@ -69,7 +69,6 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
   const [activities, setActivities] = useState<LiveActivity[]>(MOCK_ACTIVITIES);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const [unreadCount, setUnreadCount] = useState(12);
 
   // Auto-rotate through activities
   useEffect(() => {
@@ -109,7 +108,6 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
       const randomActivity = newActivities[Math.floor(Math.random() * newActivities.length)];
       
       setActivities(prev => [randomActivity, ...prev.slice(0, 4)]);
-      setUnreadCount(prev => prev + 1);
     }, 15000);
 
     return () => clearInterval(interval);
@@ -152,17 +150,17 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: -100, opacity: 0 }}
-      className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-40 px-4 ${className}`}
+      className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-4 ${className}`}
     >
-      <div className={"bg-background/95 backdrop-blur-lg border border-default-200 rounded-xl shadow-xl px-6 py-3 max-w-2xl mx-auto\""}>
+      <div className="bg-background/95 backdrop-blur-xl border-0 rounded-full shadow-lg px-6 py-3 max-w-lg mx-auto ring-1 ring-black/5 dark:ring-white/10">
         <div className="flex items-center gap-4">
           {/* Live indicator */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="relative">
-              <div className={`w-3 h-3 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-pulse`} />
-              <div className={`absolute inset-0 w-3 h-3 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-ping opacity-75`} />
+              <div className={`w-2 h-2 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-pulse`} />
+              <div className={`absolute inset-0 w-2 h-2 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-ping opacity-75`} />
             </div>
-            <span className="text-sm font-semibold text-foreground-700 tracking-wide">LIVE</span>
+            <span className="text-xs font-medium text-foreground-600 tracking-wide">LIVE</span>
           </div>
 
           {/* Activity content */}
@@ -170,17 +168,17 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentActivity.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.3 }}
-                className="flex items-center gap-2"
+                className="flex items-center gap-3"
               >
                 <Icon
                   icon={getActivityIcon(currentActivity.type)}
-                  className={`h-5 w-5 text-${getActivityColor(currentActivity.priority)} flex-shrink-0`}
+                  className={`h-4 w-4 text-${getActivityColor(currentActivity.priority)} flex-shrink-0`}
                 />
-                <span className="text-sm font-medium text-foreground truncate">
+                <span className="text-sm text-foreground truncate">
                   {currentActivity.message}
                 </span>
                 {currentActivity.count && (
@@ -188,7 +186,7 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
                     size="sm"
                     color={getActivityColor(currentActivity.priority)}
                     variant="flat"
-                    className="h-6 text-xs font-semibold px-2"
+                    className="h-5 text-xs"
                   >
                     {currentActivity.count}
                   </Chip>
@@ -197,53 +195,22 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
             </AnimatePresence>
           </div>
 
-          {/* Controls */}
-          <div className="flex items-center gap-3">
-            {/* Notification bell */}
-            <Button
-              isIconOnly
-              size="sm"
-              variant="flat"
-              className="h-9 w-9 hover:bg-primary/10 transition-colors"
-              onPress={onNotificationClick}
-            >
-              <div className="relative">
-                <Icon icon="solar:bell-linear" className="h-4 w-4" />
-                {unreadCount > 0 && (
-                  <Badge
-                    content={unreadCount > 99 ? '99+' : unreadCount}
-                    color="danger"
-                    size="sm"
-                    className="absolute -top-1 -right-1 scale-75"
-                  />
-                )}
-              </div>
-            </Button>
-
-            {/* Activity navigation */}
+          {/* Minimal controls */}
+          <div className="flex items-center gap-2">
+            {/* Activity navigation dots */}
             {activities.length > 1 && (
-              <div className="flex items-center gap-1 bg-default-100 dark:bg-default-50 rounded-lg px-2 py-1">
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  className="h-6 w-6 hover:bg-primary/10"
-                  onPress={() => setCurrentIndex((prev) => (prev - 1 + activities.length) % activities.length)}
-                >
-                  <Icon icon="solar:alt-arrow-left-linear" className="h-3 w-3" />
-                </Button>
-                <span className="text-xs font-medium text-foreground-600 px-2 min-w-[2rem] text-center">
-                  {currentIndex + 1}/{activities.length}
-                </span>
-                <Button
-                  isIconOnly
-                  size="sm"
-                  variant="light"
-                  className="h-6 w-6 hover:bg-primary/10"
-                  onPress={() => setCurrentIndex((prev) => (prev + 1) % activities.length)}
-                >
-                  <Icon icon="solar:alt-arrow-right-linear" className="h-3 w-3" />
-                </Button>
+              <div className="flex items-center gap-1">
+                {activities.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                      index === currentIndex
+                        ? `bg-${getActivityColor(currentActivity.priority)}`
+                        : 'bg-default-300 hover:bg-default-400'
+                    }`}
+                  />
+                ))}
               </div>
             )}
 
@@ -252,55 +219,34 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
               isIconOnly
               size="sm"
               variant="light"
-              className="h-7 w-7 hover:bg-danger/10 hover:text-danger transition-colors"
+              className="h-6 w-6 opacity-60 hover:opacity-100 transition-opacity"
               onPress={() => setIsVisible(false)}
             >
-              <Icon icon="solar:close-circle-linear" className="h-4 w-4" />
+              <Icon icon="solar:close-circle-linear" className="h-3 w-3" />
             </Button>
           </div>
         </div>
 
-        {/* Progress indicator */}
-        {activities.length > 1 && (
-          <div className="flex gap-1.5 mt-3 justify-center">
-            {activities.map((_, index) => (
-              <motion.div
-                key={index}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  index === currentIndex
-                    ? `bg-${getActivityColor(currentActivity.priority)} w-8`
-                    : 'bg-default-300 w-2'
-                }`}
-                initial={false}
-                animate={{
-                  backgroundColor: index === currentIndex
-                    ? `var(--heroui-${getActivityColor(currentActivity.priority)})`
-                    : 'var(--heroui-default-300)'
-                }}
-              />
-            ))}
-          </div>
+        {/* Action button for actionable activities */}
+        {currentActivity.actionable && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            transition={{ delay: 0.3 }}
+            className="flex justify-center mt-3 pt-2 border-t border-default-200/50"
+          >
+            <Button
+              size="sm"
+              color={getActivityColor(currentActivity.priority)}
+              variant="flat"
+              className="text-xs px-4 h-7"
+              onPress={onNotificationClick}
+            >
+              View Details
+            </Button>
+          </motion.div>
         )}
       </div>
-
-      {/* Action buttons for current activity */}
-      {currentActivity.actionable && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="flex justify-center mt-3"
-        >
-          <Button
-            size="sm"
-            color={getActivityColor(currentActivity.priority)}
-            variant="flat"
-            className="text-xs font-medium px-4 hover:scale-105 transition-transform"
-          >
-            View Details
-          </Button>
-        </motion.div>
-      )}
     </motion.div>
   );
 }
