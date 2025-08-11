@@ -206,7 +206,7 @@ export default function SubcastSidebar({
               <div>
                 <h2 className='text-foreground font-semibold'>{t('title')}</h2>
                 <p className='text-foreground-500 text-xs'>
-                  {t('following')} {followingCount}
+                  {t('following', { count: followingCount })}
                 </p>
               </div>
             </div>
