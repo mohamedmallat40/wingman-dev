@@ -934,11 +934,16 @@ export default function EnhancedBroadcastFeed({
                 onSelectionChange={(keys) => handleFilterChange('sortBy', Array.from(keys)[0] as string)}
                 className="w-32"
                 size="sm"
+                classNames={{
+                  trigger: "text-foreground",
+                  value: "text-foreground",
+                  popoverContent: "text-foreground bg-background"
+                }}
               >
-                <SelectItem key="recent">Recent</SelectItem>
-                <SelectItem key="popular">Popular</SelectItem>
-                <SelectItem key="trending">Trending</SelectItem>
-                <SelectItem key="comments">Most Discussed</SelectItem>
+                <SelectItem key="recent" className="text-foreground">Recent</SelectItem>
+                <SelectItem key="popular" className="text-foreground">Popular</SelectItem>
+                <SelectItem key="trending" className="text-foreground">Trending</SelectItem>
+                <SelectItem key="comments" className="text-foreground">Most Discussed</SelectItem>
               </Select>
 
               <Select
@@ -947,13 +952,18 @@ export default function EnhancedBroadcastFeed({
                 onSelectionChange={(keys) => handleFilterChange('postType', Array.from(keys)[0] as string)}
                 className="w-32"
                 size="sm"
+                classNames={{
+                  trigger: "text-foreground",
+                  value: "text-foreground",
+                  popoverContent: "text-foreground bg-background"
+                }}
               >
-                <SelectItem key="all">All Types</SelectItem>
-                <SelectItem key="article">Articles</SelectItem>
-                <SelectItem key="video">Videos</SelectItem>
-                <SelectItem key="image">Images</SelectItem>
-                <SelectItem key="poll">Polls</SelectItem>
-                <SelectItem key="quote">Quotes</SelectItem>
+                <SelectItem key="all" className="text-foreground">All Types</SelectItem>
+                <SelectItem key="article" className="text-foreground">Articles</SelectItem>
+                <SelectItem key="video" className="text-foreground">Videos</SelectItem>
+                <SelectItem key="image" className="text-foreground">Images</SelectItem>
+                <SelectItem key="poll" className="text-foreground">Polls</SelectItem>
+                <SelectItem key="quote" className="text-foreground">Quotes</SelectItem>
               </Select>
             </div>
           </div>
