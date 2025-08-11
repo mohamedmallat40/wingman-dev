@@ -107,8 +107,10 @@ export default function EnhancedBroadcastFeed({
 
   // Load posts
   useEffect(() => {
+    console.log('Loading posts with topics:', selectedTopics, 'subcast:', selectedSubcast);
     const timer = setTimeout(() => {
       const mockPosts = loadEnhancedMockPosts(selectedTopics, selectedSubcast);
+      console.log('Loaded posts count:', mockPosts.length);
       setPosts(mockPosts);
       setLoading(false);
     }, 1000);
