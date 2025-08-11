@@ -655,7 +655,7 @@ export default function EnhancedSubcastSidebar({
                 <div className="bg-default-100 mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full">
                   <Icon icon="solar:inbox-linear" className="text-default-400 h-6 w-6" />
                 </div>
-                <p className="text-sm text-foreground-500">{t('noSubcasts')}</p>
+                <p className="text-sm text-foreground-500">No topics found</p>
               </div>
             )}
           </div>
