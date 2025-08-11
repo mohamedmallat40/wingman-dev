@@ -28,7 +28,6 @@ export default function BroadcastsPage() {
   const [selectedSubcast, setSelectedSubcast] = useState<string | null>(null);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isContentCreatorOpen, setIsContentCreatorOpen] = useState(false);
-  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const [unreadNotifications] = useState(8);
 
   const handleOnboardingComplete = (selectedTopics: Topic[]) => {
