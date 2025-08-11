@@ -1219,11 +1219,11 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   );
 
   const steps = [
-    { key: 'upload', title: 'Upload', icon: 'solar:cloud-upload-linear' },
-    { key: 'parsing', title: 'Processing', icon: 'solar:cpu-bolt-linear' },
-    { key: 'review', title: 'Review', icon: 'solar:eye-linear' },
-    { key: 'applying', title: 'Applying', icon: 'solar:database-linear' },
-    { key: 'complete', title: 'Complete', icon: 'solar:check-circle-linear' }
+    { key: 'upload', title: 'Upload', icon: 'solar:cloud-upload-outline' },
+    { key: 'parsing', title: 'Processing', icon: 'solar:cpu-outline' },
+    { key: 'review', title: 'Review', icon: 'solar:eye-outline' },
+    { key: 'applying', title: 'Applying', icon: 'solar:database-outline' },
+    { key: 'complete', title: 'Complete', icon: 'solar:check-circle-outline' }
   ];
 
   const currentStepIndex = steps.findIndex(step => step.key === currentStep);
