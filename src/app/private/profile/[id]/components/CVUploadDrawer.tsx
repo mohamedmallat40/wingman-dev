@@ -556,7 +556,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             variant="bordered"
             value={reviewData.personalInfo.city || ''}
             onChange={(e) => handleUpdateItem('personalInfo', -1, { city: e.target.value })}
-            startContent={<Icon icon="solar:map-point-linear" className="h-4 w-4 text-default-400" />}
+            startContent={<Icon icon="solar:map-point-outline" className="h-4 w-4 text-default-400" />}
           />
           <Input
             label="LinkedIn Profile"
