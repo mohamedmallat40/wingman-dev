@@ -116,8 +116,8 @@ export default function BroadcastsPage() {
       >
         <div className='mx-auto flex w-full xl:w-[90%] 2xl:w-[80%] gap-6'>
           {/* Left Sidebar - Enhanced Subcast */}
-          <div className='w-80 flex-shrink-0 hidden lg:block'>
-            <div className='sticky top-4'>
+          <div className='w-80 flex-shrink-0 hidden lg:block overflow-visible'>
+            <div className='sticky top-4 overflow-visible'>
               <EnhancedSubcastSidebar
                 onSubcastToggle={handleSubcastToggle}
                 onSubcastSelect={handleSubcastSelect}
