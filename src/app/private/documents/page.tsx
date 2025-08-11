@@ -123,20 +123,22 @@ export default function DocumentsPage() {
       pageTitle={t('title')}
       pageDescription={t('description')}
       pageIcon='solar:document-text-linear'
+      contentPadding="md"
+      maxWidth="default"
       breadcrumbs={getBreadcrumbs()}
       headerActions={
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-3'>
           {actionItems.map((action) => (
             <Button
               key={action.key}
               color={action.color}
               variant={action.variant}
-              size='sm'
+              size='md'
               startContent={
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
               onPress={() => action.onClick?.()}
-              className='font-medium transition-all duration-200 hover:shadow-md'
+              className='font-medium transition-all duration-200 hover:shadow-lg shadow-md'
             >
               {action.label}
             </Button>
@@ -144,7 +146,7 @@ export default function DocumentsPage() {
         </div>
       }
     >
-      <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
+      <div className='component-spacing-large'>
         <div className='space-y-6'>
           {/* Enhanced Tabs Navigation with Integrated Search */}
           <DocumentTabs
