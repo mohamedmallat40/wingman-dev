@@ -1338,16 +1338,18 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                             </div>
 
                             <div className="flex-1">
-                              <div className={`font-semibold transition-colors duration-300 ${
+                              <div className={`text-lg font-bold transition-colors duration-500 ${
                                 index === currentStepIndex
                                   ? 'text-primary'
                                   : index < currentStepIndex
                                   ? 'text-success'
-                                  : 'text-default-600'
+                                  : 'text-default-700'
                               }`}>
                                 {step.title}
                               </div>
-                              <div className="text-sm text-default-500 mt-1">
+                              <div className={`text-sm font-medium mt-1.5 transition-colors duration-300 ${
+                                index === currentStepIndex ? 'text-primary/70' : 'text-default-600'
+                              }`}>
                                 {step.key === 'upload' && 'Select and upload your CV file'}
                                 {step.key === 'parsing' && 'AI extracts information'}
                                 {step.key === 'review' && 'Review and edit data'}
