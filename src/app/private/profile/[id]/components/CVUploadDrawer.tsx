@@ -317,14 +317,23 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       className="flex flex-col items-center justify-center min-h-[400px] px-6"
     >
       <div
-        {...getRootProps()}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
+        onClick={() => document.getElementById('cv-upload-input')?.click()}
         className={`w-full max-w-md p-8 border-2 border-dashed rounded-2xl text-center cursor-pointer transition-all duration-300 ${
           isDragActive
             ? 'border-primary bg-primary/5 scale-105'
             : 'border-default-300 hover:border-primary hover:bg-default-50'
         }`}
       >
-        <input {...getInputProps()} />
+        <input
+          id="cv-upload-input"
+          type="file"
+          accept=".pdf,.doc,.docx"
+          onChange={handleFileChange}
+          className="hidden"
+        />
         <div className="space-y-4">
           <div className="flex justify-center">
             <div className="p-4 bg-primary/10 rounded-2xl">
