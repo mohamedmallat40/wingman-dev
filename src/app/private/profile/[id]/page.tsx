@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import ProfileClient from './components/ProfileClient';
 
 interface ProfilePageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export const metadata: Metadata = {
@@ -13,10 +13,12 @@ export const metadata: Metadata = {
   description: 'View user profile details'
 };
 
-export default function ProfilePage({ params }: ProfilePageProps) {
-  if (!params?.id) {
+export default async function ProfilePage({ params }: ProfilePageProps) {
+  const { id } = await params;
+  
+  if (!id) {
     notFound();
   }
 
-  return <ProfileClient userId={params.id} />;
+  return <ProfileClient userId={id} />;
 }

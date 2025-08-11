@@ -1,6 +1,9 @@
+// Re-export broadcast utilities
+export * from './broadcast-utils';
+
+// Topic utilities for onboarding
 import { Topic } from '../types';
 
-// Background images for topic cards
 const BACKGROUND_IMAGES = [
   '/broadcast-onboarding/generative-ai.jpg',
   '/broadcast-onboarding/mobile-dev.jpg', 
@@ -13,12 +16,11 @@ export const poster = (query: string, w = 480, h = 270) => {
 };
 
 export const getTopicBackgroundImage = (topicId: string): string => {
-  // Use a simple hash of the topic ID to consistently assign the same image
   let hash = 0;
   for (let i = 0; i < topicId.length; i++) {
     const char = topicId.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    hash = hash & hash;
   }
   const index = Math.abs(hash) % BACKGROUND_IMAGES.length;
   return BACKGROUND_IMAGES[index];
