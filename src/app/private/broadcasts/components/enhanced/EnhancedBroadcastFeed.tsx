@@ -339,7 +339,7 @@ export default function EnhancedBroadcastFeed({
           </div>
 
           {/* Layout and View Options */}
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-6">
             <Tabs
               selectedKey={viewOptions.layout}
               onSelectionChange={(key) => handleViewOptionChange('layout', key)}
