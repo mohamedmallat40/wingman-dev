@@ -1301,12 +1301,12 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                           transition={{ delay: index * 0.1 }}
                           className="relative"
                         >
-                          <div className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${
+                          <div className={`flex items-center gap-4 p-5 rounded-2xl transition-all duration-500 ${
                             index === currentStepIndex
-                              ? 'bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 shadow-lg'
+                              ? 'bg-gradient-to-r from-primary/15 to-primary/8 border border-primary/30 shadow-xl shadow-primary/10'
                               : index < currentStepIndex
-                              ? 'bg-gradient-to-r from-success/10 to-success/5 border border-success/20'
-                              : 'bg-default-100/50 border border-default-200/50 hover:bg-default-100/80'
+                              ? 'bg-gradient-to-r from-success/15 to-success/8 border border-success/30 shadow-lg shadow-success/5'
+                              : 'bg-gradient-to-r from-default-100/60 to-default-50/40 border border-default-200/60 hover:border-default-300/80 hover:shadow-md'
                           }`}>
                             <div className={`relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
                               index < currentStepIndex
