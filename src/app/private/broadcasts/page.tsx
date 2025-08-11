@@ -142,14 +142,14 @@ export default function BroadcastsPage() {
               {/* Quick Actions Card */}
               <div className="bg-content1 border border-default-200 rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-foreground mb-3">Quick Actions</h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Button
                     variant="flat"
                     size="sm"
                     fullWidth
-                    startContent={<Icon icon="solar:pen-new-square-linear" className="h-4 w-4" />}
+                    startContent={<Icon icon="solar:pen-new-square-linear" className="h-4 w-4 text-blue-600" />}
                     onPress={handleCreatePost}
-                    className="justify-start"
+                    className="justify-start bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
                   >
                     Create Post
                   </Button>
@@ -157,8 +157,8 @@ export default function BroadcastsPage() {
                     variant="flat"
                     size="sm"
                     fullWidth
-                    startContent={<Icon icon="solar:bookmark-linear" className="h-4 w-4" />}
-                    className="justify-start"
+                    startContent={<Icon icon="solar:bookmark-linear" className="h-4 w-4 text-emerald-600" />}
+                    className="justify-start bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200"
                   >
                     Saved Posts
                   </Button>
@@ -166,8 +166,8 @@ export default function BroadcastsPage() {
                     variant="flat"
                     size="sm"
                     fullWidth
-                    startContent={<Icon icon="solar:users-group-rounded-linear" className="h-4 w-4" />}
-                    className="justify-start"
+                    startContent={<Icon icon="solar:users-group-rounded-linear" className="h-4 w-4 text-rose-600" />}
+                    className="justify-start bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-200"
                   >
                     Following
                   </Button>
