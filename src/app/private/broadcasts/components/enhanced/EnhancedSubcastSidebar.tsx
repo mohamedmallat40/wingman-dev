@@ -424,7 +424,7 @@ export default function EnhancedSubcastSidebar({
           {/* Search and Filters */}
           <div className="space-y-3 mb-4">
             <Input
-              placeholder={t('searchPlaceholder')}
+              placeholder="Search topics..."
               value={searchQuery}
               onValueChange={setSearchQuery}
               startContent={
