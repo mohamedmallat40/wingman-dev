@@ -10,9 +10,13 @@ type TRootLayout = PropsWithChildren;
 export default function PrivateLayout({ children }: Readonly<TRootLayout>) {
   return (
     <AuthGuard>
-      <div className='flex h-screen w-full flex-col'>
+      <div className='flex h-screen w-full flex-col overflow-hidden bg-background'>
         <PrivateNavBar />
-        <main className='scroll-hidden flex-1'>{children}</main>
+        <main className='flex-1 overflow-hidden'>
+          <div className='h-full w-full'>
+            {children}
+          </div>
+        </main>
       </div>
     </AuthGuard>
   );
