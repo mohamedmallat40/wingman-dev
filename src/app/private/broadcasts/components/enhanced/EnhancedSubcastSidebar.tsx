@@ -523,7 +523,7 @@ export default function EnhancedSubcastSidebar({
             </>
           )}
 
-          {/* Subcasts List */}
+          {/* Topics List */}
           <div className="flex-1 overflow-y-auto">
             <div className="space-y-2">
               <AnimatePresence>
