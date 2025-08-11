@@ -1034,7 +1034,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             <Icon icon="solar:check-circle-bold" className="h-16 w-16 text-success" />
           </motion.div>
         </div>
-        
+
         <div>
           <h3 className="text-2xl font-semibold text-foreground mb-2">Profile Updated Successfully!</h3>
           <p className="text-default-600">
@@ -1051,6 +1051,518 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       </div>
     </motion.div>
   );
+
+  const renderEditModal = () => {
+    if (!editingData || !editingSection) return null;
+
+    const section = editingData[editingSection as keyof ParsedCVData] as any;
+    const item = editingIndex >= 0 ? section[editingIndex] : section;
+
+    const renderEditForm = () => {
+      switch (editingSection) {
+        case 'skills':
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Skill Name"
+                value={item.name || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, name: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Select
+                label="Category"
+                selectedKeys={item.category ? [item.category] : []}
+                onSelectionChange={(keys) => {
+                  const category = Array.from(keys)[0] as string;
+                  const newItem = { ...item, category };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              >
+                <SelectItem key="Programming">Programming</SelectItem>
+                <SelectItem key="Frontend">Frontend</SelectItem>
+                <SelectItem key="Backend">Backend</SelectItem>
+                <SelectItem key="Database">Database</SelectItem>
+                <SelectItem key="DevOps">DevOps</SelectItem>
+                <SelectItem key="Cloud">Cloud</SelectItem>
+                <SelectItem key="Design">Design</SelectItem>
+                <SelectItem key="Other">Other</SelectItem>
+              </Select>
+              <Select
+                label="Level"
+                selectedKeys={item.level ? [item.level] : []}
+                onSelectionChange={(keys) => {
+                  const level = Array.from(keys)[0] as string;
+                  const newItem = { ...item, level };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              >
+                <SelectItem key="Beginner">Beginner</SelectItem>
+                <SelectItem key="Intermediate">Intermediate</SelectItem>
+                <SelectItem key="Advanced">Advanced</SelectItem>
+                <SelectItem key="Expert">Expert</SelectItem>
+              </Select>
+              <Input
+                type="number"
+                label="Years of Experience"
+                value={item.years?.toString() || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, years: parseInt(e.target.value) || 0 };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+            </div>
+          );
+
+        case 'experience':
+          return (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Company"
+                  value={item.company || ''}
+                  onChange={(e) => {
+                    const newItem = { ...item, company: e.target.value };
+                    if (editingIndex >= 0) {
+                      const newSection = [...section];
+                      newSection[editingIndex] = newItem;
+                      setEditingData({ ...editingData, [editingSection]: newSection });
+                    }
+                  }}
+                />
+                <Input
+                  label="Position"
+                  value={item.position || ''}
+                  onChange={(e) => {
+                    const newItem = { ...item, position: e.target.value };
+                    if (editingIndex >= 0) {
+                      const newSection = [...section];
+                      newSection[editingIndex] = newItem;
+                      setEditingData({ ...editingData, [editingSection]: newSection });
+                    }
+                  }}
+                />
+                <Input
+                  label="Location"
+                  value={item.location || ''}
+                  onChange={(e) => {
+                    const newItem = { ...item, location: e.target.value };
+                    if (editingIndex >= 0) {
+                      const newSection = [...section];
+                      newSection[editingIndex] = newItem;
+                      setEditingData({ ...editingData, [editingSection]: newSection });
+                    }
+                  }}
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    type="date"
+                    label="Start Date"
+                    value={item.startDate || ''}
+                    onChange={(e) => {
+                      const newItem = { ...item, startDate: e.target.value };
+                      if (editingIndex >= 0) {
+                        const newSection = [...section];
+                        newSection[editingIndex] = newItem;
+                        setEditingData({ ...editingData, [editingSection]: newSection });
+                      }
+                    }}
+                  />
+                  <Input
+                    type="date"
+                    label="End Date"
+                    value={item.endDate || ''}
+                    onChange={(e) => {
+                      const newItem = { ...item, endDate: e.target.value };
+                      if (editingIndex >= 0) {
+                        const newSection = [...section];
+                        newSection[editingIndex] = newItem;
+                        setEditingData({ ...editingData, [editingSection]: newSection });
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+              <Textarea
+                label="Description"
+                value={item.description || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, description: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+                minRows={3}
+              />
+              <Textarea
+                label="Responsibilities (one per line)"
+                value={item.responsibilities?.join('\n') || ''}
+                onChange={(e) => {
+                  const responsibilities = e.target.value.split('\n').filter(r => r.trim());
+                  const newItem = { ...item, responsibilities };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+                minRows={4}
+              />
+            </div>
+          );
+
+        case 'education':
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Institution"
+                value={item.institution || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, institution: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                label="Degree"
+                value={item.degree || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, degree: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                label="Field of Study"
+                value={item.field || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, field: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                label="Location"
+                value={item.location || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, location: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                type="date"
+                label="Start Date"
+                value={item.startDate || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, startDate: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                type="date"
+                label="End Date"
+                value={item.endDate || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, endDate: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                label="Grade/GPA"
+                className="md:col-span-2"
+                value={item.grade || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, grade: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+            </div>
+          );
+
+        case 'languages':
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Input
+                label="Language"
+                value={item.name || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, name: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Select
+                label="Level"
+                selectedKeys={item.level ? [item.level] : []}
+                onSelectionChange={(keys) => {
+                  const level = Array.from(keys)[0] as string;
+                  const newItem = { ...item, level };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              >
+                <SelectItem key="Basic">Basic</SelectItem>
+                <SelectItem key="Intermediate">Intermediate</SelectItem>
+                <SelectItem key="Advanced">Advanced</SelectItem>
+                <SelectItem key="Fluent">Fluent</SelectItem>
+                <SelectItem key="Native">Native</SelectItem>
+              </Select>
+              <Input
+                label="Proficiency Description"
+                value={item.proficiency || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, proficiency: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+            </div>
+          );
+
+        case 'certifications':
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                label="Certification Name"
+                value={item.name || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, name: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                label="Issuing Organization"
+                value={item.issuer || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, issuer: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                type="date"
+                label="Issue Date"
+                value={item.issueDate || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, issueDate: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                type="date"
+                label="Expiry Date"
+                value={item.expiryDate || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, expiryDate: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+              <Input
+                label="Credential ID"
+                className="md:col-span-2"
+                value={item.credentialId || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, credentialId: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+              />
+            </div>
+          );
+
+        case 'projects':
+          return (
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Project Name"
+                  value={item.name || ''}
+                  onChange={(e) => {
+                    const newItem = { ...item, name: e.target.value };
+                    if (editingIndex >= 0) {
+                      const newSection = [...section];
+                      newSection[editingIndex] = newItem;
+                      setEditingData({ ...editingData, [editingSection]: newSection });
+                    }
+                  }}
+                />
+                <Input
+                  label="Project URL"
+                  value={item.url || ''}
+                  onChange={(e) => {
+                    const newItem = { ...item, url: e.target.value };
+                    if (editingIndex >= 0) {
+                      const newSection = [...section];
+                      newSection[editingIndex] = newItem;
+                      setEditingData({ ...editingData, [editingSection]: newSection });
+                    }
+                  }}
+                />
+                <Input
+                  type="date"
+                  label="Start Date"
+                  value={item.startDate || ''}
+                  onChange={(e) => {
+                    const newItem = { ...item, startDate: e.target.value };
+                    if (editingIndex >= 0) {
+                      const newSection = [...section];
+                      newSection[editingIndex] = newItem;
+                      setEditingData({ ...editingData, [editingSection]: newSection });
+                    }
+                  }}
+                />
+                <Input
+                  type="date"
+                  label="End Date"
+                  value={item.endDate || ''}
+                  onChange={(e) => {
+                    const newItem = { ...item, endDate: e.target.value };
+                    if (editingIndex >= 0) {
+                      const newSection = [...section];
+                      newSection[editingIndex] = newItem;
+                      setEditingData({ ...editingData, [editingSection]: newSection });
+                    }
+                  }}
+                />
+              </div>
+              <Textarea
+                label="Description"
+                value={item.description || ''}
+                onChange={(e) => {
+                  const newItem = { ...item, description: e.target.value };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+                minRows={3}
+              />
+              <Textarea
+                label="Technologies (comma separated)"
+                value={item.technologies?.join(', ') || ''}
+                onChange={(e) => {
+                  const technologies = e.target.value.split(',').map(t => t.trim()).filter(t => t);
+                  const newItem = { ...item, technologies };
+                  if (editingIndex >= 0) {
+                    const newSection = [...section];
+                    newSection[editingIndex] = newItem;
+                    setEditingData({ ...editingData, [editingSection]: newSection });
+                  }
+                }}
+                minRows={2}
+              />
+            </div>
+          );
+
+        default:
+          return <div>No edit form available for this section.</div>;
+      }
+    };
+
+    return (
+      <Modal
+        isOpen={isEditModalOpen}
+        onClose={onEditModalClose}
+        size="3xl"
+        scrollBehavior="inside"
+        classNames={{
+          base: "max-h-[90vh]",
+          body: "py-6"
+        }}
+      >
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            <h3 className="text-lg font-semibold">
+              {editingIndex >= 0 ? 'Edit' : 'Edit'} {editingSection.charAt(0).toUpperCase() + editingSection.slice(1)}
+            </h3>
+          </ModalHeader>
+          <ModalBody>
+            {renderEditForm()}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="flat" onPress={onEditModalClose}>
+              Cancel
+            </Button>
+            <Button color="primary" onPress={() => handleSaveEdit(editingSection, item, editingIndex)}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    );
+  };
 
   return (
     <Drawer
