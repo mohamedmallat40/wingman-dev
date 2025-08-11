@@ -1229,29 +1229,31 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   const currentStepIndex = steps.findIndex(step => step.key === currentStep);
 
   return (
-    <Drawer 
-      isOpen={isOpen} 
+    <Drawer
+      isOpen={isOpen}
       onOpenChange={onOpenChange}
-      size="full"
+      size="5xl"
       placement="right"
       classNames={{
-        base: "w-screen h-screen max-w-none",
-        wrapper: "w-screen h-screen",
-        backdrop: "bg-black/50 backdrop-blur-sm"
+        base: "w-[80vw] h-screen max-w-[80vw]",
+        wrapper: "w-[80vw] h-screen",
+        backdrop: "bg-black/60 backdrop-blur-md"
       }}
     >
       <DrawerContent className="h-screen">
         {(onClose) => (
           <>
-            <DrawerHeader className="border-b border-divider bg-default-50/50 backdrop-blur-md">
+            <DrawerHeader className="border-b border-divider/30 bg-gradient-to-r from-background/95 to-default-50/30 backdrop-blur-xl">
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-4">
-                  <div className="p-2 bg-primary/10 rounded-xl">
-                    <Icon icon="solar:document-add-bold-duotone" className="h-6 w-6 text-primary" />
+                  <div className="p-3 bg-gradient-to-br from-primary/15 to-primary/5 rounded-2xl border border-primary/20">
+                    <Icon icon="solar:document-add-outline" className="h-7 w-7 text-primary/80" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold">CV Upload & Review System</h2>
-                    <p className="text-sm text-default-600">
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                      CV Upload & Review
+                    </h2>
+                    <p className="text-default-500 font-medium">
                       {currentStep === 'upload' && 'Upload your CV to automatically enhance your profile'}
                       {currentStep === 'parsing' && 'AI is analyzing and extracting information from your CV'}
                       {currentStep === 'review' && 'Review and edit the extracted information before applying'}
@@ -1266,84 +1268,175 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                   variant="light"
                   size="lg"
                   onPress={handleClose}
-                  className="hover:bg-danger/10"
+                  className="hover:bg-danger/10 hover:text-danger transition-all duration-200"
                 >
-                  <Icon icon="solar:close-linear" className="h-6 w-6" />
+                  <Icon icon="solar:close-circle-outline" className="h-6 w-6" />
                 </Button>
-              </div>
-              
-              {/* Enhanced Progress Steps */}
-              <div className="flex items-center justify-center gap-2 mt-6 px-8">
-                {steps.map((step, index) => (
-                  <div key={step.key} className="flex items-center">
-                    <div className={`relative flex items-center justify-center w-12 h-12 rounded-full border-2 transition-all duration-300 ${
-                      index <= currentStepIndex
-                        ? 'border-primary bg-primary text-white shadow-lg'
-                        : 'border-default-300 bg-default-100 text-default-600'
-                    }`}>
-                      {index < currentStepIndex ? (
-                        <Icon icon="solar:check-linear" className="h-5 w-5" />
-                      ) : (
-                        <Icon icon={step.icon} className="h-5 w-5" />
-                      )}
-                      {index === currentStepIndex && (
-                        <motion.div
-                          className="absolute inset-0 rounded-full border-2 border-primary"
-                          animate={{ scale: [1, 1.2, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                        />
-                      )}
-                    </div>
-                    <div className="ml-3 mr-6">
-                      <div className={`text-sm font-medium ${
-                        index <= currentStepIndex ? 'text-primary' : 'text-default-600'
-                      }`}>
-                        {step.title}
-                      </div>
-                    </div>
-                    {index < steps.length - 1 && (
-                      <div className={`flex-1 h-0.5 mx-4 transition-colors duration-300 ${
-                        index < currentStepIndex ? 'bg-primary' : 'bg-default-300'
-                      }`} />
-                    )}
-                  </div>
-                ))}
               </div>
             </DrawerHeader>
 
             <DrawerBody className="p-0 overflow-hidden">
-              <div className="h-full flex flex-col">
-                <AnimatePresence mode="wait">
-                  <div key={currentStep} className="flex-1 p-8">
-                    {currentStep === 'upload' && renderUploadStep()}
-                    {currentStep === 'parsing' && renderParsingStep()}
-                    {currentStep === 'review' && renderReviewStep()}
-                    {currentStep === 'applying' && renderApplyingStep()}
-                    {currentStep === 'complete' && renderCompleteStep()}
+              <div className="h-full flex">
+                {/* Vertical Steps Sidebar */}
+                <div className="w-80 bg-gradient-to-b from-default-50/50 to-default-100/30 border-r border-divider/30 backdrop-blur-sm">
+                  <div className="p-6 h-full flex flex-col">
+                    <div className="mb-8">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">Progress</h3>
+                      <p className="text-sm text-default-500">Follow the steps to complete your CV upload</p>
+                    </div>
+
+                    <div className="flex-1 space-y-6">
+                      {steps.map((step, index) => (
+                        <motion.div
+                          key={step.key}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className="relative"
+                        >
+                          <div className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${
+                            index === currentStepIndex
+                              ? 'bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 shadow-lg'
+                              : index < currentStepIndex
+                              ? 'bg-gradient-to-r from-success/10 to-success/5 border border-success/20'
+                              : 'bg-default-100/50 border border-default-200/50 hover:bg-default-100/80'
+                          }`}>
+                            <div className={`relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
+                              index < currentStepIndex
+                                ? 'bg-gradient-to-br from-success/20 to-success/10 border border-success/30'
+                                : index === currentStepIndex
+                                ? 'bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30'
+                                : 'bg-gradient-to-br from-default-200/50 to-default-100/50 border border-default-300/50'
+                            }`}>
+                              {index < currentStepIndex ? (
+                                <Icon
+                                  icon="solar:check-circle-outline"
+                                  className="h-6 w-6 text-success/80"
+                                />
+                              ) : (
+                                <Icon
+                                  icon={step.icon}
+                                  className={`h-6 w-6 ${
+                                    index === currentStepIndex ? 'text-primary/80' : 'text-default-400'
+                                  }`}
+                                />
+                              )}
+                              {index === currentStepIndex && (
+                                <motion.div
+                                  className="absolute inset-0 rounded-xl border-2 border-primary/40"
+                                  animate={{ scale: [1, 1.05, 1] }}
+                                  transition={{ duration: 2, repeat: Infinity }}
+                                />
+                              )}
+                            </div>
+
+                            <div className="flex-1">
+                              <div className={`font-semibold transition-colors duration-300 ${
+                                index === currentStepIndex
+                                  ? 'text-primary'
+                                  : index < currentStepIndex
+                                  ? 'text-success'
+                                  : 'text-default-600'
+                              }`}>
+                                {step.title}
+                              </div>
+                              <div className="text-sm text-default-500 mt-1">
+                                {step.key === 'upload' && 'Select and upload your CV file'}
+                                {step.key === 'parsing' && 'AI extracts information'}
+                                {step.key === 'review' && 'Review and edit data'}
+                                {step.key === 'applying' && 'Update your profile'}
+                                {step.key === 'complete' && 'Process completed'}
+                              </div>
+                            </div>
+
+                            {index < currentStepIndex && (
+                              <div className="w-2 h-2 rounded-full bg-success/60" />
+                            )}
+                            {index === currentStepIndex && (
+                              <motion.div
+                                className="w-2 h-2 rounded-full bg-primary/80"
+                                animate={{ scale: [1, 1.3, 1] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                              />
+                            )}
+                          </div>
+
+                          {/* Connecting Line */}
+                          {index < steps.length - 1 && (
+                            <div className={`absolute left-10 top-20 w-0.5 h-6 transition-colors duration-300 ${
+                              index < currentStepIndex ? 'bg-success/30' : 'bg-default-300/50'
+                            }`} />
+                          )}
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Progress Summary */}
+                    <div className="mt-8 p-4 bg-gradient-to-r from-default-100/50 to-default-50/50 rounded-2xl border border-default-200/50">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Icon icon="solar:chart-outline" className="h-5 w-5 text-primary/70" />
+                        <span className="font-medium text-default-700">Progress Overview</span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-default-600">Completed Steps</span>
+                          <span className="font-medium text-primary">{currentStepIndex} / {steps.length}</span>
+                        </div>
+                        <div className="w-full bg-default-200/50 rounded-full h-2">
+                          <div
+                            className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-500"
+                            style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </AnimatePresence>
+                </div>
+
+                {/* Main Content Area */}
+                <div className="flex-1 flex flex-col">
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={currentStep}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex-1 p-8"
+                    >
+                      {currentStep === 'upload' && renderUploadStep()}
+                      {currentStep === 'parsing' && renderParsingStep()}
+                      {currentStep === 'review' && renderReviewStep()}
+                      {currentStep === 'applying' && renderApplyingStep()}
+                      {currentStep === 'complete' && renderCompleteStep()}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
               </div>
             </DrawerBody>
 
-            <DrawerFooter className="border-t border-divider bg-default-50/50 backdrop-blur-md">
+            <DrawerFooter className="border-t border-divider/30 bg-gradient-to-r from-background/95 to-default-50/30 backdrop-blur-xl">
               <div className="flex justify-end gap-3 w-full">
                 {currentStep === 'upload' && (
                   <Button
                     variant="flat"
                     onPress={handleClose}
                     size="lg"
+                    startContent={<Icon icon="solar:close-circle-outline" className="h-4 w-4" />}
+                    className="hover:bg-default-200/50"
                   >
                     Cancel
                   </Button>
                 )}
-                
+
                 {currentStep === 'review' && (
                   <>
                     <Button
                       variant="flat"
                       onPress={() => setCurrentStep('upload')}
                       size="lg"
-                      startContent={<Icon icon="solar:arrow-left-linear" className="h-4 w-4" />}
+                      startContent={<Icon icon="solar:arrow-left-outline" className="h-4 w-4" />}
+                      className="hover:bg-default-200/50"
                     >
                       Upload Different CV
                     </Button>
@@ -1352,20 +1445,22 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                       onPress={handleApplyData}
                       isDisabled={selectedSections.size === 0}
                       size="lg"
-                      endContent={<Icon icon="solar:arrow-right-linear" className="h-4 w-4" />}
+                      endContent={<Icon icon="solar:arrow-right-outline" className="h-4 w-4" />}
+                      className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
                     >
                       Apply to Profile ({Object.keys(reviewData || {}).length} sections)
                     </Button>
                   </>
                 )}
-                
+
                 {currentStep === 'complete' && (
                   <Button
                     color="success"
                     onPress={handleClose}
                     size="lg"
                     variant="solid"
-                    endContent={<Icon icon="solar:check-circle-linear" className="h-4 w-4" />}
+                    endContent={<Icon icon="solar:check-circle-outline" className="h-4 w-4" />}
+                    className="bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80"
                   >
                     Done
                   </Button>
