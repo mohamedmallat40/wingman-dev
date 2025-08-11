@@ -409,8 +409,8 @@ export default function EnhancedBroadcastFeed({
           <div className="bg-primary/10 mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full">
             <Icon icon="solar:inbox-linear" className="text-primary h-12 w-12" />
           </div>
-          <h3 className="text-foreground mb-2 text-xl font-semibold">{t('noPostsFound')}</h3>
-          <p className="text-foreground-600 mx-auto max-w-md">{t('noPostsFoundDescription')}</p>
+          <h3 className="text-foreground mb-2 text-xl font-semibold">No posts found</h3>
+          <p className="text-foreground-600 mx-auto max-w-md">Try adjusting your filters or check back later for new content.</p>
         </div>
       ) : (
         <div className={`space-y-${viewOptions.layout === 'compact' ? '3' : '6'}`}>
