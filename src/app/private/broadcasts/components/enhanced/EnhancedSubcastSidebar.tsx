@@ -536,16 +536,16 @@ export default function EnhancedSubcastSidebar({
                     transition={{ delay: index * 0.05, duration: 0.3 }}
                   >
                     <Card
-                      className={`w-full cursor-pointer border transition-all duration-200 hover:scale-[1.02] ${
-                        selectedSubcast === subcast.id
-                          ? 'border-primary bg-primary/10 ring-primary/20 shadow-md ring-2'
-                          : subcast.isFollowing
-                            ? 'border-primary/30 bg-primary/5 shadow-sm'
-                            : 'border-default-200 hover:border-primary/50 hover:bg-primary/5'
-                      }`}
-                      isPressable
-                      onPress={() => onSubcastSelect?.(subcast.id)}
-                    >
+                  className={`w-full cursor-pointer border transition-all duration-200 hover:scale-[1.02] hover:z-10 relative ${
+                    selectedSubcast === subcast.id
+                      ? 'border-primary bg-primary/10 ring-primary/20 shadow-md ring-2'
+                      : subcast.isFollowing
+                        ? 'border-primary/30 bg-primary/5 shadow-sm'
+                        : 'border-default-200 hover:border-primary/50 hover:bg-primary/5 hover:shadow-lg'
+                  }`}
+                  isPressable
+                  onPress={() => onSubcastSelect?.(subcast.id)}
+                >
                       <CardBody className="p-3">
                         <div className="flex items-start gap-3">
                           {/* Icon with badges */}
