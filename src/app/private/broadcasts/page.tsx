@@ -187,16 +187,6 @@ export default function BroadcastsPage() {
                     variant="flat"
                     size="sm"
                     fullWidth
-                    startContent={<Icon icon="solar:chart-square-linear" className="h-4 w-4" />}
-                    onPress={handleViewAnalytics}
-                    className="justify-start"
-                  >
-                    View Analytics
-                  </Button>
-                  <Button
-                    variant="flat"
-                    size="sm"
-                    fullWidth
                     startContent={<Icon icon="solar:bookmark-linear" className="h-4 w-4" />}
                     className="justify-start"
                   >
