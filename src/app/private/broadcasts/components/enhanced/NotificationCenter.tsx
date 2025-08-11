@@ -399,13 +399,16 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
                       <DropdownMenu
                         selectedKeys={[filter]}
                         onSelectionChange={(keys) => setFilter(Array.from(keys)[0] as string)}
+                        classNames={{
+                          content: "bg-background text-foreground border border-default-200"
+                        }}
                       >
-                        <DropdownItem key="all">All notifications</DropdownItem>
-                        <DropdownItem key="unread">Unread only</DropdownItem>
-                        <DropdownItem key="like">Likes</DropdownItem>
-                        <DropdownItem key="comment">Comments</DropdownItem>
-                        <DropdownItem key="follow">Follows</DropdownItem>
-                        <DropdownItem key="trending">Trending</DropdownItem>
+                        <DropdownItem key="all" className="text-foreground hover:bg-default-100">All notifications</DropdownItem>
+                        <DropdownItem key="unread" className="text-foreground hover:bg-default-100">Unread only</DropdownItem>
+                        <DropdownItem key="like" className="text-foreground hover:bg-default-100">Likes</DropdownItem>
+                        <DropdownItem key="comment" className="text-foreground hover:bg-default-100">Comments</DropdownItem>
+                        <DropdownItem key="follow" className="text-foreground hover:bg-default-100">Follows</DropdownItem>
+                        <DropdownItem key="trending" className="text-foreground hover:bg-default-100">Trending</DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
                   </div>
