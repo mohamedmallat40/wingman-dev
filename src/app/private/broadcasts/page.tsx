@@ -111,16 +111,6 @@ export default function BroadcastsPage() {
             >
               {tActions('resetTopics')}
             </Button>
-
-            {/* Refresh Button */}
-            <Button
-              color='primary'
-              variant='flat'
-              size='sm'
-              startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-            >
-              {tActions('refreshFeed')}
-            </Button>
           </div>
         }
       >
