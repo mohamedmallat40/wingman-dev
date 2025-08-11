@@ -270,13 +270,13 @@ export default function EnhancedBroadcastFeed({
       <Card className="border-default-200">
         <CardBody className="p-4">
           {/* Search and Main Controls */}
-          <div className="section-spacing flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex-1">
               <Input
                 placeholder="Search posts, topics, or authors..."
                 value={filters.search}
                 onValueChange={(value) => handleFilterChange('search', value)}
-                startContent={<Icon icon="solar:magnifer-linear" className="text-default-400 h-5 w-5" />}
+                startContent={<Icon icon="solar:magnifer-linear" className="text-default-400 h-4 w-4" />}
                 endContent={
                   filters.search && (
                     <Button
@@ -284,18 +284,16 @@ export default function EnhancedBroadcastFeed({
                       size="sm"
                       variant="light"
                       onPress={() => handleFilterChange('search', '')}
-                      className="hover:bg-default-100 transition-colors"
                     >
                       <Icon icon="solar:close-circle-linear" className="h-4 w-4" />
                     </Button>
                   )
                 }
-                className="max-w-lg"
-                size="lg"
+                className="max-w-md"
               />
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Select
                 placeholder="Sort by"
                 selectedKeys={[filters.sortBy]}
