@@ -1,0 +1,221 @@
+/* Professional Spacing System for Wingman Application */
+
+/* Container Spacing Classes */
+.container-spacing {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.container-spacing-wide {
+  @apply px-6 sm:px-8 lg:px-12 xl:px-16;
+}
+
+.container-spacing-tight {
+  @apply px-2 sm:px-4 lg:px-6;
+}
+
+/* Content Spacing Classes */
+.content-spacing {
+  @apply py-6 sm:py-8 lg:py-10;
+}
+
+.content-spacing-large {
+  @apply py-8 sm:py-12 lg:py-16;
+}
+
+.content-spacing-small {
+  @apply py-4 sm:py-6 lg:py-8;
+}
+
+/* Section Spacing Classes */
+.section-spacing {
+  @apply mb-6 lg:mb-8;
+}
+
+.section-spacing-large {
+  @apply mb-8 lg:mb-12;
+}
+
+.section-spacing-small {
+  @apply mb-4 lg:mb-6;
+}
+
+/* Card Spacing Classes */
+.card-spacing {
+  @apply p-4 sm:p-6;
+}
+
+.card-spacing-large {
+  @apply p-6 sm:p-8;
+}
+
+.card-spacing-small {
+  @apply p-3 sm:p-4;
+}
+
+/* Navigation Spacing Classes */
+.nav-item-spacing {
+  @apply px-3 py-2 sm:px-4 sm:py-2.5;
+}
+
+.nav-section-spacing {
+  @apply mb-4 sm:mb-6;
+}
+
+/* Button Spacing Classes */
+.button-group-spacing {
+  @apply gap-2 sm:gap-3;
+}
+
+.button-group-spacing-large {
+  @apply gap-3 sm:gap-4;
+}
+
+/* Form Spacing Classes */
+.form-field-spacing {
+  @apply mb-4 sm:mb-6;
+}
+
+.form-section-spacing {
+  @apply mb-6 sm:mb-8;
+}
+
+/* Grid Spacing Classes */
+.grid-spacing {
+  @apply gap-4 sm:gap-6;
+}
+
+.grid-spacing-large {
+  @apply gap-6 sm:gap-8;
+}
+
+.grid-spacing-small {
+  @apply gap-2 sm:gap-4;
+}
+
+/* List Spacing Classes */
+.list-item-spacing {
+  @apply py-3 sm:py-4;
+}
+
+.list-section-spacing {
+  @apply mb-4 sm:mb-6;
+}
+
+/* Sidebar Spacing Classes */
+.sidebar-spacing {
+  @apply p-4 sm:p-6;
+}
+
+.sidebar-section-spacing {
+  @apply mb-6 sm:mb-8;
+}
+
+/* Header Spacing Classes */
+.header-spacing {
+  @apply py-6 sm:py-8 lg:py-10;
+}
+
+.header-content-spacing {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+/* Footer Spacing Classes */
+.footer-spacing {
+  @apply py-8 sm:py-12 lg:py-16;
+}
+
+.footer-section-spacing {
+  @apply mb-6 sm:mb-8;
+}
+
+/* Modal Spacing Classes */
+.modal-spacing {
+  @apply p-6 sm:p-8;
+}
+
+.modal-section-spacing {
+  @apply mb-6 sm:mb-8;
+}
+
+/* Table Spacing Classes */
+.table-cell-spacing {
+  @apply px-4 py-3 sm:px-6 sm:py-4;
+}
+
+.table-header-spacing {
+  @apply px-4 py-3 sm:px-6 sm:py-4;
+}
+
+/* Typography Spacing Classes */
+.heading-spacing {
+  @apply mb-4 sm:mb-6;
+}
+
+.paragraph-spacing {
+  @apply mb-4 sm:mb-6;
+}
+
+.text-section-spacing {
+  @apply mb-6 sm:mb-8;
+}
+
+/* Responsive Margin/Padding Utilities */
+.responsive-margin-x {
+  @apply mx-4 sm:mx-6 lg:mx-8;
+}
+
+.responsive-margin-y {
+  @apply my-4 sm:my-6 lg:my-8;
+}
+
+.responsive-padding-x {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.responsive-padding-y {
+  @apply py-4 sm:py-6 lg:py-8;
+}
+
+/* Professional Layout Classes */
+.layout-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.layout-container-wide {
+  @apply max-w-none mx-auto px-4 sm:px-6 lg:px-8 xl:px-12;
+}
+
+.layout-container-narrow {
+  @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Component Spacing Classes */
+.component-spacing {
+  @apply space-y-4 sm:space-y-6;
+}
+
+.component-spacing-large {
+  @apply space-y-6 sm:space-y-8;
+}
+
+.component-spacing-small {
+  @apply space-y-2 sm:space-y-4;
+}
+
+/* Interactive Element Spacing */
+.interactive-spacing {
+  @apply p-2 sm:p-3;
+}
+
+.interactive-spacing-large {
+  @apply p-3 sm:p-4;
+}
+
+/* Divider Spacing */
+.divider-spacing-y {
+  @apply my-6 sm:my-8 lg:my-10;
+}
+
+.divider-spacing-x {
+  @apply mx-6 sm:mx-8 lg:mx-10;
+}
