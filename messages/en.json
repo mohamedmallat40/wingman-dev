@@ -601,6 +601,14 @@
       "urgent": "Urgent",
       "draft": "Draft",
       "final": "Final"
+    },
+    "edit": {
+      "title": "Edit Document",
+      "subtitle": "Update document information and file",
+      "buttons": {
+        "update": "Update Document",
+        "updating": "Updating..."
+      }
     }
   },
   "broadcasts": {

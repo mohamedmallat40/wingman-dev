@@ -27,15 +27,10 @@ const useOAuth = () => {
       const data = (await handleOAuth(provider)) as OAuthResponse;
       // Store token if provided
       if (data.user) {
-
         if (data.token && data.user.isCompleted) {
           localStorage.setItem('token', data.token);
           setUser(data.user);
-        }
 
-        // Check if user registration is complete
-        if (data.user.isCompleted) {
-          // User is fully registered, redirect to dashboard
           addToast({
             title: 'Welcome back!',
             description: 'Successfully logged in. Redirecting to dashboard...',
@@ -53,7 +48,6 @@ const useOAuth = () => {
             timeout: 3000
           });
 
-          
           return {
             isCompleted: false,
             user: data.user,

@@ -25,9 +25,14 @@ export const API_ROUTES = {
   documents: {
     personal: '/documents',
     shared: '/documents/shared',
-    types: '/documents/types'
+    types: '/documents/types',
+    share: '/documents',
+    delete: '/documents'
   },
-  invitations: {
-    platform: '/invitations/platform'
+  network: {
+    myNetwork: '/network/my-network'
+  },
+  upload: {
+    single: '/upload'
   }
 };
