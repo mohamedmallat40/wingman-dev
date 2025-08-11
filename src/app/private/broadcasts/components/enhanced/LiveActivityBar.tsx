@@ -227,25 +227,6 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
           </div>
         </div>
 
-        {/* Action button for actionable activities */}
-        {currentActivity.actionable && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            transition={{ delay: 0.3 }}
-            className="flex justify-center mt-3 pt-2 border-t border-default-200/50"
-          >
-            <Button
-              size="sm"
-              color={getActivityColor(currentActivity.priority)}
-              variant="flat"
-              className="text-xs px-4 h-7"
-              onPress={onNotificationClick}
-            >
-              View Details
-            </Button>
-          </motion.div>
-        )}
       </div>
     </motion.div>
   );
