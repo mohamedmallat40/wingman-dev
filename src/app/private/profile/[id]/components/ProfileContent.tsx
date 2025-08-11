@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Avatar,
@@ -16,6 +16,8 @@ import {
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
+
+import CVUploadDrawer from './CVUploadDrawer';
 
 import { getImageUrl } from '@/lib/utils/utilities';
 
@@ -48,6 +50,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 }) => {
   const t = useTranslations();
   const router = useRouter();
+  const [isCVUploadOpen, setIsCVUploadOpen] = useState(false);
 
   const formatDate = (dateString: string) => {
     try {
@@ -77,6 +80,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   const handleEditSkills = () => {
     router.push('/private/settings?tab=general');
+  };
+
+  const handleCVDataParsed = (data: any) => {
+    console.log('CV data parsed:', data);
+    // Here you would typically refresh the profile data or update the UI
+    // to reflect the newly imported information
   };
 
   return (
@@ -145,6 +154,53 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
               )}
             </CardBody>
           </Card>
+
+          {/* CV Upload Section - Only for own profile */}
+          {isOwnProfile && (
+            <Card className='border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5 shadow-sm'>
+              <CardBody className='p-6'>
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center gap-4'>
+                    <div className='bg-primary/15 rounded-2xl p-4'>
+                      <Icon icon='solar:document-add-bold-duotone' className='text-primary h-8 w-8' />
+                    </div>
+                    <div>
+                      <h3 className='text-foreground text-lg font-semibold mb-1'>
+                        Upload Your CV
+                      </h3>
+                      <p className='text-foreground-600 text-sm'>
+                        Let AI analyze your CV and automatically fill out your profile with experience, skills, education, and more.
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    color='primary'
+                    variant='shadow'
+                    startContent={<Icon icon='solar:upload-linear' className='h-4 w-4' />}
+                    onPress={() => setIsCVUploadOpen(true)}
+                    className='min-w-32'
+                  >
+                    Upload CV
+                  </Button>
+                </div>
+
+                <div className='mt-4 flex flex-wrap gap-3'>
+                  <div className='flex items-center gap-2 text-sm text-foreground-600'>
+                    <Icon icon='solar:check-circle-linear' className='h-4 w-4 text-success' />
+                    <span>Supports PDF, DOC, DOCX</span>
+                  </div>
+                  <div className='flex items-center gap-2 text-sm text-foreground-600'>
+                    <Icon icon='solar:shield-check-linear' className='h-4 w-4 text-success' />
+                    <span>Secure AI parsing</span>
+                  </div>
+                  <div className='flex items-center gap-2 text-sm text-foreground-600'>
+                    <Icon icon='solar:clock-circle-linear' className='h-4 w-4 text-success' />
+                    <span>Updates in seconds</span>
+                  </div>
+                </div>
+              </CardBody>
+            </Card>
+          )}
 
           {/* Experience */}
           <Card id='experience' className='border-default-200/50 scroll-mt-24 shadow-sm'>
@@ -771,6 +827,13 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
         </div>
       </div>
+
+      {/* CV Upload Drawer */}
+      <CVUploadDrawer
+        isOpen={isCVUploadOpen}
+        onOpenChange={setIsCVUploadOpen}
+        onDataParsed={handleCVDataParsed}
+      />
     </section>
   );
 };

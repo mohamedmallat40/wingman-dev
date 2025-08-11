@@ -213,7 +213,7 @@ export default {
               800: '#27272a',
               900: '#18181b',
               DEFAULT: '#71717a',
-              foreground: '#ffffff'
+              foreground: '#18181b'
             }
           }
         },

@@ -75,21 +75,22 @@ export default function PrivateNavBar() {
 
   return (
     <Navbar
-      className='border-divider/40 shadow-small bg-background/85 supports-[backdrop-filter]:bg-background/60 w-full max-w-full border-b backdrop-blur-xl'
+      className='border-divider/40 shadow-small bg-background/95 supports-[backdrop-filter]:bg-background/70 w-full max-w-full border-b backdrop-blur-xl'
       isBordered
       maxWidth='full'
       position='sticky'
       onMenuOpenChange={setIsMenuOpen}
-      height='4rem'
+      height='4.5rem'
     >
-      <NavbarContent justify='start' className='gap-0 space-x-0'>
-        {/* Brand */}
-        <NavbarBrand className='mr-[12%] grow-0 gap-2 sm:gap-3'>
-          {/* Mobile Menu Toggle - ONLY toggle button */}
+      <NavbarContent justify='start' className='gap-0'>
+        {/* Brand Section with Enhanced Spacing */}
+        <NavbarBrand className='mr-8 grow-0 gap-3 lg:mr-12'>
+          {/* Mobile Menu Toggle */}
           <NavbarMenuToggle
-            className='text-foreground hover:text-primary mr-2 h-8 w-8 transition-colors xl:hidden'
+            className='text-foreground hover:text-primary mr-3 h-8 w-8 transition-colors xl:hidden'
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           />
+          
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -98,6 +99,7 @@ export default function PrivateNavBar() {
           >
             <WingmanIcon />
           </motion.div>
+          
           <motion.div
             className='hidden min-w-0 flex-col sm:flex'
             initial={{ opacity: 0, x: -20 }}
@@ -113,9 +115,9 @@ export default function PrivateNavBar() {
           </motion.div>
         </NavbarBrand>
 
-        {/* Desktop Navigation - Hidden on mobile and tablet */}
-        <NavbarContent className='hidden w-full max-w-none gap-1 xl:flex' justify='start'>
-          <div className='from-default-100/30 to-default-50/20 border-divider/20 -ml-4 flex h-10 items-center gap-1 rounded-2xl border bg-gradient-to-r px-2 backdrop-blur-md'>
+        {/* Desktop Navigation - Enhanced Layout */}
+        <NavbarContent className='hidden w-full max-w-none gap-2 xl:flex' justify='start'>
+          <div className='from-default-100/40 to-default-50/25 border-divider/25 flex h-11 items-center gap-2 rounded-2xl border bg-gradient-to-r px-3 backdrop-blur-md shadow-small'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -128,10 +130,10 @@ export default function PrivateNavBar() {
                   >
                     <Link
                       href={item.href}
-                      className={`group relative flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-200 ${
+                      className={`group relative flex items-center gap-3 rounded-xl px-4 py-2.5 transition-all duration-200 ${
                         isActive
-                          ? 'text-primary bg-background shadow-small ring-primary/15 ring-1'
-                          : 'text-foreground-600 hover:text-primary hover:bg-background/60'
+                          ? 'text-primary bg-background shadow-medium ring-primary/20 ring-2'
+                          : 'text-foreground-600 hover:text-primary hover:bg-background/70 hover:shadow-small'
                       }`}
                     >
                       <motion.div
@@ -141,7 +143,7 @@ export default function PrivateNavBar() {
                       >
                         <Icon
                           icon={item.icon}
-                          className={`text-[16px] transition-all duration-200 ${
+                          className={`text-[17px] transition-all duration-200 ${
                             isActive
                               ? 'text-primary'
                               : 'text-foreground-500 group-hover:text-primary'
@@ -171,9 +173,9 @@ export default function PrivateNavBar() {
           </div>
         </NavbarContent>
 
-        {/* Tablet Navigation - Visible on larger tablets only */}
-        <NavbarContent className='hidden w-full max-w-none gap-1 lg:flex xl:hidden' justify='start'>
-          <div className='from-default-100/20 to-default-50/15 border-divider/15 -ml-4 flex h-10 items-center gap-1 rounded-xl border bg-gradient-to-r px-2 backdrop-blur-md'>
+        {/* Tablet Navigation - Icon Only with Enhanced Spacing */}
+        <NavbarContent className='hidden w-full max-w-none gap-2 lg:flex xl:hidden' justify='start'>
+          <div className='from-default-100/30 to-default-50/20 border-divider/20 flex h-11 items-center gap-2 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-md shadow-small'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -186,10 +188,10 @@ export default function PrivateNavBar() {
                   >
                     <Link
                       href={item.href}
-                      className={`group relative flex items-center justify-center rounded-lg p-2.5 transition-all duration-200 ${
+                      className={`group relative flex items-center justify-center rounded-lg p-3 transition-all duration-200 ${
                         isActive
-                          ? 'text-primary bg-background shadow-small ring-primary/20 ring-1'
-                          : 'text-foreground-500 hover:text-primary hover:bg-background/60'
+                          ? 'text-primary bg-background shadow-medium ring-primary/20 ring-2'
+                          : 'text-foreground-500 hover:text-primary hover:bg-background/70 hover:shadow-small'
                       }`}
                     >
                       <motion.div
@@ -199,7 +201,7 @@ export default function PrivateNavBar() {
                       >
                         <Icon
                           icon={item.icon}
-                          className={`text-[18px] transition-all duration-200 ${
+                          className={`text-[19px] transition-all duration-200 ${
                             isActive
                               ? 'text-primary'
                               : 'text-foreground-500 group-hover:text-primary'
@@ -223,14 +225,14 @@ export default function PrivateNavBar() {
         </NavbarContent>
       </NavbarContent>
 
-      {/* Right Side Actions */}
-      <NavbarContent as='div' className='flex items-center gap-2 sm:gap-3' justify='end'>
-        {/* Settings Group - Hidden on mobile */}
-        <div className='from-default-100/30 to-default-50/20 border-divider/20 hidden items-center gap-1 rounded-xl border bg-gradient-to-r p-1 backdrop-blur-sm sm:flex'>
+      {/* Right Side Actions - Enhanced Spacing */}
+      <NavbarContent as='div' className='flex items-center gap-3 sm:gap-4' justify='end'>
+        {/* Settings Group - Enhanced with Better Spacing */}
+        <div className='from-default-100/40 to-default-50/25 border-divider/25 hidden items-center gap-2 rounded-xl border bg-gradient-to-r p-2 backdrop-blur-sm shadow-small sm:flex'>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='hover:bg-background/50 rounded-lg p-1.5 transition-all duration-200'
+            className='hover:bg-background/60 rounded-lg p-2 transition-all duration-200'
           >
             <LanguageSwitcher />
           </motion.div>
@@ -238,23 +240,23 @@ export default function PrivateNavBar() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='hover:bg-background/50 rounded-lg p-1.5 transition-all duration-200'
+            className='hover:bg-background/60 rounded-lg p-2 transition-all duration-200'
           >
             <ThemeToggle />
           </motion.div>
         </div>
 
-        {/* Divider - Hidden on mobile */}
-        <div className='bg-divider/60 hidden h-6 w-px rounded-full sm:block' />
+        {/* Elegant Divider */}
+        <div className='bg-divider/50 hidden h-7 w-px rounded-full sm:block' />
 
-        {/* Notifications */}
+        {/* Notifications - Enhanced Button */}
         <NavbarItem className='flex'>
-          <Popover offset={12} placement='bottom-end'>
+          <Popover offset={16} placement='bottom-end'>
             <PopoverTrigger>
               <Button
                 disableRipple
                 isIconOnly
-                className='hover:bg-primary/10 hover:shadow-small h-9 w-9 overflow-visible transition-all duration-200 sm:h-10 sm:w-10'
+                className='hover:bg-primary/10 hover:shadow-medium h-10 w-10 overflow-visible transition-all duration-200 sm:h-11 sm:w-11'
                 radius='full'
                 variant='light'
                 aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
@@ -290,13 +292,13 @@ export default function PrivateNavBar() {
                         notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
                       }`}
                       icon='solar:bell-linear'
-                      width={20}
+                      width={22}
                     />
                   </Badge>
                 </motion.div>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className='max-w-[95vw] p-0 sm:max-w-[400px]'>
+            <PopoverContent className='max-w-[95vw] p-0 sm:max-w-[420px]'>
               <motion.div
                 initial={{ opacity: 0, y: -10, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -309,29 +311,29 @@ export default function PrivateNavBar() {
           </Popover>
         </NavbarItem>
 
-        {/* User Avatar */}
+        {/* User Avatar - Enhanced */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className='flex items-center'
+          className='flex items-center pl-1'
         >
           <Avatar />
         </motion.div>
       </NavbarContent>
 
-      {/* Enhanced Mobile Menu */}
-      <NavbarMenu className='bg-background/95 border-divider/40 border-r pt-4 shadow-2xl backdrop-blur-2xl'>
-        <div className='flex h-full flex-col px-2'>
+      {/* Enhanced Mobile Menu with Professional Spacing */}
+      <NavbarMenu className='bg-background/96 border-divider/40 border-r pt-6 shadow-2xl backdrop-blur-2xl'>
+        <div className='flex h-full flex-col px-4'>
           {/* Navigation Section */}
           <div className='flex-1'>
-            <div className='mb-4 px-2'>
+            <div className='mb-6 px-2'>
               <p className='text-foreground-600 text-sm font-semibold tracking-wide uppercase'>
                 Navigation
               </p>
             </div>
 
-            <div className='flex flex-col gap-1'>
+            <div className='flex flex-col gap-2'>
               <AnimatePresence>
                 {navItems.map((item, index) => {
                   const isActive = pathname === item.href;
@@ -350,10 +352,10 @@ export default function PrivateNavBar() {
                         }}
                       >
                         <button
-                          className={`group flex w-full items-center gap-3 rounded-xl p-3 transition-all duration-200 ${
+                          className={`group flex w-full items-center gap-4 rounded-xl p-4 transition-all duration-200 ${
                             isActive
-                              ? 'from-primary/15 to-primary/5 text-primary border-primary/20 shadow-small border bg-gradient-to-r'
-                              : 'text-foreground hover:from-default-100/50 hover:to-default-50/25 hover:shadow-small hover:border-divider/30 hover:border hover:bg-gradient-to-r active:scale-[0.98]'
+                              ? 'from-primary/15 to-primary/5 text-primary border-primary/25 shadow-medium border bg-gradient-to-r'
+                              : 'text-foreground hover:from-default-100/60 hover:to-default-50/30 hover:shadow-medium hover:border-divider/40 hover:border hover:bg-gradient-to-r active:scale-[0.98]'
                           }`}
                           onClick={() => {
                             setIsMenuOpen(false);
@@ -361,34 +363,34 @@ export default function PrivateNavBar() {
                           }}
                         >
                           <motion.div
-                            className={`rounded-lg p-2 transition-all duration-200 ${
+                            className={`rounded-xl p-3 transition-all duration-200 ${
                               isActive
-                                ? 'bg-primary/15 shadow-small'
-                                : 'bg-default-100/60 group-hover:bg-primary/10'
+                                ? 'bg-primary/20 shadow-medium'
+                                : 'bg-default-100/70 group-hover:bg-primary/15'
                             }`}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                           >
                             <Icon
                               icon={item.icon}
-                              className={`text-lg transition-colors ${isActive ? 'text-primary' : 'text-foreground-600 group-hover:text-primary'}`}
+                              className={`text-xl transition-colors ${isActive ? 'text-primary' : 'text-foreground-600 group-hover:text-primary'}`}
                             />
                           </motion.div>
-                          <div className='flex flex-1 flex-col gap-0.5'>
+                          <div className='flex flex-1 flex-col gap-1'>
                             <span
-                              className={`font-medium transition-colors ${isActive ? 'text-primary' : 'text-foreground group-hover:text-primary'}`}
+                              className={`font-semibold transition-colors ${isActive ? 'text-primary' : 'text-foreground group-hover:text-primary'}`}
                             >
                               {item.label}
                             </span>
                             <span
-                              className={`text-xs transition-colors ${isActive ? 'text-primary/70' : 'text-foreground-500 group-hover:text-foreground-600'}`}
+                              className={`text-sm transition-colors ${isActive ? 'text-primary/70' : 'text-foreground-500 group-hover:text-foreground-600'}`}
                             >
                               {item.description}
                             </span>
                           </div>
                           {isActive && (
                             <motion.div
-                              className='bg-primary shadow-small h-6 w-1 rounded-full'
+                              className='bg-primary shadow-medium h-8 w-1.5 rounded-full'
                               layoutId='mobile-active'
                               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                             />
@@ -402,33 +404,33 @@ export default function PrivateNavBar() {
             </div>
           </div>
 
-          {/* Bottom Section - Settings & User */}
+          {/* Bottom Section - Enhanced Spacing */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
-            className='border-divider/50 mt-4 border-t pt-4'
+            className='border-divider/50 mt-6 border-t pt-6'
           >
-            {/* Settings */}
-            <div className='mb-4'>
-              <div className='from-default-100/50 to-default-50/25 border-divider/30 shadow-small rounded-xl border bg-gradient-to-r p-3 backdrop-blur-sm'>
+            {/* Settings Card */}
+            <div className='mb-6'>
+              <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-medium rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
                 <div className='flex items-center justify-between'>
-                  <div className='flex items-center gap-2'>
-                    <div className='bg-primary/20 flex h-6 w-6 items-center justify-center rounded-lg'>
-                      <Icon icon='solar:settings-bold' className='text-primary h-3 w-3' />
+                  <div className='flex items-center gap-3'>
+                    <div className='bg-primary/20 flex h-8 w-8 items-center justify-center rounded-xl shadow-small'>
+                      <Icon icon='solar:settings-bold' className='text-primary h-4 w-4' />
                     </div>
-                    <span className='text-foreground text-sm font-medium'>Settings</span>
+                    <span className='text-foreground font-medium'>Settings</span>
                   </div>
-                  <div className='flex items-center gap-1'>
+                  <div className='flex items-center gap-2'>
                     <motion.div
-                      className='hover:bg-background/60 rounded-lg p-1.5 transition-all duration-200'
+                      className='hover:bg-background/60 rounded-lg p-2 transition-all duration-200'
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
                       <LanguageSwitcher />
                     </motion.div>
                     <motion.div
-                      className='hover:bg-background/60 rounded-lg p-1.5 transition-all duration-200'
+                      className='hover:bg-background/60 rounded-lg p-2 transition-all duration-200'
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -439,17 +441,17 @@ export default function PrivateNavBar() {
               </div>
             </div>
 
-            {/* User Profile Display Only - No Dropdown in Mobile */}
-            <div className='pb-4'>
-              <div className='from-default-100/50 to-default-50/25 border-divider/30 shadow-small rounded-xl border bg-gradient-to-r p-3 backdrop-blur-sm'>
+            {/* User Profile Card */}
+            <div className='pb-6'>
+              <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-medium rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
-                    <div className='bg-primary/20 flex h-8 w-8 items-center justify-center rounded-lg'>
+                    <div className='bg-primary/20 flex h-8 w-8 items-center justify-center rounded-xl shadow-small'>
                       <Icon icon='solar:user-bold' className='text-primary h-4 w-4' />
                     </div>
                     <div>
-                      <span className='text-foreground text-sm font-medium'>Account</span>
-                      <p className='text-foreground-500 text-xs'>Profile & Settings</p>
+                      <span className='text-foreground font-medium'>Account</span>
+                      <p className='text-foreground-500 text-sm'>Profile & Settings</p>
                     </div>
                   </div>
                   <Button
@@ -458,7 +460,6 @@ export default function PrivateNavBar() {
                     className='text-primary hover:bg-primary/10'
                     onPress={() => {
                       setIsMenuOpen(false);
-                      // Navigate to profile or open settings
                       router.push('/private/profile');
                     }}
                   >

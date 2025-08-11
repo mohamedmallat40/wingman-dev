@@ -78,31 +78,48 @@ export default function TopicSelector({
   const selectedTopics = useMemo(() => topics.filter((t) => selected.has(t.id)), [topics, selected])
 
   return (
-    <div className="space-y-2">
-      <CategoryChips categories={categories} active={category} onChange={setCategory} />
+    <div className="space-y-6">
+      {/* Enhanced Category Chips with glass effect */}
+      <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 border border-white/20">
+        <CategoryChips categories={categories} active={category} onChange={setCategory} />
+      </div>
 
-      <FullBleed>
-        <HorizontalRails
-          topics={filtered.length ? filtered : topics}
-          selectedIds={selected}
-          onToggle={toggle}
-          rowCount={rowCount}
-          durationSeconds={durationSeconds}
-          gap={gap}
-          cardHeight={cardHeight}
-          pauseOnHover={pauseOnHover}
-          rowTitles={rowTitles}
-        />
-      </FullBleed>
+      {/* Topic Rails with enhanced visual effects */}
+      <div className="relative">
+        <FullBleed>
+          <HorizontalRails
+            topics={filtered.length ? filtered : topics}
+            selectedIds={selected}
+            onToggle={toggle}
+            rowCount={rowCount}
+            durationSeconds={durationSeconds}
+            gap={gap}
+            cardHeight={cardHeight}
+            pauseOnHover={pauseOnHover}
+            rowTitles={rowTitles}
+          />
+        </FullBleed>
 
-      <SelectionCTA
-        selectedNames={selectedTopics.map((t) => t.name)}
-        minSelect={minSelect}
-        isPending={isPending}
-        onShuffle={selectRandom}
-        onClear={clearAll}
-        onConfirm={confirm}
-      />
+        {/* Ambient glow effects */}
+        <div className="absolute top-0 left-1/4 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-24 h-24 bg-purple-500/20 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }} />
+      </div>
+
+      {/* Enhanced Selection CTA with glass morphism */}
+      <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-6 border border-white/20 shadow-2xl relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 opacity-50" />
+        <div className="relative z-10">
+          <SelectionCTA
+            selectedNames={selectedTopics.map((t) => t.name)}
+            minSelect={minSelect}
+            isPending={isPending}
+            onShuffle={selectRandom}
+            onClear={clearAll}
+            onConfirm={confirm}
+          />
+        </div>
+      </div>
     </div>
   )
 }

@@ -121,7 +121,7 @@ const ActionGroup: React.FC<{
   const hiddenActions = actions.slice(maxVisible);
 
   return (
-    <div className='flex items-center gap-2'>
+    <div className='flex items-center gap-3'>
       <AnimatePresence mode='wait'>
         {visibleActions.map((action, index) => (
           <ActionButton key={action.key} action={action} index={index} />
@@ -146,7 +146,7 @@ const ActionGroup: React.FC<{
                 <Icon icon='solar:menu-dots-linear' className='h-4 w-4' />
               </Button>
             </DropdownTrigger>
-            <DropdownMenu aria-label='Additional actions' variant='flat' className='min-w-40'>
+            <DropdownMenu aria-label='Additional actions' variant='flat' className='min-w-48'>
               {hiddenActions.map((action) => (
                 <DropdownItem
                   key={action.key}
@@ -154,7 +154,7 @@ const ActionGroup: React.FC<{
                     action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
                   }
                   color={action.color}
-                  className='gap-2'
+                  className='gap-3'
                   isDisabled={action.isDisabled}
                   onClick={() => action.onClick?.()}
                 >
@@ -207,31 +207,39 @@ export default function PageHeader({
     const bPriority = priorityOrder[b.priority || 'secondary'];
     return aPriority - bPriority;
   });
+
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`border-divider/50 bg-background/95 relative z-10 w-full border-b backdrop-blur-xl ${className}`}
+      className={`border-divider/50 bg-background/97 relative z-20 w-full border-b backdrop-blur-xl ${className}`}
     >
-      {/* Background gradient */}
-      <div className='from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-r via-transparent opacity-60' />
+      {/* Enhanced Background Gradient */}
+      <div className='from-primary/6 via-primary/3 to-secondary/6 absolute inset-0 bg-gradient-to-r opacity-70' />
+      
+      {/* Subtle Pattern Overlay */}
+      <div className='absolute inset-0 opacity-40'>
+        <div className='bg-primary/5 absolute top-0 left-1/4 h-20 w-20 rounded-full blur-2xl' />
+        <div className='bg-secondary/5 absolute top-0 right-1/3 h-16 w-16 rounded-full blur-2xl' />
+      </div>
 
-      <div className='relative py-6 sm:px-6'>
-        <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
-          {/* Breadcrumbs */}
+      <div className='relative py-8 sm:py-10 lg:py-12'>
+        <div className='mx-auto w-full px-4 sm:px-6 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
+          {/* Enhanced Breadcrumbs */}
           {breadcrumbs && breadcrumbs.length > 0 && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1, duration: 0.4 }}
-              className='mb-4'
+              className='mb-6'
             >
               <Breadcrumbs
                 size='sm'
                 classNames={{
-                  list: 'gap-2',
-                  separator: 'text-default-400'
+                  list: 'gap-3',
+                  separator: 'text-default-400 mx-1',
+                  item: 'text-default-600 hover:text-primary transition-colors'
                 }}
               >
                 {breadcrumbs.map((crumb, index) => (
@@ -239,6 +247,7 @@ export default function PageHeader({
                     key={index}
                     href={crumb.href}
                     startContent={crumb.icon && <Icon icon={crumb.icon} className='h-4 w-4' />}
+                    className='flex items-center gap-2'
                   >
                     {crumb.label}
                   </BreadcrumbItem>
@@ -247,36 +256,42 @@ export default function PageHeader({
             </motion.div>
           )}
 
-          <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
-            {/* Title Section */}
-            <div className='flex-1'>
+          <div className='flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between lg:gap-8'>
+            {/* Enhanced Title Section */}
+            <div className='flex-1 min-w-0'>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
-                className='flex items-center gap-4'
+                className='flex items-center gap-4 lg:gap-6'
               >
-                {/* Icon */}
+                {/* Enhanced Icon */}
                 {icon && (
-                  <div className='bg-primary/10 ring-primary/20 flex h-12 w-12 items-center justify-center rounded-2xl ring-1'>
-                    <Icon icon={icon} className='text-primary h-6 w-6' />
+                  <div className='bg-primary/15 ring-primary/25 ring-offset-background/50 flex h-14 w-14 items-center justify-center rounded-2xl ring-2 ring-offset-2 shadow-lg lg:h-16 lg:w-16'>
+                    <Icon icon={icon} className='text-primary h-7 w-7 lg:h-8 lg:w-8' />
                   </div>
                 )}
 
-                <div className='flex-1'>
-                  <div className='flex items-center gap-3'>
-                    <h1 className='text-foreground text-2xl font-bold tracking-tight sm:text-3xl'>
+                <div className='flex-1 min-w-0'>
+                  <div className='flex items-center gap-4 flex-wrap'>
+                    <h1 className='text-foreground text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl'>
                       {title}
                     </h1>
                     {badge && (
-                      <Chip
-                        size='sm'
-                        color={badge.color || 'primary'}
-                        variant={badge.variant || 'flat'}
-                        className='ml-2'
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.3, duration: 0.3 }}
                       >
-                        {badge.text}
-                      </Chip>
+                        <Chip
+                          size='md'
+                          color={badge.color || 'primary'}
+                          variant={badge.variant || 'flat'}
+                          className='shadow-small'
+                        >
+                          {badge.text}
+                        </Chip>
+                      </motion.div>
                     )}
                   </div>
 
@@ -284,8 +299,8 @@ export default function PageHeader({
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3, duration: 0.4 }}
-                      className='text-default-600 mt-2 text-sm sm:text-base'
+                      transition={{ delay: 0.4, duration: 0.4 }}
+                      className='text-default-600 mt-3 text-sm leading-relaxed sm:text-base lg:text-lg lg:mt-4'
                     >
                       {description}
                     </motion.p>
@@ -294,14 +309,14 @@ export default function PageHeader({
               </motion.div>
             </div>
 
-            {/* Actions */}
+            {/* Enhanced Actions */}
             {(actions || actionItems) && (
               <motion.div
                 ref={actionsRef}
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4, duration: 0.4 }}
-                className='flex flex-shrink-0 items-center gap-3'
+                transition={{ delay: 0.5, duration: 0.4 }}
+                className='flex flex-shrink-0 items-center gap-3 sm:gap-4'
               >
                 {actionItems && sortedActions ? (
                   <ActionGroup actions={sortedActions} maxVisible={getResponsiveMaxActions()} />

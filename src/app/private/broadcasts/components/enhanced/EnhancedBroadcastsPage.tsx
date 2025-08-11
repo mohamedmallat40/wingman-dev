@@ -8,18 +8,19 @@ import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import { BroadcastOnboarding } from './components';
-import { useBroadcastPreferences } from './hooks';
-import type { Topic } from './types';
+import { BroadcastOnboarding } from '../';
+import { useBroadcastPreferences } from '../hooks';
+import type { Topic } from '../types';
 
 // Enhanced components
-import EnhancedBroadcastFeed from './components/enhanced/EnhancedBroadcastFeed';
-import EnhancedSubcastSidebar from './components/enhanced/EnhancedSubcastSidebar';
-import NotificationCenter from './components/enhanced/NotificationCenter';
-import LiveActivityBar from './components/enhanced/LiveActivityBar';
-import ContentCreator from './components/enhanced/ContentCreator';
+import EnhancedBroadcastFeed from './EnhancedBroadcastFeed';
+import EnhancedSubcastSidebar from './EnhancedSubcastSidebar';
+import NotificationCenter from './NotificationCenter';
+import LiveActivityBar from './LiveActivityBar';
+import ContentCreator from './ContentCreator';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
-export default function BroadcastsPage() {
+export default function EnhancedBroadcastsPage() {
   const t = useTranslations('broadcasts');
   const tActions = useTranslations('broadcasts.actions');
   const tNav = useTranslations('navigation');
@@ -28,6 +29,7 @@ export default function BroadcastsPage() {
   const [selectedSubcast, setSelectedSubcast] = useState<string | null>(null);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isContentCreatorOpen, setIsContentCreatorOpen] = useState(false);
+  const [isAnalyticsOpen, setIsAnalyticsOpen] = useState(false);
   const [unreadNotifications] = useState(8);
 
   const handleOnboardingComplete = (selectedTopics: Topic[]) => {
@@ -48,6 +50,10 @@ export default function BroadcastsPage() {
 
   const handleCreatePost = () => {
     setIsContentCreatorOpen(true);
+  };
+
+  const handleViewAnalytics = () => {
+    setIsAnalyticsOpen(true);
   };
 
   if (!isLoaded) {
@@ -76,6 +82,35 @@ export default function BroadcastsPage() {
     return <BroadcastOnboarding onComplete={handleOnboardingComplete} />;
   }
 
+  // Show analytics dashboard if requested
+  if (isAnalyticsOpen) {
+    return (
+      <DashboardLayout
+        pageTitle="Analytics Dashboard"
+        pageIcon='solar:chart-square-linear'
+        breadcrumbs={[
+          { label: tNav('home'), href: '/private/dashboard', icon: 'solar:home-linear' },
+          { label: tNav('broadcasts'), href: '/private/broadcasts', icon: 'solar:satellite-linear' },
+          { label: 'Analytics', icon: 'solar:chart-square-linear' }
+        ]}
+        pageDescription="Track your content performance and audience insights"
+        headerActions={
+          <div className='flex items-center gap-2'>
+            <Button
+              variant='flat'
+              size='sm'
+              startContent={<Icon icon='solar:arrow-left-linear' className='h-4 w-4' />}
+              onPress={() => setIsAnalyticsOpen(false)}
+            >
+              Back to Feed
+            </Button>
+          </div>
+        }
+      >
+        <AnalyticsDashboard />
+      </DashboardLayout>
+    );
+  }
 
   return (
     <>
@@ -92,6 +127,36 @@ export default function BroadcastsPage() {
         pageDescription={t('description')}
         headerActions={
           <div className='flex items-center gap-2'>
+            {/* Analytics Button */}
+            <Button
+              variant='flat'
+              size='sm'
+              startContent={<Icon icon='solar:chart-square-linear' className='h-4 w-4' />}
+              onPress={handleViewAnalytics}
+            >
+              Analytics
+            </Button>
+            
+            {/* Notifications Button */}
+            <Button
+              variant='flat'
+              size='sm'
+              isIconOnly
+              onPress={() => setIsNotificationOpen(true)}
+            >
+              <div className="relative">
+                <Icon icon='solar:bell-linear' className='h-4 w-4' />
+                {unreadNotifications > 0 && (
+                  <Badge
+                    content={unreadNotifications > 99 ? '99+' : unreadNotifications}
+                    color="danger"
+                    size="sm"
+                    className="absolute -top-1 -right-1 scale-75"
+                  />
+                )}
+              </div>
+            </Button>
+
             {/* Create Post Button */}
             <Button
               color='primary'
@@ -111,13 +176,23 @@ export default function BroadcastsPage() {
             >
               {tActions('resetTopics')}
             </Button>
+
+            {/* Refresh Button */}
+            <Button
+              color='primary'
+              variant='flat'
+              size='sm'
+              startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
+            >
+              {tActions('refreshFeed')}
+            </Button>
           </div>
         }
       >
         <div className='mx-auto flex w-full xl:w-[90%] 2xl:w-[80%] gap-6'>
           {/* Left Sidebar - Enhanced Subcast */}
-          <div className='w-80 flex-shrink-0 hidden lg:block overflow-visible'>
-            <div className='sticky top-4 overflow-visible'>
+          <div className='w-80 flex-shrink-0 hidden lg:block'>
+            <div className='sticky top-4'>
               <EnhancedSubcastSidebar
                 onSubcastToggle={handleSubcastToggle}
                 onSubcastSelect={handleSubcastSelect}
@@ -142,14 +217,14 @@ export default function BroadcastsPage() {
               {/* Quick Actions Card */}
               <div className="bg-content1 border border-default-200 rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-foreground mb-3">Quick Actions</h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Button
                     variant="flat"
                     size="sm"
                     fullWidth
-                    startContent={<Icon icon="solar:pen-new-square-linear" className="h-4 w-4 text-blue-600" />}
+                    startContent={<Icon icon="solar:pen-new-square-linear" className="h-4 w-4" />}
                     onPress={handleCreatePost}
-                    className="justify-start bg-blue-50 hover:bg-blue-100 text-blue-700 border-blue-200"
+                    className="justify-start"
                   >
                     Create Post
                   </Button>
@@ -157,8 +232,18 @@ export default function BroadcastsPage() {
                     variant="flat"
                     size="sm"
                     fullWidth
-                    startContent={<Icon icon="solar:bookmark-linear" className="h-4 w-4 text-emerald-600" />}
-                    className="justify-start bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-200"
+                    startContent={<Icon icon="solar:chart-square-linear" className="h-4 w-4" />}
+                    onPress={handleViewAnalytics}
+                    className="justify-start"
+                  >
+                    View Analytics
+                  </Button>
+                  <Button
+                    variant="flat"
+                    size="sm"
+                    fullWidth
+                    startContent={<Icon icon="solar:bookmark-linear" className="h-4 w-4" />}
+                    className="justify-start"
                   >
                     Saved Posts
                   </Button>
@@ -166,8 +251,8 @@ export default function BroadcastsPage() {
                     variant="flat"
                     size="sm"
                     fullWidth
-                    startContent={<Icon icon="solar:users-group-rounded-linear" className="h-4 w-4 text-rose-600" />}
-                    className="justify-start bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-200"
+                    startContent={<Icon icon="solar:users-group-rounded-linear" className="h-4 w-4" />}
+                    className="justify-start"
                   >
                     Following
                   </Button>
