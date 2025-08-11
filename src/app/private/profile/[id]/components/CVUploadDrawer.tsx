@@ -404,17 +404,17 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
-              icon: "solar:cpu-bolt-line-duotone",
+              icon: "solar:cpu-outline",
               title: "AI Analysis",
               description: "Advanced AI extracts all information from your CV with high accuracy"
             },
             {
-              icon: "solar:settings-linear",
+              icon: "solar:settings-outline",
               title: "Smart Review",
               description: "Review and edit extracted data in structured, easy-to-use forms"
             },
             {
-              icon: "solar:user-check-rounded-linear",
+              icon: "solar:user-check-outline",
               title: "Profile Update",
               description: "Apply selected information to automatically enhance your profile"
             }
