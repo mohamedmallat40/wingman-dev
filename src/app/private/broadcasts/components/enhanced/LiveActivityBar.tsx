@@ -222,24 +222,24 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
 
             {/* Activity navigation */}
             {activities.length > 1 && (
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 bg-default-100 dark:bg-default-50 rounded-lg px-2 py-1">
                 <Button
                   isIconOnly
                   size="sm"
                   variant="light"
-                  className="h-6 w-6"
+                  className="h-6 w-6 hover:bg-primary/10"
                   onPress={() => setCurrentIndex((prev) => (prev - 1 + activities.length) % activities.length)}
                 >
                   <Icon icon="solar:alt-arrow-left-linear" className="h-3 w-3" />
                 </Button>
-                <span className="text-xs text-foreground-500 px-1">
+                <span className="text-xs font-medium text-foreground-600 px-2 min-w-[2rem] text-center">
                   {currentIndex + 1}/{activities.length}
                 </span>
                 <Button
                   isIconOnly
                   size="sm"
                   variant="light"
-                  className="h-6 w-6"
+                  className="h-6 w-6 hover:bg-primary/10"
                   onPress={() => setCurrentIndex((prev) => (prev + 1) % activities.length)}
                 >
                   <Icon icon="solar:alt-arrow-right-linear" className="h-3 w-3" />
