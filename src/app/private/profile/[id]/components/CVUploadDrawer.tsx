@@ -1318,13 +1318,13 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                               {index < currentStepIndex ? (
                                 <Icon
                                   icon="solar:check-circle-outline"
-                                  className="h-6 w-6 text-success/80"
+                                  className="h-7 w-7 text-success font-semibold"
                                 />
                               ) : (
                                 <Icon
                                   icon={step.icon}
-                                  className={`h-6 w-6 ${
-                                    index === currentStepIndex ? 'text-primary/80' : 'text-default-400'
+                                  className={`h-7 w-7 ${
+                                    index === currentStepIndex ? 'text-primary font-semibold' : 'text-default-500'
                                   }`}
                                 />
                               )}
