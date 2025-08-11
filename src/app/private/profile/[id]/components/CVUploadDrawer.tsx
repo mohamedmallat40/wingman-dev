@@ -450,7 +450,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
               transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
               className="p-8 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl"
             >
-              <Icon icon="solar:cpu-bolt-line-duotone" className="h-20 w-20 text-primary" />
+              <Icon icon="solar:cpu-outline" className="h-20 w-20 text-primary/70" />
             </motion.div>
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/20 to-transparent animate-pulse" />
           </div>
