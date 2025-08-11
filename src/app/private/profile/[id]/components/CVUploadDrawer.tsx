@@ -1308,12 +1308,12 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                               ? 'bg-gradient-to-r from-success/15 to-success/8 border border-success/30 shadow-lg shadow-success/5'
                               : 'bg-gradient-to-r from-default-100/60 to-default-50/40 border border-default-200/60 hover:border-default-300/80 hover:shadow-md'
                           }`}>
-                            <div className={`relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
+                            <div className={`relative flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-500 ${
                               index < currentStepIndex
-                                ? 'bg-gradient-to-br from-success/20 to-success/10 border border-success/30'
+                                ? 'bg-gradient-to-br from-success/25 to-success/15 border-2 border-success/40 shadow-lg shadow-success/20'
                                 : index === currentStepIndex
-                                ? 'bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30'
-                                : 'bg-gradient-to-br from-default-200/50 to-default-100/50 border border-default-300/50'
+                                ? 'bg-gradient-to-br from-primary/25 to-primary/15 border-2 border-primary/40 shadow-xl shadow-primary/25'
+                                : 'bg-gradient-to-br from-default-200/60 to-default-100/40 border-2 border-default-300/60'
                             }`}>
                               {index < currentStepIndex ? (
                                 <Icon
