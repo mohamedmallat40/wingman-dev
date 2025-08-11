@@ -1235,9 +1235,10 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       size="5xl"
       placement="right"
       classNames={{
-        base: "w-[80vw] h-screen max-w-[80vw] ml-auto",
-        wrapper: "w-[80vw] h-screen ml-auto",
-        backdrop: "bg-black/60 backdrop-blur-md"
+        base: "w-[80vw] h-screen max-w-[80vw]",
+        wrapper: "w-[80vw] h-screen",
+        backdrop: "bg-black/60 backdrop-blur-md",
+        content: "ml-auto"
       }}
     >
       <DrawerContent className="h-screen">
