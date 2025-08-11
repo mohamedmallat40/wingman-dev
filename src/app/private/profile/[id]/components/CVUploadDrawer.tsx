@@ -423,7 +423,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
               <CardBody className="text-center p-6">
                 <div className="flex justify-center mb-4">
                   <div className="p-3 bg-primary/10 rounded-2xl">
-                    <Icon icon={feature.icon} className="h-8 w-8 text-primary" />
+                    <Icon icon={feature.icon} className="h-8 w-8 text-primary/70" />
                   </div>
                 </div>
                 <h5 className="font-semibold text-foreground mb-2">{feature.title}</h5>
