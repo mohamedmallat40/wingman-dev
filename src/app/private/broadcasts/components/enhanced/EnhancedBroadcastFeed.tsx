@@ -265,10 +265,10 @@ export default function EnhancedBroadcastFeed({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="component-spacing-large">
       {/* Enhanced Controls */}
-      <Card className="border-default-200">
-        <CardBody className="p-4">
+      <Card className="border-default-200 shadow-sm hover:shadow-md transition-all duration-200">
+        <CardBody className="card-spacing">
           {/* Search and Main Controls */}
           <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex-1">
