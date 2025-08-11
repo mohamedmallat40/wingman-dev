@@ -289,13 +289,13 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="flex justify-center mt-2"
+          className="flex justify-center mt-3"
         >
           <Button
             size="sm"
             color={getActivityColor(currentActivity.priority)}
             variant="flat"
-            className="text-xs"
+            className="text-xs font-medium px-4 hover:scale-105 transition-transform"
           >
             View Details
           </Button>
