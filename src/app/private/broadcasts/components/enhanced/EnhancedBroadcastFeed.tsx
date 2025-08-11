@@ -54,13 +54,15 @@ const loadEnhancedMockPosts = (
   selectedSubcast?: string | null
 ): BroadcastPost[] => {
   const allPosts = generateEnhancedMockPosts();
-  
+
   // Filter posts based on selected subcast or topics
   let filteredPosts = allPosts;
 
   if (selectedSubcast) {
+    // If a specific subcast is selected, filter by that subcast
     filteredPosts = allPosts.filter((post) => post.subcast?.id === selectedSubcast);
-  } else if (topics.length > 0) {
+  } else if (topics && topics.length > 0) {
+    // If specific topics are selected, filter by those topics
     filteredPosts = allPosts.filter((post) =>
       topics.some(
         (topic) =>
@@ -68,11 +70,12 @@ const loadEnhancedMockPosts = (
             (tag) =>
               tag.toLowerCase().includes(topic.name.toLowerCase()) ||
               topic.name.toLowerCase().includes(tag.toLowerCase())
-          ) || 
+          ) ||
           post.category.toLowerCase() === topic.category.toLowerCase()
       )
     );
   }
+  // If no subcast and no topics selected, show all posts
 
   return filteredPosts;
 };
