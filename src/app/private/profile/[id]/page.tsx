@@ -9,12 +9,12 @@ interface ProfilePageProps {
 }
 
 export const metadata: Metadata = {
-  title: 'Profile | Talent Pool',
-  description: 'View talent profile details'
+  title: 'Profile | Wingman',
+  description: 'View user profile details'
 };
 
 export default function ProfilePage({ params }: ProfilePageProps) {
-  if (!params.id) {
+  if (!params?.id) {
     notFound();
   }
 
