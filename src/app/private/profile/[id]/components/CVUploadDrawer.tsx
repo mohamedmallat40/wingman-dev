@@ -1278,11 +1278,18 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             <DrawerBody className="p-0 overflow-hidden">
               <div className="h-full flex">
                 {/* Vertical Steps Sidebar */}
-                <div className="w-80 bg-gradient-to-b from-default-50/50 to-default-100/30 border-r border-divider/30 backdrop-blur-sm">
-                  <div className="p-6 h-full flex flex-col">
-                    <div className="mb-8">
-                      <h3 className="text-lg font-semibold text-foreground mb-2">Progress</h3>
-                      <p className="text-sm text-default-500">Follow the steps to complete your CV upload</p>
+                <div className="w-80 bg-gradient-to-b from-default-50/60 to-default-100/40 border-r border-divider/20 backdrop-blur-xl">
+                  <div className="p-8 h-full flex flex-col">
+                    <div className="mb-10">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl border border-primary/20">
+                          <Icon icon="solar:chart-2-outline" className="h-5 w-5 text-primary/80" />
+                        </div>
+                        <h3 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+                          Progress Tracker
+                        </h3>
+                      </div>
+                      <p className="text-default-600 font-medium">Complete each step to enhance your profile</p>
                     </div>
 
                     <div className="flex-1 space-y-6">
