@@ -121,7 +121,7 @@ export default function BroadcastsPage() {
               variant='flat'
               size='sm'
               startContent={<Icon icon='solar:settings-linear' className='h-4 w-4' />}
-              onPress={handleReset}
+              onPress={handlePreferencesReset}
             >
               {tActions('resetTopics')}
             </Button>
@@ -129,23 +129,23 @@ export default function BroadcastsPage() {
         }
       >
         <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
-          {/* Left Sidebar - Enhanced Subcast */}
+          {/* Left Sidebar - Subcast */}
           <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
             <div className='sticky top-4 overflow-visible'>
-              <EnhancedSubcastSidebar
+              <SubcastSidebar
                 onSubcastToggle={handleSubcastToggle}
                 onSubcastSelect={handleSubcastSelect}
-                selectedSubcast={selectedSubcast}
+                selectedSubcast={activeSubcast}
               />
             </div>
           </div>
 
-          {/* Main Content - Enhanced Feed */}
+          {/* Main Content - Feed */}
           <div className='min-w-0 flex-1'>
             <div className='py-6'>
-              <EnhancedBroadcastFeed
-                selectedTopics={preferences.selectedTopics}
-                selectedSubcast={selectedSubcast}
+              <BroadcastFeed
+                selectedTopics={broadcastPreferences.selectedTopics}
+                selectedSubcast={activeSubcast}
               />
             </div>
           </div>

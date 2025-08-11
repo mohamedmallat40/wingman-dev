@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { type BroadcastPost, type Topic } from '../../types';
-import { generateEnhancedMockPosts } from '../../data/enhanced-posts';
+import { generateMockPosts } from '../../data/mock-posts';
 import PostCard from '../cards/PostCard';
 import BroadcastFeedSkeleton from '../states/BroadcastFeedSkeleton';
 
@@ -34,7 +34,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
       setIsLoading(true);
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      let filteredPosts = generateEnhancedMockPosts();
+      let filteredPosts = generateMockPosts();
       
       // Filter by selected subcast
       if (selectedSubcast) {
