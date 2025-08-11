@@ -494,7 +494,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             <CardBody className="p-4">
               <div className="flex items-center gap-4">
                 <div className="p-3 bg-success/10 rounded-xl">
-                  <Icon icon="solar:document-text-linear" className="h-6 w-6 text-success" />
+                  <Icon icon="solar:document-text-outline" className="h-6 w-6 text-success/70" />
                 </div>
                 <div className="flex-1 text-left">
                   <div className="font-semibold text-foreground">{uploadedFile.name}</div>
