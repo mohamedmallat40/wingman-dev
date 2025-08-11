@@ -1015,7 +1015,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="h-full flex flex-col"
+        className="flex flex-col h-full"
       >
         <div className="mb-6">
           <h3 className="text-2xl font-bold text-foreground mb-2">Review & Edit Your Information</h3>
@@ -1024,9 +1024,9 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
           </p>
         </div>
 
-        <div className="flex-1 flex flex-col">
-          <Tabs 
-            value={activeTab} 
+        <div className="flex flex-col flex-1 min-h-0">
+          <Tabs
+            value={activeTab}
             onSelectionChange={(key) => setActiveTab(key as string)}
             variant="underlined"
             classNames={{
