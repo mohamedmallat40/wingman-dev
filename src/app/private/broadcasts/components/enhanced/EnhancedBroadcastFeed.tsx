@@ -989,7 +989,7 @@ export default function EnhancedBroadcastFeed({
               variant="bordered"
               classNames={{
                 tab: "text-foreground",
-                tabContent: "text-foreground group-data-[selected=true]:text-primary",
+                tabContent: "text-foreground group-data-[selected=true]:text-white",
                 cursor: "bg-primary",
                 panel: "text-foreground"
               }}
