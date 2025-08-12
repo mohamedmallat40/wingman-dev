@@ -252,6 +252,7 @@ export default function DocumentsPage() {
                   onUpload={handleUploadDocument}
                   onRefresh={handleRefresh}
                   handleOnEdit={handleEditDocument}
+                  handleOnView={handleViewDocument}
                 />
               </motion.div>
             </AnimatePresence>
