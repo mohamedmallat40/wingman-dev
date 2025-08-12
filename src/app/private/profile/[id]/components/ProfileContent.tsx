@@ -428,17 +428,17 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         <div className='space-y-8 lg:col-span-2'>
           {/* About */}
           <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
-            <CardHeader className='pb-4'>
+            <CardHeader className='pb-4 hover:pb-5 transition-all duration-200'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
-                  <div className='bg-primary/10 rounded-full p-3'>
+                  <div className='bg-primary/10 rounded-full p-3 hover:bg-primary/15 transition-colors duration-200 hover:scale-105 transform'>
                     <Icon icon='solar:user-speak-linear' className='text-primary h-5 w-5' />
                   </div>
                   <div>
-                    <h2 className='text-foreground text-xl font-semibold'>
+                    <h2 className='text-foreground text-xl font-semibold hover:text-primary transition-colors duration-200'>
                       {t('talentPool.profile.sections.about')}
                     </h2>
-                    <p className='text-small text-foreground-500 mt-1'>
+                    <p className='text-small text-foreground-500 mt-1 hover:text-foreground-600 transition-colors duration-200'>
                       {t('talentPool.profile.aboutDescription')}
                     </p>
                   </div>
