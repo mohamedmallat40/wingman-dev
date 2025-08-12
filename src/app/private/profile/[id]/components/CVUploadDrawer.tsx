@@ -522,10 +522,10 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           </div>
         </div>
 
-        <div className='space-y-4'>
-          <h3 className='text-foreground text-3xl font-bold'>Processing Your CV</h3>
-          <p className='text-default-600 text-lg'>
-            Our advanced AI is analyzing your CV and extracting all relevant information...
+        <div className='space-y-3'>
+          <h3 className='text-foreground text-xl font-semibold'>AI Analysis in Progress</h3>
+          <p className='text-default-600 text-sm leading-relaxed'>
+            Our intelligent system is carefully extracting and structuring your professional information
           </p>
         </div>
 
