@@ -3,6 +3,7 @@ export interface IDocument {
   documentName: string;
   fileName: string;
   createdAt: string;
+  createdBy?: string;
   sharedWith: Array<{
     id: string;
     email: string;
@@ -17,11 +18,11 @@ export interface IDocument {
   type: {
     id: string;
     name: string;
-  };
+  } | null;
   status: {
     id: string;
     name: string;
-  };
+  } | null;
 }
 
 export type DocumentType = 'all-documents' | 'shared-with-me';
@@ -32,4 +33,6 @@ export interface DocumentFilters {
   tags?: string[];
   type?: string;
   status?: string;
+  dateFrom?: string;
+  dateTo?: string;
 }

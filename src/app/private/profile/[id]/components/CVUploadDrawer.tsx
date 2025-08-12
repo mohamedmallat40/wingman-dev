@@ -2,39 +2,45 @@
 
 import React, { useCallback, useState } from 'react';
 
+import type { ParsedCVData } from '../services/cv-service';
+
 import {
-  Avatar,
+  Badge,
   Button,
   Card,
   CardBody,
-  CardHeader,
   Chip,
-  Divider,
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
-  Input,
-  Textarea,
-  Select,
-  SelectItem,
   Progress,
   ScrollShadow,
-  Spacer,
-  Accordion,
-  AccordionItem,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure
+  Tab,
+  Tabs
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import {
+  type IEducation,
+  type IExperience,
+  type ILanguage,
+  type IUserProfile,
+  type Skill
+} from 'modules/profile/types';
 
-import { CVService, type ParsedCVData } from '../services/cv-service';
+import { FileUpload } from '@/components/ui/file-upload';
+
+import { CVService } from '../services/cv-service';
+import {
+  CertificationsForm,
+  EducationForm,
+  ExperienceForm,
+  LanguagesForm,
+  PersonalInfoForm,
+  SkillsForm
+} from './forms';
 
 interface CVUploadDrawerProps {
   isOpen: boolean;
@@ -44,63 +50,54 @@ interface CVUploadDrawerProps {
 
 type UploadStep = 'upload' | 'parsing' | 'review' | 'applying' | 'complete';
 
-const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
-  isOpen,
-  onOpenChange,
-  onDataParsed
-}) => {
+// Enhanced data interfaces that match the existing profile structure
+interface ReviewData {
+  personalInfo: Partial<IUserProfile>;
+  skills: Skill[];
+  experience: IExperience[];
+  education: IEducation[];
+  languages: ILanguage[];
+  portfolio: string[];
+  certifications: Array<{
+    id: string;
+    name: string;
+    issuer: string;
+    issueDate: string;
+    expiryDate?: string;
+    credentialId?: string;
+  }>;
+}
+
+const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, onDataParsed }) => {
   const [currentStep, setCurrentStep] = useState<UploadStep>('upload');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [parsedData, setParsedData] = useState<ParsedCVData | null>(null);
+  const [reviewData, setReviewData] = useState<ReviewData | null>(null);
   const [selectedSections, setSelectedSections] = useState<Set<string>>(new Set());
   const [isApplying, setIsApplying] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
-  const [editingData, setEditingData] = useState<ParsedCVData | null>(null);
-  const [activeReviewSection, setActiveReviewSection] = useState<string>('');
-
+  const [activeTab, setActiveTab] = useState('personal');
   const [isDragActive, setIsDragActive] = useState(false);
-  const {isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose} = useDisclosure();
-  const [editingSection, setEditingSection] = useState<string>('');
-  const [editingIndex, setEditingIndex] = useState<number>(-1);
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file) return;
-
-    // Validate file type
-    const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      alert('Please upload a PDF, DOC, or DOCX file');
-      return;
-    }
-
-    // Validate file size (10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      alert('File size must be less than 10MB');
-      return;
-    }
 
     setUploadedFile(file);
     setCurrentStep('parsing');
     setUploadProgress(0);
 
     try {
-      // Simulate upload progress
+      // Enhanced progress simulation
       const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) {
+        setUploadProgress((prev) => {
+          if (prev >= 85) {
             clearInterval(progressInterval);
-            return 90;
+            return 85;
           }
-          return prev + 10;
+          return prev + Math.random() * 15;
         });
-      }, 200);
+      }, 300);
 
-      // Try to parse CV with backend API
       try {
         const parsedData = await CVService.parseCV(file);
         clearInterval(progressInterval);
@@ -108,38 +105,92 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
 
         setTimeout(() => {
           setParsedData(parsedData);
-          setEditingData(JSON.parse(JSON.stringify(parsedData))); // Deep clone
-          setSelectedSections(new Set(['personalInfo', 'skills', 'experience', 'education', 'languages']));
+          setReviewData(transformToReviewData(parsedData));
+          setSelectedSections(
+            new Set(['personalInfo', 'skills', 'experience', 'education', 'languages'])
+          );
           setCurrentStep('review');
-        }, 500);
+        }, 800);
       } catch (apiError) {
-        // If API fails, use mock data for demonstration
-        console.log('API not available, using mock data for demo');
+        console.log('API not available, using comprehensive mock data');
         clearInterval(progressInterval);
         setUploadProgress(100);
 
         setTimeout(() => {
           const mockData = CVService.getMockCVData();
           setParsedData(mockData);
-          setEditingData(JSON.parse(JSON.stringify(mockData))); // Deep clone
-          setSelectedSections(new Set(['personalInfo', 'skills', 'experience', 'education', 'languages']));
+          setReviewData(transformToReviewData(mockData));
+          setSelectedSections(
+            new Set(['personalInfo', 'skills', 'experience', 'education', 'languages'])
+          );
           setCurrentStep('review');
-        }, 1500);
+        }, 1200);
       }
-
     } catch (error) {
       console.error('Error parsing CV:', error);
-      // Reset to upload step on error
       setCurrentStep('upload');
       setUploadProgress(0);
     }
   }, []);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      handleFileUpload(file);
-    }
+  const transformToReviewData = (data: ParsedCVData): ReviewData => {
+    return {
+      personalInfo: {
+        firstName: data.personalInfo.firstName || '',
+        lastName: data.personalInfo.lastName || '',
+        email: data.personalInfo.email || '',
+        phoneNumber: data.personalInfo.phone || '',
+        city: data.personalInfo.location || '',
+        linkedinProfile: data.personalInfo.linkedIn || '',
+        profileWebsite: data.personalInfo.website || '',
+        aboutMe: data.personalInfo.summary || '',
+        portfolio: data.personalInfo.website || null
+      },
+      skills: data.skills.map((skill, index) => ({
+        id: `skill_${index}`,
+        key: skill.name,
+        type: skill.category.toLowerCase().includes('soft') ? 'SOFT' : 'NORMAL'
+      })),
+      experience: data.experience.map((exp, index) => ({
+        id: `exp_${index}`,
+        company: exp.company,
+        position: exp.position,
+        title: exp.position,
+        description: exp.description,
+        startDate: exp.startDate,
+        endDate: exp.endDate || '',
+        link: null,
+        image: '',
+        screenShots: null,
+        videoUrl: null
+      })),
+      education: data.education.map((edu, index) => ({
+        id: `edu_${index}`,
+        university: edu.institution,
+        degree: `${edu.degree} in ${edu.field}`,
+        description: `Grade: ${edu.grade || 'N/A'}`,
+        startDate: edu.startDate,
+        endDate: edu.endDate || ''
+      })),
+      languages: data.languages.map((lang, index) => ({
+        id: `lang_${index}`,
+        key: lang.name,
+        level: lang.level.toUpperCase() as 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE'
+      })),
+      portfolio: data.projects.map((project) => project.url).filter(Boolean) as string[],
+      certifications: data.certifications.map((cert, index) => ({
+        id: `cert_${index}`,
+        name: cert.name,
+        issuer: cert.issuer,
+        issueDate: cert.issueDate,
+        expiryDate: cert.expiryDate,
+        credentialId: cert.credentialId
+      }))
+    };
+  };
+
+  const handleFileRemove = () => {
+    setUploadedFile(null);
   };
 
   const handleDragOver = (event: React.DragEvent) => {
@@ -155,51 +206,19 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     setIsDragActive(false);
-
-    const file = event.dataTransfer.files[0];
-    if (file) {
-      handleFileUpload(file);
-    }
-  };
-
-  const handleSectionToggle = (section: string) => {
-    const newSelected = new Set(selectedSections);
-    if (newSelected.has(section)) {
-      newSelected.delete(section);
-    } else {
-      newSelected.add(section);
-    }
-    setSelectedSections(newSelected);
   };
 
   const handleApplyData = async () => {
-    if (!editingData) return;
+    if (!reviewData) return;
 
     setIsApplying(true);
     setCurrentStep('applying');
 
     try {
-      // Filter data based on selected sections
-      const dataToApply: Partial<ParsedCVData> = {};
-
-      selectedSections.forEach(section => {
-        if (editingData[section as keyof ParsedCVData]) {
-          (dataToApply as any)[section] = editingData[section as keyof ParsedCVData];
-        }
-      });
-
-      // Apply the data to profile
-      try {
-        await CVService.applyCVData(dataToApply);
-      } catch (apiError) {
-        console.log('API not available, simulating data application for demo');
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-      }
-
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 3000));
       setCurrentStep('complete');
-      onDataParsed(editingData);
-
+      onDataParsed(parsedData!);
     } catch (error) {
       console.error('Error applying CV data:', error);
     } finally {
@@ -208,129 +227,240 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   };
 
   const handleClose = () => {
-    // Reset state when closing
     setCurrentStep('upload');
     setUploadProgress(0);
     setParsedData(null);
-    setEditingData(null);
+    setReviewData(null);
     setSelectedSections(new Set());
     setUploadedFile(null);
-    setActiveReviewSection('');
+    setActiveTab('personal');
     onOpenChange(false);
   };
 
-  const handleEditSection = (section: string, index: number = -1) => {
-    setEditingSection(section);
-    setEditingIndex(index);
-    onEditModalOpen();
+  // Form handlers
+  const handlePersonalInfoChange = (field: string, value: string) => {
+    if (!reviewData) return;
+    setReviewData({
+      ...reviewData,
+      personalInfo: { ...reviewData.personalInfo, [field]: value }
+    });
   };
 
-  const handleSaveEdit = (section: string, data: any, index: number = -1) => {
-    if (!editingData) return;
-
-    const newEditingData = { ...editingData };
-
-    if (index >= 0) {
-      // Editing an array item
-      const sectionArray = newEditingData[section as keyof ParsedCVData] as any[];
-      sectionArray[index] = data;
-    } else {
-      // Editing the entire section
-      (newEditingData as any)[section] = data;
-    }
-
-    setEditingData(newEditingData);
-    onEditModalClose();
+  const handleSkillAdd = () => {
+    if (!reviewData) return;
+    const newSkill: Skill = { id: `skill_${Date.now()}`, key: '', type: 'NORMAL' };
+    setReviewData({
+      ...reviewData,
+      skills: [...reviewData.skills, newSkill]
+    });
   };
 
-  const handleAddNew = (section: string) => {
-    if (!editingData) return;
+  const handleSkillRemove = (index: number) => {
+    if (!reviewData) return;
+    const newSkills = [...reviewData.skills];
+    newSkills.splice(index, 1);
+    setReviewData({ ...reviewData, skills: newSkills });
+  };
 
-    const newEditingData = { ...editingData };
-    const sectionArray = newEditingData[section as keyof ParsedCVData] as any[];
+  const handleSkillUpdate = (index: number, data: Skill) => {
+    if (!reviewData) return;
+    const newSkills = [...reviewData.skills];
+    newSkills[index] = data;
+    setReviewData({ ...reviewData, skills: newSkills });
+  };
 
-    // Add empty template based on section type
-    const templates = {
-      skills: { name: '', category: '', level: '', years: 0 },
-      experience: { company: '', position: '', startDate: '', endDate: '', location: '', description: '', responsibilities: [] },
-      education: { institution: '', degree: '', field: '', startDate: '', endDate: '', grade: '', location: '' },
-      languages: { name: '', level: '', proficiency: '' },
-      certifications: { name: '', issuer: '', issueDate: '', expiryDate: '', credentialId: '' },
-      projects: { name: '', description: '', technologies: [], startDate: '', endDate: '', url: '' }
+  const handleExperienceAdd = () => {
+    if (!reviewData) return;
+    const newExp: IExperience = {
+      id: `exp_${Date.now()}`,
+      company: '',
+      position: '',
+      title: '',
+      description: '',
+      startDate: '',
+      endDate: '',
+      link: null,
+      image: '',
+      screenShots: null,
+      videoUrl: null
     };
-
-    sectionArray.push(templates[section as keyof typeof templates]);
-    setEditingData(newEditingData);
+    setReviewData({
+      ...reviewData,
+      experience: [...reviewData.experience, newExp]
+    });
   };
 
-  const handleRemove = (section: string, index: number) => {
-    if (!editingData) return;
+  const handleExperienceRemove = (index: number) => {
+    if (!reviewData) return;
+    const newExperience = [...reviewData.experience];
+    newExperience.splice(index, 1);
+    setReviewData({ ...reviewData, experience: newExperience });
+  };
 
-    const newEditingData = { ...editingData };
-    const sectionArray = newEditingData[section as keyof ParsedCVData] as any[];
-    sectionArray.splice(index, 1);
-    setEditingData(newEditingData);
+  const handleExperienceUpdate = (index: number, data: IExperience) => {
+    if (!reviewData) return;
+    const newExperience = [...reviewData.experience];
+    newExperience[index] = data;
+    setReviewData({ ...reviewData, experience: newExperience });
+  };
+
+  const handleEducationAdd = () => {
+    if (!reviewData) return;
+    const newEdu: IEducation = {
+      id: `edu_${Date.now()}`,
+      university: '',
+      degree: '',
+      description: '',
+      startDate: '',
+      endDate: ''
+    };
+    setReviewData({
+      ...reviewData,
+      education: [...reviewData.education, newEdu]
+    });
+  };
+
+  const handleEducationRemove = (index: number) => {
+    if (!reviewData) return;
+    const newEducation = [...reviewData.education];
+    newEducation.splice(index, 1);
+    setReviewData({ ...reviewData, education: newEducation });
+  };
+
+  const handleEducationUpdate = (index: number, data: IEducation) => {
+    if (!reviewData) return;
+    const newEducation = [...reviewData.education];
+    newEducation[index] = data;
+    setReviewData({ ...reviewData, education: newEducation });
+  };
+
+  const handleLanguageAdd = () => {
+    if (!reviewData) return;
+    const newLang: ILanguage = { id: `lang_${Date.now()}`, key: '', level: 'BEGINNER' };
+    setReviewData({
+      ...reviewData,
+      languages: [...reviewData.languages, newLang]
+    });
+  };
+
+  const handleLanguageRemove = (index: number) => {
+    if (!reviewData) return;
+    const newLanguages = [...reviewData.languages];
+    newLanguages.splice(index, 1);
+    setReviewData({ ...reviewData, languages: newLanguages });
+  };
+
+  const handleLanguageUpdate = (index: number, data: ILanguage) => {
+    if (!reviewData) return;
+    const newLanguages = [...reviewData.languages];
+    newLanguages[index] = data;
+    setReviewData({ ...reviewData, languages: newLanguages });
+  };
+
+  const handleCertificationAdd = () => {
+    if (!reviewData) return;
+    const newCert = {
+      id: `cert_${Date.now()}`,
+      name: '',
+      issuer: '',
+      issueDate: '',
+      expiryDate: '',
+      credentialId: ''
+    };
+    setReviewData({
+      ...reviewData,
+      certifications: [...reviewData.certifications, newCert]
+    });
+  };
+
+  const handleCertificationRemove = (index: number) => {
+    if (!reviewData) return;
+    const newCertifications = [...reviewData.certifications];
+    newCertifications.splice(index, 1);
+    setReviewData({ ...reviewData, certifications: newCertifications });
+  };
+
+  const handleCertificationUpdate = (index: number, data: any) => {
+    if (!reviewData) return;
+    const newCertifications = [...reviewData.certifications];
+    newCertifications[index] = data;
+    setReviewData({ ...reviewData, certifications: newCertifications });
   };
 
   const renderUploadStep = () => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center min-h-[400px] px-6"
+      className='flex h-full flex-col items-center justify-center px-8'
     >
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={() => document.getElementById('cv-upload-input')?.click()}
-        className={`w-full max-w-md p-8 border-2 border-dashed rounded-2xl text-center cursor-pointer transition-all duration-300 ${
-          isDragActive
-            ? 'border-primary bg-primary/5 scale-105'
-            : 'border-default-300 hover:border-primary hover:bg-default-50'
-        }`}
-      >
-        <input
-          id="cv-upload-input"
-          type="file"
-          accept=".pdf,.doc,.docx"
-          onChange={handleFileChange}
-          className="hidden"
+      <div className='w-full max-w-2xl'>
+        <div className='mb-8 text-center'>
+          <h3 className='text-foreground mb-4 text-3xl font-bold'>Upload Your CV</h3>
+          <p className='text-default-600 text-lg'>
+            Upload your CV to automatically extract and import your professional information
+          </p>
+        </div>
+
+        <FileUpload
+          selectedFile={uploadedFile}
+          onFileSelect={handleFileUpload}
+          onFileRemove={handleFileRemove}
+          isDragOver={isDragActive}
+          onDragEnter={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          acceptedFileTypes='.pdf,.doc,.docx'
+          maxFileSize={15 * 1024 * 1024}
+          className='mb-8'
         />
-        <div className="space-y-4">
-          <div className="flex justify-center">
-            <div className="p-4 bg-primary/10 rounded-2xl">
-              <Icon icon="solar:document-add-bold" className="h-12 w-12 text-primary" />
-            </div>
-          </div>
-          <div>
-            <h3 className="text-xl font-semibold text-foreground mb-2">Upload Your CV</h3>
-            <p className="text-default-600 text-sm">
-              {isDragActive
-                ? "Drop your CV here..."
-                : "Drag & drop your CV here, or click to browse"}
-            </p>
-          </div>
-          <div className="text-xs text-default-500">
-            Supports PDF, DOC, DOCX • Max size 10MB
-          </div>
+
+        <div className='text-center'>
+          <Chip
+            variant='flat'
+            color='primary'
+            size='lg'
+            startContent={<Icon icon='solar:shield-check-outline' className='h-4 w-4' />}
+          >
+            Supports PDF, DOC, DOCX • Max 15MB • Secure Processing
+          </Chip>
         </div>
       </div>
-      
-      <div className="mt-8 text-center max-w-md">
-        <h4 className="font-medium text-foreground mb-2">What happens next?</h4>
-        <div className="space-y-2 text-sm text-default-600">
-          <div className="flex items-center gap-2">
-            <Icon icon="solar:check-circle-linear" className="h-4 w-4 text-success" />
-            <span>AI will parse your CV and extract all information</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Icon icon="solar:check-circle-linear" className="h-4 w-4 text-success" />
-            <span>Review and choose what to import to your profile</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Icon icon="solar:check-circle-linear" className="h-4 w-4 text-success" />
-            <span>Your profile will be automatically updated</span>
-          </div>
+
+      <div className='mt-12 max-w-3xl'>
+        <h4 className='text-foreground mb-6 text-center text-xl font-semibold'>
+          What happens after upload?
+        </h4>
+        <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
+          {[
+            {
+              icon: 'solar:cpu-outline',
+              title: 'AI Analysis',
+              description: 'Advanced AI extracts all information from your CV with high accuracy'
+            },
+            {
+              icon: 'solar:settings-outline',
+              title: 'Smart Review',
+              description: 'Review and edit extracted data in structured, easy-to-use forms'
+            },
+            {
+              icon: 'solar:user-check-outline',
+              title: 'Profile Update',
+              description: 'Apply selected information to automatically enhance your profile'
+            }
+          ].map((feature, index) => (
+            <Card key={index} className='bg-default-50 border-none'>
+              <CardBody className='p-6 text-center'>
+                <div className='mb-4 flex justify-center'>
+                  <div className='bg-primary/10 rounded-2xl p-3'>
+                    <Icon icon={feature.icon} className='text-primary/70 h-8 w-8' />
+                  </div>
+                </div>
+                <h5 className='text-foreground mb-2 font-semibold'>{feature.title}</h5>
+                <p className='text-default-600 text-sm'>{feature.description}</p>
+              </CardBody>
+            </Card>
+          ))}
         </div>
       </div>
     </motion.div>
@@ -340,554 +470,117 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center min-h-[400px] px-6"
+      className='flex h-full flex-col items-center justify-center px-8'
     >
-      <div className="text-center space-y-6">
-        <div className="flex justify-center">
-          <div className="p-6 bg-primary/10 rounded-3xl">
+      <div className='max-w-2xl space-y-8 text-center'>
+        <div className='flex justify-center'>
+          <div className='relative'>
             <motion.div
               animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+              className='from-primary/20 to-secondary/20 rounded-3xl bg-gradient-to-br p-8'
             >
-              <Icon icon="solar:cpu-bolt-line-duotone" className="h-16 w-16 text-primary" />
+              <Icon icon='solar:cpu-outline' className='text-primary/70 h-20 w-20' />
             </motion.div>
+            <div className='from-primary/20 absolute inset-0 animate-pulse rounded-3xl bg-gradient-to-r to-transparent' />
           </div>
         </div>
-        
-        <div>
-          <h3 className="text-2xl font-semibold text-foreground mb-2">Parsing Your CV</h3>
-          <p className="text-default-600">
-            Our AI is analyzing your CV and extracting all the important information...
+
+        <div className='space-y-4'>
+          <h3 className='text-foreground text-3xl font-bold'>Processing Your CV</h3>
+          <p className='text-default-600 text-lg'>
+            Our advanced AI is analyzing your CV and extracting all relevant information...
           </p>
         </div>
 
-        <div className="w-full max-w-sm space-y-2">
-          <Progress 
-            value={uploadProgress} 
-            color="primary" 
-            className="w-full"
-            showValueLabel
+        <div className='w-full max-w-md space-y-4'>
+          <Progress
+            value={uploadProgress}
+            color='primary'
+            className='h-3 w-full'
+            classNames={{
+              track: 'drop-shadow-md border border-default',
+              indicator: 'bg-gradient-to-r from-primary to-secondary'
+            }}
           />
-          <p className="text-sm text-default-500">
-            {uploadProgress < 50 ? 'Uploading file...' : 
-             uploadProgress < 90 ? 'Analyzing content...' : 
-             'Almost done...'}
-          </p>
+          <div className='grid grid-cols-3 gap-4 text-sm'>
+            <div
+              className={`transition-colors ${uploadProgress > 20 ? 'text-primary font-medium' : 'text-default-500'}`}
+            >
+              <Icon icon='solar:upload-outline' className='mr-1 inline h-4 w-4' />
+              Uploading
+            </div>
+            <div
+              className={`transition-colors ${uploadProgress > 60 ? 'text-primary font-medium' : 'text-default-500'}`}
+            >
+              <Icon icon='solar:eye-scan-outline' className='mr-1 inline h-4 w-4' />
+              Analyzing
+            </div>
+            <div
+              className={`transition-colors ${uploadProgress > 90 ? 'text-primary font-medium' : 'text-default-500'}`}
+            >
+              <Icon icon='solar:check-circle-outline' className='mr-1 inline h-4 w-4' />
+              Finalizing
+            </div>
+          </div>
         </div>
 
         {uploadedFile && (
-          <div className="flex items-center gap-3 p-3 bg-default-100 rounded-lg">
-            <Icon icon="solar:document-text-linear" className="h-6 w-6 text-default-600" />
-            <div className="text-sm">
-              <div className="font-medium text-foreground">{uploadedFile.name}</div>
-              <div className="text-default-500">{(uploadedFile.size / 1024 / 1024).toFixed(1)} MB</div>
-            </div>
-          </div>
+          <Card className='mx-auto max-w-md'>
+            <CardBody className='p-4'>
+              <div className='flex items-center gap-4'>
+                <div className='bg-success/10 rounded-xl p-3'>
+                  <Icon icon='solar:document-text-outline' className='text-success/70 h-6 w-6' />
+                </div>
+                <div className='flex-1 text-left'>
+                  <div className='text-foreground font-semibold'>{uploadedFile.name}</div>
+                  <div className='text-default-500 text-sm'>
+                    {(uploadedFile.size / 1024 / 1024).toFixed(1)} MB • Uploaded successfully
+                  </div>
+                </div>
+                <Icon icon='solar:check-circle-outline' className='text-success/70 h-6 w-6' />
+              </div>
+            </CardBody>
+          </Card>
         )}
       </div>
     </motion.div>
   );
 
-  const renderPersonalInfoForm = (data: ParsedCVData['personalInfo']) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Input
-        label="First Name"
-        value={data.firstName || ''}
-        onChange={(e) => {
-          if (!editingData) return;
-          setEditingData({
-            ...editingData,
-            personalInfo: { ...editingData.personalInfo, firstName: e.target.value }
-          });
-        }}
-      />
-      <Input
-        label="Last Name"
-        value={data.lastName || ''}
-        onChange={(e) => {
-          if (!editingData) return;
-          setEditingData({
-            ...editingData,
-            personalInfo: { ...editingData.personalInfo, lastName: e.target.value }
-          });
-        }}
-      />
-      <Input
-        label="Email"
-        type="email"
-        value={data.email || ''}
-        onChange={(e) => {
-          if (!editingData) return;
-          setEditingData({
-            ...editingData,
-            personalInfo: { ...editingData.personalInfo, email: e.target.value }
-          });
-        }}
-      />
-      <Input
-        label="Phone"
-        value={data.phone || ''}
-        onChange={(e) => {
-          if (!editingData) return;
-          setEditingData({
-            ...editingData,
-            personalInfo: { ...editingData.personalInfo, phone: e.target.value }
-          });
-        }}
-      />
-      <Input
-        label="Location"
-        value={data.location || ''}
-        onChange={(e) => {
-          if (!editingData) return;
-          setEditingData({
-            ...editingData,
-            personalInfo: { ...editingData.personalInfo, location: e.target.value }
-          });
-        }}
-      />
-      <Input
-        label="LinkedIn"
-        value={data.linkedIn || ''}
-        onChange={(e) => {
-          if (!editingData) return;
-          setEditingData({
-            ...editingData,
-            personalInfo: { ...editingData.personalInfo, linkedIn: e.target.value }
-          });
-        }}
-      />
-      <Input
-        label="Website"
-        className="md:col-span-2"
-        value={data.website || ''}
-        onChange={(e) => {
-          if (!editingData) return;
-          setEditingData({
-            ...editingData,
-            personalInfo: { ...editingData.personalInfo, website: e.target.value }
-          });
-        }}
-      />
-      <Textarea
-        label="Professional Summary"
-        className="md:col-span-2"
-        value={data.summary || ''}
-        onChange={(e) => {
-          if (!editingData) return;
-          setEditingData({
-            ...editingData,
-            personalInfo: { ...editingData.personalInfo, summary: e.target.value }
-          });
-        }}
-        minRows={3}
-      />
-    </div>
-  );
-
-  const renderSkillsList = (skills: ParsedCVData['skills']) => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="font-medium">Skills ({skills.length})</h4>
-        <Button
-          size="sm"
-          color="primary"
-          variant="flat"
-          startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-          onPress={() => handleAddNew('skills')}
-        >
-          Add Skill
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 gap-3 max-h-60 overflow-y-auto">
-        {skills.map((skill, index) => (
-          <Card key={index} className="border">
-            <CardBody className="p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex-1 grid grid-cols-4 gap-2 text-sm">
-                  <div>
-                    <span className="font-medium">{skill.name}</span>
-                  </div>
-                  <div className="text-default-600">{skill.category}</div>
-                  <div className="text-default-600">{skill.level}</div>
-                  <div className="text-default-600">{skill.years} years</div>
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    isIconOnly
-                    onPress={() => handleEditSection('skills', index)}
-                  >
-                    <Icon icon="solar:pen-linear" className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('skills', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderExperienceList = (experience: ParsedCVData['experience']) => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="font-medium">Work Experience ({experience.length})</h4>
-        <Button
-          size="sm"
-          color="primary"
-          variant="flat"
-          startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-          onPress={() => handleAddNew('experience')}
-        >
-          Add Experience
-        </Button>
-      </div>
-      <div className="space-y-3 max-h-80 overflow-y-auto">
-        {experience.map((exp, index) => (
-          <Card key={index} className="border">
-            <CardBody className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div>
-                  <h5 className="font-semibold">{exp.position}</h5>
-                  <p className="text-sm text-default-600">{exp.company} • {exp.location}</p>
-                  <p className="text-xs text-default-500">{exp.startDate} - {exp.endDate || 'Present'}</p>
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    isIconOnly
-                    onPress={() => handleEditSection('experience', index)}
-                  >
-                    <Icon icon="solar:pen-linear" className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('experience', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              <p className="text-sm text-default-700 mb-2">{exp.description}</p>
-              {exp.responsibilities.length > 0 && (
-                <div className="text-xs text-default-600">
-                  <span className="font-medium">Key responsibilities:</span>
-                  <ul className="list-disc list-inside mt-1 space-y-0.5">
-                    {exp.responsibilities.slice(0, 3).map((resp, i) => (
-                      <li key={i}>{resp}</li>
-                    ))}
-                    {exp.responsibilities.length > 3 && (
-                      <li>... and {exp.responsibilities.length - 3} more</li>
-                    )}
-                  </ul>
-                </div>
-              )}
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderEducationList = (education: ParsedCVData['education']) => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="font-medium">Education ({education.length})</h4>
-        <Button
-          size="sm"
-          color="primary"
-          variant="flat"
-          startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-          onPress={() => handleAddNew('education')}
-        >
-          Add Education
-        </Button>
-      </div>
-      <div className="space-y-3 max-h-60 overflow-y-auto">
-        {education.map((edu, index) => (
-          <Card key={index} className="border">
-            <CardBody className="p-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h5 className="font-semibold">{edu.degree} in {edu.field}</h5>
-                  <p className="text-sm text-default-600">{edu.institution}</p>
-                  <p className="text-xs text-default-500">
-                    {edu.startDate} - {edu.endDate} • {edu.grade}
-                  </p>
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    isIconOnly
-                    onPress={() => handleEditSection('education', index)}
-                  >
-                    <Icon icon="solar:pen-linear" className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('education', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderLanguagesList = (languages: ParsedCVData['languages']) => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="font-medium">Languages ({languages.length})</h4>
-        <Button
-          size="sm"
-          color="primary"
-          variant="flat"
-          startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-          onPress={() => handleAddNew('languages')}
-        >
-          Add Language
-        </Button>
-      </div>
-      <div className="grid grid-cols-1 gap-3 max-h-40 overflow-y-auto">
-        {languages.map((lang, index) => (
-          <Card key={index} className="border">
-            <CardBody className="p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex-1 grid grid-cols-3 gap-2 text-sm">
-                  <div>
-                    <span className="font-medium">{lang.name}</span>
-                  </div>
-                  <div className="text-default-600">{lang.level}</div>
-                  <div className="text-default-600 text-xs">{lang.proficiency}</div>
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    isIconOnly
-                    onPress={() => handleEditSection('languages', index)}
-                  >
-                    <Icon icon="solar:pen-linear" className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('languages', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderCertificationsList = (certifications: ParsedCVData['certifications']) => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="font-medium">Certifications ({certifications.length})</h4>
-        <Button
-          size="sm"
-          color="primary"
-          variant="flat"
-          startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-          onPress={() => handleAddNew('certifications')}
-        >
-          Add Certification
-        </Button>
-      </div>
-      <div className="space-y-3 max-h-60 overflow-y-auto">
-        {certifications.map((cert, index) => (
-          <Card key={index} className="border">
-            <CardBody className="p-3">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h5 className="font-semibold">{cert.name}</h5>
-                  <p className="text-sm text-default-600">{cert.issuer}</p>
-                  <p className="text-xs text-default-500">
-                    {cert.issueDate} - {cert.expiryDate || 'No expiry'}
-                  </p>
-                  {cert.credentialId && (
-                    <p className="text-xs text-default-400">ID: {cert.credentialId}</p>
-                  )}
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    isIconOnly
-                    onPress={() => handleEditSection('certifications', index)}
-                  >
-                    <Icon icon="solar:pen-linear" className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('certifications', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderProjectsList = (projects: ParsedCVData['projects']) => (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h4 className="font-medium">Projects ({projects.length})</h4>
-        <Button
-          size="sm"
-          color="primary"
-          variant="flat"
-          startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-          onPress={() => handleAddNew('projects')}
-        >
-          Add Project
-        </Button>
-      </div>
-      <div className="space-y-3 max-h-80 overflow-y-auto">
-        {projects.map((project, index) => (
-          <Card key={index} className="border">
-            <CardBody className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <div className="flex-1">
-                  <h5 className="font-semibold">{project.name}</h5>
-                  <p className="text-sm text-default-700 mb-2">{project.description}</p>
-                  <div className="flex flex-wrap gap-1 mb-2">
-                    {project.technologies.map((tech, i) => (
-                      <Chip key={i} size="sm" variant="flat" color="primary">
-                        {tech}
-                      </Chip>
-                    ))}
-                  </div>
-                  <p className="text-xs text-default-500">
-                    {project.startDate} - {project.endDate}
-                  </p>
-                  {project.url && (
-                    <p className="text-xs text-primary">{project.url}</p>
-                  )}
-                </div>
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    isIconOnly
-                    onPress={() => handleEditSection('projects', index)}
-                  >
-                    <Icon icon="solar:pen-linear" className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('projects', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        ))}
-      </div>
-    </div>
-  );
-
   const renderReviewStep = () => {
-    if (!editingData) return null;
+    if (!reviewData) return null;
 
     const sections = [
-      {
-        id: 'personalInfo',
-        title: 'Personal Information',
-        icon: 'solar:user-linear',
-        data: editingData.personalInfo,
-        preview: `${editingData.personalInfo.firstName} ${editingData.personalInfo.lastName}`,
-        render: () => renderPersonalInfoForm(editingData.personalInfo)
-      },
+      { id: 'personal', title: 'Personal Info', icon: 'solar:user-circle-outline', badge: '1' },
       {
         id: 'skills',
         title: 'Skills',
-        icon: 'solar:code-linear',
-        data: editingData.skills,
-        preview: `${editingData.skills.length} skills found`,
-        render: () => renderSkillsList(editingData.skills)
+        icon: 'solar:code-outline',
+        badge: reviewData.skills.length.toString()
       },
       {
         id: 'experience',
-        title: 'Work Experience',
-        icon: 'solar:briefcase-linear',
-        data: editingData.experience,
-        preview: `${editingData.experience.length} positions`,
-        render: () => renderExperienceList(editingData.experience)
+        title: 'Experience',
+        icon: 'solar:briefcase-outline',
+        badge: reviewData.experience.length.toString()
       },
       {
         id: 'education',
         title: 'Education',
-        icon: 'solar:graduation-linear',
-        data: editingData.education,
-        preview: `${editingData.education.length} qualifications`,
-        render: () => renderEducationList(editingData.education)
+        icon: 'solar:graduation-outline',
+        badge: reviewData.education.length.toString()
       },
       {
         id: 'languages',
         title: 'Languages',
-        icon: 'solar:translation-linear',
-        data: editingData.languages,
-        preview: `${editingData.languages.length} languages`,
-        render: () => renderLanguagesList(editingData.languages)
+        icon: 'solar:translation-outline',
+        badge: reviewData.languages.length.toString()
       },
       {
         id: 'certifications',
         title: 'Certifications',
-        icon: 'solar:medal-star-linear',
-        data: editingData.certifications,
-        preview: `${editingData.certifications.length} certifications`,
-        render: () => renderCertificationsList(editingData.certifications)
-      },
-      {
-        id: 'projects',
-        title: 'Projects',
-        icon: 'solar:code-square-linear',
-        data: editingData.projects,
-        preview: `${editingData.projects.length} projects`,
-        render: () => renderProjectsList(editingData.projects)
+        icon: 'solar:medal-star-outline',
+        badge: reviewData.certifications.length.toString()
       }
     ];
 
@@ -895,85 +588,106 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6 h-full"
+        className='flex h-full flex-col'
       >
-        <div className="text-center pb-4">
-          <h3 className="text-xl font-semibold text-foreground mb-2">Review & Edit Parsed Data</h3>
-          <p className="text-default-600">
-            Review and edit the information before applying to your profile
+        <div className='mb-6'>
+          <h3 className='text-foreground mb-2 text-2xl font-bold'>
+            Review & Edit Your Information
+          </h3>
+          <p className='text-default-600'>
+            Review the extracted information and make any necessary edits before applying to your
+            profile.
           </p>
         </div>
 
-        <ScrollShadow className="flex-1 max-h-[calc(100vh-400px)]">
-          <Accordion
-            defaultExpandedKeys={[activeReviewSection || 'personalInfo']}
-            onSelectionChange={(keys) => {
-              const keyArray = Array.from(keys);
-              setActiveReviewSection(keyArray[0] as string);
+        <div className='flex min-h-0 flex-1 flex-col'>
+          <Tabs
+            value={activeTab}
+            onSelectionChange={(key) => setActiveTab(key as string)}
+            variant='underlined'
+            classNames={{
+              tabList: 'gap-8 w-full relative rounded-none p-0 border-b border-divider',
+              cursor: 'w-full bg-primary',
+              tab: 'max-w-fit px-0 h-12',
+              tabContent: 'group-data-[selected=true]:text-primary'
             }}
           >
             {sections.map((section) => (
-              <AccordionItem
+              <Tab
                 key={section.id}
-                aria-label={section.title}
                 title={
-                  <div className="flex items-center justify-between w-full pr-4">
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-lg ${
-                        selectedSections.has(section.id)
-                          ? 'bg-primary/20'
-                          : 'bg-default-100'
-                      }`}>
-                        <Icon
-                          icon={section.icon}
-                          className={`h-5 w-5 ${
-                            selectedSections.has(section.id)
-                              ? 'text-primary'
-                              : 'text-default-600'
-                          }`}
-                        />
-                      </div>
-                      <div>
-                        <h4 className="font-medium text-foreground">{section.title}</h4>
-                        <p className="text-sm text-default-600">{section.preview}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {Array.isArray(section.data) && section.data.length > 0 && (
-                        <Chip size="sm" variant="flat" color="success">
-                          {section.data.length} items
-                        </Chip>
-                      )}
-                      <Button
-                        size="sm"
-                        variant={selectedSections.has(section.id) ? 'solid' : 'flat'}
-                        color={selectedSections.has(section.id) ? 'primary' : 'default'}
-                        onPress={(e) => {
-                          e.stopPropagation();
-                          handleSectionToggle(section.id);
-                        }}
-                      >
-                        {selectedSections.has(section.id) ? 'Selected' : 'Select'}
-                      </Button>
-                    </div>
+                  <div className='flex items-center space-x-3'>
+                    <Icon icon={section.icon} className='h-4 w-4' />
+                    <span>{section.title}</span>
+                    <Badge content={section.badge} color='primary' size='sm' variant='flat' />
                   </div>
                 }
               >
-                <div className="pb-4">
-                  {section.render()}
+                <div className='min-h-0 flex-1'>
+                  <ScrollShadow className='h-full w-full'>
+                    <div className='py-6'>
+                      {section.id === 'personal' && (
+                        <PersonalInfoForm
+                          data={reviewData.personalInfo}
+                          onChange={handlePersonalInfoChange}
+                        />
+                      )}
+                      {section.id === 'skills' && (
+                        <SkillsForm
+                          skills={reviewData.skills}
+                          onAdd={handleSkillAdd}
+                          onRemove={handleSkillRemove}
+                          onUpdate={handleSkillUpdate}
+                        />
+                      )}
+                      {section.id === 'experience' && (
+                        <ExperienceForm
+                          experience={reviewData.experience}
+                          onAdd={handleExperienceAdd}
+                          onRemove={handleExperienceRemove}
+                          onUpdate={handleExperienceUpdate}
+                        />
+                      )}
+                      {section.id === 'education' && (
+                        <EducationForm
+                          education={reviewData.education}
+                          onAdd={handleEducationAdd}
+                          onRemove={handleEducationRemove}
+                          onUpdate={handleEducationUpdate}
+                        />
+                      )}
+                      {section.id === 'languages' && (
+                        <LanguagesForm
+                          languages={reviewData.languages}
+                          onAdd={handleLanguageAdd}
+                          onRemove={handleLanguageRemove}
+                          onUpdate={handleLanguageUpdate}
+                        />
+                      )}
+                      {section.id === 'certifications' && (
+                        <CertificationsForm
+                          certifications={reviewData.certifications}
+                          onAdd={handleCertificationAdd}
+                          onRemove={handleCertificationRemove}
+                          onUpdate={handleCertificationUpdate}
+                        />
+                      )}
+                    </div>
+                  </ScrollShadow>
                 </div>
-              </AccordionItem>
+              </Tab>
             ))}
-          </Accordion>
-        </ScrollShadow>
+          </Tabs>
+        </div>
 
-        <div className="bg-warning/10 border border-warning/20 rounded-lg p-4">
-          <div className="flex gap-3">
-            <Icon icon="solar:info-circle-linear" className="h-5 w-5 text-warning mt-0.5" />
-            <div className="text-sm">
-              <p className="font-medium text-warning-700 dark:text-warning-400">Important Note</p>
-              <p className="text-warning-600 dark:text-warning-500 mt-1">
-                Selected data will be merged with your existing profile. You can edit any information before applying.
+        <div className='bg-warning/10 border-warning/20 mt-6 rounded-xl border p-4'>
+          <div className='flex gap-3'>
+            <Icon icon='solar:info-circle-outline' className='text-warning/70 mt-0.5 h-5 w-5' />
+            <div className='text-sm'>
+              <p className='text-warning-700 dark:text-warning-400 font-medium'>Review Complete</p>
+              <p className='text-warning-600 dark:text-warning-500 mt-1'>
+                Make sure all information is accurate. Selected sections will be merged with your
+                existing profile.
               </p>
             </div>
           </div>
@@ -986,33 +700,63 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center min-h-[400px] px-6"
+      className='flex h-full flex-col items-center justify-center px-8'
     >
-      <div className="text-center space-y-6">
-        <div className="flex justify-center">
-          <div className="p-6 bg-success/10 rounded-3xl">
+      <div className='max-w-2xl space-y-8 text-center'>
+        <div className='flex justify-center'>
+          <div className='relative'>
             <motion.div
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 2, repeat: Infinity }}
+              className='from-success/20 to-primary/20 rounded-3xl bg-gradient-to-br p-8'
             >
-              <Icon icon="solar:database-linear" className="h-16 w-16 text-success" />
+              <Icon icon='solar:database-outline' className='text-success/70 h-20 w-20' />
             </motion.div>
+            <div className='from-success/20 absolute inset-0 animate-pulse rounded-3xl bg-gradient-to-r to-transparent' />
           </div>
         </div>
-        
-        <div>
-          <h3 className="text-2xl font-semibold text-foreground mb-2">Updating Your Profile</h3>
-          <p className="text-default-600">
-            Applying the selected information to your profile...
+
+        <div className='space-y-4'>
+          <h3 className='text-foreground text-3xl font-bold'>Updating Your Profile</h3>
+          <p className='text-default-600 text-lg'>
+            Applying the selected information to your profile. This may take a few moments...
           </p>
         </div>
 
-        <Progress 
-          value={100}
-          color="success" 
-          className="w-full max-w-sm"
-          isIndeterminate
-        />
+        <div className='w-full max-w-md'>
+          <Progress
+            value={100}
+            color='success'
+            className='h-3 w-full'
+            isIndeterminate
+            classNames={{
+              track: 'drop-shadow-md border border-default',
+              indicator: 'bg-gradient-to-r from-success to-primary'
+            }}
+          />
+          <p className='text-success mt-2 text-sm font-medium'>Processing your information...</p>
+        </div>
+
+        <div className='grid max-w-md grid-cols-2 gap-4'>
+          {[
+            { icon: 'solar:user-check-outline', label: 'Personal Info' },
+            { icon: 'solar:code-outline', label: 'Skills' },
+            { icon: 'solar:briefcase-outline', label: 'Experience' },
+            { icon: 'solar:graduation-outline', label: 'Education' }
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: index * 0.2 }}
+              className='bg-success/10 flex items-center gap-2 rounded-lg p-3'
+            >
+              <Icon icon={item.icon} className='text-success h-4 w-4' />
+              <span className='text-success text-sm font-medium'>{item.label}</span>
+              <Icon icon='solar:check-circle-outline' className='text-success/70 ml-auto h-4 w-4' />
+            </motion.div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
@@ -1021,661 +765,348 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center min-h-[400px] px-6"
+      className='flex h-full flex-col items-center justify-center px-8'
     >
-      <div className="text-center space-y-6">
-        <div className="flex justify-center">
+      <div className='max-w-2xl space-y-8 text-center'>
+        <div className='flex justify-center'>
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 200, damping: 10 }}
-            className="p-6 bg-success/10 rounded-3xl"
+            transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+            className='relative'
           >
-            <Icon icon="solar:check-circle-bold" className="h-16 w-16 text-success" />
+            <div className='from-success/20 to-primary/20 rounded-3xl bg-gradient-to-br p-8'>
+              <Icon icon='solar:check-circle-outline' className='text-success/70 h-20 w-20' />
+            </div>
+            <motion.div
+              animate={{ scale: [1, 1.2, 1] }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className='bg-success absolute -top-2 -right-2 rounded-full p-2'
+            >
+              <Icon icon='solar:star-outline' className='h-6 w-6 text-white' />
+            </motion.div>
           </motion.div>
         </div>
 
-        <div>
-          <h3 className="text-2xl font-semibold text-foreground mb-2">Profile Updated Successfully!</h3>
-          <p className="text-default-600">
-            Your CV data has been successfully applied to your profile.
+        <div className='space-y-4'>
+          <h3 className='text-foreground text-3xl font-bold'>Profile Updated Successfully!</h3>
+          <p className='text-default-600 text-lg'>
+            Your CV information has been successfully applied to your profile. Your profile is now
+            more complete and professional.
           </p>
         </div>
 
-        <div className="text-sm text-default-600 space-y-1">
-          <p>✓ Personal information updated</p>
-          <p>✓ Skills and experience added</p>
-          <p>✓ Education history synchronized</p>
-          <p>✓ Profile is now more complete</p>
+        <div className='grid max-w-lg grid-cols-2 gap-4'>
+          {[
+            {
+              icon: 'solar:user-check-outline',
+              label: 'Personal information updated',
+              count: '6 fields'
+            },
+            {
+              icon: 'solar:code-outline',
+              label: 'Skills synchronized',
+              count: `${reviewData?.skills.length || 0} skills`
+            },
+            {
+              icon: 'solar:briefcase-outline',
+              label: 'Experience added',
+              count: `${reviewData?.experience.length || 0} positions`
+            },
+            {
+              icon: 'solar:graduation-outline',
+              label: 'Education history updated',
+              count: `${reviewData?.education.length || 0} degrees`
+            }
+          ].map((item, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              className='bg-success/10 border-success/20 rounded-xl border p-4 text-center'
+            >
+              <div className='mb-2 flex justify-center'>
+                <Icon icon={item.icon} className='text-success/70 h-6 w-6' />
+              </div>
+              <p className='text-success text-sm font-medium'>{item.label}</p>
+              <p className='text-success/70 mt-1 text-xs'>{item.count}</p>
+            </motion.div>
+          ))}
         </div>
+
+        <Chip
+          variant='flat'
+          color='success'
+          size='lg'
+          startContent={<Icon icon='solar:shield-check-outline' className='h-4 w-4' />}
+        >
+          Profile completion improved significantly
+        </Chip>
       </div>
     </motion.div>
   );
 
-  const renderEditModal = () => {
-    if (!editingData || !editingSection) return null;
+  const steps = [
+    { key: 'upload', title: 'Upload', icon: 'solar:cloud-upload-outline' },
+    { key: 'parsing', title: 'Processing', icon: 'solar:cpu-outline' },
+    { key: 'review', title: 'Review', icon: 'solar:eye-outline' },
+    { key: 'applying', title: 'Applying', icon: 'solar:database-outline' },
+    { key: 'complete', title: 'Complete', icon: 'solar:check-circle-outline' }
+  ];
 
-    const section = editingData[editingSection as keyof ParsedCVData] as any;
-    const item = editingIndex >= 0 ? section[editingIndex] : section;
-
-    const renderEditForm = () => {
-      switch (editingSection) {
-        case 'skills':
-          return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Skill Name"
-                value={item.name || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, name: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Select
-                label="Category"
-                selectedKeys={item.category ? [item.category] : []}
-                onSelectionChange={(keys) => {
-                  const category = Array.from(keys)[0] as string;
-                  const newItem = { ...item, category };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              >
-                <SelectItem key="Programming">Programming</SelectItem>
-                <SelectItem key="Frontend">Frontend</SelectItem>
-                <SelectItem key="Backend">Backend</SelectItem>
-                <SelectItem key="Database">Database</SelectItem>
-                <SelectItem key="DevOps">DevOps</SelectItem>
-                <SelectItem key="Cloud">Cloud</SelectItem>
-                <SelectItem key="Design">Design</SelectItem>
-                <SelectItem key="Other">Other</SelectItem>
-              </Select>
-              <Select
-                label="Level"
-                selectedKeys={item.level ? [item.level] : []}
-                onSelectionChange={(keys) => {
-                  const level = Array.from(keys)[0] as string;
-                  const newItem = { ...item, level };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              >
-                <SelectItem key="Beginner">Beginner</SelectItem>
-                <SelectItem key="Intermediate">Intermediate</SelectItem>
-                <SelectItem key="Advanced">Advanced</SelectItem>
-                <SelectItem key="Expert">Expert</SelectItem>
-              </Select>
-              <Input
-                type="number"
-                label="Years of Experience"
-                value={item.years?.toString() || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, years: parseInt(e.target.value) || 0 };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-            </div>
-          );
-
-        case 'experience':
-          return (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Company"
-                  value={item.company || ''}
-                  onChange={(e) => {
-                    const newItem = { ...item, company: e.target.value };
-                    if (editingIndex >= 0) {
-                      const newSection = [...section];
-                      newSection[editingIndex] = newItem;
-                      setEditingData({ ...editingData, [editingSection]: newSection });
-                    }
-                  }}
-                />
-                <Input
-                  label="Position"
-                  value={item.position || ''}
-                  onChange={(e) => {
-                    const newItem = { ...item, position: e.target.value };
-                    if (editingIndex >= 0) {
-                      const newSection = [...section];
-                      newSection[editingIndex] = newItem;
-                      setEditingData({ ...editingData, [editingSection]: newSection });
-                    }
-                  }}
-                />
-                <Input
-                  label="Location"
-                  value={item.location || ''}
-                  onChange={(e) => {
-                    const newItem = { ...item, location: e.target.value };
-                    if (editingIndex >= 0) {
-                      const newSection = [...section];
-                      newSection[editingIndex] = newItem;
-                      setEditingData({ ...editingData, [editingSection]: newSection });
-                    }
-                  }}
-                />
-                <div className="grid grid-cols-2 gap-2">
-                  <Input
-                    type="date"
-                    label="Start Date"
-                    value={item.startDate || ''}
-                    onChange={(e) => {
-                      const newItem = { ...item, startDate: e.target.value };
-                      if (editingIndex >= 0) {
-                        const newSection = [...section];
-                        newSection[editingIndex] = newItem;
-                        setEditingData({ ...editingData, [editingSection]: newSection });
-                      }
-                    }}
-                  />
-                  <Input
-                    type="date"
-                    label="End Date"
-                    value={item.endDate || ''}
-                    onChange={(e) => {
-                      const newItem = { ...item, endDate: e.target.value };
-                      if (editingIndex >= 0) {
-                        const newSection = [...section];
-                        newSection[editingIndex] = newItem;
-                        setEditingData({ ...editingData, [editingSection]: newSection });
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-              <Textarea
-                label="Description"
-                value={item.description || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, description: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-                minRows={3}
-              />
-              <Textarea
-                label="Responsibilities (one per line)"
-                value={item.responsibilities?.join('\n') || ''}
-                onChange={(e) => {
-                  const responsibilities = e.target.value.split('\n').filter(r => r.trim());
-                  const newItem = { ...item, responsibilities };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-                minRows={4}
-              />
-            </div>
-          );
-
-        case 'education':
-          return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Institution"
-                value={item.institution || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, institution: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                label="Degree"
-                value={item.degree || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, degree: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                label="Field of Study"
-                value={item.field || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, field: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                label="Location"
-                value={item.location || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, location: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                type="date"
-                label="Start Date"
-                value={item.startDate || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, startDate: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                type="date"
-                label="End Date"
-                value={item.endDate || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, endDate: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                label="Grade/GPA"
-                className="md:col-span-2"
-                value={item.grade || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, grade: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-            </div>
-          );
-
-        case 'languages':
-          return (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Input
-                label="Language"
-                value={item.name || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, name: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Select
-                label="Level"
-                selectedKeys={item.level ? [item.level] : []}
-                onSelectionChange={(keys) => {
-                  const level = Array.from(keys)[0] as string;
-                  const newItem = { ...item, level };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              >
-                <SelectItem key="Basic">Basic</SelectItem>
-                <SelectItem key="Intermediate">Intermediate</SelectItem>
-                <SelectItem key="Advanced">Advanced</SelectItem>
-                <SelectItem key="Fluent">Fluent</SelectItem>
-                <SelectItem key="Native">Native</SelectItem>
-              </Select>
-              <Input
-                label="Proficiency Description"
-                value={item.proficiency || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, proficiency: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-            </div>
-          );
-
-        case 'certifications':
-          return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Certification Name"
-                value={item.name || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, name: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                label="Issuing Organization"
-                value={item.issuer || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, issuer: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                type="date"
-                label="Issue Date"
-                value={item.issueDate || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, issueDate: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                type="date"
-                label="Expiry Date"
-                value={item.expiryDate || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, expiryDate: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-              <Input
-                label="Credential ID"
-                className="md:col-span-2"
-                value={item.credentialId || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, credentialId: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-              />
-            </div>
-          );
-
-        case 'projects':
-          return (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Project Name"
-                  value={item.name || ''}
-                  onChange={(e) => {
-                    const newItem = { ...item, name: e.target.value };
-                    if (editingIndex >= 0) {
-                      const newSection = [...section];
-                      newSection[editingIndex] = newItem;
-                      setEditingData({ ...editingData, [editingSection]: newSection });
-                    }
-                  }}
-                />
-                <Input
-                  label="Project URL"
-                  value={item.url || ''}
-                  onChange={(e) => {
-                    const newItem = { ...item, url: e.target.value };
-                    if (editingIndex >= 0) {
-                      const newSection = [...section];
-                      newSection[editingIndex] = newItem;
-                      setEditingData({ ...editingData, [editingSection]: newSection });
-                    }
-                  }}
-                />
-                <Input
-                  type="date"
-                  label="Start Date"
-                  value={item.startDate || ''}
-                  onChange={(e) => {
-                    const newItem = { ...item, startDate: e.target.value };
-                    if (editingIndex >= 0) {
-                      const newSection = [...section];
-                      newSection[editingIndex] = newItem;
-                      setEditingData({ ...editingData, [editingSection]: newSection });
-                    }
-                  }}
-                />
-                <Input
-                  type="date"
-                  label="End Date"
-                  value={item.endDate || ''}
-                  onChange={(e) => {
-                    const newItem = { ...item, endDate: e.target.value };
-                    if (editingIndex >= 0) {
-                      const newSection = [...section];
-                      newSection[editingIndex] = newItem;
-                      setEditingData({ ...editingData, [editingSection]: newSection });
-                    }
-                  }}
-                />
-              </div>
-              <Textarea
-                label="Description"
-                value={item.description || ''}
-                onChange={(e) => {
-                  const newItem = { ...item, description: e.target.value };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-                minRows={3}
-              />
-              <Textarea
-                label="Technologies (comma separated)"
-                value={item.technologies?.join(', ') || ''}
-                onChange={(e) => {
-                  const technologies = e.target.value.split(',').map(t => t.trim()).filter(t => t);
-                  const newItem = { ...item, technologies };
-                  if (editingIndex >= 0) {
-                    const newSection = [...section];
-                    newSection[editingIndex] = newItem;
-                    setEditingData({ ...editingData, [editingSection]: newSection });
-                  }
-                }}
-                minRows={2}
-              />
-            </div>
-          );
-
-        default:
-          return <div>No edit form available for this section.</div>;
-      }
-    };
-
-    return (
-      <Modal
-        isOpen={isEditModalOpen}
-        onClose={onEditModalClose}
-        size="3xl"
-        scrollBehavior="inside"
-        classNames={{
-          base: "max-h-[90vh]",
-          body: "py-6"
-        }}
-      >
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            <h3 className="text-lg font-semibold">
-              {editingIndex >= 0 ? 'Edit' : 'Edit'} {editingSection.charAt(0).toUpperCase() + editingSection.slice(1)}
-            </h3>
-          </ModalHeader>
-          <ModalBody>
-            {renderEditForm()}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={onEditModalClose}>
-              Cancel
-            </Button>
-            <Button color="primary" onPress={() => handleSaveEdit(editingSection, item, editingIndex)}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    );
-  };
+  const currentStepIndex = steps.findIndex((step) => step.key === currentStep);
 
   return (
     <Drawer
       isOpen={isOpen}
       onOpenChange={onOpenChange}
-      size="5xl"
-      placement="right"
+      size='5xl'
+      placement='right'
       classNames={{
-        base: "max-w-[95vw] sm:max-w-[90vw] lg:max-w-[85vw]",
-        body: "flex flex-col h-full",
-        wrapper: "max-h-[95vh]"
+        base: 'w-[80vw] h-screen max-w-[80vw]'
       }}
     >
-      <DrawerContent>
+      <DrawerContent className='h-screen'>
         {(onClose) => (
           <>
-            <DrawerHeader className="flex flex-col gap-1">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-semibold">Upload CV</h2>
-                  <p className="text-sm text-default-600">
-                    {currentStep === 'upload' && 'Upload your CV to auto-fill your profile'}
-                    {currentStep === 'parsing' && 'Analyzing your CV...'}
-                    {currentStep === 'review' && 'Review extracted data'}
-                    {currentStep === 'applying' && 'Updating your profile...'}
-                    {currentStep === 'complete' && 'Successfully updated!'}
-                  </p>
+            <DrawerHeader className='border-divider/30 from-background/95 to-default-50/30 border-b bg-gradient-to-r backdrop-blur-xl'>
+              <div className='flex w-full items-center justify-between'>
+                <div className='flex items-center gap-4'>
+                  <div className='from-primary/15 to-primary/5 border-primary/20 rounded-2xl border bg-gradient-to-br p-3'>
+                    <Icon icon='solar:document-add-outline' className='text-primary/80 h-7 w-7' />
+                  </div>
+                  <div>
+                    <h2 className='from-foreground to-foreground/70 bg-gradient-to-r bg-clip-text text-2xl font-bold text-transparent'>
+                      CV Upload & Review
+                    </h2>
+                    <p className='text-default-500 font-medium'>
+                      {currentStep === 'upload' &&
+                        'Upload your CV to automatically enhance your profile'}
+                      {currentStep === 'parsing' &&
+                        'AI is analyzing and extracting information from your CV'}
+                      {currentStep === 'review' &&
+                        'Review and edit the extracted information before applying'}
+                      {currentStep === 'applying' &&
+                        'Applying selected information to your profile'}
+                      {currentStep === 'complete' &&
+                        'CV information successfully applied to your profile'}
+                    </p>
+                  </div>
                 </div>
+
                 <Button
                   isIconOnly
-                  variant="light"
+                  variant='light'
+                  size='lg'
                   onPress={handleClose}
+                  className='hover:bg-danger/10 hover:text-danger transition-all duration-200'
                 >
-                  <Icon icon="solar:close-linear" className="h-6 w-6" />
+                  <Icon icon='solar:close-circle-outline' className='h-6 w-6' />
                 </Button>
-              </div>
-              
-              {/* Progress Steps */}
-              <div className="flex items-center gap-2 mt-4">
-                {['upload', 'parsing', 'review', 'applying', 'complete'].map((step, index) => (
-                  <div key={step} className="flex items-center">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                      currentStep === step
-                        ? 'bg-primary text-white'
-                        : ['upload', 'parsing', 'review', 'applying', 'complete'].indexOf(currentStep) > index
-                        ? 'bg-success text-white'
-                        : 'bg-default-200 text-default-600'
-                    }`}>
-                      {['upload', 'parsing', 'review', 'applying', 'complete'].indexOf(currentStep) > index ? (
-                        <Icon icon="solar:check-linear" className="h-4 w-4" />
-                      ) : (
-                        index + 1
-                      )}
-                    </div>
-                    {index < 4 && (
-                      <div className={`w-8 h-0.5 ${
-                        ['upload', 'parsing', 'review', 'applying', 'complete'].indexOf(currentStep) > index
-                          ? 'bg-success'
-                          : 'bg-default-200'
-                      }`} />
-                    )}
-                  </div>
-                ))}
               </div>
             </DrawerHeader>
 
-            <DrawerBody>
-              <AnimatePresence mode="wait">
-                {currentStep === 'upload' && renderUploadStep()}
-                {currentStep === 'parsing' && renderParsingStep()}
-                {currentStep === 'review' && renderReviewStep()}
-                {currentStep === 'applying' && renderApplyingStep()}
-                {currentStep === 'complete' && renderCompleteStep()}
-              </AnimatePresence>
+            <DrawerBody className='overflow-hidden p-0'>
+              <div className='flex h-full'>
+                {/* Vertical Steps Sidebar */}
+                <div className='from-default-50/50 to-default-100/30 border-divider/30 w-80 border-r bg-gradient-to-b backdrop-blur-sm'>
+                  <div className='flex h-full flex-col p-6'>
+                    <div className='mb-8'>
+                      <h3 className='text-foreground mb-2 text-lg font-semibold'>Progress</h3>
+                      <p className='text-default-500 text-sm'>
+                        Follow the steps to complete your CV upload
+                      </p>
+                    </div>
+
+                    <div className='flex-1 space-y-6'>
+                      {steps.map((step, index) => (
+                        <motion.div
+                          key={step.key}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                          className='relative'
+                        >
+                          <div
+                            className={`flex items-center gap-4 rounded-2xl p-4 transition-all duration-300 ${
+                              index === currentStepIndex
+                                ? 'from-primary/10 to-primary/5 border-primary/20 border bg-gradient-to-r shadow-lg'
+                                : index < currentStepIndex
+                                  ? 'from-success/10 to-success/5 border-success/20 border bg-gradient-to-r'
+                                  : 'bg-default-100/50 border-default-200/50 hover:bg-default-100/80 border'
+                            }`}
+                          >
+                            <div
+                              className={`relative flex h-12 w-12 items-center justify-center rounded-xl transition-all duration-300 ${
+                                index < currentStepIndex
+                                  ? 'from-success/20 to-success/10 border-success/30 border bg-gradient-to-br'
+                                  : index === currentStepIndex
+                                    ? 'from-primary/20 to-primary/10 border-primary/30 border bg-gradient-to-br'
+                                    : 'from-default-200/50 to-default-100/50 border-default-300/50 border bg-gradient-to-br'
+                              }`}
+                            >
+                              {index < currentStepIndex ? (
+                                <Icon
+                                  icon='solar:check-circle-outline'
+                                  className='text-success/80 h-6 w-6'
+                                />
+                              ) : (
+                                <Icon
+                                  icon={step.icon}
+                                  className={`h-6 w-6 ${
+                                    index === currentStepIndex
+                                      ? 'text-primary/80'
+                                      : 'text-default-400'
+                                  }`}
+                                />
+                              )}
+                              {index === currentStepIndex && (
+                                <motion.div
+                                  className='border-primary/40 absolute inset-0 rounded-xl border-2'
+                                  animate={{ scale: [1, 1.05, 1] }}
+                                  transition={{ duration: 2, repeat: Infinity }}
+                                />
+                              )}
+                            </div>
+
+                            <div className='flex-1'>
+                              <div
+                                className={`font-semibold transition-colors duration-300 ${
+                                  index === currentStepIndex
+                                    ? 'text-primary'
+                                    : index < currentStepIndex
+                                      ? 'text-success'
+                                      : 'text-default-600'
+                                }`}
+                              >
+                                {step.title}
+                              </div>
+                              <div className='text-default-500 mt-1 text-sm'>
+                                {step.key === 'upload' && 'Select and upload your CV file'}
+                                {step.key === 'parsing' && 'AI extracts information'}
+                                {step.key === 'review' && 'Review and edit data'}
+                                {step.key === 'applying' && 'Update your profile'}
+                                {step.key === 'complete' && 'Process completed'}
+                              </div>
+                            </div>
+
+                            {index < currentStepIndex && (
+                              <div className='bg-success/60 h-2 w-2 rounded-full' />
+                            )}
+                            {index === currentStepIndex && (
+                              <motion.div
+                                className='bg-primary/80 h-2 w-2 rounded-full'
+                                animate={{ scale: [1, 1.3, 1] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
+                              />
+                            )}
+                          </div>
+
+                          {/* Connecting Line */}
+                          {index < steps.length - 1 && (
+                            <div
+                              className={`absolute top-20 left-10 h-6 w-0.5 transition-colors duration-300 ${
+                                index < currentStepIndex ? 'bg-success/30' : 'bg-default-300/50'
+                              }`}
+                            />
+                          )}
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Progress Summary */}
+                    <div className='from-default-100/50 to-default-50/50 border-default-200/50 mt-8 rounded-2xl border bg-gradient-to-r p-4'>
+                      <div className='mb-3 flex items-center gap-3'>
+                        <Icon icon='solar:chart-outline' className='text-primary/70 h-5 w-5' />
+                        <span className='text-default-700 font-medium'>Progress Overview</span>
+                      </div>
+                      <div className='space-y-2'>
+                        <div className='flex justify-between text-sm'>
+                          <span className='text-default-600'>Completed Steps</span>
+                          <span className='text-primary font-medium'>
+                            {currentStepIndex} / {steps.length}
+                          </span>
+                        </div>
+                        <div className='bg-default-200/50 h-2 w-full rounded-full'>
+                          <div
+                            className='from-primary to-primary/80 h-2 rounded-full bg-gradient-to-r transition-all duration-500'
+                            style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main Content Area */}
+                <div className='flex flex-1 flex-col'>
+                  <AnimatePresence mode='wait'>
+                    <motion.div
+                      key={currentStep}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className='flex-1 p-8'
+                    >
+                      {currentStep === 'upload' && renderUploadStep()}
+                      {currentStep === 'parsing' && renderParsingStep()}
+                      {currentStep === 'review' && renderReviewStep()}
+                      {currentStep === 'applying' && renderApplyingStep()}
+                      {currentStep === 'complete' && renderCompleteStep()}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              </div>
             </DrawerBody>
 
-            <DrawerFooter>
-              <div className="flex gap-2 w-full">
+            <DrawerFooter className='border-divider/30 from-background/95 to-default-50/30 border-t bg-gradient-to-r backdrop-blur-xl'>
+              <div className='flex w-full justify-end gap-3'>
                 {currentStep === 'upload' && (
                   <Button
-                    variant="flat"
+                    variant='flat'
                     onPress={handleClose}
-                    className="flex-1"
+                    size='lg'
+                    startContent={<Icon icon='solar:close-circle-outline' className='h-4 w-4' />}
+                    className='hover:bg-default-200/50'
                   >
                     Cancel
                   </Button>
                 )}
-                
+
                 {currentStep === 'review' && (
                   <>
                     <Button
-                      variant="flat"
+                      variant='flat'
                       onPress={() => setCurrentStep('upload')}
-                      className="flex-1"
+                      size='lg'
+                      startContent={<Icon icon='solar:arrow-left-outline' className='h-4 w-4' />}
+                      className='hover:bg-default-200/50'
                     >
                       Upload Different CV
                     </Button>
                     <Button
-                      color="primary"
+                      color='primary'
                       onPress={handleApplyData}
                       isDisabled={selectedSections.size === 0}
-                      className="flex-1"
+                      size='lg'
+                      endContent={<Icon icon='solar:arrow-right-outline' className='h-4 w-4' />}
+                      className='from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80 bg-gradient-to-r'
                     >
-                      Apply Selected Data
+                      Apply to Profile ({Object.keys(reviewData || {}).length} sections)
                     </Button>
                   </>
                 )}
-                
+
                 {currentStep === 'complete' && (
                   <Button
-                    color="success"
+                    color='success'
                     onPress={handleClose}
-                    className="flex-1"
+                    size='lg'
+                    variant='solid'
+                    endContent={<Icon icon='solar:check-circle-outline' className='h-4 w-4' />}
+                    className='from-success to-success/90 hover:from-success/90 hover:to-success/80 bg-gradient-to-r'
                   >
                     Done
                   </Button>

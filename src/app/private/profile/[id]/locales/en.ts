@@ -1,0 +1,358 @@
+export const profileLocales = {
+  // Common actions
+  actions: {
+    edit: 'Edit',
+    add: 'Add',
+    delete: 'Delete',
+    save: 'Save',
+    cancel: 'Cancel',
+    upload: 'Upload',
+    remove: 'Remove',
+    connect: 'Connect',
+    disconnect: 'Disconnect',
+    accept: 'Accept',
+    decline: 'Decline',
+    back: 'Back',
+    next: 'Next',
+    previous: 'Previous',
+    loading: 'Loading...',
+    saving: 'Saving...',
+    updating: 'Updating...',
+    deleting: 'Deleting...',
+    uploading: 'Uploading...'
+  },
+
+  // Navigation and layout
+  navigation: {
+    profile: 'Profile',
+    about: 'About',
+    experience: 'Experience',
+    education: 'Education',
+    skills: 'Skills',
+    languages: 'Languages',
+    socialAccounts: 'Social Accounts',
+    contact: 'Contact',
+    connections: 'Connections',
+    settings: 'Settings'
+  },
+
+  // Profile sections
+  sections: {
+    about: {
+      title: 'About Me',
+      description: 'Tell others about yourself and your professional journey',
+      empty: 'No description available yet',
+      addPrompt: 'Add a description about yourself',
+      placeholder:
+        'Write a brief description about yourself, your experience, and what you are passionate about...'
+    },
+    experience: {
+      title: 'Work Experience',
+      description: 'Your professional experience and achievements',
+      empty: 'No work experience added yet',
+      addPrompt: 'Add your work experience',
+      position: 'Position',
+      company: 'Company',
+      location: 'Location',
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      current: 'I currently work here',
+      description: 'Description',
+      skills: 'Skills Used',
+      present: 'Present',
+      duration: {
+        years: 'years',
+        year: 'year',
+        months: 'months',
+        month: 'month'
+      }
+    },
+    education: {
+      title: 'Education',
+      description: 'Your academic background and qualifications',
+      empty: 'No education added yet',
+      addPrompt: 'Add your education',
+      degree: 'Degree',
+      university: 'University/School',
+      field: 'Field of Study',
+      location: 'Location',
+      startDate: 'Start Date',
+      endDate: 'End Date',
+      current: 'I currently study here',
+      description: 'Description',
+      grade: 'Grade/GPA',
+      present: 'Present'
+    },
+    skills: {
+      title: 'Skills',
+      description: 'Your technical and professional skills',
+      empty: 'No skills added yet',
+      addPrompt: 'Add your skills',
+      skillName: 'Skill Name',
+      level: 'Level',
+      type: 'Type',
+      levels: {
+        BEGINNER: 'Beginner',
+        INTERMEDIATE: 'Intermediate',
+        ADVANCED: 'Advanced',
+        EXPERT: 'Expert'
+      },
+      types: {
+        TECHNICAL: 'Technical',
+        SOFT: 'Soft Skill',
+        LANGUAGE: 'Language',
+        TOOL: 'Tool/Software'
+      }
+    },
+    languages: {
+      title: 'Languages',
+      description: 'Languages you speak and your proficiency levels',
+      empty: 'No languages added yet',
+      addPrompt: 'Add languages you speak',
+      languageName: 'Language',
+      nativeName: 'Native Name',
+      proficiency: 'Proficiency Level',
+      certification: 'Certification',
+      yearsExperience: 'Years of Experience',
+      isNative: 'Native Speaker',
+      skills: {
+        canSpeak: 'Speaking',
+        canUnderstand: 'Listening',
+        canRead: 'Reading',
+        canWrite: 'Writing'
+      },
+      levels: {
+        NATIVE: 'Native',
+        FLUENT: 'Fluent',
+        PROFESSIONAL: 'Professional',
+        CONVERSATIONAL: 'Conversational',
+        INTERMEDIATE: 'Intermediate',
+        BEGINNER: 'Beginner',
+        ELEMENTARY: 'Elementary'
+      },
+      levelDescriptions: {
+        NATIVE: 'Native or bilingual proficiency',
+        FLUENT: 'Full professional proficiency',
+        PROFESSIONAL: 'Professional working proficiency',
+        CONVERSATIONAL: 'General professional proficiency',
+        INTERMEDIATE: 'Limited working proficiency',
+        BEGINNER: 'Elementary proficiency',
+        ELEMENTARY: 'Elementary proficiency'
+      },
+      cefr: {
+        NATIVE: 'Native speaker',
+        C2: 'Mastery - Near native proficiency',
+        C1: 'Advanced - Effective operational proficiency',
+        B2: 'Upper Intermediate - Independent user',
+        B1: 'Intermediate - Threshold user',
+        A2: 'Elementary - Waystage user',
+        A1: 'Beginner - Breakthrough user'
+      },
+      certificationTypes: {
+        IELTS: 'IELTS',
+        TOEFL: 'TOEFL',
+        CAMBRIDGE: 'Cambridge English',
+        DELE: 'DELE (Spanish)',
+        DELF: 'DELF (French)',
+        GOETHE: 'Goethe-Zertifikat (German)',
+        HSK: 'HSK (Chinese)',
+        JLPT: 'JLPT (Japanese)',
+        OTHER: 'Other'
+      }
+    },
+    socialAccounts: {
+      title: 'Social Accounts',
+      description: 'Connect your social media profiles and portfolios',
+      empty: 'No social accounts added yet',
+      addPrompt: 'Add your social profiles',
+      platform: 'Platform',
+      username: 'Username',
+      url: 'Profile URL',
+      displayName: 'Display Name',
+      isPublic: 'Public Profile',
+      platforms: {
+        linkedin: 'LinkedIn',
+        github: 'GitHub',
+        twitter: 'Twitter',
+        instagram: 'Instagram',
+        facebook: 'Facebook',
+        youtube: 'YouTube',
+        tiktok: 'TikTok',
+        behance: 'Behance',
+        dribbble: 'Dribbble',
+        medium: 'Medium',
+        portfolio: 'Portfolio',
+        other: 'Other'
+      }
+    }
+  },
+
+  // Profile header
+  header: {
+    uploadCV: 'Upload CV & Auto-Fill',
+    previewProfile: 'Preview Profile',
+    editProfile: 'Edit Profile',
+    availabilityStatus: {
+      AVAILABLE: 'Available for work',
+      BUSY: 'Busy',
+      UNAVAILABLE: 'Unavailable'
+    },
+    userType: {
+      FREELANCER: 'Freelancer',
+      EMPLOYEE: 'Employee',
+      CONTRACTOR: 'Contractor',
+      CONSULTANT: 'Consultant',
+      AGENCY: 'Agency'
+    },
+    workType: {
+      REMOTE: 'Remote',
+      ONSITE: 'On-site',
+      HYBRID: 'Hybrid',
+      FLEXIBLE: 'Flexible'
+    },
+    workingTime: {
+      FULL_TIME: 'Full-time',
+      PART_TIME: 'Part-time',
+      CONTRACT: 'Contract',
+      FREELANCE: 'Freelance'
+    },
+    verification: {
+      emailVerified: 'Email verified',
+      phoneVerified: 'Phone verified'
+    },
+    experience: {
+      yearsExperience: 'years of experience',
+      yearExperience: 'year of experience'
+    }
+  },
+
+  // Connection status
+  connections: {
+    status: {
+      connected: 'Connected',
+      pending: 'Connection Pending',
+      notConnected: 'Not Connected'
+    },
+    actions: {
+      connect: 'Connect',
+      accept: 'Accept Connection',
+      decline: 'Decline Connection',
+      message: 'Send Message',
+      call: 'Call',
+      email: 'Email'
+    }
+  },
+
+  // Forms and modals
+  forms: {
+    personalInfo: {
+      title: 'Edit Personal Information',
+      description: 'Update your personal details and bio',
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      email: 'Email Address',
+      phoneNumber: 'Phone Number',
+      aboutMe: 'About Me',
+      profession: 'Profession',
+      city: 'City',
+      region: 'Country/Region',
+      website: 'Website',
+      linkedin: 'LinkedIn Profile'
+    },
+    validation: {
+      required: 'This field is required',
+      email: 'Please enter a valid email address',
+      url: 'Please enter a valid URL',
+      phone: 'Please enter a valid phone number',
+      date: 'Please enter a valid date',
+      minLength: 'Must be at least {{min}} characters',
+      maxLength: 'Must be no more than {{max}} characters'
+    }
+  },
+
+  // Success and error messages
+  messages: {
+    success: {
+      profileUpdated: 'Profile updated successfully',
+      experienceAdded: 'Experience added successfully',
+      experienceUpdated: 'Experience updated successfully',
+      experienceDeleted: 'Experience deleted successfully',
+      educationAdded: 'Education added successfully',
+      educationUpdated: 'Education updated successfully',
+      educationDeleted: 'Education deleted successfully',
+      languageAdded: 'Language added successfully',
+      languageUpdated: 'Language updated successfully',
+      languageDeleted: 'Language deleted successfully',
+      skillsUpdated: 'Skills updated successfully',
+      socialAccountAdded: 'Social account added successfully',
+      socialAccountUpdated: 'Social account updated successfully',
+      socialAccountDeleted: 'Social account deleted successfully',
+      connectionSent: 'Connection request sent',
+      connectionAccepted: 'Connection accepted',
+      connectionDeclined: 'Connection declined',
+      imageUploaded: 'Image uploaded successfully'
+    },
+    error: {
+      profileUpdateFailed: 'Failed to update profile',
+      experienceAddFailed: 'Failed to add experience',
+      experienceUpdateFailed: 'Failed to update experience',
+      experienceDeleteFailed: 'Failed to delete experience',
+      educationAddFailed: 'Failed to add education',
+      educationUpdateFailed: 'Failed to update education',
+      educationDeleteFailed: 'Failed to delete education',
+      languageAddFailed: 'Failed to add language',
+      languageUpdateFailed: 'Failed to update language',
+      languageDeleteFailed: 'Failed to delete language',
+      skillsUpdateFailed: 'Failed to update skills',
+      socialAccountAddFailed: 'Failed to add social account',
+      socialAccountUpdateFailed: 'Failed to update social account',
+      socialAccountDeleteFailed: 'Failed to delete social account',
+      connectionSendFailed: 'Failed to send connection request',
+      connectionAcceptFailed: 'Failed to accept connection',
+      connectionDeclineFailed: 'Failed to decline connection',
+      imageUploadFailed: 'Failed to upload image',
+      loadingFailed: 'Failed to load data',
+      networkError: 'Network error. Please check your connection.',
+      serverError: 'Server error. Please try again later.'
+    }
+  },
+
+  // Empty states
+  empty: {
+    profile: 'Complete your profile to get started',
+    experience: 'Add your work experience to showcase your professional journey',
+    education: 'Add your education to highlight your academic background',
+    skills: 'Add skills to show your expertise',
+    languages: 'Add languages you speak',
+    socialAccounts: 'Connect your social media profiles',
+    connections: 'No connections yet',
+    search: 'No results found'
+  },
+
+  // Loading states
+  loading: {
+    profile: 'Loading profile...',
+    experience: 'Loading experience...',
+    education: 'Loading education...',
+    skills: 'Loading skills...',
+    languages: 'Loading languages...',
+    socialAccounts: 'Loading social accounts...',
+    connections: 'Loading connections...'
+  },
+
+  // Accessibility labels
+  a11y: {
+    profileImage: 'Profile picture',
+    editButton: 'Edit {{section}}',
+    addButton: 'Add {{item}}',
+    deleteButton: 'Delete {{item}}',
+    closeModal: 'Close modal',
+    openModal: 'Open {{modal}} modal',
+    navigationMenu: 'Profile navigation menu',
+    socialLink: '{{platform}} profile',
+    languageFlag: '{{language}} flag',
+    skillBadge: '{{skill}} skill badge',
+    experienceItem: 'Experience at {{company}}',
+    educationItem: 'Education at {{university}}'
+  }
+};

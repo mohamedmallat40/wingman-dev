@@ -298,75 +298,296 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
 const ProfileSkeleton: React.FC = () => {
   return (
     <div className='from-background to-default-50 dark:to-default-900/20 min-h-screen bg-gradient-to-b'>
-      {/* Header Skeleton */}
-      <div className='relative'>
-        <div className='from-primary/10 via-secondary/5 to-primary/10 absolute inset-0 -z-10 bg-gradient-to-r' />
-        <div className='container mx-auto px-4 pt-6 pb-8'>
-          <div className='mb-6 flex items-center justify-between'>
-            <Skeleton className='h-6 w-16 rounded-lg' />
-            <div className='flex gap-2'>
-              <Skeleton className='h-8 w-20 rounded-full' />
-              <Skeleton className='h-8 w-24 rounded-full' />
-            </div>
-          </div>
+      {/* ProfileHeader Skeleton - Exact Match */}
+      <section className='from-background via-background to-default-50/30 relative overflow-hidden bg-gradient-to-br'>
+        {/* Enhanced background */}
+        <div className='from-primary/3 to-secondary/3 absolute inset-0 -z-10 bg-gradient-to-br via-transparent' />
 
-          <Card className='border-default-200 overflow-hidden'>
-            <div className='from-primary/20 to-secondary/20 relative h-32 bg-gradient-to-r' />
-            <CardBody className='relative -mt-12 p-6'>
-              <div className='flex flex-col gap-6 lg:flex-row lg:items-end'>
-                <Skeleton className='h-24 w-24 rounded-full' />
-                <div className='flex-1 space-y-4'>
-                  <div className='space-y-2'>
-                    <Skeleton className='h-8 w-64 rounded-lg' />
-                    <Skeleton className='h-5 w-96 rounded-lg' />
+        <div className='container mx-auto px-4 py-6 sm:px-6 lg:px-8'>
+          {/* Navigation */}
+          <nav className='mb-6 flex items-center justify-between'>
+            <Skeleton className='h-9 w-16 rounded-md' />
+            <Skeleton className='h-9 w-44 rounded-full' />
+          </nav>
+
+          {/* Main Profile Card */}
+          <Card className='border-primary/10 border shadow-sm'>
+            <CardBody className='p-4 sm:p-6'>
+              <div className='flex flex-col gap-6 lg:flex-row'>
+                <div className='flex flex-1 gap-4'>
+                  <div className='relative'>
+                    <Skeleton className='h-36 w-36 rounded-xl sm:h-40 sm:w-40' />
+                    <Skeleton className='absolute -right-2 -bottom-2 h-8 w-8 rounded-full' />
                   </div>
-                  <div className='flex flex-wrap gap-2'>
-                    <Skeleton className='h-10 w-24 rounded-full' />
-                    <Skeleton className='h-10 w-32 rounded-full' />
-                    <Skeleton className='h-10 w-28 rounded-full' />
+
+                  <div className='flex-1'>
+                    <div className='flex items-start justify-between'>
+                      <div className='space-y-3'>
+                        <div className='flex items-center gap-2'>
+                          <Skeleton className='h-8 w-64 rounded-lg' />
+                          <Skeleton className='h-6 w-6 rounded-sm' />
+                        </div>
+                        <Skeleton className='h-5 w-80 rounded-lg' />
+                      </div>
+                    </div>
+
+                    {/* Key Information badges */}
+                    <div className='mt-3 flex flex-wrap items-center gap-2'>
+                      <Skeleton className='h-7 w-24 rounded-lg' />
+                      <Skeleton className='h-7 w-20 rounded-lg' />
+                    </div>
+
+                    {/* Details */}
+                    <div className='mt-3 flex flex-wrap items-center gap-3'>
+                      <Skeleton className='h-4 w-32 rounded-lg' />
+                      <Skeleton className='h-4 w-28 rounded-lg' />
+                      <Skeleton className='h-4 w-36 rounded-lg' />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions Section */}
+                <div className='flex min-w-56 flex-col items-stretch gap-2'>
+                  <Skeleton className='h-12 w-full rounded-full' />
+                  <Skeleton className='h-12 w-full rounded-full' />
+                  <div className='flex gap-2'>
+                    <Skeleton className='h-12 flex-1 rounded-full' />
+                    <Skeleton className='h-12 flex-1 rounded-full' />
+                    <Skeleton className='h-12 flex-1 rounded-full' />
                   </div>
                 </div>
               </div>
             </CardBody>
           </Card>
         </div>
-      </div>
+      </section>
 
-      {/* Content Skeleton */}
-      <div className='container mx-auto px-4 pb-16'>
-        <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
-          <div className='space-y-6 lg:col-span-2'>
-            {[1, 2, 3].map((i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <Skeleton className='h-6 w-32 rounded-lg' />
-                  <Skeleton className='h-4 w-48 rounded-lg' />
-                </CardHeader>
-                <CardBody className='space-y-4'>
+      {/* ProfileContent Skeleton - Exact Match */}
+      <section className='container mx-auto px-6 pb-20'>
+        <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
+          {/* Main content */}
+          <div className='space-y-8 lg:col-span-2'>
+            {/* About Section */}
+            <Card className='border-default-200/50 shadow-sm'>
+              <CardHeader className='pb-4'>
+                <div className='flex w-full items-center justify-between'>
+                  <div className='flex items-center gap-4'>
+                    <Skeleton className='h-11 w-11 rounded-full' />
+                    <div className='space-y-2'>
+                      <Skeleton className='h-6 w-16 rounded-lg' />
+                      <Skeleton className='h-4 w-40 rounded-lg' />
+                    </div>
+                  </div>
+                  <Skeleton className='h-8 w-8 rounded-sm' />
+                </div>
+              </CardHeader>
+              <CardBody className='px-8 pt-2'>
+                <div className='space-y-3'>
                   <Skeleton className='h-4 w-full rounded-lg' />
-                  <Skeleton className='h-4 w-3/4 rounded-lg' />
                   <Skeleton className='h-4 w-5/6 rounded-lg' />
-                </CardBody>
-              </Card>
-            ))}
+                  <Skeleton className='h-4 w-4/5 rounded-lg' />
+                  <Skeleton className='h-4 w-3/4 rounded-lg' />
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Experience Section */}
+            <Card className='border-default-200/50 shadow-sm'>
+              <CardHeader className='pb-4'>
+                <div className='flex w-full items-center justify-between'>
+                  <div className='flex items-center gap-4'>
+                    <Skeleton className='h-11 w-11 rounded-full' />
+                    <div className='space-y-2'>
+                      <Skeleton className='h-6 w-24 rounded-lg' />
+                      <Skeleton className='h-4 w-48 rounded-lg' />
+                    </div>
+                  </div>
+                  <Skeleton className='h-8 w-8 rounded-sm' />
+                </div>
+              </CardHeader>
+              <CardBody className='px-8 pt-2'>
+                <div className='space-y-8'>
+                  {[1, 2].map((i) => (
+                    <div key={i} className='flex gap-6'>
+                      <Skeleton className='h-5 w-5 rounded-sm flex-shrink-0 mt-2' />
+                      <div className='flex-1 space-y-4'>
+                        <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
+                          <div className='space-y-2'>
+                            <Skeleton className='h-5 w-48 rounded-lg' />
+                            <Skeleton className='h-4 w-32 rounded-lg' />
+                            <Skeleton className='h-3 w-28 rounded-lg' />
+                          </div>
+                          <Skeleton className='h-8 w-32 rounded-full' />
+                        </div>
+                        <div className='space-y-2'>
+                          <Skeleton className='h-4 w-full rounded-lg' />
+                          <Skeleton className='h-4 w-4/5 rounded-lg' />
+                        </div>
+                        <div className='flex flex-wrap gap-2'>
+                          <Skeleton className='h-6 w-16 rounded-full' />
+                          <Skeleton className='h-6 w-20 rounded-full' />
+                          <Skeleton className='h-6 w-18 rounded-full' />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Education Section */}
+            <Card className='border-default-200/50 shadow-sm'>
+              <CardHeader className='pb-4'>
+                <div className='flex w-full items-center justify-between'>
+                  <div className='flex items-center gap-4'>
+                    <Skeleton className='h-11 w-11 rounded-full' />
+                    <div className='space-y-2'>
+                      <Skeleton className='h-6 w-20 rounded-lg' />
+                      <Skeleton className='h-4 w-44 rounded-lg' />
+                    </div>
+                  </div>
+                  <Skeleton className='h-8 w-8 rounded-sm' />
+                </div>
+              </CardHeader>
+              <CardBody className='px-8 pt-2'>
+                <div className='space-y-8'>
+                  {[1, 2].map((i) => (
+                    <div key={i} className='flex gap-6'>
+                      <Skeleton className='h-5 w-5 rounded-sm flex-shrink-0 mt-2' />
+                      <div className='flex-1'>
+                        <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
+                          <div className='space-y-2'>
+                            <Skeleton className='h-5 w-52 rounded-lg' />
+                            <Skeleton className='h-4 w-36 rounded-lg' />
+                            <Skeleton className='h-3 w-28 rounded-lg' />
+                          </div>
+                          <Skeleton className='h-8 w-28 rounded-full' />
+                        </div>
+                        <Skeleton className='h-4 w-4/5 mt-4 rounded-lg' />
+                        <Skeleton className='h-6 w-20 mt-4 rounded-full' />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
           </div>
 
-          <div className='space-y-6'>
-            {[1, 2].map((i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <Skeleton className='h-6 w-24 rounded-lg' />
-                </CardHeader>
-                <CardBody className='space-y-3'>
-                  {[1, 2, 3].map((j) => (
-                    <Skeleton key={j} className='h-4 w-full rounded-lg' />
+          {/* Sidebar */}
+          <div className='space-y-8'>
+            {/* Skills Card */}
+            <Card className='border-default-200/50 shadow-sm'>
+              <CardHeader className='pb-4'>
+                <div className='flex w-full items-center justify-between'>
+                  <div className='flex items-center gap-4'>
+                    <Skeleton className='h-11 w-11 rounded-full' />
+                    <div className='space-y-2'>
+                      <Skeleton className='h-5 w-12 rounded-lg' />
+                      <Skeleton className='h-4 w-32 rounded-lg' />
+                    </div>
+                  </div>
+                  <Skeleton className='h-8 w-8 rounded-sm' />
+                </div>
+              </CardHeader>
+              <CardBody className='pt-2'>
+                <div className='flex flex-wrap gap-3'>
+                  {[1, 2, 3, 4, 5, 6].map((i) => (
+                    <Skeleton key={i} className='h-6 w-16 rounded-full' />
                   ))}
-                </CardBody>
-              </Card>
-            ))}
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Languages Card */}
+            <Card className='border-default-200/50 shadow-sm'>
+              <CardHeader className='pb-4'>
+                <div className='flex w-full items-center justify-between'>
+                  <div className='flex items-center gap-4'>
+                    <Skeleton className='h-11 w-11 rounded-full' />
+                    <div className='space-y-2'>
+                      <Skeleton className='h-5 w-20 rounded-lg' />
+                      <Skeleton className='h-4 w-40 rounded-lg' />
+                    </div>
+                  </div>
+                  <Skeleton className='h-8 w-8 rounded-sm' />
+                </div>
+              </CardHeader>
+              <CardBody className='px-8 pt-2'>
+                <div className='space-y-3'>
+                  {[1, 2, 3].map((i) => (
+                    <Card key={i} className='shadow-small border-none'>
+                      <CardBody className='p-4'>
+                        <div className='space-y-3'>
+                          <div className='flex items-center justify-between'>
+                            <div className='flex items-center gap-3'>
+                              <Skeleton className='h-6 w-8 rounded-sm' />
+                              <div className='space-y-1'>
+                                <Skeleton className='h-4 w-16 rounded-lg' />
+                                <Skeleton className='h-3 w-12 rounded-lg' />
+                              </div>
+                            </div>
+                            <Skeleton className='h-6 w-20 rounded-full' />
+                          </div>
+                          <div className='space-y-2'>
+                            <div className='flex items-center justify-between'>
+                              <Skeleton className='h-3 w-16 rounded-lg' />
+                              <Skeleton className='h-3 w-8 rounded-lg' />
+                            </div>
+                            <Skeleton className='h-2 w-full rounded-full' />
+                          </div>
+                          <div className='flex flex-wrap gap-1'>
+                            {[1, 2, 3, 4].map((j) => (
+                              <Skeleton key={j} className='h-5 w-8 rounded-full' />
+                            ))}
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Social Accounts Card */}
+            <Card className='border-default-200/50 shadow-sm'>
+              <CardHeader className='pb-4'>
+                <div className='flex w-full items-center justify-between'>
+                  <div className='flex items-center gap-4'>
+                    <Skeleton className='h-11 w-11 rounded-full' />
+                    <div className='space-y-2'>
+                      <Skeleton className='h-5 w-28 rounded-lg' />
+                      <Skeleton className='h-4 w-44 rounded-lg' />
+                    </div>
+                  </div>
+                  <Skeleton className='h-8 w-8 rounded-sm' />
+                </div>
+              </CardHeader>
+              <CardBody className='px-8 pt-2'>
+                <div className='grid grid-cols-2 gap-3'>
+                  {[1, 2, 3, 4].map((i) => (
+                    <Skeleton key={i} className='h-20 w-full rounded-lg' />
+                  ))}
+                </div>
+              </CardBody>
+            </Card>
+
+            {/* Profile Summary Card */}
+            <Card className='border-primary/20 shadow-sm'>
+              <CardBody className='p-8 text-center'>
+                <Skeleton className='mx-auto mb-4 h-20 w-20 rounded-full' />
+                <Skeleton className='mx-auto mb-3 h-5 w-32 rounded-lg' />
+                <Skeleton className='mx-auto mb-4 h-8 w-24 rounded-full' />
+                <Skeleton className='mx-auto mb-4 h-px w-full rounded-full' />
+                <div className='space-y-2'>
+                  <Skeleton className='mx-auto h-3 w-full rounded-lg' />
+                  <Skeleton className='mx-auto h-3 w-4/5 rounded-lg' />
+                  <Skeleton className='mx-auto h-3 w-3/4 rounded-lg' />
+                </div>
+              </CardBody>
+            </Card>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
