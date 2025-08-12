@@ -240,6 +240,16 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
           </div>
         )}
       </CardBody>
+
+      <DocumentViewerDrawer
+        isOpen={isViewerOpen}
+        onOpenChange={setIsViewerOpen}
+        document={selectedDocument}
+        onDownload={onDownload}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        isOwnProfile={isOwnProfile}
+      />
     </Card>
   );
 };
