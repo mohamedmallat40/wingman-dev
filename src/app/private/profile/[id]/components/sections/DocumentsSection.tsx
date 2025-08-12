@@ -32,6 +32,13 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
   onDelete,
   onDownload
 }) => {
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+  const handleDocumentClick = (document: Document) => {
+    setSelectedDocument(document);
+    setIsViewerOpen(true);
+  };
   const getDocumentIcon = (type: string) => {
     switch (type) {
       case 'CV':
