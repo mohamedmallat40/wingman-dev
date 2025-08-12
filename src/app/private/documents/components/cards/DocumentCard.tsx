@@ -166,6 +166,7 @@ const getTranslatedType = (type: string, t: any) => {
 export default function DocumentCard({
   document,
   onEdit,
+  onView,
   viewMode = 'list'
 }: Readonly<DocumentCardProperties>) {
   const t = useTranslations('documents');
