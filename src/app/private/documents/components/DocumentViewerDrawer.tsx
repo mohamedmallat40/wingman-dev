@@ -13,6 +13,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { IDocument } from '../types';
+import { getDocumentPreviewUrl, getDocumentDownloadUrl } from '../utils';
 
 interface DocumentViewerDrawerProps {
   isOpen: boolean;
