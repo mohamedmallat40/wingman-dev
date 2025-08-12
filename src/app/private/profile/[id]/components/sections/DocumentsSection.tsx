@@ -162,22 +162,53 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
                         size='sm'
                         variant='light'
                         className='text-default-500 hover:text-primary'
-                        onPress={() => onDownload(doc)}
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          onDownload(doc);
+                        }}
                       >
                         <Icon icon='solar:download-linear' className='h-4 w-4' />
                       </Button>
 
+                      <Button
+                        isIconOnly
+                        size='sm'
+                        variant='light'
+                        className='text-default-500 hover:text-primary'
+                        onPress={(e) => {
+                          e.stopPropagation();
+                          handleDocumentClick(doc);
+                        }}
+                      >
+                        <Icon icon='solar:eye-linear' className='h-4 w-4' />
+                      </Button>
+
                       {isOwnProfile && (
                         <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
-                          <ActionButtons
-                            showEdit
-                            showDelete
-                            onEdit={() => onEdit(doc)}
-                            onDelete={() => onDelete(doc)}
-                            editTooltip={`Edit ${doc.name}`}
-                            deleteTooltip={`Delete ${doc.name}`}
-                            size="sm"
-                          />
+                          <Button
+                            isIconOnly
+                            size='sm'
+                            variant='light'
+                            className='text-default-500 hover:text-primary'
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              onEdit(doc);
+                            }}
+                          >
+                            <Icon icon='solar:pen-linear' className='h-3 w-3' />
+                          </Button>
+                          <Button
+                            isIconOnly
+                            size='sm'
+                            variant='light'
+                            className='text-default-500 hover:text-danger'
+                            onPress={(e) => {
+                              e.stopPropagation();
+                              onDelete(doc);
+                            }}
+                          >
+                            <Icon icon='solar:trash-bin-minimalistic-linear' className='h-3 w-3' />
+                          </Button>
                         </div>
                       )}
                     </div>
