@@ -8,39 +8,19 @@ import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import { BroadcastOnboarding } from './components';
 import BroadcastFeed from './components/lists/BroadcastFeed';
 import ContentCreator from './components/modals/ContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
 import SubcastSidebar from './components/navigation/SubcastSidebar';
-import { useBroadcastPreferences } from './hooks';
-import { type Topic } from './types';
 
 export default function BroadcastsPage() {
   const t = useTranslations('broadcasts');
-  const tActions = useTranslations('broadcasts.actions');
   const tNav = useTranslations('navigation');
-
-  const {
-    preferences: broadcastPreferences,
-    isLoaded: preferencesLoaded,
-    completeOnboarding,
-    resetPreferences
-  } = useBroadcastPreferences();
 
   const [activeSubcast, setActiveSubcast] = useState<string | null>(null);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showContentCreator, setShowContentCreator] = useState(false);
-  const [unreadCount] = useState(8);
-
-  const handleOnboardingComplete = (selectedTopics: Topic[]) => {
-    completeOnboarding(selectedTopics);
-  };
-
-  const handlePreferencesReset = () => {
-    resetPreferences();
-  };
 
   const handleSubcastToggle = (subcastId: string) => {
     console.log('Toggle subcast:', subcastId);
@@ -64,32 +44,6 @@ export default function BroadcastsPage() {
     console.log('Saved draft:', draftData);
     // TODO: Save to drafts
   };
-
-  if (!preferencesLoaded) {
-    return (
-      <DashboardLayout
-        pageTitle={t('title')}
-        pageIcon='solar:satellite-linear'
-        breadcrumbs={[
-          { label: tNav('home'), href: '/private/dashboard', icon: 'solar:home-linear' },
-          { label: tNav('broadcasts'), icon: 'solar:satellite-linear' }
-        ]}
-        pageDescription={t('description')}
-      >
-        <div className='flex h-full items-center justify-center'>
-          <div className='text-center'>
-            <div className='bg-primary/20 mx-auto mb-6 h-16 w-16 animate-pulse rounded-full'></div>
-            <div className='bg-default-200 mx-auto mb-4 h-6 w-48 animate-pulse rounded'></div>
-            <div className='bg-default-200 mx-auto h-4 w-64 animate-pulse rounded'></div>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  if (broadcastPreferences.isFirstTime) {
-    return <BroadcastOnboarding onComplete={handleOnboardingComplete} />;
-  }
 
   return (
     <>
@@ -115,16 +69,6 @@ export default function BroadcastsPage() {
             >
               Create Post
             </Button>
-
-            {/* Settings Button */}
-            <Button
-              variant='flat'
-              size='sm'
-              startContent={<Icon icon='solar:settings-linear' className='h-4 w-4' />}
-              onPress={handlePreferencesReset}
-            >
-              {tActions('resetTopics')}
-            </Button>
           </div>
         }
       >
@@ -144,7 +88,6 @@ export default function BroadcastsPage() {
           <div className='min-w-0 flex-1'>
             <div className='py-6'>
               <BroadcastFeed
-                selectedTopics={broadcastPreferences.selectedTopics}
                 selectedSubcast={activeSubcast}
               />
             </div>

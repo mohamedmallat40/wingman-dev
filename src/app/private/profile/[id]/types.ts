@@ -1,3 +1,12 @@
+export interface SocialAccount {
+  id: string;
+  platform: 'linkedin' | 'github' | 'twitter' | 'instagram' | 'facebook' | 'youtube' | 'tiktok' | 'behance' | 'dribbble' | 'medium' | 'portfolio' | 'other';
+  username: string;
+  url: string;
+  isPublic: boolean;
+  displayName?: string;
+}
+
 export interface ProfileUser {
   id: string;
   email: string;
@@ -26,6 +35,7 @@ export interface ProfileUser {
   paymentType?: string;
   reviewCount?: string;
   averageRating?: number;
+  socialAccounts?: SocialAccount[];
 }
 
 export interface Experience {
@@ -39,11 +49,38 @@ export interface Experience {
   skills?: string[];
 }
 
+export type LanguageProficiencyLevel = 
+  | 'NATIVE' 
+  | 'FLUENT' 
+  | 'PROFESSIONAL' 
+  | 'CONVERSATIONAL' 
+  | 'INTERMEDIATE' 
+  | 'BEGINNER' 
+  | 'ELEMENTARY';
+
+export type CertificationLevel = 
+  | 'C2' | 'C1' | 'B2' | 'B1' | 'A2' | 'A1' | 'NATIVE';
+
 export interface Language {
   id: string;
-  key: string;
-  level: string;
-  name?: string;
+  name: string; // Full language name (e.g., "English", "Spanish")
+  nativeName?: string; // Native name (e.g., "Español" for Spanish)
+  code: string; // ISO 639-1 code (e.g., "en", "es", "fr")
+  level: LanguageProficiencyLevel;
+  certificationLevel?: CertificationLevel; // CEFR level if applicable
+  yearsOfExperience?: number;
+  description?: string; // Additional context
+  certificationName?: string; // e.g., "IELTS", "TOEFL", "DELE"
+  certificationScore?: string; // e.g., "8.5/9", "Advanced"
+  certificationDate?: string; // When certification was obtained
+  isNative: boolean;
+  canRead: boolean;
+  canWrite: boolean;
+  canSpeak: boolean;
+  canUnderstand: boolean;
+  countryFlag?: string; // Country code for flag display
+  // For backwards compatibility
+  key: string; // Will map to 'name'
 }
 
 export interface Education {

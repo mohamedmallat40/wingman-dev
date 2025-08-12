@@ -19,7 +19,6 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslations } from 'next-intl';
 
 interface Notification {
   id: string;
@@ -175,8 +174,6 @@ interface NotificationCenterProps {
 }
 
 export default function NotificationCenter({ isOpen, onClose, className = '' }: NotificationCenterProps) {
-  const t = useTranslations('broadcasts.notifications');
-  
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
   const [liveUpdates, setLiveUpdates] = useState<LiveUpdate[]>(MOCK_LIVE_UPDATES);
   const [trending, setTrending] = useState<TrendingItem[]>(MOCK_TRENDING);

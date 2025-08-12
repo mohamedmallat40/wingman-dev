@@ -227,12 +227,12 @@ export default function PrivateNavBar() {
 
       {/* Right Side Actions - Enhanced Spacing */}
       <NavbarContent as='div' className='flex items-center gap-3 sm:gap-4' justify='end'>
-        {/* Settings Group - Enhanced with Better Spacing */}
-        <div className='from-default-100/40 to-default-50/25 border-divider/25 hidden items-center gap-2 rounded-xl border bg-gradient-to-r p-2 backdrop-blur-sm shadow-small sm:flex'>
+        {/* Theme & Language Group - Reduced Height to Match Navigation */}
+        <div className='from-default-100/40 to-default-50/25 border-divider/25 hidden h-11 items-center gap-1 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-sm shadow-small sm:flex'>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='hover:bg-background/60 rounded-lg p-2 transition-all duration-200'
+            className='hover:bg-background/60 rounded-lg p-1 transition-all duration-200'
           >
             <LanguageSwitcher />
           </motion.div>
@@ -240,7 +240,7 @@ export default function PrivateNavBar() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className='hover:bg-background/60 rounded-lg p-2 transition-all duration-200'
+            className='hover:bg-background/60 rounded-lg p-1 transition-all duration-200'
           >
             <ThemeToggle />
           </motion.div>
@@ -411,15 +411,15 @@ export default function PrivateNavBar() {
             transition={{ duration: 0.3, delay: 0.3 }}
             className='border-divider/50 mt-6 border-t pt-6'
           >
-            {/* Settings Card */}
+            {/* Preferences Card */}
             <div className='mb-6'>
               <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-medium rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <div className='bg-primary/20 flex h-8 w-8 items-center justify-center rounded-xl shadow-small'>
-                      <Icon icon='solar:settings-bold' className='text-primary h-4 w-4' />
+                      <Icon icon='solar:pallete-2-bold' className='text-primary h-4 w-4' />
                     </div>
-                    <span className='text-foreground font-medium'>Settings</span>
+                    <span className='text-foreground font-medium'>Preferences</span>
                   </div>
                   <div className='flex items-center gap-2'>
                     <motion.div
@@ -451,7 +451,7 @@ export default function PrivateNavBar() {
                     </div>
                     <div>
                       <span className='text-foreground font-medium'>Account</span>
-                      <p className='text-foreground-500 text-sm'>Profile & Settings</p>
+                      <p className='text-foreground-500 text-sm'>Profile & Account</p>
                     </div>
                   </div>
                   <Button

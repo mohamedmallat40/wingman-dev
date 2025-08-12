@@ -2,7 +2,26 @@
 
 import React, { useState } from 'react';
 
-import { Avatar, Badge, Button, Card, CardBody, CardHeader, Chip, Divider } from '@heroui/react';
+import {
+  Avatar,
+  Badge,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Chip,
+  Divider,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Progress,
+  Select,
+  SelectItem,
+  Textarea
+} from '@heroui/react';
 import { Icon } from '@iconify/react';
 import ISO6391 from 'iso-639-1';
 import { useTranslations } from 'next-intl';
@@ -22,9 +41,21 @@ import {
   type Experience,
   type Language,
   type ProfileUser,
+  type SocialAccount,
   type UserNote
 } from '../types';
-import CVUploadDrawer from './CVUploadDrawer';
+import { CertificationsForm } from './forms/CertificationsForm';
+import { EducationForm } from './forms/EducationForm';
+import { ExperienceForm } from './forms/ExperienceForm';
+import { LanguagesForm } from './forms/LanguagesForm';
+import { EnhancedLanguagesForm } from './forms/EnhancedLanguagesForm';
+import { ActionButtons } from './ActionButtons';
+import { SocialAccountCard } from './cards/SocialAccountCard';
+import { LanguagesSection } from './sections/LanguagesSection';
+import { EducationSection } from './sections/EducationSection';
+import { PersonalInfoForm } from './forms/PersonalInfoForm';
+import { SkillsForm } from './forms/SkillsForm';
+import { SocialAccountsForm } from './forms/SocialAccountsForm';
 
 interface ProfileContentProps {
   user: ProfileUser;
@@ -45,7 +76,29 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 }) => {
   const t = useTranslations();
   const router = useRouter();
-  const [isCVUploadOpen, setIsCVUploadOpen] = useState(false);
+
+  // Modal states for all forms
+  const [isPersonalInfoModalOpen, setIsPersonalInfoModalOpen] = useState(false);
+  const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
+  const [isEducationModalOpen, setIsEducationModalOpen] = useState(false);
+  const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
+  const [isLanguagesModalOpen, setIsLanguagesModalOpen] = useState(false);
+  const [isCertificationsModalOpen, setIsCertificationsModalOpen] = useState(false);
+  const [isSocialAccountsModalOpen, setIsSocialAccountsModalOpen] = useState(false);
+
+  // Individual item modals
+  const [editingExperience, setEditingExperience] = useState<{item: Experience | null, isOpen: boolean}>({item: null, isOpen: false});
+  const [editingEducation, setEditingEducation] = useState<{item: Education | null, isOpen: boolean}>({item: null, isOpen: false});
+  const [editingLanguage, setEditingLanguage] = useState<{item: Language | null, isOpen: boolean}>({item: null, isOpen: false});
+
+  // Local state for forms
+  const [localUser, setLocalUser] = useState(user);
+  const [localExperiences, setLocalExperiences] = useState<Experience[]>(experiences);
+  const [localEducation, setLocalEducation] = useState<Education[]>(education);
+  const [localLanguages, setLocalLanguages] = useState<Language[]>(languages);
+  const [localSkills, setLocalSkills] = useState(user.skills || []);
+  const [localCertifications, setLocalCertifications] = useState([]);
+  const [localSocialAccounts, setLocalSocialAccounts] = useState<SocialAccount[]>(user.socialAccounts || []);
 
   const formatDate = (dateString: string) => {
     try {
@@ -61,61 +114,346 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   const fullName = `${user.firstName} ${user.lastName}`;
 
+  // Personal Info handlers
   const handleEditAbout = () => {
-    router.push('/private/settings?tab=general');
+    console.log('Opening personal info modal');
+    setIsPersonalInfoModalOpen(true);
   };
 
-  const handleEditExperience = () => {
-    router.push('/private/settings?tab=experience');
+  const handlePersonalInfoChange = (field: string, value: string) => {
+    setLocalUser((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleEditEducation = () => {
-    router.push('/private/settings?tab=education');
+  const handleSavePersonalInfo = () => {
+    console.log('Saving personal info:', localUser);
+    setIsPersonalInfoModalOpen(false);
   };
 
+  // Skills handlers
   const handleEditSkills = () => {
-    router.push('/private/settings?tab=general');
+    console.log('Opening skills modal for adding new skills');
+    // Ensure we start with current skills
+    setLocalSkills(user.skills || []);
+    setIsSkillsModalOpen(true);
   };
 
-  const handleCVDataParsed = (data: any) => {
-    console.log('CV data parsed:', data);
-    // Here you would typically refresh the profile data or update the UI
-    // to reflect the newly imported information
+  const handleAddSkill = () => {
+    const newSkill = {
+      id: `temp-${Date.now()}`,
+      name: '',
+      level: 'Beginner'
+    };
+    setLocalSkills((prev) => [...prev, newSkill]);
   };
+
+  const handleRemoveSkill = (index: number) => {
+    setLocalSkills((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateSkill = (index: number, data: any) => {
+    setLocalSkills((prev) => prev.map((skill, i) => (i === index ? data : skill)));
+  };
+
+  const handleSaveSkills = () => {
+    console.log('Saving skills:', localSkills);
+    setIsSkillsModalOpen(false);
+  };
+
+  // Languages handlers
+  const handleEditLanguages = (language?: Language) => {
+    if (language) {
+      // Edit specific language item
+      setEditingLanguage({item: language, isOpen: true});
+    } else {
+      // Add new language directly
+      console.log('Adding new language directly');
+      const newLanguage: Language = {
+        id: `temp-${Date.now()}`,
+        name: '',
+        nativeName: '',
+        code: '',
+        key: '',
+        level: 'BEGINNER',
+        isNative: false,
+        canRead: true,
+        canWrite: true,
+        canSpeak: true,
+        canUnderstand: true,
+        yearsOfExperience: 0
+      };
+      setEditingLanguage({item: newLanguage, isOpen: true});
+    }
+  };
+
+  const handleAddLanguage = () => {
+    const newLanguage: Language = {
+      id: `temp-${Date.now()}`,
+      name: '',
+      nativeName: '',
+      code: '',
+      key: '', // For backwards compatibility
+      level: 'BEGINNER',
+      isNative: false,
+      canRead: true,
+      canWrite: true,
+      canSpeak: true,
+      canUnderstand: true,
+      yearsOfExperience: 0
+    };
+    setLocalLanguages((prev) => [...prev, newLanguage]);
+  };
+
+  const handleRemoveLanguage = (index: number) => {
+    setLocalLanguages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateLanguage = (index: number, data: Language) => {
+    setLocalLanguages((prev) => prev.map((lang, i) => (i === index ? data : lang)));
+  };
+
+  const handleSaveLanguages = () => {
+    console.log('Saving languages:', localLanguages);
+    setIsLanguagesModalOpen(false);
+  };
+
+  const handleSaveIndividualLanguage = (updatedLanguage: Language) => {
+    console.log('Saving individual language:', updatedLanguage);
+    // Here you would save to your backend
+    setEditingLanguage({item: null, isOpen: false});
+  };
+
+  // Certifications handlers
+  const handleEditCertifications = () => {
+    console.log('Opening certifications modal');
+    setIsCertificationsModalOpen(true);
+  };
+
+  const handleAddCertification = () => {
+    const newCertification = {
+      id: `temp-${Date.now()}`,
+      name: '',
+      issuer: '',
+      issueDate: '',
+      expiryDate: '',
+      credentialId: ''
+    };
+    setLocalCertifications((prev) => [...prev, newCertification]);
+  };
+
+  const handleRemoveCertification = (index: number) => {
+    setLocalCertifications((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateCertification = (index: number, data: any) => {
+    setLocalCertifications((prev) => prev.map((cert, i) => (i === index ? data : cert)));
+  };
+
+  const handleSaveCertifications = () => {
+    console.log('Saving certifications:', localCertifications);
+    setIsCertificationsModalOpen(false);
+  };
+
+  // Social Accounts handlers
+  const handleEditSocialAccounts = () => {
+    console.log('Opening social accounts modal for adding new account');
+    // Ensure we start with current social accounts
+    setLocalSocialAccounts(user.socialAccounts || []);
+    setIsSocialAccountsModalOpen(true);
+  };
+
+  const handleAddSocialAccount = () => {
+    const newSocialAccount: SocialAccount = {
+      id: `temp-${Date.now()}`,
+      platform: 'linkedin',
+      username: '',
+      url: '',
+      isPublic: true,
+      displayName: ''
+    };
+    setLocalSocialAccounts((prev) => [...prev, newSocialAccount]);
+  };
+
+  const handleRemoveSocialAccount = (index: number) => {
+    setLocalSocialAccounts((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateSocialAccount = (index: number, data: SocialAccount) => {
+    setLocalSocialAccounts((prev) => prev.map((account, i) => (i === index ? data : account)));
+  };
+
+  const handleSaveSocialAccounts = () => {
+    console.log('Saving social accounts:', localSocialAccounts);
+    setIsSocialAccountsModalOpen(false);
+  };
+
+  const handleEditSocialAccount = (account: SocialAccount) => {
+    // Find and edit specific social account
+    console.log('Editing social account:', account);
+    // Here you would open the edit form for the specific account
+    setIsSocialAccountsModalOpen(true);
+  };
+
+  const handleDeleteSocialAccount = (accountId: string) => {
+    const confirmed = confirm('Are you sure you want to delete this social account?');
+    if (confirmed) {
+      setLocalSocialAccounts(prev => prev.filter(account => account.id !== accountId));
+      console.log('Social account deleted:', accountId);
+    }
+  };
+
+  // Experience handlers
+  const handleAddExperience = () => {
+    console.log('Adding new experience directly');
+    // Create and add new empty experience
+    const newExperience: Experience = {
+      id: `temp-${Date.now()}`,
+      position: '',
+      company: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      skills: []
+    };
+    setEditingExperience({item: newExperience, isOpen: true});
+  };
+
+  const handleEditExperience = (experience?: Experience) => {
+    if (experience) {
+      // Edit specific experience item
+      setEditingExperience({item: experience, isOpen: true});
+    } else {
+      // Edit all experiences
+      setIsExperienceModalOpen(true);
+    }
+  };
+
+  const handleAddExperienceItem = () => {
+    const newExperience: Experience = {
+      id: `temp-${Date.now()}`,
+      position: '',
+      company: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      skills: []
+    };
+    setLocalExperiences((prev) => [...prev, newExperience]);
+  };
+
+  const handleRemoveExperience = (index: number) => {
+    setLocalExperiences((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateExperience = (index: number, data: Experience) => {
+    setLocalExperiences((prev) => prev.map((exp, i) => (i === index ? data : exp)));
+  };
+
+  const handleSaveExperiences = () => {
+    // Here you would save to your backend
+    console.log('Saving experiences:', localExperiences);
+    setIsExperienceModalOpen(false);
+  };
+
+  const handleSaveIndividualExperience = (updatedExperience: Experience) => {
+    console.log('Saving individual experience:', updatedExperience);
+    // Here you would save to your backend
+    setEditingExperience({item: null, isOpen: false});
+  };
+
+  const handleSaveIndividualEducation = (updatedEducation: Education) => {
+    console.log('Saving individual education:', updatedEducation);
+    // Here you would save to your backend
+    setEditingEducation({item: null, isOpen: false});
+  };
+
+  // Education handlers
+  const handleAddEducation = () => {
+    console.log('Adding new education directly');
+    // Create and add new empty education
+    const newEducation: Education = {
+      id: `temp-${Date.now()}`,
+      degree: '',
+      university: '',
+      field: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      grade: ''
+    };
+    setEditingEducation({item: newEducation, isOpen: true});
+  };
+
+  const handleEditEducation = (education?: Education) => {
+    if (education) {
+      // Edit specific education item
+      setEditingEducation({item: education, isOpen: true});
+    } else {
+      // Edit all education
+      setIsEducationModalOpen(true);
+    }
+  };
+
+  const handleAddEducationItem = () => {
+    const newEducation: Education = {
+      id: `temp-${Date.now()}`,
+      degree: '',
+      university: '',
+      field: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      grade: ''
+    };
+    setLocalEducation((prev) => [...prev, newEducation]);
+  };
+
+  const handleRemoveEducation = (index: number) => {
+    setLocalEducation((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateEducation = (index: number, data: Education) => {
+    setLocalEducation((prev) => prev.map((edu, i) => (i === index ? data : edu)));
+  };
+
+  const handleSaveEducation = () => {
+    // Here you would save to your backend
+    console.log('Saving education:', localEducation);
+    setIsEducationModalOpen(false);
+  };
+
 
   return (
-    <section className='container mx-auto px-6 pb-20'>
+    <section className='container mx-auto px-6 pb-20 transition-all duration-300'>
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
         {/* Main content */}
-        <div className='space-y-8 lg:col-span-2'>
+        <div className='space-y-8 lg:col-span-2 animate-slide-up'>
           {/* About */}
-          <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm'>
-            <CardHeader className='pb-4'>
+          <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
+            <CardHeader className='pb-4 hover:pb-5 transition-all duration-200'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
-                  <div className='bg-primary/10 rounded-full p-3'>
+                  <div className='bg-primary/10 rounded-full p-3 hover:bg-primary/15 transition-colors duration-200 hover:scale-105 transform'>
                     <Icon icon='solar:user-speak-linear' className='text-primary h-5 w-5' />
                   </div>
                   <div>
-                    <h2 className='text-foreground text-xl font-semibold'>
+                    <h2 className='text-foreground text-xl font-semibold hover:text-primary transition-colors duration-200'>
                       {t('talentPool.profile.sections.about')}
                     </h2>
-                    <p className='text-small text-foreground-500 mt-1'>
+                    <p className='text-small text-foreground-500 mt-1 hover:text-foreground-600 transition-colors duration-200'>
                       {t('talentPool.profile.aboutDescription')}
                     </p>
                   </div>
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-primary'
-                    onPress={handleEditAbout}
-                  >
-                    <Icon icon='solar:pen-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showEdit
+                    onEdit={handleEditAbout}
+                    editTooltip="Edit about me"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -127,10 +465,10 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 />
               ) : (
                 <div className='flex items-center justify-center py-12 text-center'>
-                  <div>
+                  <div className='animate-fade-in'>
                     <Icon
                       icon='solar:document-text-linear'
-                      className='text-default-300 mx-auto mb-4 h-12 w-12'
+                      className='text-default-300 mx-auto mb-4 h-12 w-12 hover:text-primary transition-colors duration-300 hover:scale-110 transform'
                     />
                     <p className='text-foreground-500 mb-4'>
                       {t('talentPool.cards.noAboutAvailable')}
@@ -143,7 +481,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
                         onPress={handleEditAbout}
                       >
-                        Add About Me
+                        <span className='hidden sm:inline'>Add About Me</span>
+                        <span className='sm:hidden'>Add</span>
                       </Button>
                     )}
                   </div>
@@ -152,57 +491,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             </CardBody>
           </Card>
 
-          {/* CV Upload Section - Only for own profile */}
-          {isOwnProfile && (
-            <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-r shadow-sm'>
-              <CardBody className='p-6'>
-                <div className='flex items-center justify-between'>
-                  <div className='flex items-center gap-4'>
-                    <div className='bg-primary/15 rounded-2xl p-4'>
-                      <Icon
-                        icon='solar:document-add-bold-duotone'
-                        className='text-primary h-8 w-8'
-                      />
-                    </div>
-                    <div>
-                      <h3 className='text-foreground mb-1 text-lg font-semibold'>Upload Your CV</h3>
-                      <p className='text-foreground-600 text-sm'>
-                        Let AI analyze your CV and automatically fill out your profile with
-                        experience, skills, education, and more.
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    color='primary'
-                    variant='shadow'
-                    startContent={<Icon icon='solar:upload-linear' className='h-4 w-4' />}
-                    onPress={() => setIsCVUploadOpen(true)}
-                    className='min-w-32'
-                  >
-                    Upload CV
-                  </Button>
-                </div>
-
-                <div className='mt-4 flex flex-wrap gap-3'>
-                  <div className='text-foreground-600 flex items-center gap-2 text-sm'>
-                    <Icon icon='solar:check-circle-linear' className='text-success h-4 w-4' />
-                    <span>Supports PDF, DOC, DOCX</span>
-                  </div>
-                  <div className='text-foreground-600 flex items-center gap-2 text-sm'>
-                    <Icon icon='solar:shield-check-linear' className='text-success h-4 w-4' />
-                    <span>Secure AI parsing</span>
-                  </div>
-                  <div className='text-foreground-600 flex items-center gap-2 text-sm'>
-                    <Icon icon='solar:clock-circle-linear' className='text-success h-4 w-4' />
-                    <span>Updates in seconds</span>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-          )}
 
           {/* Experience */}
-          <Card id='experience' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='experience' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -220,15 +511,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-primary'
-                    onPress={handleEditExperience}
-                  >
-                    <Icon icon='solar:pen-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleAddExperience}
+                    addTooltip="Add new experience"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -261,16 +549,23 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                                     {exp.position}
                                   </h3>
                                   {isOwnProfile && (
-                                    <Button
-                                      isIconOnly
-                                      variant='light'
-                                      size='sm'
-                                      className='text-foreground-400 hover:text-primary h-6 w-6'
-                                      onPress={handleEditExperience}
-                                    >
-                                      <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                                    </Button>
-                                  )}
+                                  <ActionButtons
+                                    showEdit
+                                    showDelete
+                                    onEdit={() => handleEditExperience(exp)}
+                                    onDelete={() => {
+                                      const confirmed = confirm(`Are you sure you want to delete the experience at ${exp.company}?`);
+                                      if (confirmed) {
+                                        const index = experiences.findIndex(e => e.id === exp.id);
+                                        if (index !== -1) {
+                                          handleRemoveExperience(index);
+                                        }
+                                      }
+                                    }}
+                                    editTooltip={`Edit ${exp.position} at ${exp.company}`}
+                                    deleteTooltip={`Delete ${exp.position} experience`}
+                                  />
+                                )}
                                 </div>
                                 <p className='text-foreground-700 font-medium'>{exp.company}</p>
                                 {exp.location && (
@@ -333,7 +628,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         variant='flat'
                         size='sm'
                         startContent={<Icon icon='solar:plus-linear' className='h-4 w-4' />}
-                        onPress={handleEditExperience}
+                        onPress={handleAddExperience}
                       >
                         Add Experience
                       </Button>
@@ -345,133 +640,27 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Education */}
-          <Card id='education' className='border-default-200/50 scroll-mt-24 shadow-sm'>
-            <CardHeader className='pb-4'>
-              <div className='flex w-full items-center justify-between'>
-                <div className='flex items-center gap-4'>
-                  <div className='bg-secondary/10 rounded-full p-3'>
-                    <Icon icon='solar:diploma-linear' className='text-secondary h-5 w-5' />
-                  </div>
-                  <div>
-                    <h2 className='text-foreground text-xl font-semibold'>
-                      {t('talentPool.profile.sections.education')}
-                    </h2>
-                    <p className='text-small text-foreground-500 mt-1'>
-                      {t('talentPool.profile.educationDescription')}
-                    </p>
-                  </div>
-                </div>
-
-                {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-primary'
-                    onPress={handleEditEducation}
-                  >
-                    <Icon icon='solar:pen-linear' className='h-4 w-4' />
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardBody className='px-8 pt-2'>
-              {education.length > 0 ? (
-                <div className='space-y-8'>
-                  {[...education]
-                    .sort(
-                      (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-                    )
-                    .map((edu, index) => (
-                      <div key={edu.id || index} className='flex gap-6'>
-                        <div className='flex-shrink-0'>
-                          <Icon icon='solar:book-linear' className='text-secondary mt-2 h-5 w-5' />
-                        </div>
-
-                        <div className='flex-1'>
-                          <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
-                            <div className='space-y-2'>
-                              <div className='flex items-center gap-2'>
-                                <h3 className='text-foreground text-lg font-semibold'>
-                                  {edu.university}
-                                </h3>
-                                {isOwnProfile && (
-                                  <Button
-                                    isIconOnly
-                                    variant='light'
-                                    size='sm'
-                                    className='text-foreground-400 hover:text-primary h-6 w-6'
-                                    onPress={handleEditEducation}
-                                  >
-                                    <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                                  </Button>
-                                )}
-                              </div>
-                              <p className='text-foreground-700 font-medium'>{edu.degree}</p>
-                              {edu.field && (
-                                <p className='text-small text-foreground-500'>{edu.field}</p>
-                              )}
-                            </div>
-                            <div className='text-small text-foreground-500 bg-default-100 flex items-center gap-2 rounded-full px-3 py-2'>
-                              <Icon icon='solar:calendar-linear' className='h-4 w-4' />
-                              <span>
-                                {formatDate(edu.startDate)} —{' '}
-                                {edu.endDate
-                                  ? formatDate(edu.endDate)
-                                  : t('talentPool.profile.present')}
-                              </span>
-                            </div>
-                          </div>
-
-                          {edu.description && (
-                            <p className='text-foreground-600 mt-4 leading-relaxed'>
-                              {edu.description}
-                            </p>
-                          )}
-
-                          {edu.grade && (
-                            <div className='mt-4'>
-                              <Chip size='sm' variant='flat' color='success'>
-                                {t('talentPool.profile.grade')}: {edu.grade}
-                              </Chip>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className='flex items-center justify-center py-12 text-center'>
-                  <div>
-                    <Icon
-                      icon='solar:diploma-linear'
-                      className='text-default-300 mx-auto mb-4 h-12 w-12'
-                    />
-                    <p className='text-foreground-500 mb-4'>
-                      {t('talentPool.profile.noEducation')}
-                    </p>
-                    {isOwnProfile && (
-                      <Button
-                        color='primary'
-                        variant='flat'
-                        size='sm'
-                        startContent={<Icon icon='solar:plus-linear' className='h-4 w-4' />}
-                        onPress={handleEditEducation}
-                      >
-                        Add Education
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              )}
-            </CardBody>
-          </Card>
+          <EducationSection
+            education={education}
+            isOwnProfile={isOwnProfile}
+            onAdd={handleAddEducation}
+            onEdit={(edu) => handleEditEducation(edu)}
+            onDelete={(edu) => {
+              const confirmed = confirm(`Are you sure you want to delete the education from ${edu.university}?`);
+              if (confirmed) {
+                const index = education.findIndex(e => e.id === edu.id);
+                if (index !== -1) {
+                  handleRemoveEducation(index);
+                }
+              }
+            }}
+          />
         </div>
 
         {/* Sidebar */}
-        <div className='space-y-8'>
+        <div className='space-y-8 animate-slide-up [animation-delay:200ms]'>
           {/* Skills */}
-          <Card id='skills' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='skills' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-success/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -489,15 +678,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-primary'
-                    onPress={handleEditSkills}
-                  >
-                    <Icon icon='solar:pen-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleEditSkills}
+                    addTooltip="Add new skills"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -518,7 +704,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         size='sm'
                         color={chipColor}
                         variant='flat'
-                        className='font-medium'
+                        className='font-medium hover:scale-105 transform transition-all duration-200 cursor-default hover:shadow-md'
                         startContent={<Icon icon={getSkillIcon(skill.key)} className='h-3 w-3' />}
                       >
                         {skill.key.trim()}
@@ -554,96 +740,74 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Languages */}
-          <Card id='languages' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <LanguagesSection
+            languages={languages}
+            isOwnProfile={isOwnProfile}
+            onAdd={() => handleEditLanguages()}
+            onEdit={(lang) => handleEditLanguages(lang)}
+            onDelete={(lang) => {
+              const confirmed = confirm(`Are you sure you want to delete ${lang.name || lang.key} language?`);
+              if (confirmed) {
+                const index = languages.findIndex(l => l.id === lang.id);
+                if (index !== -1) {
+                  handleRemoveLanguage(index);
+                }
+              }
+            }}
+          />
+
+          {/* Social Accounts */}
+          <Card id='social-accounts' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-purple/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
-                  <div className='bg-warning/10 rounded-full p-3'>
-                    <Icon icon='solar:globe-linear' className='text-warning h-5 w-5' />
+                  <div className='bg-purple/10 rounded-full p-3'>
+                    <Icon icon='solar:link-circle-linear' className='text-purple h-5 w-5' />
                   </div>
                   <div>
                     <h3 className='text-foreground text-lg font-semibold'>
-                      {t('talentPool.profile.sections.languages')}
+                      Social Accounts
                     </h3>
                     <p className='text-small text-foreground-500 mt-1'>
-                      {t('talentPool.profile.languagesDescription')}
+                      Connect with me on social platforms
                     </p>
                   </div>
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-primary'
-                    onPress={() => router.push('/private/settings')}
-                  >
-                    <Icon icon='solar:pen-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleEditSocialAccounts}
+                    addTooltip="Add new social account"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
             <CardBody className='px-8 pt-2'>
-              {languages.length > 0 ? (
-                <div className='space-y-3'>
-                  {languages.map((lang, index) => (
-                    <Card
-                      key={lang.id || index}
-                      className='shadow-small from-default-50/50 to-default-100/50 border-none bg-gradient-to-br'
-                    >
-                      <CardBody className='p-4'>
-                        <div className='mb-3 flex items-center justify-between'>
-                          <div className='flex items-center gap-3'>
-                            <h4 className='text-foreground text-lg font-bold'>
-                              {ISO6391.getName(lang.key.toLocaleLowerCase())}
-                            </h4>
-                          </div>
-                          <div className='flex items-center gap-2'>
-                            <Chip
-                              size='sm'
-                              color={
-                                lang.level === 'NATIVE'
-                                  ? 'success'
-                                  : lang.level === 'PROFESSIONAL'
-                                    ? 'primary'
-                                    : lang.level === 'INTERMEDIATE'
-                                      ? 'warning'
-                                      : lang.level === 'BEGINNER'
-                                        ? 'secondary'
-                                        : 'default'
-                              }
-                              variant='flat'
-                              className='text-tiny font-bold'
-                            >
-                              {lang.level}
-                            </Chip>
-                            {isOwnProfile && (
-                              <Button
-                                isIconOnly
-                                variant='light'
-                                size='sm'
-                                className='text-foreground-400 hover:text-primary h-6 w-6'
-                                onPress={() => router.push('/private/settings')}
-                              >
-                                <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      </CardBody>
-                    </Card>
-                  ))}
+              {localSocialAccounts.filter(account => account.isPublic).length > 0 ? (
+                <div className='grid grid-cols-2 gap-3'>
+                  {localSocialAccounts
+                    .filter(account => account.isPublic)
+                    .map((account, index) => (
+                      <SocialAccountCard
+                        key={account.id || index}
+                        account={account}
+                        isOwnProfile={isOwnProfile}
+                        onEdit={() => handleEditSocialAccount(account)}
+                        onDelete={() => handleDeleteSocialAccount(account.id)}
+                      />
+                    ))}
                 </div>
               ) : (
                 <div className='flex items-center justify-center py-12 text-center'>
                   <div>
                     <Icon
-                      icon='solar:globe-linear'
+                      icon='solar:link-circle-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
                     <p className='text-foreground-500 mb-4'>
-                      {t('talentPool.profile.noLanguages')}
+                      No social accounts available
                     </p>
                     {isOwnProfile && (
                       <Button
@@ -651,9 +815,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         variant='flat'
                         size='sm'
                         startContent={<Icon icon='solar:plus-linear' className='h-4 w-4' />}
-                        onPress={() => router.push('/private/settings')}
+                        onPress={handleEditSocialAccounts}
                       >
-                        Add Languages
+                        Add Social Accounts
                       </Button>
                     )}
                   </div>
@@ -664,7 +828,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
           {/* Contact - Only show for other users */}
           {!isOwnProfile && (
-            <Card id='contact' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+            <Card id='contact' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-danger/20'>
               <CardHeader className='pb-4'>
                 <div className='flex items-center gap-4'>
                   <div className='bg-danger/10 rounded-full p-3'>
@@ -771,7 +935,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           )}
 
           {/* Profile summary card */}
-          <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-br shadow-sm'>
+          <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-br shadow-sm hover:shadow-lg transition-all duration-300 hover:border-primary/30 hover:from-primary/8 hover:to-secondary/8'>
             <CardBody className='p-8 text-center'>
               <div className='mx-auto mb-4 h-20 w-20'>
                 {user.profileImage && user.profileImage.trim() ? (
@@ -814,12 +978,507 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         </div>
       </div>
 
-      {/* CV Upload Drawer */}
-      <CVUploadDrawer
-        isOpen={isCVUploadOpen}
-        onOpenChange={setIsCVUploadOpen}
-        onDataParsed={handleCVDataParsed}
-      />
+
+      {/* Experience Modal */}
+      <Modal
+        isOpen={isExperienceModalOpen}
+        onClose={() => setIsExperienceModalOpen(false)}
+        size='3xl'
+        scrollBehavior='inside'
+      >
+        <ModalContent>
+          <ModalHeader className='flex items-center gap-3'>
+            <div className='bg-primary/20 rounded-xl p-2'>
+              <Icon icon='solar:case-linear' className='text-primary h-5 w-5' />
+            </div>
+            <div>
+              <h2 className='text-xl font-semibold'>Manage Experience</h2>
+              <p className='text-foreground-500 text-sm'>
+                Add, edit, or remove your work experience
+              </p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <ExperienceForm
+              experience={localExperiences}
+              onAdd={handleAddExperienceItem}
+              onRemove={handleRemoveExperience}
+              onUpdate={handleUpdateExperience}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant='light' onPress={() => setIsExperienceModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button color='primary' onPress={handleSaveExperiences}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Education Modal */}
+      <Modal
+        isOpen={isEducationModalOpen}
+        onClose={() => setIsEducationModalOpen(false)}
+        size='3xl'
+        scrollBehavior='inside'
+      >
+        <ModalContent>
+          <ModalHeader className='flex items-center gap-3'>
+            <div className='bg-secondary/20 rounded-xl p-2'>
+              <Icon icon='solar:diploma-linear' className='text-secondary h-5 w-5' />
+            </div>
+            <div>
+              <h2 className='text-xl font-semibold'>Manage Education</h2>
+              <p className='text-foreground-500 text-sm'>Add, edit, or remove your education</p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <EducationForm
+              education={localEducation}
+              onAdd={handleAddEducationItem}
+              onRemove={handleRemoveEducation}
+              onUpdate={handleUpdateEducation}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant='light' onPress={() => setIsEducationModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button color='primary' onPress={handleSaveEducation}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Personal Info Modal */}
+      <Modal
+        isOpen={isPersonalInfoModalOpen}
+        onClose={() => setIsPersonalInfoModalOpen(false)}
+        size='3xl'
+        scrollBehavior='inside'
+      >
+        <ModalContent>
+          <ModalHeader className='flex items-center gap-3'>
+            <div className='bg-primary/20 rounded-xl p-2'>
+              <Icon icon='solar:user-speak-linear' className='text-primary h-5 w-5' />
+            </div>
+            <div>
+              <h2 className='text-xl font-semibold'>Edit Personal Information</h2>
+              <p className='text-foreground-500 text-sm'>Update your personal details and bio</p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <PersonalInfoForm data={localUser} onChange={handlePersonalInfoChange} />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant='light' onPress={() => setIsPersonalInfoModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button color='primary' onPress={handleSavePersonalInfo}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Skills Modal */}
+      <Modal
+        isOpen={isSkillsModalOpen}
+        onClose={() => setIsSkillsModalOpen(false)}
+        size='3xl'
+        scrollBehavior='inside'
+      >
+        <ModalContent>
+          <ModalHeader className='flex items-center gap-3'>
+            <div className='bg-success/20 rounded-xl p-2'>
+              <Icon icon='solar:verified-check-linear' className='text-success h-5 w-5' />
+            </div>
+            <div>
+              <h2 className='text-xl font-semibold'>Manage Skills</h2>
+              <p className='text-foreground-500 text-sm'>Add, edit, or remove your skills</p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <SkillsForm
+              skills={localSkills}
+              onAdd={handleAddSkill}
+              onRemove={handleRemoveSkill}
+              onUpdate={handleUpdateSkill}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant='light' onPress={() => setIsSkillsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button color='primary' onPress={handleSaveSkills}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Languages Modal */}
+      <Modal
+        isOpen={isLanguagesModalOpen}
+        onClose={() => setIsLanguagesModalOpen(false)}
+        size='3xl'
+        scrollBehavior='inside'
+      >
+        <ModalContent>
+          <ModalHeader className='flex items-center gap-3'>
+            <div className='bg-warning/20 rounded-xl p-2'>
+              <Icon icon='solar:globe-linear' className='text-warning h-5 w-5' />
+            </div>
+            <div>
+              <h2 className='text-xl font-semibold'>Manage Languages</h2>
+              <p className='text-foreground-500 text-sm'>
+                Add, edit, or remove languages you speak
+              </p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <EnhancedLanguagesForm
+              languages={localLanguages}
+              onAdd={handleAddLanguage}
+              onRemove={handleRemoveLanguage}
+              onUpdate={handleUpdateLanguage}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant='light' onPress={() => setIsLanguagesModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button color='primary' onPress={handleSaveLanguages}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Certifications Modal */}
+      <Modal
+        isOpen={isCertificationsModalOpen}
+        onClose={() => setIsCertificationsModalOpen(false)}
+        size='3xl'
+        scrollBehavior='inside'
+      >
+        <ModalContent>
+          <ModalHeader className='flex items-center gap-3'>
+            <div className='bg-secondary/20 rounded-xl p-2'>
+              <Icon icon='solar:medal-star-linear' className='text-secondary h-5 w-5' />
+            </div>
+            <div>
+              <h2 className='text-xl font-semibold'>Manage Certifications</h2>
+              <p className='text-foreground-500 text-sm'>
+                Add, edit, or remove your certifications
+              </p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <CertificationsForm
+              certifications={localCertifications}
+              onAdd={handleAddCertification}
+              onRemove={handleRemoveCertification}
+              onUpdate={handleUpdateCertification}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant='light' onPress={() => setIsCertificationsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button color='primary' onPress={handleSaveCertifications}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Individual Experience Item Modal */}
+      <Modal 
+        isOpen={editingExperience.isOpen}
+        onClose={() => setEditingExperience({item: null, isOpen: false})}
+        size="2xl"
+        scrollBehavior="inside"
+      >
+        <ModalContent>
+          <ModalHeader className="flex items-center gap-3">
+            <div className="bg-primary/20 rounded-xl p-2">
+              <Icon icon="solar:case-linear" className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">Edit Experience</h2>
+              <p className="text-sm text-foreground-500">Update this work experience</p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            {editingExperience.item && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Position"
+                    value={editingExperience.item.position}
+                    onChange={(e) => setEditingExperience(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, position: e.target.value} : null
+                    }))}
+                  />
+                  <Input
+                    label="Company"
+                    value={editingExperience.item.company}
+                    onChange={(e) => setEditingExperience(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, company: e.target.value} : null
+                    }))}
+                  />
+                </div>
+                <Input
+                  label="Location"
+                  value={editingExperience.item.location || ''}
+                  onChange={(e) => setEditingExperience(prev => ({
+                    ...prev,
+                    item: prev.item ? {...prev.item, location: e.target.value} : null
+                  }))}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Start Date"
+                    type="date"
+                    value={editingExperience.item.startDate?.split('T')[0] || ''}
+                    onChange={(e) => setEditingExperience(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, startDate: e.target.value} : null
+                    }))}
+                  />
+                  <Input
+                    label="End Date"
+                    type="date"
+                    value={editingExperience.item.endDate?.split('T')[0] || ''}
+                    onChange={(e) => setEditingExperience(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, endDate: e.target.value} : null
+                    }))}
+                  />
+                </div>
+                <Textarea
+                  label="Description"
+                  value={editingExperience.item.description || ''}
+                  onChange={(e) => setEditingExperience(prev => ({
+                    ...prev,
+                    item: prev.item ? {...prev.item, description: e.target.value} : null
+                  }))}
+                  minRows={3}
+                />
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="light" onPress={() => setEditingExperience({item: null, isOpen: false})}>
+              Cancel
+            </Button>
+            <Button color="primary" onPress={() => editingExperience.item && handleSaveIndividualExperience(editingExperience.item)}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Individual Education Item Modal */}
+      <Modal 
+        isOpen={editingEducation.isOpen}
+        onClose={() => setEditingEducation({item: null, isOpen: false})}
+        size="2xl"
+        scrollBehavior="inside"
+      >
+        <ModalContent>
+          <ModalHeader className="flex items-center gap-3">
+            <div className="bg-secondary/20 rounded-xl p-2">
+              <Icon icon="solar:diploma-linear" className="h-5 w-5 text-secondary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">Edit Education</h2>
+              <p className="text-sm text-foreground-500">Update this education entry</p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            {editingEducation.item && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Degree"
+                    value={editingEducation.item.degree}
+                    onChange={(e) => setEditingEducation(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, degree: e.target.value} : null
+                    }))}
+                  />
+                  <Input
+                    label="University"
+                    value={editingEducation.item.university}
+                    onChange={(e) => setEditingEducation(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, university: e.target.value} : null
+                    }))}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Field of Study"
+                    value={editingEducation.item.field || ''}
+                    onChange={(e) => setEditingEducation(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, field: e.target.value} : null
+                    }))}
+                  />
+                  <Input
+                    label="Grade"
+                    value={editingEducation.item.grade || ''}
+                    onChange={(e) => setEditingEducation(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, grade: e.target.value} : null
+                    }))}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Input
+                    label="Start Date"
+                    type="date"
+                    value={editingEducation.item.startDate?.split('T')[0] || ''}
+                    onChange={(e) => setEditingEducation(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, startDate: e.target.value} : null
+                    }))}
+                  />
+                  <Input
+                    label="End Date"
+                    type="date"
+                    value={editingEducation.item.endDate?.split('T')[0] || ''}
+                    onChange={(e) => setEditingEducation(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, endDate: e.target.value} : null
+                    }))}
+                  />
+                </div>
+                <Textarea
+                  label="Description"
+                  value={editingEducation.item.description || ''}
+                  onChange={(e) => setEditingEducation(prev => ({
+                    ...prev,
+                    item: prev.item ? {...prev.item, description: e.target.value} : null
+                  }))}
+                  minRows={3}
+                />
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="light" onPress={() => setEditingEducation({item: null, isOpen: false})}>
+              Cancel
+            </Button>
+            <Button color="primary" onPress={() => editingEducation.item && handleSaveIndividualEducation(editingEducation.item)}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Individual Language Item Modal */}
+      <Modal 
+        isOpen={editingLanguage.isOpen}
+        onClose={() => setEditingLanguage({item: null, isOpen: false})}
+        size="md"
+        scrollBehavior="inside"
+      >
+        <ModalContent>
+          <ModalHeader className="flex items-center gap-3">
+            <div className="bg-secondary/20 rounded-xl p-2">
+              <Icon icon="solar:globe-linear" className="h-5 w-5 text-secondary" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold">Edit Language</h2>
+              <p className="text-sm text-foreground-500">Update this language skill</p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            {editingLanguage.item && (
+              <div className="space-y-4">
+                <Input
+                  label="Language"
+                  value={editingLanguage.item.key}
+                  onChange={(e) => setEditingLanguage(prev => ({
+                    ...prev,
+                    item: prev.item ? {...prev.item, key: e.target.value} : null
+                  }))}
+                />
+                <Select
+                  label="Proficiency Level"
+                  selectedKeys={[editingLanguage.item.level]}
+                  onSelectionChange={(keys) => {
+                    const level = Array.from(keys)[0] as string;
+                    setEditingLanguage(prev => ({
+                      ...prev,
+                      item: prev.item ? {...prev.item, level} : null
+                    }));
+                  }}
+                >
+                  <SelectItem key="NATIVE">Native</SelectItem>
+                  <SelectItem key="PROFESSIONAL">Professional</SelectItem>
+                  <SelectItem key="INTERMEDIATE">Intermediate</SelectItem>
+                  <SelectItem key="BEGINNER">Beginner</SelectItem>
+                </Select>
+              </div>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="light" onPress={() => setEditingLanguage({item: null, isOpen: false})}>
+              Cancel
+            </Button>
+            <Button color="primary" onPress={() => editingLanguage.item && handleSaveIndividualLanguage(editingLanguage.item)}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Social Accounts Modal */}
+      <Modal
+        isOpen={isSocialAccountsModalOpen}
+        onClose={() => setIsSocialAccountsModalOpen(false)}
+        size='3xl'
+        scrollBehavior='inside'
+      >
+        <ModalContent>
+          <ModalHeader className='flex items-center gap-3'>
+            <div className='bg-purple/20 rounded-xl p-2'>
+              <Icon icon='solar:link-circle-linear' className='text-purple h-5 w-5' />
+            </div>
+            <div>
+              <h2 className='text-xl font-semibold'>Manage Social Accounts</h2>
+              <p className='text-foreground-500 text-sm'>
+                Add, edit, or remove your social media profiles
+              </p>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <SocialAccountsForm
+              socialAccounts={localSocialAccounts}
+              onAdd={handleAddSocialAccount}
+              onRemove={handleRemoveSocialAccount}
+              onUpdate={handleUpdateSocialAccount}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant='light' onPress={() => setIsSocialAccountsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button color='primary' onPress={handleSaveSocialAccounts}>
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </section>
   );
 };

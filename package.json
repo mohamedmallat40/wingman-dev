@@ -8,7 +8,6 @@
     "url": "https://wingam.com"
   },
   "scripts": {
-    "postinstall": "husky & playwright install",
     "dev": "next dev --turbopack",
     "qa": "cross-env NODE_ENV=qa next dev --turbopack",
     "build": "next build",
@@ -38,6 +37,7 @@
     "@heroui/toast": "^2.0.14",
     "@hookform/resolvers": "^5.0.1",
     "@iconify/react": "^6.0.0",
+    "@internationalized/date": "^3.8.2",
     "@react-aria/i18n": "^3.12.9",
     "@t3-oss/env-nextjs": "0.13.4",
     "@tanstack/react-query": "5.75.5",
@@ -64,7 +64,6 @@
     "@eslint/eslintrc": "3.3.1",
     "@ianvs/prettier-plugin-sort-imports": "4.4.1",
     "@next/eslint-plugin-next": "15.3.2",
-    "@playwright/test": "1.52.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@tanstack/eslint-plugin-query": "5.74.7",
     "@total-typescript/ts-reset": "0.6.1",

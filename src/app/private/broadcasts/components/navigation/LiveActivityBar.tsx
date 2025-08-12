@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react';
 import { Button, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslations } from 'next-intl';
 
 interface LiveActivity {
   id: string;
@@ -64,8 +63,6 @@ const MOCK_ACTIVITIES: LiveActivity[] = [
 ];
 
 export default function LiveActivityBar({ onNotificationClick, className = '' }: LiveActivityBarProps) {
-  const t = useTranslations('broadcasts.live');
-  
   const [activities, setActivities] = useState<LiveActivity[]>(MOCK_ACTIVITIES);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
