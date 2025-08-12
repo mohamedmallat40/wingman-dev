@@ -16,6 +16,7 @@ import {
   DocumentTabs,
   DocumentUploadModal
 } from './components';
+import { DocumentViewerDrawer } from './components/DocumentViewerDrawer';
 import {
   ACTION_ITEMS,
   BREADCRUMB_CONFIG,
