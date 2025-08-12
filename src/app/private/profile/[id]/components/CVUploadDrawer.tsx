@@ -74,9 +74,6 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   const [activeTab, setActiveTab] = useState('personal');
 
   const [isDragActive, setIsDragActive] = useState(false);
-  const {isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose} = useDisclosure();
-  const [editingSection, setEditingSection] = useState<string>('');
-  const [editingIndex, setEditingIndex] = useState<number>(-1);
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file) return;
