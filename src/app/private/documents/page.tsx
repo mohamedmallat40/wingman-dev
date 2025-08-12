@@ -33,6 +33,8 @@ export default function DocumentsPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editingDocument, setEditingDocument] = useState<IDocument | null>(null);
   const [modalMode, setModalMode] = useState<'upload' | 'edit'>('upload');
+  const [viewingDocument, setViewingDocument] = useState<IDocument | null>(null);
+  const [showViewerDrawer, setShowViewerDrawer] = useState(false);
 
   // Add these mutations after existing hooks
   const uploadMutation = useUploadDocument();
