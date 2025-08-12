@@ -425,7 +425,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
     <section className='container mx-auto px-6 pb-20 transition-all duration-300'>
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
         {/* Main content */}
-        <div className='space-y-8 lg:col-span-2'>
+        <div className='space-y-8 lg:col-span-2 animate-slide-up'>
           {/* About */}
           <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
             <CardHeader className='pb-4 hover:pb-5 transition-all duration-200'>
