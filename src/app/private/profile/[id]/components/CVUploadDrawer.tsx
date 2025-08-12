@@ -5,37 +5,20 @@ import React, { useCallback, useState } from 'react';
 import type { ParsedCVData } from '../services/cv-service';
 
 import {
-  Accordion,
-  AccordionItem,
-  Avatar,
   Badge,
   Button,
   Card,
   CardBody,
-  CardHeader,
   Chip,
-  Divider,
   Drawer,
   DrawerBody,
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
-  Form,
-  Input,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
   Progress,
   ScrollShadow,
-  Select,
-  SelectItem,
-  Spacer,
   Tab,
-  Tabs,
-  Textarea,
-  useDisclosure
+  Tabs
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -47,7 +30,17 @@ import {
   type Skill
 } from 'modules/profile/types';
 
+import { FileUpload } from '@/components/ui/file-upload';
+
 import { CVService } from '../services/cv-service';
+import {
+  CertificationsForm,
+  EducationForm,
+  ExperienceForm,
+  LanguagesForm,
+  PersonalInfoForm,
+  SkillsForm
+} from './forms';
 
 interface CVUploadDrawerProps {
   isOpen: boolean;
@@ -84,35 +77,10 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
   const [isApplying, setIsApplying] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [activeTab, setActiveTab] = useState('personal');
-
   const [isDragActive, setIsDragActive] = useState(false);
-  const {
-    isOpen: isEditModalOpen,
-    onOpen: onEditModalOpen,
-    onClose: onEditModalClose
-  } = useDisclosure();
-  const [editingSection, setEditingSection] = useState<string>('');
-  const [editingIndex, setEditingIndex] = useState<number>(-1);
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file) return;
-
-    // Enhanced file validation
-    const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      alert('Please upload a PDF, DOC, or DOCX file');
-      return;
-    }
-
-    if (file.size > 15 * 1024 * 1024) {
-      alert('File size must be less than 15MB');
-      return;
-    }
 
     setUploadedFile(file);
     setCurrentStep('parsing');
@@ -221,11 +189,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
     };
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      handleFileUpload(file);
-    }
+  const handleFileRemove = () => {
+    setUploadedFile(null);
   };
 
   const handleDragOver = (event: React.DragEvent) => {
@@ -241,21 +206,6 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     setIsDragActive(false);
-
-    const file = event.dataTransfer.files[0];
-    if (file) {
-      handleFileUpload(file);
-    }
-  };
-
-  const handleSectionToggle = (section: string) => {
-    const newSelected = new Set(selectedSections);
-    if (newSelected.has(section)) {
-      newSelected.delete(section);
-    } else {
-      newSelected.add(section);
-    }
-    setSelectedSections(newSelected);
   };
 
   const handleApplyData = async () => {
@@ -287,69 +237,154 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
     onOpenChange(false);
   };
 
-  const handleAddNew = (section: string) => {
+  // Form handlers
+  const handlePersonalInfoChange = (field: string, value: string) => {
     if (!reviewData) return;
+    setReviewData({
+      ...reviewData,
+      personalInfo: { ...reviewData.personalInfo, [field]: value }
+    });
+  };
 
-    const newReviewData = { ...reviewData };
+  const handleSkillAdd = () => {
+    if (!reviewData) return;
+    const newSkill: Skill = { id: `skill_${Date.now()}`, key: '', type: 'NORMAL' };
+    setReviewData({
+      ...reviewData,
+      skills: [...reviewData.skills, newSkill]
+    });
+  };
 
-    const templates = {
-      skills: { id: `skill_${Date.now()}`, key: '', type: 'NORMAL' as const },
-      experience: {
-        id: `exp_${Date.now()}`,
-        company: '',
-        position: '',
-        title: '',
-        description: '',
-        startDate: '',
-        endDate: '',
-        link: null,
-        image: '',
-        screenShots: null,
-        videoUrl: null
-      },
-      education: {
-        id: `edu_${Date.now()}`,
-        university: '',
-        degree: '',
-        description: '',
-        startDate: '',
-        endDate: ''
-      },
-      languages: { id: `lang_${Date.now()}`, key: '', level: 'BEGINNER' as const },
-      certifications: {
-        id: `cert_${Date.now()}`,
-        name: '',
-        issuer: '',
-        issueDate: '',
-        expiryDate: '',
-        credentialId: ''
-      }
+  const handleSkillRemove = (index: number) => {
+    if (!reviewData) return;
+    const newSkills = [...reviewData.skills];
+    newSkills.splice(index, 1);
+    setReviewData({ ...reviewData, skills: newSkills });
+  };
+
+  const handleSkillUpdate = (index: number, data: Skill) => {
+    if (!reviewData) return;
+    const newSkills = [...reviewData.skills];
+    newSkills[index] = data;
+    setReviewData({ ...reviewData, skills: newSkills });
+  };
+
+  const handleExperienceAdd = () => {
+    if (!reviewData) return;
+    const newExp: IExperience = {
+      id: `exp_${Date.now()}`,
+      company: '',
+      position: '',
+      title: '',
+      description: '',
+      startDate: '',
+      endDate: '',
+      link: null,
+      image: '',
+      screenShots: null,
+      videoUrl: null
     };
-
-    if (section in templates) {
-      (newReviewData as any)[section].push((templates as any)[section]);
-      setReviewData(newReviewData);
-    }
+    setReviewData({
+      ...reviewData,
+      experience: [...reviewData.experience, newExp]
+    });
   };
 
-  const handleRemove = (section: string, index: number) => {
+  const handleExperienceRemove = (index: number) => {
     if (!reviewData) return;
-
-    const newReviewData = { ...reviewData };
-    (newReviewData as any)[section].splice(index, 1);
-    setReviewData(newReviewData);
+    const newExperience = [...reviewData.experience];
+    newExperience.splice(index, 1);
+    setReviewData({ ...reviewData, experience: newExperience });
   };
 
-  const handleUpdateItem = (section: string, index: number, data: any) => {
+  const handleExperienceUpdate = (index: number, data: IExperience) => {
     if (!reviewData) return;
+    const newExperience = [...reviewData.experience];
+    newExperience[index] = data;
+    setReviewData({ ...reviewData, experience: newExperience });
+  };
 
-    const newReviewData = { ...reviewData };
-    if (section === 'personalInfo') {
-      newReviewData.personalInfo = { ...newReviewData.personalInfo, ...data };
-    } else {
-      (newReviewData as any)[section][index] = data;
-    }
-    setReviewData(newReviewData);
+  const handleEducationAdd = () => {
+    if (!reviewData) return;
+    const newEdu: IEducation = {
+      id: `edu_${Date.now()}`,
+      university: '',
+      degree: '',
+      description: '',
+      startDate: '',
+      endDate: ''
+    };
+    setReviewData({
+      ...reviewData,
+      education: [...reviewData.education, newEdu]
+    });
+  };
+
+  const handleEducationRemove = (index: number) => {
+    if (!reviewData) return;
+    const newEducation = [...reviewData.education];
+    newEducation.splice(index, 1);
+    setReviewData({ ...reviewData, education: newEducation });
+  };
+
+  const handleEducationUpdate = (index: number, data: IEducation) => {
+    if (!reviewData) return;
+    const newEducation = [...reviewData.education];
+    newEducation[index] = data;
+    setReviewData({ ...reviewData, education: newEducation });
+  };
+
+  const handleLanguageAdd = () => {
+    if (!reviewData) return;
+    const newLang: ILanguage = { id: `lang_${Date.now()}`, key: '', level: 'BEGINNER' };
+    setReviewData({
+      ...reviewData,
+      languages: [...reviewData.languages, newLang]
+    });
+  };
+
+  const handleLanguageRemove = (index: number) => {
+    if (!reviewData) return;
+    const newLanguages = [...reviewData.languages];
+    newLanguages.splice(index, 1);
+    setReviewData({ ...reviewData, languages: newLanguages });
+  };
+
+  const handleLanguageUpdate = (index: number, data: ILanguage) => {
+    if (!reviewData) return;
+    const newLanguages = [...reviewData.languages];
+    newLanguages[index] = data;
+    setReviewData({ ...reviewData, languages: newLanguages });
+  };
+
+  const handleCertificationAdd = () => {
+    if (!reviewData) return;
+    const newCert = {
+      id: `cert_${Date.now()}`,
+      name: '',
+      issuer: '',
+      issueDate: '',
+      expiryDate: '',
+      credentialId: ''
+    };
+    setReviewData({
+      ...reviewData,
+      certifications: [...reviewData.certifications, newCert]
+    });
+  };
+
+  const handleCertificationRemove = (index: number) => {
+    if (!reviewData) return;
+    const newCertifications = [...reviewData.certifications];
+    newCertifications.splice(index, 1);
+    setReviewData({ ...reviewData, certifications: newCertifications });
+  };
+
+  const handleCertificationUpdate = (index: number, data: any) => {
+    if (!reviewData) return;
+    const newCertifications = [...reviewData.certifications];
+    newCertifications[index] = data;
+    setReviewData({ ...reviewData, certifications: newCertifications });
   };
 
   const renderUploadStep = () => (
@@ -358,55 +393,37 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       animate={{ opacity: 1, y: 0 }}
       className='flex h-full flex-col items-center justify-center px-8'
     >
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={() => document.getElementById('cv-upload-input')?.click()}
-        className={`w-full max-w-2xl cursor-pointer rounded-3xl border-3 border-dashed p-12 text-center transition-all duration-300 ${
-          isDragActive
-            ? 'border-primary bg-primary/10 scale-[1.02]'
-            : 'border-default-300 hover:border-primary hover:bg-primary/5'
-        }`}
-      >
-        <input
-          id='cv-upload-input'
-          type='file'
-          accept='.pdf,.doc,.docx'
-          onChange={handleFileChange}
-          className='hidden'
+      <div className='w-full max-w-2xl'>
+        <div className='mb-8 text-center'>
+          <h3 className='text-foreground mb-4 text-3xl font-bold'>Upload Your CV</h3>
+          <p className='text-default-600 text-lg'>
+            Upload your CV to automatically extract and import your professional information
+          </p>
+        </div>
+
+        <FileUpload
+          selectedFile={uploadedFile}
+          onFileSelect={handleFileUpload}
+          onFileRemove={handleFileRemove}
+          isDragOver={isDragActive}
+          onDragEnter={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          acceptedFileTypes='.pdf,.doc,.docx'
+          maxFileSize={15 * 1024 * 1024}
+          className='mb-8'
         />
-        <div className='space-y-8'>
-          <div className='flex justify-center'>
-            <div className='relative'>
-              <div className='from-primary/20 to-secondary/20 rounded-3xl bg-gradient-to-br p-8'>
-                <Icon icon='solar:document-add-outline' className='text-primary/70 h-20 w-20' />
-              </div>
-              <div className='bg-success absolute -top-2 -right-2 rounded-full p-2'>
-                <Icon icon='solar:cloud-upload-outline' className='h-6 w-6 text-white' />
-              </div>
-            </div>
-          </div>
 
-          <div className='space-y-4'>
-            <h3 className='text-foreground text-3xl font-bold'>Upload Your CV</h3>
-            <p className='text-default-600 mx-auto max-w-md text-lg'>
-              {isDragActive
-                ? 'Drop your CV here to get started...'
-                : 'Drag & drop your CV here, or click to browse your files'}
-            </p>
-          </div>
-
-          <div className='flex justify-center'>
-            <Chip
-              variant='flat'
-              color='primary'
-              size='lg'
-              startContent={<Icon icon='solar:shield-check-linear' className='h-4 w-4' />}
-            >
-              Supports PDF, DOC, DOCX • Max 15MB • Secure Processing
-            </Chip>
-          </div>
+        <div className='text-center'>
+          <Chip
+            variant='flat'
+            color='primary'
+            size='lg'
+            startContent={<Icon icon='solar:shield-check-outline' className='h-4 w-4' />}
+          >
+            Supports PDF, DOC, DOCX • Max 15MB • Secure Processing
+          </Chip>
         </div>
       </div>
 
@@ -530,590 +547,40 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
     </motion.div>
   );
 
-  const renderPersonalInfoForm = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className='space-y-6'>
-        <div className='grid grid-cols-1 gap-6 lg:grid-cols-2'>
-          <Input
-            label='First Name'
-            placeholder='Enter your first name'
-            variant='bordered'
-            value={reviewData.personalInfo.firstName || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { firstName: e.target.value })}
-            startContent={<Icon icon='solar:user-outline' className='text-default-400 h-4 w-4' />}
-          />
-          <Input
-            label='Last Name'
-            placeholder='Enter your last name'
-            variant='bordered'
-            value={reviewData.personalInfo.lastName || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { lastName: e.target.value })}
-            startContent={<Icon icon='solar:user-outline' className='text-default-400 h-4 w-4' />}
-          />
-          <Input
-            label='Email Address'
-            placeholder='Enter your email'
-            variant='bordered'
-            type='email'
-            value={reviewData.personalInfo.email || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { email: e.target.value })}
-            startContent={<Icon icon='solar:letter-outline' className='text-default-400 h-4 w-4' />}
-          />
-          <Input
-            label='Phone Number'
-            placeholder='Enter your phone number'
-            variant='bordered'
-            value={reviewData.personalInfo.phoneNumber || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { phoneNumber: e.target.value })}
-            startContent={<Icon icon='solar:phone-outline' className='text-default-400 h-4 w-4' />}
-          />
-          <Input
-            label='Location'
-            placeholder='City, Country'
-            variant='bordered'
-            value={reviewData.personalInfo.city || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { city: e.target.value })}
-            startContent={
-              <Icon icon='solar:map-point-outline' className='text-default-400 h-4 w-4' />
-            }
-          />
-          <Input
-            label='LinkedIn Profile'
-            placeholder='https://linkedin.com/in/username'
-            variant='bordered'
-            value={reviewData.personalInfo.linkedinProfile || ''}
-            onChange={(e) =>
-              handleUpdateItem('personalInfo', -1, { linkedinProfile: e.target.value })
-            }
-            startContent={<Icon icon='solar:link-outline' className='text-default-400 h-4 w-4' />}
-          />
-        </div>
-        <Input
-          label='Portfolio Website'
-          placeholder='https://yourportfolio.com'
-          variant='bordered'
-          value={reviewData.personalInfo.profileWebsite || ''}
-          onChange={(e) => handleUpdateItem('personalInfo', -1, { profileWebsite: e.target.value })}
-          startContent={<Icon icon='solar:global-outline' className='text-default-400 h-4 w-4' />}
-        />
-        <Textarea
-          label='Professional Summary'
-          placeholder='Brief description of your professional background and expertise...'
-          variant='bordered'
-          value={reviewData.personalInfo.aboutMe || ''}
-          onChange={(e) => handleUpdateItem('personalInfo', -1, { aboutMe: e.target.value })}
-          minRows={4}
-          startContent={<Icon icon='solar:notes-outline' className='text-default-400 h-4 w-4' />}
-        />
-      </div>
-    );
-  };
-
-  const renderSkillsSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className='space-y-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-lg font-semibold'>Skills ({reviewData.skills.length})</h3>
-            <p className='text-default-600 text-sm'>Manage your technical and soft skills</p>
-          </div>
-          <Button
-            color='primary'
-            variant='flat'
-            startContent={<Icon icon='solar:add-circle-linear' className='h-4 w-4' />}
-            onPress={() => handleAddNew('skills')}
-          >
-            Add Skill
-          </Button>
-        </div>
-
-        <div className='grid max-h-96 grid-cols-1 gap-4 overflow-y-auto pr-2 lg:grid-cols-2'>
-          {reviewData.skills.map((skill, index) => (
-            <Card
-              key={skill.id}
-              className='border-default-200 hover:border-primary/50 border-2 transition-colors'
-            >
-              <CardBody className='p-4'>
-                <div className='flex items-center justify-between'>
-                  <div className='flex flex-1 items-center gap-3'>
-                    <div
-                      className={`rounded-lg p-2 ${skill.type === 'SOFT' ? 'bg-secondary/20' : 'bg-primary/20'}`}
-                    >
-                      <Icon
-                        icon={skill.type === 'SOFT' ? 'solar:heart-linear' : 'solar:code-linear'}
-                        className={`h-4 w-4 ${skill.type === 'SOFT' ? 'text-secondary' : 'text-primary'}`}
-                      />
-                    </div>
-                    <div className='flex-1'>
-                      <Input
-                        variant='bordered'
-                        size='sm'
-                        value={skill.key}
-                        onChange={(e) =>
-                          handleUpdateItem('skills', index, { ...skill, key: e.target.value })
-                        }
-                        placeholder='Skill name'
-                      />
-                    </div>
-                    <Select
-                      variant='bordered'
-                      size='sm'
-                      className='w-32'
-                      selectedKeys={[skill.type]}
-                      onSelectionChange={(keys) => {
-                        const type = Array.from(keys)[0] as 'NORMAL' | 'SOFT';
-                        handleUpdateItem('skills', index, { ...skill, type });
-                      }}
-                    >
-                      <SelectItem key='NORMAL'>Technical</SelectItem>
-                      <SelectItem key='SOFT'>Soft Skill</SelectItem>
-                    </Select>
-                  </div>
-                  <Button
-                    size='sm'
-                    variant='light'
-                    color='danger'
-                    isIconOnly
-                    onPress={() => handleRemove('skills', index)}
-                  >
-                    <Icon icon='solar:trash-bin-trash-linear' className='h-4 w-4' />
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderExperienceSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className='space-y-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-lg font-semibold'>
-              Work Experience ({reviewData.experience.length})
-            </h3>
-            <p className='text-default-600 text-sm'>Your professional work history</p>
-          </div>
-          <Button
-            color='primary'
-            variant='flat'
-            startContent={<Icon icon='solar:add-circle-linear' className='h-4 w-4' />}
-            onPress={() => handleAddNew('experience')}
-          >
-            Add Experience
-          </Button>
-        </div>
-
-        <div className='max-h-96 space-y-6 overflow-y-auto pr-2'>
-          {reviewData.experience.map((exp, index) => (
-            <Card key={exp.id} className='border-default-200 border-2'>
-              <CardHeader className='pb-2'>
-                <div className='flex w-full items-start justify-between'>
-                  <div className='flex items-center gap-3'>
-                    <div className='bg-primary/20 rounded-lg p-2'>
-                      <Icon icon='solar:briefcase-linear' className='text-primary h-5 w-5' />
-                    </div>
-                    <div>
-                      <h4 className='font-semibold'>{exp.position || 'Position'}</h4>
-                      <p className='text-default-600 text-sm'>{exp.company || 'Company'}</p>
-                    </div>
-                  </div>
-                  <Button
-                    size='sm'
-                    variant='light'
-                    color='danger'
-                    isIconOnly
-                    onPress={() => handleRemove('experience', index)}
-                  >
-                    <Icon icon='solar:trash-bin-trash-linear' className='h-4 w-4' />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardBody className='pt-0'>
-                <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-                  <Input
-                    label='Company'
-                    variant='bordered'
-                    value={exp.company}
-                    onChange={(e) =>
-                      handleUpdateItem('experience', index, { ...exp, company: e.target.value })
-                    }
-                  />
-                  <Input
-                    label='Position'
-                    variant='bordered'
-                    value={exp.position}
-                    onChange={(e) =>
-                      handleUpdateItem('experience', index, {
-                        ...exp,
-                        position: e.target.value,
-                        title: e.target.value
-                      })
-                    }
-                  />
-                  <Input
-                    label='Start Date'
-                    type='date'
-                    variant='bordered'
-                    value={exp.startDate}
-                    onChange={(e) =>
-                      handleUpdateItem('experience', index, { ...exp, startDate: e.target.value })
-                    }
-                  />
-                  <Input
-                    label='End Date'
-                    type='date'
-                    variant='bordered'
-                    value={exp.endDate}
-                    onChange={(e) =>
-                      handleUpdateItem('experience', index, { ...exp, endDate: e.target.value })
-                    }
-                  />
-                </div>
-                <Textarea
-                  label='Description'
-                  variant='bordered'
-                  value={exp.description}
-                  onChange={(e) =>
-                    handleUpdateItem('experience', index, { ...exp, description: e.target.value })
-                  }
-                  minRows={3}
-                  className='mt-4'
-                />
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderEducationSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className='space-y-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-lg font-semibold'>Education ({reviewData.education.length})</h3>
-            <p className='text-default-600 text-sm'>Your educational background</p>
-          </div>
-          <Button
-            color='primary'
-            variant='flat'
-            startContent={<Icon icon='solar:add-circle-linear' className='h-4 w-4' />}
-            onPress={() => handleAddNew('education')}
-          >
-            Add Education
-          </Button>
-        </div>
-
-        <div className='max-h-96 space-y-6 overflow-y-auto pr-2'>
-          {reviewData.education.map((edu, index) => (
-            <Card key={edu.id} className='border-default-200 border-2'>
-              <CardHeader className='pb-2'>
-                <div className='flex w-full items-start justify-between'>
-                  <div className='flex items-center gap-3'>
-                    <div className='bg-success/20 rounded-lg p-2'>
-                      <Icon icon='solar:graduation-linear' className='text-success h-5 w-5' />
-                    </div>
-                    <div>
-                      <h4 className='font-semibold'>{edu.degree || 'Degree'}</h4>
-                      <p className='text-default-600 text-sm'>{edu.university || 'University'}</p>
-                    </div>
-                  </div>
-                  <Button
-                    size='sm'
-                    variant='light'
-                    color='danger'
-                    isIconOnly
-                    onPress={() => handleRemove('education', index)}
-                  >
-                    <Icon icon='solar:trash-bin-trash-linear' className='h-4 w-4' />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardBody className='pt-0'>
-                <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-                  <Input
-                    label='University/Institution'
-                    variant='bordered'
-                    value={edu.university}
-                    onChange={(e) =>
-                      handleUpdateItem('education', index, { ...edu, university: e.target.value })
-                    }
-                  />
-                  <Input
-                    label='Degree'
-                    variant='bordered'
-                    value={edu.degree}
-                    onChange={(e) =>
-                      handleUpdateItem('education', index, { ...edu, degree: e.target.value })
-                    }
-                  />
-                  <Input
-                    label='Start Date'
-                    type='date'
-                    variant='bordered'
-                    value={edu.startDate}
-                    onChange={(e) =>
-                      handleUpdateItem('education', index, { ...edu, startDate: e.target.value })
-                    }
-                  />
-                  <Input
-                    label='End Date'
-                    type='date'
-                    variant='bordered'
-                    value={edu.endDate}
-                    onChange={(e) =>
-                      handleUpdateItem('education', index, { ...edu, endDate: e.target.value })
-                    }
-                  />
-                </div>
-                <Textarea
-                  label='Additional Information'
-                  variant='bordered'
-                  value={edu.description}
-                  onChange={(e) =>
-                    handleUpdateItem('education', index, { ...edu, description: e.target.value })
-                  }
-                  className='mt-4'
-                  placeholder='Grade, achievements, etc.'
-                />
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderLanguagesSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className='space-y-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-lg font-semibold'>Languages ({reviewData.languages.length})</h3>
-            <p className='text-default-600 text-sm'>Languages you speak</p>
-          </div>
-          <Button
-            color='primary'
-            variant='flat'
-            startContent={<Icon icon='solar:add-circle-linear' className='h-4 w-4' />}
-            onPress={() => handleAddNew('languages')}
-          >
-            Add Language
-          </Button>
-        </div>
-
-        <div className='grid max-h-96 grid-cols-1 gap-4 overflow-y-auto pr-2 lg:grid-cols-2'>
-          {reviewData.languages.map((lang, index) => (
-            <Card key={lang.id} className='border-default-200 border-2'>
-              <CardBody className='p-4'>
-                <div className='flex items-center justify-between'>
-                  <div className='flex flex-1 items-center gap-3'>
-                    <div className='bg-warning/20 rounded-lg p-2'>
-                      <Icon icon='solar:translation-linear' className='text-warning h-4 w-4' />
-                    </div>
-                    <div className='flex-1 space-y-2'>
-                      <Input
-                        variant='bordered'
-                        size='sm'
-                        value={lang.key}
-                        onChange={(e) =>
-                          handleUpdateItem('languages', index, { ...lang, key: e.target.value })
-                        }
-                        placeholder='Language name'
-                      />
-                      <Select
-                        variant='bordered'
-                        size='sm'
-                        selectedKeys={[lang.level]}
-                        onSelectionChange={(keys) => {
-                          const level = Array.from(keys)[0] as typeof lang.level;
-                          handleUpdateItem('languages', index, { ...lang, level });
-                        }}
-                      >
-                        <SelectItem key='BEGINNER'>Beginner</SelectItem>
-                        <SelectItem key='INTERMEDIATE'>Intermediate</SelectItem>
-                        <SelectItem key='PROFESSIONAL'>Professional</SelectItem>
-                        <SelectItem key='NATIVE'>Native</SelectItem>
-                      </Select>
-                    </div>
-                  </div>
-                  <Button
-                    size='sm'
-                    variant='light'
-                    color='danger'
-                    isIconOnly
-                    onPress={() => handleRemove('languages', index)}
-                  >
-                    <Icon icon='solar:trash-bin-trash-linear' className='h-4 w-4' />
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderCertificationsSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className='space-y-6'>
-        <div className='flex items-center justify-between'>
-          <div>
-            <h3 className='text-lg font-semibold'>
-              Certifications ({reviewData.certifications.length})
-            </h3>
-            <p className='text-default-600 text-sm'>Professional certifications and achievements</p>
-          </div>
-          <Button
-            color='primary'
-            variant='flat'
-            startContent={<Icon icon='solar:add-circle-linear' className='h-4 w-4' />}
-            onPress={() => handleAddNew('certifications')}
-          >
-            Add Certification
-          </Button>
-        </div>
-
-        <div className='max-h-96 space-y-4 overflow-y-auto pr-2'>
-          {reviewData.certifications.map((cert, index) => (
-            <Card key={cert.id} className='border-default-200 border-2'>
-              <CardBody className='p-4'>
-                <div className='mb-4 flex items-start justify-between'>
-                  <div className='flex items-center gap-3'>
-                    <div className='bg-secondary/20 rounded-lg p-2'>
-                      <Icon icon='solar:medal-star-linear' className='text-secondary h-5 w-5' />
-                    </div>
-                    <div>
-                      <h4 className='font-semibold'>{cert.name || 'Certification Name'}</h4>
-                      <p className='text-default-600 text-sm'>
-                        {cert.issuer || 'Issuing Organization'}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    size='sm'
-                    variant='light'
-                    color='danger'
-                    isIconOnly
-                    onPress={() => handleRemove('certifications', index)}
-                  >
-                    <Icon icon='solar:trash-bin-trash-linear' className='h-4 w-4' />
-                  </Button>
-                </div>
-                <div className='grid grid-cols-1 gap-4 lg:grid-cols-2'>
-                  <Input
-                    label='Certification Name'
-                    variant='bordered'
-                    value={cert.name}
-                    onChange={(e) =>
-                      handleUpdateItem('certifications', index, { ...cert, name: e.target.value })
-                    }
-                  />
-                  <Input
-                    label='Issuing Organization'
-                    variant='bordered'
-                    value={cert.issuer}
-                    onChange={(e) =>
-                      handleUpdateItem('certifications', index, { ...cert, issuer: e.target.value })
-                    }
-                  />
-                  <Input
-                    label='Issue Date'
-                    type='date'
-                    variant='bordered'
-                    value={cert.issueDate}
-                    onChange={(e) =>
-                      handleUpdateItem('certifications', index, {
-                        ...cert,
-                        issueDate: e.target.value
-                      })
-                    }
-                  />
-                  <Input
-                    label='Expiry Date'
-                    type='date'
-                    variant='bordered'
-                    value={cert.expiryDate || ''}
-                    onChange={(e) =>
-                      handleUpdateItem('certifications', index, {
-                        ...cert,
-                        expiryDate: e.target.value
-                      })
-                    }
-                  />
-                </div>
-                <Input
-                  label='Credential ID'
-                  variant='bordered'
-                  value={cert.credentialId || ''}
-                  onChange={(e) =>
-                    handleUpdateItem('certifications', index, {
-                      ...cert,
-                      credentialId: e.target.value
-                    })
-                  }
-                  className='mt-4'
-                />
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   const renderReviewStep = () => {
     if (!reviewData) return null;
 
     const sections = [
+      { id: 'personal', title: 'Personal Info', icon: 'solar:user-circle-outline', badge: '1' },
       {
-        id: 'personal',
-        title: 'Personal Info',
-        icon: 'solar:user-circle-linear',
-        content: renderPersonalInfoForm
+        id: 'skills',
+        title: 'Skills',
+        icon: 'solar:code-outline',
+        badge: reviewData.skills.length.toString()
       },
-      { id: 'skills', title: 'Skills', icon: 'solar:code-linear', content: renderSkillsSection },
       {
         id: 'experience',
         title: 'Experience',
-        icon: 'solar:briefcase-linear',
-        content: renderExperienceSection
+        icon: 'solar:briefcase-outline',
+        badge: reviewData.experience.length.toString()
       },
       {
         id: 'education',
         title: 'Education',
-        icon: 'solar:graduation-linear',
-        content: renderEducationSection
+        icon: 'solar:graduation-outline',
+        badge: reviewData.education.length.toString()
       },
       {
         id: 'languages',
         title: 'Languages',
-        icon: 'solar:translation-linear',
-        content: renderLanguagesSection
+        icon: 'solar:translation-outline',
+        badge: reviewData.languages.length.toString()
       },
       {
         id: 'certifications',
         title: 'Certifications',
-        icon: 'solar:medal-star-linear',
-        content: renderCertificationsSection
+        icon: 'solar:medal-star-outline',
+        badge: reviewData.certifications.length.toString()
       }
     ];
 
@@ -1133,13 +600,13 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           </p>
         </div>
 
-        <div className='flex flex-1 flex-col'>
+        <div className='flex min-h-0 flex-1 flex-col'>
           <Tabs
             value={activeTab}
             onSelectionChange={(key) => setActiveTab(key as string)}
             variant='underlined'
             classNames={{
-              tabList: 'gap-6 w-full relative rounded-none p-0 border-b border-divider',
+              tabList: 'gap-8 w-full relative rounded-none p-0 border-b border-divider',
               cursor: 'w-full bg-primary',
               tab: 'max-w-fit px-0 h-12',
               tabContent: 'group-data-[selected=true]:text-primary'
@@ -1149,33 +616,65 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
               <Tab
                 key={section.id}
                 title={
-                  <div className='flex items-center space-x-2'>
+                  <div className='flex items-center space-x-3'>
                     <Icon icon={section.icon} className='h-4 w-4' />
                     <span>{section.title}</span>
-                    <Badge
-                      content={
-                        section.id === 'personal'
-                          ? '1'
-                          : section.id === 'skills'
-                            ? reviewData.skills.length
-                            : section.id === 'experience'
-                              ? reviewData.experience.length
-                              : section.id === 'education'
-                                ? reviewData.education.length
-                                : section.id === 'languages'
-                                  ? reviewData.languages.length
-                                  : reviewData.certifications.length
-                      }
-                      color='primary'
-                      size='sm'
-                      variant='flat'
-                    />
+                    <Badge content={section.badge} color='primary' size='sm' variant='flat' />
                   </div>
                 }
               >
-                <ScrollShadow className='h-[calc(100vh-350px)] w-full'>
-                  <div className='py-6'>{section.content()}</div>
-                </ScrollShadow>
+                <div className='min-h-0 flex-1'>
+                  <ScrollShadow className='h-full w-full'>
+                    <div className='py-6'>
+                      {section.id === 'personal' && (
+                        <PersonalInfoForm
+                          data={reviewData.personalInfo}
+                          onChange={handlePersonalInfoChange}
+                        />
+                      )}
+                      {section.id === 'skills' && (
+                        <SkillsForm
+                          skills={reviewData.skills}
+                          onAdd={handleSkillAdd}
+                          onRemove={handleSkillRemove}
+                          onUpdate={handleSkillUpdate}
+                        />
+                      )}
+                      {section.id === 'experience' && (
+                        <ExperienceForm
+                          experience={reviewData.experience}
+                          onAdd={handleExperienceAdd}
+                          onRemove={handleExperienceRemove}
+                          onUpdate={handleExperienceUpdate}
+                        />
+                      )}
+                      {section.id === 'education' && (
+                        <EducationForm
+                          education={reviewData.education}
+                          onAdd={handleEducationAdd}
+                          onRemove={handleEducationRemove}
+                          onUpdate={handleEducationUpdate}
+                        />
+                      )}
+                      {section.id === 'languages' && (
+                        <LanguagesForm
+                          languages={reviewData.languages}
+                          onAdd={handleLanguageAdd}
+                          onRemove={handleLanguageRemove}
+                          onUpdate={handleLanguageUpdate}
+                        />
+                      )}
+                      {section.id === 'certifications' && (
+                        <CertificationsForm
+                          certifications={reviewData.certifications}
+                          onAdd={handleCertificationAdd}
+                          onRemove={handleCertificationRemove}
+                          onUpdate={handleCertificationUpdate}
+                        />
+                      )}
+                    </div>
+                  </ScrollShadow>
+                </div>
               </Tab>
             ))}
           </Tabs>
@@ -1183,7 +682,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
 
         <div className='bg-warning/10 border-warning/20 mt-6 rounded-xl border p-4'>
           <div className='flex gap-3'>
-            <Icon icon='solar:info-circle-linear' className='text-warning mt-0.5 h-5 w-5' />
+            <Icon icon='solar:info-circle-outline' className='text-warning/70 mt-0.5 h-5 w-5' />
             <div className='text-sm'>
               <p className='text-warning-700 dark:text-warning-400 font-medium'>Review Complete</p>
               <p className='text-warning-600 dark:text-warning-500 mt-1'>
@@ -1211,7 +710,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
               transition={{ duration: 2, repeat: Infinity }}
               className='from-success/20 to-primary/20 rounded-3xl bg-gradient-to-br p-8'
             >
-              <Icon icon='solar:database-linear' className='text-success h-20 w-20' />
+              <Icon icon='solar:database-outline' className='text-success/70 h-20 w-20' />
             </motion.div>
             <div className='from-success/20 absolute inset-0 animate-pulse rounded-3xl bg-gradient-to-r to-transparent' />
           </div>
@@ -1240,10 +739,10 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
 
         <div className='grid max-w-md grid-cols-2 gap-4'>
           {[
-            { icon: 'solar:user-check-linear', label: 'Personal Info' },
-            { icon: 'solar:code-linear', label: 'Skills' },
-            { icon: 'solar:briefcase-linear', label: 'Experience' },
-            { icon: 'solar:graduation-linear', label: 'Education' }
+            { icon: 'solar:user-check-outline', label: 'Personal Info' },
+            { icon: 'solar:code-outline', label: 'Skills' },
+            { icon: 'solar:briefcase-outline', label: 'Experience' },
+            { icon: 'solar:graduation-outline', label: 'Education' }
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -1254,7 +753,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
             >
               <Icon icon={item.icon} className='text-success h-4 w-4' />
               <span className='text-success text-sm font-medium'>{item.label}</span>
-              <Icon icon='solar:check-circle-bold' className='text-success ml-auto h-4 w-4' />
+              <Icon icon='solar:check-circle-outline' className='text-success/70 ml-auto h-4 w-4' />
             </motion.div>
           ))}
         </div>
@@ -1277,14 +776,14 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
             className='relative'
           >
             <div className='from-success/20 to-primary/20 rounded-3xl bg-gradient-to-br p-8'>
-              <Icon icon='solar:check-circle-bold' className='text-success h-20 w-20' />
+              <Icon icon='solar:check-circle-outline' className='text-success/70 h-20 w-20' />
             </div>
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 0.5, delay: 0.3 }}
               className='bg-success absolute -top-2 -right-2 rounded-full p-2'
             >
-              <Icon icon='solar:star-bold' className='h-6 w-6 text-white' />
+              <Icon icon='solar:star-outline' className='h-6 w-6 text-white' />
             </motion.div>
           </motion.div>
         </div>
@@ -1300,22 +799,22 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
         <div className='grid max-w-lg grid-cols-2 gap-4'>
           {[
             {
-              icon: 'solar:user-check-rounded-linear',
+              icon: 'solar:user-check-outline',
               label: 'Personal information updated',
               count: '6 fields'
             },
             {
-              icon: 'solar:code-linear',
+              icon: 'solar:code-outline',
               label: 'Skills synchronized',
               count: `${reviewData?.skills.length || 0} skills`
             },
             {
-              icon: 'solar:briefcase-linear',
+              icon: 'solar:briefcase-outline',
               label: 'Experience added',
               count: `${reviewData?.experience.length || 0} positions`
             },
             {
-              icon: 'solar:graduation-linear',
+              icon: 'solar:graduation-outline',
               label: 'Education history updated',
               count: `${reviewData?.education.length || 0} degrees`
             }
@@ -1328,7 +827,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
               className='bg-success/10 border-success/20 rounded-xl border p-4 text-center'
             >
               <div className='mb-2 flex justify-center'>
-                <Icon icon={item.icon} className='text-success h-6 w-6' />
+                <Icon icon={item.icon} className='text-success/70 h-6 w-6' />
               </div>
               <p className='text-success text-sm font-medium'>{item.label}</p>
               <p className='text-success/70 mt-1 text-xs'>{item.count}</p>
@@ -1340,7 +839,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           variant='flat'
           color='success'
           size='lg'
-          startContent={<Icon icon='solar:shield-check-linear' className='h-4 w-4' />}
+          startContent={<Icon icon='solar:shield-check-outline' className='h-4 w-4' />}
         >
           Profile completion improved significantly
         </Chip>
@@ -1362,9 +861,13 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
     <Drawer
       isOpen={isOpen}
       onOpenChange={onOpenChange}
+      size='5xl'
       placement='right'
       classNames={{
-        base: 'w-[80vw] h-screen max-w-[80vw]'
+        base: 'w-[80vw] h-screen max-w-[80vw]',
+        wrapper: 'w-[80vw] h-screen',
+        backdrop: 'bg-black/60 backdrop-blur-md',
+        content: 'ml-auto'
       }}
     >
       <DrawerContent className='h-screen'>
