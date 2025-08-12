@@ -416,17 +416,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 {isOwnProfile && (
                   <ActionButtons
                     showEdit
-                    showDelete={!!user.aboutMe}
                     onEdit={handleEditAbout}
-                    onDelete={() => {
-                      const confirmed = confirm('Are you sure you want to clear your about me section?');
-                      if (confirmed) {
-                        handlePersonalInfoChange('aboutMe', '');
-                        console.log('About me cleared');
-                      }
-                    }}
                     editTooltip="Edit about me"
-                    deleteTooltip="Clear about me"
                     size="md"
                   />
                 )}
