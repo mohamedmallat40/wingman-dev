@@ -975,7 +975,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                                 size='sm'
                                 value={currentLevel.percentage}
                                 color={currentLevel.color as any}
-                                className='max-w-full'
+                                className='max-w-full transition-all duration-700 ease-out hover:scale-[1.01] transform'
                               />
                             </div>
 
