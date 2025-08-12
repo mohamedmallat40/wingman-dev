@@ -479,7 +479,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
                         onPress={handleEditAbout}
                       >
-                        Add About Me
+                        <span className='hidden sm:inline'>Add About Me</span>
+                        <span className='sm:hidden'>Add</span>
                       </Button>
                     )}
                   </div>
