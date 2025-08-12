@@ -52,7 +52,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
   }, [document]);
 
   const renderDocumentContent = () => {
-    if (!document?.url) {
+    if (!previewUrl) {
       return (
         <div className='flex h-full items-center justify-center'>
           <div className='text-center'>
@@ -67,7 +67,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
     if (isPDF) {
       return (
         <iframe
-          src={document.url}
+          src={previewUrl}
           className='h-full w-full border-0'
           title={`Preview of ${document.documentName}`}
         />
@@ -78,7 +78,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
       return (
         <div className='flex h-full items-center justify-center p-4'>
           <img
-            src={document.url}
+            src={previewUrl}
             alt={document.documentName}
             className='max-h-full max-w-full object-contain'
           />
@@ -100,7 +100,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
             startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
             className='mt-4'
             as='a'
-            href={document.url}
+            href={downloadUrl || '#'}
             download={document.documentName}
           >
             Download File
