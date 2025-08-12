@@ -422,12 +422,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
 
   return (
-    <section className='container mx-auto px-6 pb-20'>
+    <section className='container mx-auto px-6 pb-20 transition-all duration-300'>
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
         {/* Main content */}
         <div className='space-y-8 lg:col-span-2'>
           {/* About */}
-          <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -489,7 +489,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
 
           {/* Experience */}
-          <Card id='experience' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='experience' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -636,7 +636,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Education */}
-          <Card id='education' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='education' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-secondary/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -766,7 +766,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         {/* Sidebar */}
         <div className='space-y-8'>
           {/* Skills */}
-          <Card id='skills' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='skills' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-success/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -846,7 +846,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Languages */}
-          <Card id='languages' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='languages' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-warning/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -1056,7 +1056,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Social Accounts */}
-          <Card id='social-accounts' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='social-accounts' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-purple/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -1127,7 +1127,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
           {/* Contact - Only show for other users */}
           {!isOwnProfile && (
-            <Card id='contact' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+            <Card id='contact' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-danger/20'>
               <CardHeader className='pb-4'>
                 <div className='flex items-center gap-4'>
                   <div className='bg-danger/10 rounded-full p-3'>
@@ -1234,7 +1234,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           )}
 
           {/* Profile summary card */}
-          <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-br shadow-sm'>
+          <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-br shadow-sm hover:shadow-lg transition-all duration-300 hover:border-primary/30 hover:from-primary/8 hover:to-secondary/8'>
             <CardBody className='p-8 text-center'>
               <div className='mx-auto mb-4 h-20 w-20'>
                 {user.profileImage && user.profileImage.trim() ? (
