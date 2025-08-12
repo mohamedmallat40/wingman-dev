@@ -269,6 +269,14 @@ export default function DocumentsPage() {
         document={editingDocument}
         mode={modalMode}
       />
+
+      {/* Document Viewer Drawer */}
+      <DocumentViewerDrawer
+        isOpen={showViewerDrawer}
+        onClose={handleCloseViewer}
+        document={viewingDocument}
+        onEdit={handleEditDocument}
+      />
     </DashboardLayout>
   );
 }
