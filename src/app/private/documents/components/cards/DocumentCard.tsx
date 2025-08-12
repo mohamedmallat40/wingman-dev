@@ -353,6 +353,7 @@ export default function DocumentCard({
                   <DropdownItem
                     key='view'
                     startContent={<Icon icon='solar:eye-linear' className='h-4 w-4' />}
+                    onPress={() => onView?.(document)}
                   >
                     {t('actions.view')}
                   </DropdownItem>
