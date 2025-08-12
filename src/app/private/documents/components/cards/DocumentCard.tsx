@@ -26,6 +26,7 @@ import { DocumentShareModal } from '../modals';
 interface DocumentCardProperties {
   document: IDocument;
   onEdit?: (document: IDocument) => void;
+  onView?: (document: IDocument) => void;
   viewMode?: 'list' | 'grid';
 }
 
