@@ -27,7 +27,8 @@ const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
   error = null,
   onUpload,
   onRefresh,
-  handleOnEdit
+  handleOnEdit,
+  handleOnView
 }) => {
   // Loading state
   if (isLoading) {
