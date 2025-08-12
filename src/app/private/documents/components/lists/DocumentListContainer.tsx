@@ -112,7 +112,7 @@ const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
               delay: index * 0.05 // Stagger animation
             }}
           >
-            <DocumentCard document={document} viewMode={viewMode} onEdit={handleOnEdit} />
+            <DocumentCard document={document} viewMode={viewMode} onEdit={handleOnEdit} onView={handleOnView} />
           </motion.div>
         ))}
       </AnimatePresence>
