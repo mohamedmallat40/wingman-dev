@@ -86,19 +86,19 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
 
       <CardBody className='pt-0'>
         {languages.length > 0 ? (
-          <div className='grid gap-4 sm:grid-cols-2'>
+          <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
             {languages.map((lang, index) => (
-              <Card 
+              <Card
                 key={lang.id || index}
                 className='border border-default-200/50 bg-gradient-to-br from-background to-default-50/30 hover:shadow-md transition-all duration-300 hover:border-warning/30 group'
               >
-                <CardBody className='p-4'>
-                  <div className='space-y-3'>
+                <CardBody className='p-3'>
+                  <div className='space-y-2'>
                     {/* Header with flag and name */}
                     <div className='flex items-center justify-between'>
-                      <div className='flex items-center gap-3'>
-                        <div className='relative'>
-                          <div className='h-7 w-10 overflow-hidden rounded-md border border-default-200 shadow-sm bg-default-100'>
+                      <div className='flex items-center gap-2 min-w-0 flex-1'>
+                        <div className='relative flex-shrink-0'>
+                          <div className='h-5 w-7 overflow-hidden rounded border border-default-200 shadow-sm bg-default-100'>
                             <img
                               src={getCountryFlag(lang)}
                               alt={`${lang.name || lang.key} flag`}
@@ -114,22 +114,19 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
                             />
                           </div>
                           {lang.isNative && (
-                            <div className='absolute -top-1 -right-1 h-3 w-3 bg-success rounded-full border-2 border-background' />
+                            <div className='absolute -top-0.5 -right-0.5 h-2 w-2 bg-success rounded-full border border-background' />
                           )}
                         </div>
-                        
-                        <div className='flex-1 min-w-0'>
-                          <h4 className='font-semibold text-foreground truncate'>
+
+                        <div className='min-w-0 flex-1'>
+                          <h4 className='font-semibold text-foreground text-sm truncate'>
                             {lang.name || lang.key}
                           </h4>
-                          {lang.nativeName && lang.nativeName !== (lang.name || lang.key) && (
-                            <p className='text-xs text-default-500 truncate'>{lang.nativeName}</p>
-                          )}
                         </div>
                       </div>
 
                       {isOwnProfile && (
-                        <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+                        <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0'>
                           <ActionButtons
                             showEdit
                             showDelete
@@ -144,72 +141,27 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
                     </div>
 
                     {/* Level badge */}
-                    <div className='flex items-center justify-between'>
+                    <div className='flex justify-center'>
                       <Chip
                         size='sm'
                         color={getLevelColor(lang.level) as any}
                         variant='flat'
-                        className='font-medium'
+                        className='font-medium text-xs'
                       >
                         {getLevelLabel(lang.level)}
                       </Chip>
-                      
-                      {lang.yearsOfExperience && lang.yearsOfExperience > 0 && (
-                        <div className='flex items-center gap-1 text-xs text-default-600'>
-                          <Icon icon='solar:calendar-outline' className='h-3 w-3' />
-                          <span>{lang.yearsOfExperience}y</span>
-                        </div>
-                      )}
                     </div>
-
-                    {/* Skills - simplified */}
-                    <div className='flex gap-1'>
-                      {[
-                        { key: 'canSpeak', icon: 'solar:microphone-outline', label: 'S' },
-                        { key: 'canUnderstand', icon: 'solar:headphones-outline', label: 'L' },
-                        { key: 'canRead', icon: 'solar:book-outline', label: 'R' },
-                        { key: 'canWrite', icon: 'solar:pen-outline', label: 'W' }
-                      ].map((skill) => (
-                        <div
-                          key={skill.key}
-                          className={`flex items-center justify-center h-6 w-6 rounded-full text-xs transition-colors ${
-                            lang[skill.key as keyof Language] 
-                              ? 'bg-warning/20 text-warning-700' 
-                              : 'bg-default-100 text-default-400'
-                          }`}
-                          title={skill.label === 'S' ? 'Speaking' : skill.label === 'L' ? 'Listening' : skill.label === 'R' ? 'Reading' : 'Writing'}
-                        >
-                          <Icon icon={skill.icon} className='h-3 w-3' />
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Certification - if exists */}
-                    {lang.certificationName && (
-                      <>
-                        <Divider className='my-2' />
-                        <div className='flex items-center gap-2 text-xs'>
-                          <Icon icon='solar:diploma-outline' className='h-3 w-3 text-success' />
-                          <span className='text-success font-medium truncate'>{lang.certificationName}</span>
-                          {lang.certificationLevel && (
-                            <Chip size='sm' color='success' variant='dot' className='text-tiny'>
-                              {lang.certificationLevel}
-                            </Chip>
-                          )}
-                        </div>
-                      </>
-                    )}
                   </div>
                 </CardBody>
               </Card>
             ))}
           </div>
         ) : (
-          <div className='flex flex-col items-center justify-center py-12 text-center'>
-            <div className='mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-warning/10'>
-              <Icon icon='solar:translation-outline' className='h-8 w-8 text-warning/60' />
+          <div className='flex flex-col items-center justify-center py-8 text-center'>
+            <div className='mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-warning/10'>
+              <Icon icon='solar:translation-outline' className='h-6 w-6 text-warning/60' />
             </div>
-            <p className='text-sm text-default-500 mb-4'>
+            <p className='text-sm text-default-500 mb-3'>
               No languages added yet
             </p>
             {isOwnProfile && (
@@ -220,7 +172,8 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
                 onPress={onAdd}
                 startContent={<Icon icon='solar:add-circle-outline' className='h-4 w-4' />}
               >
-                Add Your First Language
+                <span className='hidden sm:inline'>Add Your First Language</span>
+                <span className='sm:hidden'>Add Language</span>
               </Button>
             )}
           </div>
