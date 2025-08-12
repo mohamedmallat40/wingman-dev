@@ -5,9 +5,7 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader,
   Chip,
-  Divider,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -19,18 +17,18 @@ import {
   Tabs,
   Tab
 } from '@heroui/react';
-import { FileUpload } from '@/components/ui/file-upload';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { FileUpload } from '@/components/ui/file-upload';
 import { CVService, type ParsedCVData } from '../services/cv-service';
 import { type IUserProfile, type IEducation, type IExperience, type ILanguage, type Skill } from 'modules/profile/types';
-import {
-  PersonalInfoForm,
-  SkillsForm,
-  ExperienceForm,
-  EducationForm,
-  LanguagesForm,
-  CertificationsForm
+import { 
+  PersonalInfoForm, 
+  SkillsForm, 
+  ExperienceForm, 
+  EducationForm, 
+  LanguagesForm, 
+  CertificationsForm 
 } from './forms';
 
 interface CVUploadDrawerProps {
@@ -72,28 +70,10 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   const [isApplying, setIsApplying] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [activeTab, setActiveTab] = useState('personal');
-
   const [isDragActive, setIsDragActive] = useState(false);
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file) return;
-
-    // Enhanced file validation
-    const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    ];
-
-    if (!allowedTypes.includes(file.type)) {
-      alert('Please upload a PDF, DOC, or DOCX file');
-      return;
-    }
-
-    if (file.size > 15 * 1024 * 1024) {
-      alert('File size must be less than 15MB');
-      return;
-    }
 
     setUploadedFile(file);
     setCurrentStep('parsing');
@@ -199,11 +179,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
     };
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      handleFileUpload(file);
-    }
+  const handleFileRemove = () => {
+    setUploadedFile(null);
   };
 
   const handleDragOver = (event: React.DragEvent) => {
@@ -219,21 +196,6 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   const handleDrop = (event: React.DragEvent) => {
     event.preventDefault();
     setIsDragActive(false);
-
-    const file = event.dataTransfer.files[0];
-    if (file) {
-      handleFileUpload(file);
-    }
-  };
-
-  const handleSectionToggle = (section: string) => {
-    const newSelected = new Set(selectedSections);
-    if (newSelected.has(section)) {
-      newSelected.delete(section);
-    } else {
-      newSelected.add(section);
-    }
-    setSelectedSections(newSelected);
   };
 
   const handleApplyData = async () => {
@@ -265,69 +227,154 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
     onOpenChange(false);
   };
 
-  const handleAddNew = (section: string) => {
+  // Form handlers
+  const handlePersonalInfoChange = (field: string, value: string) => {
     if (!reviewData) return;
+    setReviewData({
+      ...reviewData,
+      personalInfo: { ...reviewData.personalInfo, [field]: value }
+    });
+  };
 
-    const newReviewData = { ...reviewData };
-    
-    const templates = {
-      skills: { id: `skill_${Date.now()}`, key: '', type: 'NORMAL' as const },
-      experience: {
-        id: `exp_${Date.now()}`,
-        company: '',
-        position: '',
-        title: '',
-        description: '',
-        startDate: '',
-        endDate: '',
-        link: null,
-        image: '',
-        screenShots: null,
-        videoUrl: null
-      },
-      education: {
-        id: `edu_${Date.now()}`,
-        university: '',
-        degree: '',
-        description: '',
-        startDate: '',
-        endDate: ''
-      },
-      languages: { id: `lang_${Date.now()}`, key: '', level: 'BEGINNER' as const },
-      certifications: {
-        id: `cert_${Date.now()}`,
-        name: '',
-        issuer: '',
-        issueDate: '',
-        expiryDate: '',
-        credentialId: ''
-      }
+  const handleSkillAdd = () => {
+    if (!reviewData) return;
+    const newSkill: Skill = { id: `skill_${Date.now()}`, key: '', type: 'NORMAL' };
+    setReviewData({
+      ...reviewData,
+      skills: [...reviewData.skills, newSkill]
+    });
+  };
+
+  const handleSkillRemove = (index: number) => {
+    if (!reviewData) return;
+    const newSkills = [...reviewData.skills];
+    newSkills.splice(index, 1);
+    setReviewData({ ...reviewData, skills: newSkills });
+  };
+
+  const handleSkillUpdate = (index: number, data: Skill) => {
+    if (!reviewData) return;
+    const newSkills = [...reviewData.skills];
+    newSkills[index] = data;
+    setReviewData({ ...reviewData, skills: newSkills });
+  };
+
+  const handleExperienceAdd = () => {
+    if (!reviewData) return;
+    const newExp: IExperience = {
+      id: `exp_${Date.now()}`,
+      company: '',
+      position: '',
+      title: '',
+      description: '',
+      startDate: '',
+      endDate: '',
+      link: null,
+      image: '',
+      screenShots: null,
+      videoUrl: null
     };
-    
-    if (section in templates) {
-      (newReviewData as any)[section].push((templates as any)[section]);
-      setReviewData(newReviewData);
-    }
+    setReviewData({
+      ...reviewData,
+      experience: [...reviewData.experience, newExp]
+    });
   };
 
-  const handleRemove = (section: string, index: number) => {
+  const handleExperienceRemove = (index: number) => {
     if (!reviewData) return;
-
-    const newReviewData = { ...reviewData };
-    (newReviewData as any)[section].splice(index, 1);
-    setReviewData(newReviewData);
+    const newExperience = [...reviewData.experience];
+    newExperience.splice(index, 1);
+    setReviewData({ ...reviewData, experience: newExperience });
   };
 
-  const handleUpdateItem = (section: string, index: number, data: any) => {
+  const handleExperienceUpdate = (index: number, data: IExperience) => {
     if (!reviewData) return;
+    const newExperience = [...reviewData.experience];
+    newExperience[index] = data;
+    setReviewData({ ...reviewData, experience: newExperience });
+  };
 
-    const newReviewData = { ...reviewData };
-    if (section === 'personalInfo') {
-      newReviewData.personalInfo = { ...newReviewData.personalInfo, ...data };
-    } else {
-      (newReviewData as any)[section][index] = data;
-    }
-    setReviewData(newReviewData);
+  const handleEducationAdd = () => {
+    if (!reviewData) return;
+    const newEdu: IEducation = {
+      id: `edu_${Date.now()}`,
+      university: '',
+      degree: '',
+      description: '',
+      startDate: '',
+      endDate: ''
+    };
+    setReviewData({
+      ...reviewData,
+      education: [...reviewData.education, newEdu]
+    });
+  };
+
+  const handleEducationRemove = (index: number) => {
+    if (!reviewData) return;
+    const newEducation = [...reviewData.education];
+    newEducation.splice(index, 1);
+    setReviewData({ ...reviewData, education: newEducation });
+  };
+
+  const handleEducationUpdate = (index: number, data: IEducation) => {
+    if (!reviewData) return;
+    const newEducation = [...reviewData.education];
+    newEducation[index] = data;
+    setReviewData({ ...reviewData, education: newEducation });
+  };
+
+  const handleLanguageAdd = () => {
+    if (!reviewData) return;
+    const newLang: ILanguage = { id: `lang_${Date.now()}`, key: '', level: 'BEGINNER' };
+    setReviewData({
+      ...reviewData,
+      languages: [...reviewData.languages, newLang]
+    });
+  };
+
+  const handleLanguageRemove = (index: number) => {
+    if (!reviewData) return;
+    const newLanguages = [...reviewData.languages];
+    newLanguages.splice(index, 1);
+    setReviewData({ ...reviewData, languages: newLanguages });
+  };
+
+  const handleLanguageUpdate = (index: number, data: ILanguage) => {
+    if (!reviewData) return;
+    const newLanguages = [...reviewData.languages];
+    newLanguages[index] = data;
+    setReviewData({ ...reviewData, languages: newLanguages });
+  };
+
+  const handleCertificationAdd = () => {
+    if (!reviewData) return;
+    const newCert = {
+      id: `cert_${Date.now()}`,
+      name: '',
+      issuer: '',
+      issueDate: '',
+      expiryDate: '',
+      credentialId: ''
+    };
+    setReviewData({
+      ...reviewData,
+      certifications: [...reviewData.certifications, newCert]
+    });
+  };
+
+  const handleCertificationRemove = (index: number) => {
+    if (!reviewData) return;
+    const newCertifications = [...reviewData.certifications];
+    newCertifications.splice(index, 1);
+    setReviewData({ ...reviewData, certifications: newCertifications });
+  };
+
+  const handleCertificationUpdate = (index: number, data: any) => {
+    if (!reviewData) return;
+    const newCertifications = [...reviewData.certifications];
+    newCertifications[index] = data;
+    setReviewData({ ...reviewData, certifications: newCertifications });
   };
 
   const renderUploadStep = () => (
@@ -336,55 +383,37 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       animate={{ opacity: 1, y: 0 }}
       className="flex flex-col items-center justify-center h-full px-8"
     >
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={() => document.getElementById('cv-upload-input')?.click()}
-        className={`w-full max-w-2xl p-12 border-3 border-dashed rounded-3xl text-center cursor-pointer transition-all duration-300 ${
-          isDragActive
-            ? 'border-primary bg-primary/10 scale-[1.02]'
-            : 'border-default-300 hover:border-primary hover:bg-primary/5'
-        }`}
-      >
-        <input
-          id="cv-upload-input"
-          type="file"
-          accept=".pdf,.doc,.docx"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        <div className="space-y-8">
-          <div className="flex justify-center">
-            <div className="relative">
-              <div className="p-8 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-3xl">
-                <Icon icon="solar:document-add-outline" className="h-20 w-20 text-primary/70" />
-              </div>
-              <div className="absolute -top-2 -right-2 p-2 bg-success rounded-full">
-                <Icon icon="solar:cloud-upload-outline" className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="space-y-4">
-            <h3 className="text-3xl font-bold text-foreground">Upload Your CV</h3>
-            <p className="text-lg text-default-600 max-w-md mx-auto">
-              {isDragActive
-                ? "Drop your CV here to get started..."
-                : "Drag & drop your CV here, or click to browse your files"}
-            </p>
-          </div>
+      <div className="w-full max-w-2xl">
+        <div className="text-center mb-8">
+          <h3 className="text-3xl font-bold text-foreground mb-4">Upload Your CV</h3>
+          <p className="text-lg text-default-600">
+            Upload your CV to automatically extract and import your professional information
+          </p>
+        </div>
 
-          <div className="flex justify-center">
-            <Chip 
-              variant="flat" 
-              color="primary" 
-              size="lg"
-              startContent={<Icon icon="solar:shield-check-linear" className="h-4 w-4" />}
-            >
-              Supports PDF, DOC, DOCX • Max 15MB • Secure Processing
-            </Chip>
-          </div>
+        <FileUpload
+          selectedFile={uploadedFile}
+          onFileSelect={handleFileUpload}
+          onFileRemove={handleFileRemove}
+          isDragOver={isDragActive}
+          onDragEnter={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          acceptedFileTypes=".pdf,.doc,.docx"
+          maxFileSize={15 * 1024 * 1024}
+          className="mb-8"
+        />
+
+        <div className="text-center">
+          <Chip 
+            variant="flat" 
+            color="primary" 
+            size="lg"
+            startContent={<Icon icon="solar:shield-check-outline" className="h-4 w-4" />}
+          >
+            Supports PDF, DOC, DOCX • Max 15MB • Secure Processing
+          </Chip>
         </div>
       </div>
       
@@ -502,504 +531,16 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
     </motion.div>
   );
 
-  const renderPersonalInfoForm = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Input
-            label="First Name"
-            placeholder="Enter your first name"
-            variant="bordered"
-            value={reviewData.personalInfo.firstName || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { firstName: e.target.value })}
-            startContent={<Icon icon="solar:user-outline" className="h-4 w-4 text-default-400" />}
-          />
-          <Input
-            label="Last Name"
-            placeholder="Enter your last name"
-            variant="bordered"
-            value={reviewData.personalInfo.lastName || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { lastName: e.target.value })}
-            startContent={<Icon icon="solar:user-outline" className="h-4 w-4 text-default-400" />}
-          />
-          <Input
-            label="Email Address"
-            placeholder="Enter your email"
-            variant="bordered"
-            type="email"
-            value={reviewData.personalInfo.email || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { email: e.target.value })}
-            startContent={<Icon icon="solar:letter-outline" className="h-4 w-4 text-default-400" />}
-          />
-          <Input
-            label="Phone Number"
-            placeholder="Enter your phone number"
-            variant="bordered"
-            value={reviewData.personalInfo.phoneNumber || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { phoneNumber: e.target.value })}
-            startContent={<Icon icon="solar:phone-outline" className="h-4 w-4 text-default-400" />}
-          />
-          <Input
-            label="Location"
-            placeholder="City, Country"
-            variant="bordered"
-            value={reviewData.personalInfo.city || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { city: e.target.value })}
-            startContent={<Icon icon="solar:map-point-outline" className="h-4 w-4 text-default-400" />}
-          />
-          <Input
-            label="LinkedIn Profile"
-            placeholder="https://linkedin.com/in/username"
-            variant="bordered"
-            value={reviewData.personalInfo.linkedinProfile || ''}
-            onChange={(e) => handleUpdateItem('personalInfo', -1, { linkedinProfile: e.target.value })}
-            startContent={<Icon icon="solar:link-outline" className="h-4 w-4 text-default-400" />}
-          />
-        </div>
-        <Input
-          label="Portfolio Website"
-          placeholder="https://yourportfolio.com"
-          variant="bordered"
-          value={reviewData.personalInfo.profileWebsite || ''}
-          onChange={(e) => handleUpdateItem('personalInfo', -1, { profileWebsite: e.target.value })}
-          startContent={<Icon icon="solar:global-outline" className="h-4 w-4 text-default-400" />}
-        />
-        <Textarea
-          label="Professional Summary"
-          placeholder="Brief description of your professional background and expertise..."
-          variant="bordered"
-          value={reviewData.personalInfo.aboutMe || ''}
-          onChange={(e) => handleUpdateItem('personalInfo', -1, { aboutMe: e.target.value })}
-          minRows={4}
-          startContent={<Icon icon="solar:notes-outline" className="h-4 w-4 text-default-400" />}
-        />
-      </div>
-    );
-  };
-
-  const renderSkillsSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-lg font-semibold">Skills ({reviewData.skills.length})</h3>
-            <p className="text-sm text-default-600">Manage your technical and soft skills</p>
-          </div>
-          <Button
-            color="primary"
-            variant="flat"
-            startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-            onPress={() => handleAddNew('skills')}
-          >
-            Add Skill
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2">
-          {reviewData.skills.map((skill, index) => (
-            <Card key={skill.id} className="border-2 border-default-200 hover:border-primary/50 transition-colors">
-              <CardBody className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className={`p-2 rounded-lg ${skill.type === 'SOFT' ? 'bg-secondary/20' : 'bg-primary/20'}`}>
-                      <Icon 
-                        icon={skill.type === 'SOFT' ? "solar:heart-linear" : "solar:code-linear"} 
-                        className={`h-4 w-4 ${skill.type === 'SOFT' ? 'text-secondary' : 'text-primary'}`}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <Input
-                        variant="bordered"
-                        size="sm"
-                        value={skill.key}
-                        onChange={(e) => handleUpdateItem('skills', index, { ...skill, key: e.target.value })}
-                        placeholder="Skill name"
-                      />
-                    </div>
-                    <Select
-                      variant="bordered"
-                      size="sm"
-                      className="w-32"
-                      selectedKeys={[skill.type]}
-                      onSelectionChange={(keys) => {
-                        const type = Array.from(keys)[0] as 'NORMAL' | 'SOFT';
-                        handleUpdateItem('skills', index, { ...skill, type });
-                      }}
-                    >
-                      <SelectItem key="NORMAL">Technical</SelectItem>
-                      <SelectItem key="SOFT">Soft Skill</SelectItem>
-                    </Select>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('skills', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderExperienceSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-lg font-semibold">Work Experience ({reviewData.experience.length})</h3>
-            <p className="text-sm text-default-600">Your professional work history</p>
-          </div>
-          <Button
-            color="primary"
-            variant="flat"
-            startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-            onPress={() => handleAddNew('experience')}
-          >
-            Add Experience
-          </Button>
-        </div>
-
-        <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
-          {reviewData.experience.map((exp, index) => (
-            <Card key={exp.id} className="border-2 border-default-200">
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start w-full">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-primary/20 rounded-lg">
-                      <Icon icon="solar:briefcase-linear" className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">{exp.position || 'Position'}</h4>
-                      <p className="text-sm text-default-600">{exp.company || 'Company'}</p>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('experience', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardBody className="pt-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <Input
-                    label="Company"
-                    variant="bordered"
-                    value={exp.company}
-                    onChange={(e) => handleUpdateItem('experience', index, { ...exp, company: e.target.value })}
-                  />
-                  <Input
-                    label="Position"
-                    variant="bordered"
-                    value={exp.position}
-                    onChange={(e) => handleUpdateItem('experience', index, { ...exp, position: e.target.value, title: e.target.value })}
-                  />
-                  <Input
-                    label="Start Date"
-                    type="date"
-                    variant="bordered"
-                    value={exp.startDate}
-                    onChange={(e) => handleUpdateItem('experience', index, { ...exp, startDate: e.target.value })}
-                  />
-                  <Input
-                    label="End Date"
-                    type="date"
-                    variant="bordered"
-                    value={exp.endDate}
-                    onChange={(e) => handleUpdateItem('experience', index, { ...exp, endDate: e.target.value })}
-                  />
-                </div>
-                <Textarea
-                  label="Description"
-                  variant="bordered"
-                  value={exp.description}
-                  onChange={(e) => handleUpdateItem('experience', index, { ...exp, description: e.target.value })}
-                  minRows={3}
-                  className="mt-4"
-                />
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderEducationSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-lg font-semibold">Education ({reviewData.education.length})</h3>
-            <p className="text-sm text-default-600">Your educational background</p>
-          </div>
-          <Button
-            color="primary"
-            variant="flat"
-            startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-            onPress={() => handleAddNew('education')}
-          >
-            Add Education
-          </Button>
-        </div>
-
-        <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
-          {reviewData.education.map((edu, index) => (
-            <Card key={edu.id} className="border-2 border-default-200">
-              <CardHeader className="pb-2">
-                <div className="flex justify-between items-start w-full">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-success/20 rounded-lg">
-                      <Icon icon="solar:graduation-linear" className="h-5 w-5 text-success" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">{edu.degree || 'Degree'}</h4>
-                      <p className="text-sm text-default-600">{edu.university || 'University'}</p>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('education', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardBody className="pt-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <Input
-                    label="University/Institution"
-                    variant="bordered"
-                    value={edu.university}
-                    onChange={(e) => handleUpdateItem('education', index, { ...edu, university: e.target.value })}
-                  />
-                  <Input
-                    label="Degree"
-                    variant="bordered"
-                    value={edu.degree}
-                    onChange={(e) => handleUpdateItem('education', index, { ...edu, degree: e.target.value })}
-                  />
-                  <Input
-                    label="Start Date"
-                    type="date"
-                    variant="bordered"
-                    value={edu.startDate}
-                    onChange={(e) => handleUpdateItem('education', index, { ...edu, startDate: e.target.value })}
-                  />
-                  <Input
-                    label="End Date"
-                    type="date"
-                    variant="bordered"
-                    value={edu.endDate}
-                    onChange={(e) => handleUpdateItem('education', index, { ...edu, endDate: e.target.value })}
-                  />
-                </div>
-                <Textarea
-                  label="Additional Information"
-                  variant="bordered"
-                  value={edu.description}
-                  onChange={(e) => handleUpdateItem('education', index, { ...edu, description: e.target.value })}
-                  className="mt-4"
-                  placeholder="Grade, achievements, etc."
-                />
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderLanguagesSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-lg font-semibold">Languages ({reviewData.languages.length})</h3>
-            <p className="text-sm text-default-600">Languages you speak</p>
-          </div>
-          <Button
-            color="primary"
-            variant="flat"
-            startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-            onPress={() => handleAddNew('languages')}
-          >
-            Add Language
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-h-96 overflow-y-auto pr-2">
-          {reviewData.languages.map((lang, index) => (
-            <Card key={lang.id} className="border-2 border-default-200">
-              <CardBody className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="p-2 bg-warning/20 rounded-lg">
-                      <Icon icon="solar:translation-linear" className="h-4 w-4 text-warning" />
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <Input
-                        variant="bordered"
-                        size="sm"
-                        value={lang.key}
-                        onChange={(e) => handleUpdateItem('languages', index, { ...lang, key: e.target.value })}
-                        placeholder="Language name"
-                      />
-                      <Select
-                        variant="bordered"
-                        size="sm"
-                        selectedKeys={[lang.level]}
-                        onSelectionChange={(keys) => {
-                          const level = Array.from(keys)[0] as typeof lang.level;
-                          handleUpdateItem('languages', index, { ...lang, level });
-                        }}
-                      >
-                        <SelectItem key="BEGINNER">Beginner</SelectItem>
-                        <SelectItem key="INTERMEDIATE">Intermediate</SelectItem>
-                        <SelectItem key="PROFESSIONAL">Professional</SelectItem>
-                        <SelectItem key="NATIVE">Native</SelectItem>
-                      </Select>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('languages', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderCertificationsSection = () => {
-    if (!reviewData) return null;
-
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-lg font-semibold">Certifications ({reviewData.certifications.length})</h3>
-            <p className="text-sm text-default-600">Professional certifications and achievements</p>
-          </div>
-          <Button
-            color="primary"
-            variant="flat"
-            startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
-            onPress={() => handleAddNew('certifications')}
-          >
-            Add Certification
-          </Button>
-        </div>
-
-        <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-          {reviewData.certifications.map((cert, index) => (
-            <Card key={cert.id} className="border-2 border-default-200">
-              <CardBody className="p-4">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-secondary/20 rounded-lg">
-                      <Icon icon="solar:medal-star-linear" className="h-5 w-5 text-secondary" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">{cert.name || 'Certification Name'}</h4>
-                      <p className="text-sm text-default-600">{cert.issuer || 'Issuing Organization'}</p>
-                    </div>
-                  </div>
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    onPress={() => handleRemove('certifications', index)}
-                  >
-                    <Icon icon="solar:trash-bin-trash-linear" className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  <Input
-                    label="Certification Name"
-                    variant="bordered"
-                    value={cert.name}
-                    onChange={(e) => handleUpdateItem('certifications', index, { ...cert, name: e.target.value })}
-                  />
-                  <Input
-                    label="Issuing Organization"
-                    variant="bordered"
-                    value={cert.issuer}
-                    onChange={(e) => handleUpdateItem('certifications', index, { ...cert, issuer: e.target.value })}
-                  />
-                  <Input
-                    label="Issue Date"
-                    type="date"
-                    variant="bordered"
-                    value={cert.issueDate}
-                    onChange={(e) => handleUpdateItem('certifications', index, { ...cert, issueDate: e.target.value })}
-                  />
-                  <Input
-                    label="Expiry Date"
-                    type="date"
-                    variant="bordered"
-                    value={cert.expiryDate || ''}
-                    onChange={(e) => handleUpdateItem('certifications', index, { ...cert, expiryDate: e.target.value })}
-                  />
-                </div>
-                <Input
-                  label="Credential ID"
-                  variant="bordered"
-                  value={cert.credentialId || ''}
-                  onChange={(e) => handleUpdateItem('certifications', index, { ...cert, credentialId: e.target.value })}
-                  className="mt-4"
-                />
-              </CardBody>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
   const renderReviewStep = () => {
     if (!reviewData) return null;
 
     const sections = [
-      { id: 'personal', title: 'Personal Info', icon: 'solar:user-circle-linear', content: renderPersonalInfoForm },
-      { id: 'skills', title: 'Skills', icon: 'solar:code-linear', content: renderSkillsSection },
-      { id: 'experience', title: 'Experience', icon: 'solar:briefcase-linear', content: renderExperienceSection },
-      { id: 'education', title: 'Education', icon: 'solar:graduation-linear', content: renderEducationSection },
-      { id: 'languages', title: 'Languages', icon: 'solar:translation-linear', content: renderLanguagesSection },
-      { id: 'certifications', title: 'Certifications', icon: 'solar:medal-star-linear', content: renderCertificationsSection },
+      { id: 'personal', title: 'Personal Info', icon: 'solar:user-circle-outline', badge: '1' },
+      { id: 'skills', title: 'Skills', icon: 'solar:code-outline', badge: reviewData.skills.length.toString() },
+      { id: 'experience', title: 'Experience', icon: 'solar:briefcase-outline', badge: reviewData.experience.length.toString() },
+      { id: 'education', title: 'Education', icon: 'solar:graduation-outline', badge: reviewData.education.length.toString() },
+      { id: 'languages', title: 'Languages', icon: 'solar:translation-outline', badge: reviewData.languages.length.toString() },
+      { id: 'certifications', title: 'Certifications', icon: 'solar:medal-star-outline', badge: reviewData.certifications.length.toString() },
     ];
 
     return (
@@ -1016,12 +557,12 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
         </div>
 
         <div className="flex flex-col flex-1 min-h-0">
-          <Tabs
-            value={activeTab}
+          <Tabs 
+            value={activeTab} 
             onSelectionChange={(key) => setActiveTab(key as string)}
             variant="underlined"
             classNames={{
-              tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
+              tabList: "gap-8 w-full relative rounded-none p-0 border-b border-divider",
               cursor: "w-full bg-primary",
               tab: "max-w-fit px-0 h-12",
               tabContent: "group-data-[selected=true]:text-primary"
@@ -1031,18 +572,11 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
               <Tab
                 key={section.id}
                 title={
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-3">
                     <Icon icon={section.icon} className="h-4 w-4" />
                     <span>{section.title}</span>
                     <Badge 
-                      content={
-                        section.id === 'personal' ? '1' : 
-                        section.id === 'skills' ? reviewData.skills.length :
-                        section.id === 'experience' ? reviewData.experience.length :
-                        section.id === 'education' ? reviewData.education.length :
-                        section.id === 'languages' ? reviewData.languages.length :
-                        reviewData.certifications.length
-                      }
+                      content={section.badge}
                       color="primary"
                       size="sm"
                       variant="flat"
@@ -1053,7 +587,52 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                 <div className="flex-1 min-h-0">
                   <ScrollShadow className="h-full w-full">
                     <div className="py-6">
-                      {section.content()}
+                      {section.id === 'personal' && (
+                        <PersonalInfoForm 
+                          data={reviewData.personalInfo} 
+                          onChange={handlePersonalInfoChange}
+                        />
+                      )}
+                      {section.id === 'skills' && (
+                        <SkillsForm 
+                          skills={reviewData.skills}
+                          onAdd={handleSkillAdd}
+                          onRemove={handleSkillRemove}
+                          onUpdate={handleSkillUpdate}
+                        />
+                      )}
+                      {section.id === 'experience' && (
+                        <ExperienceForm 
+                          experience={reviewData.experience}
+                          onAdd={handleExperienceAdd}
+                          onRemove={handleExperienceRemove}
+                          onUpdate={handleExperienceUpdate}
+                        />
+                      )}
+                      {section.id === 'education' && (
+                        <EducationForm 
+                          education={reviewData.education}
+                          onAdd={handleEducationAdd}
+                          onRemove={handleEducationRemove}
+                          onUpdate={handleEducationUpdate}
+                        />
+                      )}
+                      {section.id === 'languages' && (
+                        <LanguagesForm 
+                          languages={reviewData.languages}
+                          onAdd={handleLanguageAdd}
+                          onRemove={handleLanguageRemove}
+                          onUpdate={handleLanguageUpdate}
+                        />
+                      )}
+                      {section.id === 'certifications' && (
+                        <CertificationsForm 
+                          certifications={reviewData.certifications}
+                          onAdd={handleCertificationAdd}
+                          onRemove={handleCertificationRemove}
+                          onUpdate={handleCertificationUpdate}
+                        />
+                      )}
                     </div>
                   </ScrollShadow>
                 </div>
@@ -1064,7 +643,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
 
         <div className="mt-6 p-4 bg-warning/10 border border-warning/20 rounded-xl">
           <div className="flex gap-3">
-            <Icon icon="solar:info-circle-linear" className="h-5 w-5 text-warning mt-0.5" />
+            <Icon icon="solar:info-circle-outline" className="h-5 w-5 text-warning/70 mt-0.5" />
             <div className="text-sm">
               <p className="font-medium text-warning-700 dark:text-warning-400">Review Complete</p>
               <p className="text-warning-600 dark:text-warning-500 mt-1">
@@ -1091,7 +670,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
               transition={{ duration: 2, repeat: Infinity }}
               className="p-8 bg-gradient-to-br from-success/20 to-primary/20 rounded-3xl"
             >
-              <Icon icon="solar:database-linear" className="h-20 w-20 text-success" />
+              <Icon icon="solar:database-outline" className="h-20 w-20 text-success/70" />
             </motion.div>
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-success/20 to-transparent animate-pulse" />
           </div>
@@ -1120,10 +699,10 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
 
         <div className="grid grid-cols-2 gap-4 max-w-md">
           {[
-            { icon: "solar:user-check-linear", label: "Personal Info" },
-            { icon: "solar:code-linear", label: "Skills" },
-            { icon: "solar:briefcase-linear", label: "Experience" },
-            { icon: "solar:graduation-linear", label: "Education" }
+            { icon: "solar:user-check-outline", label: "Personal Info" },
+            { icon: "solar:code-outline", label: "Skills" },
+            { icon: "solar:briefcase-outline", label: "Experience" },
+            { icon: "solar:graduation-outline", label: "Education" }
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -1134,7 +713,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             >
               <Icon icon={item.icon} className="h-4 w-4 text-success" />
               <span className="text-sm font-medium text-success">{item.label}</span>
-              <Icon icon="solar:check-circle-bold" className="h-4 w-4 text-success ml-auto" />
+              <Icon icon="solar:check-circle-outline" className="h-4 w-4 text-success/70 ml-auto" />
             </motion.div>
           ))}
         </div>
@@ -1157,14 +736,14 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             className="relative"
           >
             <div className="p-8 bg-gradient-to-br from-success/20 to-primary/20 rounded-3xl">
-              <Icon icon="solar:check-circle-bold" className="h-20 w-20 text-success" />
+              <Icon icon="solar:check-circle-outline" className="h-20 w-20 text-success/70" />
             </div>
             <motion.div
               animate={{ scale: [1, 1.2, 1] }}
               transition={{ duration: 0.5, delay: 0.3 }}
               className="absolute -top-2 -right-2 p-2 bg-success rounded-full"
             >
-              <Icon icon="solar:star-bold" className="h-6 w-6 text-white" />
+              <Icon icon="solar:star-outline" className="h-6 w-6 text-white" />
             </motion.div>
           </motion.div>
         </div>
@@ -1178,10 +757,10 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
 
         <div className="grid grid-cols-2 gap-4 max-w-lg">
           {[
-            { icon: "solar:user-check-rounded-linear", label: "Personal information updated", count: "6 fields" },
-            { icon: "solar:code-linear", label: "Skills synchronized", count: `${reviewData?.skills.length || 0} skills` },
-            { icon: "solar:briefcase-linear", label: "Experience added", count: `${reviewData?.experience.length || 0} positions` },
-            { icon: "solar:graduation-linear", label: "Education history updated", count: `${reviewData?.education.length || 0} degrees` }
+            { icon: "solar:user-check-outline", label: "Personal information updated", count: "6 fields" },
+            { icon: "solar:code-outline", label: "Skills synchronized", count: `${reviewData?.skills.length || 0} skills` },
+            { icon: "solar:briefcase-outline", label: "Experience added", count: `${reviewData?.experience.length || 0} positions` },
+            { icon: "solar:graduation-outline", label: "Education history updated", count: `${reviewData?.education.length || 0} degrees` }
           ].map((item, index) => (
             <motion.div
               key={index}
@@ -1191,7 +770,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
               className="p-4 bg-success/10 border border-success/20 rounded-xl text-center"
             >
               <div className="flex justify-center mb-2">
-                <Icon icon={item.icon} className="h-6 w-6 text-success" />
+                <Icon icon={item.icon} className="h-6 w-6 text-success/70" />
               </div>
               <p className="text-sm font-medium text-success">{item.label}</p>
               <p className="text-xs text-success/70 mt-1">{item.count}</p>
@@ -1203,7 +782,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
           variant="flat" 
           color="success" 
           size="lg"
-          startContent={<Icon icon="solar:shield-check-linear" className="h-4 w-4" />}
+          startContent={<Icon icon="solar:shield-check-outline" className="h-4 w-4" />}
         >
           Profile completion improved significantly
         </Chip>
@@ -1222,8 +801,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
   const currentStepIndex = steps.findIndex(step => step.key === currentStep);
 
   return (
-    <Drawer
-      isOpen={isOpen}
+    <Drawer 
+      isOpen={isOpen} 
       onOpenChange={onOpenChange}
       size="5xl"
       placement="right"
@@ -1237,17 +816,17 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
       <DrawerContent className="h-screen">
         {(onClose) => (
           <>
-            <DrawerHeader className="border-b border-divider/20 bg-gradient-to-r from-background/98 to-default-50/40 backdrop-blur-2xl">
-              <div className="flex items-center justify-between w-full py-2">
-                <div className="flex items-center gap-5">
-                  <div className="p-4 bg-gradient-to-br from-primary/20 to-primary/8 rounded-3xl border border-primary/30 shadow-lg shadow-primary/10">
-                    <Icon icon="solar:document-add-outline" className="h-8 w-8 text-primary" />
+            <DrawerHeader className="border-b border-divider/30 bg-gradient-to-r from-background/95 to-default-50/30 backdrop-blur-xl">
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-gradient-to-br from-primary/15 to-primary/5 rounded-2xl border border-primary/20">
+                    <Icon icon="solar:document-add-outline" className="h-7 w-7 text-primary/80" />
                   </div>
                   <div>
-                    <h2 className="text-3xl font-black bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent mb-1">
+                    <h2 className="text-2xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                       CV Upload & Review
                     </h2>
-                    <p className="text-default-600 font-semibold text-lg">
+                    <p className="text-default-500 font-medium">
                       {currentStep === 'upload' && 'Upload your CV to automatically enhance your profile'}
                       {currentStep === 'parsing' && 'AI is analyzing and extracting information from your CV'}
                       {currentStep === 'review' && 'Review and edit the extracted information before applying'}
@@ -1262,9 +841,9 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                   variant="light"
                   size="lg"
                   onPress={handleClose}
-                  className="hover:bg-danger/15 hover:text-danger transition-all duration-300 hover:scale-105 rounded-2xl"
+                  className="hover:bg-danger/10 hover:text-danger transition-all duration-200"
                 >
-                  <Icon icon="solar:close-circle-outline" className="h-7 w-7" />
+                  <Icon icon="solar:close-circle-outline" className="h-6 w-6" />
                 </Button>
               </div>
             </DrawerHeader>
@@ -1272,20 +851,13 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
             <DrawerBody className="p-0 overflow-hidden">
               <div className="h-full flex">
                 {/* Vertical Steps Sidebar */}
-                <div className="w-80 bg-gradient-to-b from-default-50/60 to-default-100/40 border-r border-divider/20 backdrop-blur-xl">
-                  <div className="p-8 h-full flex flex-col">
-                    <div className="mb-10">
-                      <div className="flex items-center gap-3 mb-3">
-                        <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl border border-primary/20">
-                          <Icon icon="solar:chart-2-outline" className="h-5 w-5 text-primary/80" />
-                        </div>
-                        <h3 className="text-xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
-                          Progress Tracker
-                        </h3>
-                      </div>
-                      <p className="text-default-600 font-medium">Complete each step to enhance your profile</p>
+                <div className="w-80 bg-gradient-to-b from-default-50/50 to-default-100/30 border-r border-divider/30 backdrop-blur-sm">
+                  <div className="p-6 h-full flex flex-col">
+                    <div className="mb-8">
+                      <h3 className="text-lg font-semibold text-foreground mb-2">Progress</h3>
+                      <p className="text-sm text-default-500">Follow the steps to complete your CV upload</p>
                     </div>
-
+                    
                     <div className="flex-1 space-y-6">
                       {steps.map((step, index) => (
                         <motion.div
@@ -1295,30 +867,30 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                           transition={{ delay: index * 0.1 }}
                           className="relative"
                         >
-                          <div className={`flex items-center gap-4 p-5 rounded-2xl transition-all duration-500 ${
+                          <div className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${
                             index === currentStepIndex
-                              ? 'bg-gradient-to-r from-primary/15 to-primary/8 border border-primary/30 shadow-xl shadow-primary/10'
+                              ? 'bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 shadow-lg'
                               : index < currentStepIndex
-                              ? 'bg-gradient-to-r from-success/15 to-success/8 border border-success/30 shadow-lg shadow-success/5'
-                              : 'bg-gradient-to-r from-default-100/60 to-default-50/40 border border-default-200/60 hover:border-default-300/80 hover:shadow-md'
+                              ? 'bg-gradient-to-r from-success/10 to-success/5 border border-success/20'
+                              : 'bg-default-100/50 border border-default-200/50 hover:bg-default-100/80'
                           }`}>
-                            <div className={`relative flex items-center justify-center w-14 h-14 rounded-2xl transition-all duration-500 ${
+                            <div className={`relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ${
                               index < currentStepIndex
-                                ? 'bg-gradient-to-br from-success/25 to-success/15 border-2 border-success/40 shadow-lg shadow-success/20'
+                                ? 'bg-gradient-to-br from-success/20 to-success/10 border border-success/30'
                                 : index === currentStepIndex
-                                ? 'bg-gradient-to-br from-primary/25 to-primary/15 border-2 border-primary/40 shadow-xl shadow-primary/25'
-                                : 'bg-gradient-to-br from-default-200/60 to-default-100/40 border-2 border-default-300/60'
+                                ? 'bg-gradient-to-br from-primary/20 to-primary/10 border border-primary/30'
+                                : 'bg-gradient-to-br from-default-200/50 to-default-100/50 border border-default-300/50'
                             }`}>
                               {index < currentStepIndex ? (
-                                <Icon
-                                  icon="solar:check-circle-outline"
-                                  className="h-7 w-7 text-success font-semibold"
+                                <Icon 
+                                  icon="solar:check-circle-outline" 
+                                  className="h-6 w-6 text-success/80" 
                                 />
                               ) : (
-                                <Icon
-                                  icon={step.icon}
-                                  className={`h-7 w-7 ${
-                                    index === currentStepIndex ? 'text-primary font-semibold' : 'text-default-500'
+                                <Icon 
+                                  icon={step.icon} 
+                                  className={`h-6 w-6 ${
+                                    index === currentStepIndex ? 'text-primary/80' : 'text-default-400'
                                   }`}
                                 />
                               )}
@@ -1330,20 +902,18 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                                 />
                               )}
                             </div>
-
+                            
                             <div className="flex-1">
-                              <div className={`text-lg font-bold transition-colors duration-500 ${
+                              <div className={`font-semibold transition-colors duration-300 ${
                                 index === currentStepIndex
                                   ? 'text-primary'
                                   : index < currentStepIndex
                                   ? 'text-success'
-                                  : 'text-default-700'
+                                  : 'text-default-600'
                               }`}>
                                 {step.title}
                               </div>
-                              <div className={`text-sm font-medium mt-1.5 transition-colors duration-300 ${
-                                index === currentStepIndex ? 'text-primary/70' : 'text-default-600'
-                              }`}>
+                              <div className="text-sm text-default-500 mt-1">
                                 {step.key === 'upload' && 'Select and upload your CV file'}
                                 {step.key === 'parsing' && 'AI extracts information'}
                                 {step.key === 'review' && 'Review and edit data'}
@@ -1375,33 +945,21 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                     </div>
 
                     {/* Progress Summary */}
-                    <div className="mt-auto p-6 bg-gradient-to-br from-default-100/70 to-default-50/50 rounded-3xl border border-default-200/60 shadow-lg backdrop-blur-sm">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl">
-                          <Icon icon="solar:chart-outline" className="h-5 w-5 text-primary" />
-                        </div>
-                        <span className="font-bold text-default-800">Progress Overview</span>
+                    <div className="mt-8 p-4 bg-gradient-to-r from-default-100/50 to-default-50/50 rounded-2xl border border-default-200/50">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Icon icon="solar:chart-outline" className="h-5 w-5 text-primary/70" />
+                        <span className="font-medium text-default-700">Progress Overview</span>
                       </div>
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <span className="text-default-700 font-medium">Completed Steps</span>
-                          <div className="flex items-center gap-2">
-                            <span className="font-bold text-lg text-primary">{currentStepIndex}</span>
-                            <span className="text-default-500 font-medium">/ {steps.length}</span>
-                          </div>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-default-600">Completed Steps</span>
+                          <span className="font-medium text-primary">{currentStepIndex} / {steps.length}</span>
                         </div>
-                        <div className="space-y-2">
-                          <div className="w-full bg-default-200/70 rounded-full h-3 shadow-inner">
-                            <div
-                              className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 h-3 rounded-full transition-all duration-700 shadow-sm"
-                              style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
-                            />
-                          </div>
-                          <div className="text-center">
-                            <span className="text-xs font-medium text-primary">
-                              {Math.round((currentStepIndex / steps.length) * 100)}% Complete
-                            </span>
-                          </div>
+                        <div className="w-full bg-default-200/50 rounded-full h-2">
+                          <div 
+                            className="bg-gradient-to-r from-primary to-primary/80 h-2 rounded-full transition-all duration-500"
+                            style={{ width: `${(currentStepIndex / steps.length) * 100}%` }}
+                          />
                         </div>
                       </div>
                     </div>
@@ -1409,15 +967,15 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                 </div>
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col bg-gradient-to-br from-background/50 to-default-50/20">
+                <div className="flex-1 flex flex-col">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={currentStep}
-                      initial={{ opacity: 0, x: 30, scale: 0.98 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={{ opacity: 0, x: -30, scale: 0.98 }}
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
-                      className="flex-1 p-10"
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className="flex-1 p-8"
                     >
                       {currentStep === 'upload' && renderUploadStep()}
                       {currentStep === 'parsing' && renderParsingStep()}
@@ -1430,28 +988,28 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
               </div>
             </DrawerBody>
 
-            <DrawerFooter className="border-t border-divider/20 bg-gradient-to-r from-background/98 to-default-50/40 backdrop-blur-2xl py-6">
-              <div className="flex justify-end gap-4 w-full">
+            <DrawerFooter className="border-t border-divider/30 bg-gradient-to-r from-background/95 to-default-50/30 backdrop-blur-xl">
+              <div className="flex justify-end gap-3 w-full">
                 {currentStep === 'upload' && (
                   <Button
                     variant="flat"
                     onPress={handleClose}
                     size="lg"
-                    startContent={<Icon icon="solar:close-circle-outline" className="h-5 w-5" />}
-                    className="hover:bg-default-200/60 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-semibold"
+                    startContent={<Icon icon="solar:close-circle-outline" className="h-4 w-4" />}
+                    className="hover:bg-default-200/50"
                   >
                     Cancel
                   </Button>
                 )}
-
+                
                 {currentStep === 'review' && (
                   <>
                     <Button
                       variant="flat"
                       onPress={() => setCurrentStep('upload')}
                       size="lg"
-                      startContent={<Icon icon="solar:arrow-left-outline" className="h-5 w-5" />}
-                      className="hover:bg-default-200/60 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-semibold"
+                      startContent={<Icon icon="solar:arrow-left-outline" className="h-4 w-4" />}
+                      className="hover:bg-default-200/50"
                     >
                       Upload Different CV
                     </Button>
@@ -1460,22 +1018,22 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({
                       onPress={handleApplyData}
                       isDisabled={selectedSections.size === 0}
                       size="lg"
-                      endContent={<Icon icon="solar:arrow-right-outline" className="h-5 w-5" />}
-                      className="bg-gradient-to-r from-primary via-primary/95 to-primary/90 hover:from-primary/95 hover:to-primary/85 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-bold shadow-lg shadow-primary/25"
+                      endContent={<Icon icon="solar:arrow-right-outline" className="h-4 w-4" />}
+                      className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary/80"
                     >
                       Apply to Profile ({Object.keys(reviewData || {}).length} sections)
                     </Button>
                   </>
                 )}
-
+                
                 {currentStep === 'complete' && (
                   <Button
                     color="success"
                     onPress={handleClose}
                     size="lg"
                     variant="solid"
-                    endContent={<Icon icon="solar:check-circle-outline" className="h-5 w-5" />}
-                    className="bg-gradient-to-r from-success via-success/95 to-success/90 hover:from-success/95 hover:to-success/85 hover:scale-105 transition-all duration-300 rounded-2xl px-8 font-bold shadow-lg shadow-success/25"
+                    endContent={<Icon icon="solar:check-circle-outline" className="h-4 w-4" />}
+                    className="bg-gradient-to-r from-success to-success/90 hover:from-success/90 hover:to-success/80"
                   >
                     Done
                   </Button>
