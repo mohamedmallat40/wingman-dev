@@ -49,6 +49,7 @@ import { ExperienceForm } from './forms/ExperienceForm';
 import { LanguagesForm } from './forms/LanguagesForm';
 import { EnhancedLanguagesForm } from './forms/EnhancedLanguagesForm';
 import { ActionButtons } from './ActionButtons';
+import { SocialAccountCard } from './cards/SocialAccountCard';
 import { PersonalInfoForm } from './forms/PersonalInfoForm';
 import { SkillsForm } from './forms/SkillsForm';
 import { SocialAccountsForm } from './forms/SocialAccountsForm';
