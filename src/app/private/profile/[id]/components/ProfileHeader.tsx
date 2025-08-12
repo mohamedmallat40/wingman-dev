@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-import { Avatar, Badge, Button, Card, CardBody, CardHeader, Divider } from '@heroui/react';
+import { Avatar, Badge, Button, Card, CardBody, CardHeader, Divider, Chip, Progress } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -18,13 +18,17 @@ import {
 } from '@/app/private/talent-pool/utils/talent-utils';
 import { getImageUrl } from '@/lib/utils/utilities';
 
-import { type ConnectionStatus, type ProfileUser } from '../types';
+import { type ConnectionStatus, type ProfileUser, type Experience, type Education, type Language } from '../types';
+import { calculateProfileCompletion, getCompletionColor, getCompletionMessage } from '../utils/profileCompletion';
 import CVUploadDrawer from './CVUploadDrawer';
 
 interface ProfileHeaderProps {
   user: ProfileUser;
   connectionStatus: ConnectionStatus;
   isOwnProfile: boolean;
+  experiences?: Experience[];
+  education?: Education[];
+  languages?: Language[];
   onConnect: () => void;
   onAccept: () => void;
   onRefuse: () => void;
@@ -35,6 +39,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   user,
   connectionStatus,
   isOwnProfile,
+  experiences = [],
+  education = [],
+  languages = [],
   onConnect,
   onAccept,
   onRefuse,
@@ -63,6 +70,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     // Here you would typically refresh the profile data or update the UI
     // to reflect the newly imported information
   };
+
+  // Calculate profile completion
+  const completionPercentage = calculateProfileCompletion({
+    user,
+    experiences,
+    education,
+    languages
+  });
+  const completionColor = getCompletionColor(completionPercentage);
+  const completionMessage = getCompletionMessage(completionPercentage);
 
   return (
     <>
