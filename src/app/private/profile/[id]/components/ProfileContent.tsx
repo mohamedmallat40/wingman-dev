@@ -126,7 +126,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Skills handlers
   const handleEditSkills = () => {
-    console.log('Opening skills modal');
+    console.log('Opening skills modal for adding new skills');
+    // Ensure we start with current skills
+    setLocalSkills(user.skills || []);
     setIsSkillsModalOpen(true);
   };
 
@@ -158,8 +160,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
       // Edit specific language item
       setEditingLanguage({item: language, isOpen: true});
     } else {
-      // Edit all languages
-      console.log('Opening languages modal');
+      // Add new language
+      console.log('Opening languages modal for adding new language');
+      setLocalLanguages(languages);
       setIsLanguagesModalOpen(true);
     }
   };
@@ -234,7 +237,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Social Accounts handlers
   const handleEditSocialAccounts = () => {
-    console.log('Opening social accounts modal');
+    console.log('Opening social accounts modal for adding new account');
+    // Ensure we start with current social accounts
+    setLocalSocialAccounts(user.socialAccounts || []);
     setIsSocialAccountsModalOpen(true);
   };
 
@@ -265,7 +270,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Experience handlers
   const handleAddExperience = () => {
-    console.log('Opening experience modal');
+    console.log('Opening experience modal for adding new experience');
+    // Reset to empty experience for adding
+    setLocalExperiences(experiences);
     setIsExperienceModalOpen(true);
   };
 
@@ -321,6 +328,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Education handlers
   const handleAddEducation = () => {
+    console.log('Opening education modal for adding new education');
+    // Reset to current education for adding
+    setLocalEducation(education);
     setIsEducationModalOpen(true);
   };
 
