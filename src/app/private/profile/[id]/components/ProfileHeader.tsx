@@ -100,56 +100,23 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               <span className='hidden sm:inline'>{t('common.back')}</span>
             </Button>
 
-            <div className='flex items-center gap-3'>
-              {/* Profile Completion Chip */}
-              {isOwnProfile && (
-                <div className='flex flex-col items-center gap-1'>
-                  <Chip
-                    color={completionColor}
-                    variant='flat'
-                    size='sm'
-                    className='font-semibold'
-                    startContent={<Icon icon='solar:chart-outline' className='h-3 w-3' />}
-                  >
-                    {completionPercentage}% Complete
-                  </Chip>
-                  <p className='text-xs text-default-500 hidden sm:block'>
-                    {completionMessage} • Complete your profile for better reach
-                  </p>
-                </div>
-              )}
-
-              {/* Enhanced AI-powered CV Upload button */}
-              {isOwnProfile && (
-                <div className='relative'>
-                  <Button
-                    variant='flat'
-                    color='primary'
-                    size='sm'
-                    startContent={
-                      <div className='relative'>
-                        <Icon icon='solar:document-add-linear' className='h-4 w-4' />
-                        <div className='absolute -top-0.5 -right-0.5 h-2 w-2 bg-success rounded-full animate-ping' />
-                        <div className='absolute -top-0.5 -right-0.5 h-2 w-2 bg-success rounded-full' />
-                      </div>
-                    }
-                    onPress={handleEditProfile}
-                    className='rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 hover:from-primary/30 hover:to-secondary/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border-primary/30 animate-pulse'
-                  >
-                    <span className='bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-semibold hidden sm:inline'>
-                      ✨ Upload CV & Auto-Fill
-                    </span>
-                  </Button>
-
-                  {/* Floating sparkles animation */}
-                  <div className='absolute -top-2 -right-2 h-4 w-4 pointer-events-none'>
-                    <div className='absolute inset-0 animate-ping'>
-                      <Icon icon='solar:stars-outline' className='h-4 w-4 text-primary/60' />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* Profile Completion Chip */}
+            {isOwnProfile && (
+              <div className='flex flex-col items-center gap-1'>
+                <Chip
+                  color={completionColor}
+                  variant='flat'
+                  size='sm'
+                  className='font-semibold'
+                  startContent={<Icon icon='solar:chart-outline' className='h-3 w-3' />}
+                >
+                  {completionPercentage}% Complete
+                </Chip>
+                <p className='text-xs text-default-500 hidden sm:block'>
+                  {completionMessage} • Complete your profile for better reach
+                </p>
+              </div>
+            )}
           </nav>
 
           {/* Main Profile Card */}
