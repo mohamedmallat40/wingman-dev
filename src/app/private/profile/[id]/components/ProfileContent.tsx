@@ -764,7 +764,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         </div>
 
         {/* Sidebar */}
-        <div className='space-y-8'>
+        <div className='space-y-8 animate-slide-up [animation-delay:200ms]'>
           {/* Skills */}
           <Card id='skills' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-success/20'>
             <CardHeader className='pb-4'>
