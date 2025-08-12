@@ -152,7 +152,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                     color='primary'
                     startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
                     as='a'
-                    href={document.url}
+                    href={downloadUrl || '#'}
                     download={document.documentName}
                   >
                     Download
