@@ -175,7 +175,6 @@ export default function DocumentCard({
   const handleDelete = async () => {
     try {
       await deleteMutation.mutateAsync(document.id);
-      console.log('Document deleted successfully');
     } catch (error) {
       console.error('Delete failed:', error);
     }

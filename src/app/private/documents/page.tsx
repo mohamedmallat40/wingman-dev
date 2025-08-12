@@ -92,7 +92,6 @@ export default function DocumentsPage() {
         }
 
         await uploadMutation.mutateAsync(formData);
-        console.log('Document uploaded successfully:', data);
       } catch (error) {
         console.error('Upload failed:', error);
         throw error;
@@ -127,7 +126,6 @@ export default function DocumentsPage() {
         }
 
         await updateMutation.mutateAsync({ documentId, formData });
-        console.log('Document updated successfully:', data);
       } catch (error) {
         console.error('Update failed:', error);
         throw error;
@@ -157,12 +155,7 @@ export default function DocumentsPage() {
   // Action items with handlers
   const actionItems = ACTION_ITEMS.map((item) => ({
     ...item,
-    onClick:
-      item.key === 'upload'
-        ? handleUploadDocument
-        : () => {
-            console.log(`${item.label} clicked`);
-          }
+    onClick: item.key === 'upload' ? handleUploadDocument : null
   }));
 
   return (

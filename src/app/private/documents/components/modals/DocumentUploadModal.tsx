@@ -375,9 +375,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
         } else if (!isEditMode && onUpload) {
           let fileName = '';
           if (selectedFile && !uploadedFileName) {
-            console.log(selectedFile);
             const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
-            console.log('Upload response:', uploadResponse);
             fileName = uploadResponse.filename;
             setUploadedFileName(uploadResponse.filename);
           }

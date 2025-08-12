@@ -10,13 +10,8 @@ export interface UploadResponse {
 }
 
 export const uploadFile = async (file: File) => {
-  console.log('Uploading Service:', file);
-
   const formData = new FormData();
   formData.append('image', file);
-
-  console.log('Form data:', formData);
-
   return await wingManApi.post<UploadResponse>(API_ROUTES.upload.single, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });

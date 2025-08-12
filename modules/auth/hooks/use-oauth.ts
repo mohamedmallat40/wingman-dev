@@ -39,7 +39,12 @@ const useOAuth = () => {
           });
 
           router.push('/private/dashboard');
-          return { isCompleted: true, user: data.user };
+          return {
+            isCompleted: true,
+            user: data.user,
+            token: data.token,
+            chatToken: data.chatToken
+          };
         } else {
           addToast({
             title: 'Welcome!',
@@ -64,7 +69,7 @@ const useOAuth = () => {
         timeout: 3000
       });
 
-      return { isCompleted: false, user: null };
+      return { isCompleted: false, user: null, token: null, chatToken: null };
     } catch (error: unknown) {
       console.error(`${provider} login failed:`, error);
       const message =
