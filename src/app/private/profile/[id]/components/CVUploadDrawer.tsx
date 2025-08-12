@@ -475,14 +475,50 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       <div className='max-w-2xl space-y-8 text-center'>
         <div className='flex justify-center'>
           <div className='relative'>
+            {/* Central AI brain icon */}
             <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              className='from-primary/20 to-secondary/20 rounded-3xl bg-gradient-to-br p-8'
+              className='relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm border border-primary/20'
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Icon icon='solar:cpu-outline' className='text-primary/70 h-20 w-20' />
+              <Icon icon='solar:cpu-bolt-outline' className='text-primary h-12 w-12' />
             </motion.div>
-            <div className='from-primary/20 absolute inset-0 animate-pulse rounded-3xl bg-gradient-to-r to-transparent' />
+
+            {/* Animated particles around */}
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className='absolute h-2 w-2 bg-primary/40 rounded-full'
+                style={{
+                  top: '50%',
+                  left: '50%',
+                  transformOrigin: '0 40px'
+                }}
+                animate={{
+                  rotate: [0, 360],
+                  scale: [0.5, 1, 0.5],
+                  opacity: [0.3, 1, 0.3]
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  delay: i * 0.3,
+                  ease: 'easeInOut'
+                }}
+              />
+            ))}
+
+            {/* Pulsing rings */}
+            <motion.div
+              className='absolute inset-0 rounded-full border-2 border-primary/20'
+              animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+            />
+            <motion.div
+              className='absolute inset-0 rounded-full border-2 border-secondary/20'
+              animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
+            />
           </div>
         </div>
 
