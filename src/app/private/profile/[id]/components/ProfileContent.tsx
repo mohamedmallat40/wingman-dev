@@ -810,7 +810,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         size='sm'
                         color={chipColor}
                         variant='flat'
-                        className='font-medium'
+                        className='font-medium hover:scale-105 transform transition-all duration-200 cursor-default hover:shadow-md'
                         startContent={<Icon icon={getSkillIcon(skill.key)} className='h-3 w-3' />}
                       >
                         {skill.key.trim()}
