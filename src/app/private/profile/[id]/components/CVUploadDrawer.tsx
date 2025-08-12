@@ -840,29 +840,31 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       <div className='max-w-2xl space-y-8 text-center'>
         <div className='flex justify-center'>
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
             className='relative'
           >
-            <div className='from-success/20 to-primary/20 rounded-3xl bg-gradient-to-br p-8'>
-              <Icon icon='solar:check-circle-outline' className='text-success/70 h-20 w-20' />
+            <div className='flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-success/10 to-primary/10 backdrop-blur-sm border border-success/20'>
+              <Icon icon='solar:check-circle-bold' className='text-success h-8 w-8' />
             </div>
             <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className='bg-success absolute -top-2 -right-2 rounded-full p-2'
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 10, 0]
+              }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className='bg-success absolute -top-1 -right-1 rounded-full p-1.5'
             >
-              <Icon icon='solar:star-outline' className='h-6 w-6 text-white' />
+              <Icon icon='solar:stars-outline' className='h-3 w-3 text-white' />
             </motion.div>
           </motion.div>
         </div>
 
-        <div className='space-y-4'>
-          <h3 className='text-foreground text-3xl font-bold'>Profile Updated Successfully!</h3>
-          <p className='text-default-600 text-lg'>
-            Your CV information has been successfully applied to your profile. Your profile is now
-            more complete and professional.
+        <div className='space-y-3'>
+          <h3 className='text-foreground text-xl font-semibold'>Profile Enhanced Successfully</h3>
+          <p className='text-default-600 text-sm leading-relaxed'>
+            Your CV information has been seamlessly integrated into your profile
           </p>
         </div>
 
