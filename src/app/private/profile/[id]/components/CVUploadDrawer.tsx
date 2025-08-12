@@ -24,6 +24,14 @@ import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CVService, type ParsedCVData } from '../services/cv-service';
 import { type IUserProfile, type IEducation, type IExperience, type ILanguage, type Skill } from 'modules/profile/types';
+import {
+  PersonalInfoForm,
+  SkillsForm,
+  ExperienceForm,
+  EducationForm,
+  LanguagesForm,
+  CertificationsForm
+} from './forms';
 
 interface CVUploadDrawerProps {
   isOpen: boolean;
