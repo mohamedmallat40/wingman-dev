@@ -110,6 +110,16 @@ export default function DocumentsPage() {
     setShowUploadModal(true);
   }, []);
 
+  const handleViewDocument = useCallback((document: IDocument) => {
+    setViewingDocument(document);
+    setShowViewerDrawer(true);
+  }, []);
+
+  const handleCloseViewer = useCallback(() => {
+    setShowViewerDrawer(false);
+    setViewingDocument(null);
+  }, []);
+
   const handleUpdate = useCallback(
     async (
       documentId: string,
