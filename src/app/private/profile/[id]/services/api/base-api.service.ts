@@ -1,5 +1,6 @@
-import wingManApi from '@/lib/axios';
 import { AxiosResponse } from 'axios';
+
+import wingManApi from '@/lib/axios';
 
 export interface ApiResponse<T> {
   data: T;
@@ -37,9 +38,9 @@ export class BaseApiService {
   ): Promise<T> {
     try {
       const url = `${this.basePath}${endpoint}`;
-      
+
       let response: AxiosResponse<T>;
-      
+
       switch (method) {
         case 'GET':
           response = await wingManApi.get(url, config);
@@ -68,7 +69,7 @@ export class BaseApiService {
         field: error.response?.data?.field,
         details: error.response?.data
       };
-      
+
       console.error(`API Error [${method} ${endpoint}]:`, apiError);
       throw apiError;
     }
@@ -144,7 +145,11 @@ export class BaseApiService {
   }
 
   // Pagination support
-  async paginate<T>(page: number = 1, limit: number = 10, filters?: any): Promise<PaginatedResponse<T>> {
+  async paginate<T>(
+    page: number = 1,
+    limit: number = 10,
+    filters?: any
+  ): Promise<PaginatedResponse<T>> {
     const params = { page: page.toString(), limit: limit.toString(), ...filters };
     return this.get<PaginatedResponse<T>>(`/paginate?${new URLSearchParams(params).toString()}`);
   }

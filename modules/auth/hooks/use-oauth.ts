@@ -10,10 +10,9 @@ import { useRouter } from 'next/navigation';
 
 interface OAuthResponse {
   success: boolean;
-  data?: {
-    user: IUserProfile;
-    token: string;
-  };
+  user: IUserProfile;
+  token: string;
+  chatToken: string;
   error?: string;
 }
 
@@ -25,26 +24,47 @@ const useOAuth = () => {
   const authenticate = async (provider: 'google' | 'linkedin') => {
     setLoadingProvider(provider);
     try {
-      const data = await handleOAuth(provider);
-      const response = data as OAuthResponse;
+      const data = (await handleOAuth(provider)) as OAuthResponse;
       // Store token if provided
-      if (response.data?.token) {
-        localStorage.setItem('token', response.data.token);
-      }
+      if (data.user) {
+        if (data.token && data.user.isCompleted) {
+          localStorage.setItem('token', data.token);
+          setUser(data.user);
 
-      // Set user data
-      if (response.data?.user) {
-        setUser(response.data.user);
+          addToast({
+            title: 'Welcome back!',
+            description: 'Successfully logged in. Redirecting to dashboard...',
+            color: 'success',
+            timeout: 3000
+          });
+
+          router.push('/private/dashboard');
+          return { isCompleted: true, user: data.user };
+        } else {
+          addToast({
+            title: 'Welcome!',
+            description: 'Please complete your registration to continue.',
+            color: 'success',
+            timeout: 3000
+          });
+
+          return {
+            isCompleted: false,
+            user: data.user,
+            token: data.token,
+            chatToken: data.chatToken
+          };
+        }
       }
 
       addToast({
         title: 'Success',
-        description: `Successfully logged in with ${provider}!`,
+        description: `Successfully authenticated with ${provider}!`,
         color: 'success',
         timeout: 3000
       });
 
-      router.push('/');
+      return { isCompleted: false, user: null };
     } catch (error: unknown) {
       console.error(`${provider} login failed:`, error);
       const message =
@@ -55,6 +75,7 @@ const useOAuth = () => {
         color: 'danger',
         timeout: 4000
       });
+      throw error; // Re-throw to handle in component
     } finally {
       setLoadingProvider(undefined);
     }

@@ -11,7 +11,6 @@ export default function SolutionsPage() {
   const handleSubmitSolution = async () => {
     // Simulate solution submission
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log('Solution submitted!');
   };
 
   const handleViewSaved = () => {

@@ -15,6 +15,6 @@ export const registerSchema = z.object({
     houseNumber: z.string().optional(),
     VATNumber: z.string().optional(),
     companyName: z.string().optional(),
-    type: z.enum(['BILLING', 'SHIPPING']).default('BILLING')
+    type: z.string().default('BILLING').optional()
   })
 });

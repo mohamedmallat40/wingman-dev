@@ -19,7 +19,7 @@ export const profileLocales = {
     saving: 'Saving...',
     updating: 'Updating...',
     deleting: 'Deleting...',
-    uploading: 'Uploading...',
+    uploading: 'Uploading...'
   },
 
   // Navigation and layout
@@ -33,7 +33,7 @@ export const profileLocales = {
     socialAccounts: 'Social Accounts',
     contact: 'Contact',
     connections: 'Connections',
-    settings: 'Settings',
+    settings: 'Settings'
   },
 
   // Profile sections
@@ -43,7 +43,8 @@ export const profileLocales = {
       description: 'Tell others about yourself and your professional journey',
       empty: 'No description available yet',
       addPrompt: 'Add a description about yourself',
-      placeholder: 'Write a brief description about yourself, your experience, and what you are passionate about...',
+      placeholder:
+        'Write a brief description about yourself, your experience, and what you are passionate about...'
     },
     experience: {
       title: 'Work Experience',
@@ -63,8 +64,8 @@ export const profileLocales = {
         years: 'years',
         year: 'year',
         months: 'months',
-        month: 'month',
-      },
+        month: 'month'
+      }
     },
     education: {
       title: 'Education',
@@ -80,7 +81,7 @@ export const profileLocales = {
       current: 'I currently study here',
       description: 'Description',
       grade: 'Grade/GPA',
-      present: 'Present',
+      present: 'Present'
     },
     skills: {
       title: 'Skills',
@@ -94,14 +95,14 @@ export const profileLocales = {
         BEGINNER: 'Beginner',
         INTERMEDIATE: 'Intermediate',
         ADVANCED: 'Advanced',
-        EXPERT: 'Expert',
+        EXPERT: 'Expert'
       },
       types: {
         TECHNICAL: 'Technical',
         SOFT: 'Soft Skill',
         LANGUAGE: 'Language',
-        TOOL: 'Tool/Software',
-      },
+        TOOL: 'Tool/Software'
+      }
     },
     languages: {
       title: 'Languages',
@@ -118,7 +119,7 @@ export const profileLocales = {
         canSpeak: 'Speaking',
         canUnderstand: 'Listening',
         canRead: 'Reading',
-        canWrite: 'Writing',
+        canWrite: 'Writing'
       },
       levels: {
         NATIVE: 'Native',
@@ -127,7 +128,7 @@ export const profileLocales = {
         CONVERSATIONAL: 'Conversational',
         INTERMEDIATE: 'Intermediate',
         BEGINNER: 'Beginner',
-        ELEMENTARY: 'Elementary',
+        ELEMENTARY: 'Elementary'
       },
       levelDescriptions: {
         NATIVE: 'Native or bilingual proficiency',
@@ -136,7 +137,7 @@ export const profileLocales = {
         CONVERSATIONAL: 'General professional proficiency',
         INTERMEDIATE: 'Limited working proficiency',
         BEGINNER: 'Elementary proficiency',
-        ELEMENTARY: 'Elementary proficiency',
+        ELEMENTARY: 'Elementary proficiency'
       },
       cefr: {
         NATIVE: 'Native speaker',
@@ -145,7 +146,7 @@ export const profileLocales = {
         B2: 'Upper Intermediate - Independent user',
         B1: 'Intermediate - Threshold user',
         A2: 'Elementary - Waystage user',
-        A1: 'Beginner - Breakthrough user',
+        A1: 'Beginner - Breakthrough user'
       },
       certificationTypes: {
         IELTS: 'IELTS',
@@ -156,8 +157,8 @@ export const profileLocales = {
         GOETHE: 'Goethe-Zertifikat (German)',
         HSK: 'HSK (Chinese)',
         JLPT: 'JLPT (Japanese)',
-        OTHER: 'Other',
-      },
+        OTHER: 'Other'
+      }
     },
     socialAccounts: {
       title: 'Social Accounts',
@@ -181,9 +182,9 @@ export const profileLocales = {
         dribbble: 'Dribbble',
         medium: 'Medium',
         portfolio: 'Portfolio',
-        other: 'Other',
-      },
-    },
+        other: 'Other'
+      }
+    }
   },
 
   // Profile header
@@ -194,35 +195,35 @@ export const profileLocales = {
     availabilityStatus: {
       AVAILABLE: 'Available for work',
       BUSY: 'Busy',
-      UNAVAILABLE: 'Unavailable',
+      UNAVAILABLE: 'Unavailable'
     },
     userType: {
       FREELANCER: 'Freelancer',
       EMPLOYEE: 'Employee',
       CONTRACTOR: 'Contractor',
       CONSULTANT: 'Consultant',
-      AGENCY: 'Agency',
+      AGENCY: 'Agency'
     },
     workType: {
       REMOTE: 'Remote',
       ONSITE: 'On-site',
       HYBRID: 'Hybrid',
-      FLEXIBLE: 'Flexible',
+      FLEXIBLE: 'Flexible'
     },
     workingTime: {
       FULL_TIME: 'Full-time',
       PART_TIME: 'Part-time',
       CONTRACT: 'Contract',
-      FREELANCE: 'Freelance',
+      FREELANCE: 'Freelance'
     },
     verification: {
       emailVerified: 'Email verified',
-      phoneVerified: 'Phone verified',
+      phoneVerified: 'Phone verified'
     },
     experience: {
       yearsExperience: 'years of experience',
-      yearExperience: 'year of experience',
-    },
+      yearExperience: 'year of experience'
+    }
   },
 
   // Connection status
@@ -230,7 +231,7 @@ export const profileLocales = {
     status: {
       connected: 'Connected',
       pending: 'Connection Pending',
-      notConnected: 'Not Connected',
+      notConnected: 'Not Connected'
     },
     actions: {
       connect: 'Connect',
@@ -238,8 +239,8 @@ export const profileLocales = {
       decline: 'Decline Connection',
       message: 'Send Message',
       call: 'Call',
-      email: 'Email',
-    },
+      email: 'Email'
+    }
   },
 
   // Forms and modals
@@ -256,7 +257,7 @@ export const profileLocales = {
       city: 'City',
       region: 'Country/Region',
       website: 'Website',
-      linkedin: 'LinkedIn Profile',
+      linkedin: 'LinkedIn Profile'
     },
     validation: {
       required: 'This field is required',
@@ -265,8 +266,8 @@ export const profileLocales = {
       phone: 'Please enter a valid phone number',
       date: 'Please enter a valid date',
       minLength: 'Must be at least {{min}} characters',
-      maxLength: 'Must be no more than {{max}} characters',
-    },
+      maxLength: 'Must be no more than {{max}} characters'
+    }
   },
 
   // Success and error messages
@@ -289,7 +290,7 @@ export const profileLocales = {
       connectionSent: 'Connection request sent',
       connectionAccepted: 'Connection accepted',
       connectionDeclined: 'Connection declined',
-      imageUploaded: 'Image uploaded successfully',
+      imageUploaded: 'Image uploaded successfully'
     },
     error: {
       profileUpdateFailed: 'Failed to update profile',
@@ -312,8 +313,8 @@ export const profileLocales = {
       imageUploadFailed: 'Failed to upload image',
       loadingFailed: 'Failed to load data',
       networkError: 'Network error. Please check your connection.',
-      serverError: 'Server error. Please try again later.',
-    },
+      serverError: 'Server error. Please try again later.'
+    }
   },
 
   // Empty states
@@ -325,7 +326,7 @@ export const profileLocales = {
     languages: 'Add languages you speak',
     socialAccounts: 'Connect your social media profiles',
     connections: 'No connections yet',
-    search: 'No results found',
+    search: 'No results found'
   },
 
   // Loading states
@@ -336,7 +337,7 @@ export const profileLocales = {
     skills: 'Loading skills...',
     languages: 'Loading languages...',
     socialAccounts: 'Loading social accounts...',
-    connections: 'Loading connections...',
+    connections: 'Loading connections...'
   },
 
   // Accessibility labels
@@ -352,6 +353,6 @@ export const profileLocales = {
     languageFlag: '{{language}} flag',
     skillBadge: '{{skill}} skill badge',
     experienceItem: 'Experience at {{company}}',
-    educationItem: 'Education at {{university}}',
-  },
+    educationItem: 'Education at {{university}}'
+  }
 };

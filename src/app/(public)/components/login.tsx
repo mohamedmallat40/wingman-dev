@@ -3,20 +3,25 @@
 import { useEffect, useState } from 'react';
 
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal';
-import { Button, Checkbox, Divider, Form, Input, Link } from '@heroui/react';
+import { addToast, Button, Checkbox, Divider, Form, Input, Link } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import useLogin from '@root/modules/auth/hooks/use-login';
 import useOAuth from '@root/modules/auth/hooks/use-oauth';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
-interface LoginModalProps {
+interface LoginModalProperties {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onSwitchToRegister?: () => void;
 }
 
-export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginModalProps) {
+export function LoginModal({
+  isOpen,
+  onOpenChange,
+  onSwitchToRegister
+}: Readonly<LoginModalProperties>) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +33,7 @@ export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginMo
 
   const { form, mutation } = useLogin();
   const { loginWithGoogle, loginWithLinkedIn, isGoogleLoading, isLinkedInLoading } = useOAuth();
+  const router = useRouter();
   const t = useTranslations('AuthPage');
 
   // Load remembered credentials on component mount
@@ -87,6 +93,49 @@ export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginMo
     }
   };
 
+  // Handle OAuth authentication
+  const handleOAuthLogin = async (provider: 'google' | 'linkedin') => {
+    try {
+      const authFunction = provider === 'google' ? loginWithGoogle : loginWithLinkedIn;
+      const result = await authFunction();
+
+      if (result && typeof result === 'object' && 'isCompleted' in result) {
+        if (result.isCompleted) {
+          // User is completed, close modal and redirect to dashboard
+          handleClose();
+          // Toast is already handled in useOAuth
+        } else {
+          // User is not completed, close modal and redirect to register with toast
+          handleClose();
+          addToast({
+            title: 'Complete Your Registration',
+            description: 'Please complete your registration process before logging in.',
+            color: 'warning',
+            timeout: 5000
+          });
+          router.push('/register');
+        }
+      }
+    } catch (error: unknown) {
+      // Check if error message indicates user doesn't exist
+      const errorMessage = error instanceof Error ? error.message.toLowerCase() : '';
+
+      if (
+        errorMessage.includes('user not found') ||
+        errorMessage.includes('user does not exist') ||
+        errorMessage.includes('no account found')
+      ) {
+        addToast({
+          title: 'Account Not Found',
+          description: `No account found with this ${provider} profile. Please sign up first.`,
+          color: 'danger',
+          timeout: 5000
+        });
+      }
+      // Other errors are already handled by useOAuth with toast notifications
+    }
+  };
+
   const handleClose = () => {
     // Only clear email if not remembered
     if (!rememberMe) {
@@ -105,11 +154,8 @@ export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginMo
 
     // Simulate API call to send reset email
     try {
-      console.log('Sending password reset email to:', resetEmail);
-      // Replace with actual API call
-      // await sendPasswordResetEmail(resetEmail);
       setResetSent(true);
-    } catch (error) {
+    } catch {
       setError('Failed to send reset email. Please try again.');
     }
   };
@@ -360,7 +406,9 @@ export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginMo
                         size='sm'
                         type='button'
                         variant='light'
-                        onPress={() => setShowPassword(!showPassword)}
+                        onPress={() => {
+                          setShowPassword(!showPassword);
+                        }}
                       >
                         {showPassword ? (
                           <Icon
@@ -410,7 +458,9 @@ export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginMo
                       className='text-primary hover:text-primary/80 h-auto min-w-0 p-0 font-medium tracking-[0.02em]'
                       variant='light'
                       size='sm'
-                      onPress={() => setShowResetModal(true)}
+                      onPress={() => {
+                        setShowResetModal(true);
+                      }}
                     >
                       Forgot password?
                     </Button>
@@ -463,7 +513,7 @@ export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginMo
                   fullWidth
                   startContent={<Icon icon='flat-color-icons:google' width={20} />}
                   variant='bordered'
-                  onPress={loginWithGoogle}
+                  onPress={() => handleOAuthLogin('google')}
                   isLoading={isGoogleLoading}
                 >
                   {isGoogleLoading ? 'Connecting...' : 'Continue with Google'}
@@ -473,7 +523,7 @@ export function LoginModal({ isOpen, onOpenChange, onSwitchToRegister }: LoginMo
                   fullWidth
                   startContent={<Icon icon='skill-icons:linkedin' width={20} />}
                   variant='bordered'
-                  onPress={loginWithLinkedIn}
+                  onPress={() => handleOAuthLogin('linkedin')}
                   isLoading={isLinkedInLoading}
                 >
                   {isLinkedInLoading ? 'Connecting...' : 'Continue with LinkedIn'}
@@ -526,7 +576,7 @@ const Login = () => {
         onOpenChange={modal.onOpenChange}
         onSwitchToRegister={() => {
           // Navigate to register page
-          window.location.href = '/register';
+          globalThis.location.href = '/register';
         }}
       />
     </>
