@@ -741,21 +741,55 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       <div className='max-w-2xl space-y-8 text-center'>
         <div className='flex justify-center'>
           <div className='relative'>
+            {/* Central update icon */}
             <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className='from-success/20 to-primary/20 rounded-3xl bg-gradient-to-br p-8'
+              className='relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-success/10 to-primary/10 backdrop-blur-sm border border-success/20'
+              animate={{
+                rotateY: [0, 180, 360],
+                scale: [1, 1.05, 1]
+              }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Icon icon='solar:database-outline' className='text-success/70 h-20 w-20' />
+              <Icon icon='solar:refresh-circle-outline' className='text-success h-10 w-10' />
             </motion.div>
-            <div className='from-success/20 absolute inset-0 animate-pulse rounded-3xl bg-gradient-to-r to-transparent' />
+
+            {/* Flowing data streams */}
+            {[...Array(6)].map((_, i) => (
+              <motion.div
+                key={i}
+                className='absolute h-1 w-8 bg-gradient-to-r from-success/60 to-transparent rounded-full'
+                style={{
+                  top: '50%',
+                  left: '50%',
+                  transformOrigin: '0 0',
+                  transform: `rotate(${i * 60}deg) translateX(30px)`
+                }}
+                animate={{
+                  opacity: [0, 1, 0],
+                  scaleX: [0, 1, 0]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                  ease: 'easeInOut'
+                }}
+              />
+            ))}
+
+            {/* Success pulse ring */}
+            <motion.div
+              className='absolute inset-0 rounded-2xl border-2 border-success/30'
+              animate={{ scale: [1, 1.4], opacity: [0.6, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+            />
           </div>
         </div>
 
-        <div className='space-y-4'>
-          <h3 className='text-foreground text-3xl font-bold'>Updating Your Profile</h3>
-          <p className='text-default-600 text-lg'>
-            Applying the selected information to your profile. This may take a few moments...
+        <div className='space-y-3'>
+          <h3 className='text-foreground text-xl font-semibold'>Syncing Profile</h3>
+          <p className='text-default-600 text-sm leading-relaxed'>
+            Seamlessly integrating your information with your existing profile
           </p>
         </div>
 
@@ -763,14 +797,14 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           <Progress
             value={100}
             color='success'
-            className='h-3 w-full'
+            className='h-2 w-full'
             isIndeterminate
             classNames={{
-              track: 'drop-shadow-md border border-default',
-              indicator: 'bg-gradient-to-r from-success to-primary'
+              track: 'bg-default-200/50 border border-default-300/30',
+              indicator: 'bg-gradient-to-r from-success/80 to-primary/80'
             }}
           />
-          <p className='text-success mt-2 text-sm font-medium'>Processing your information...</p>
+          <p className='text-success/80 mt-2 text-xs font-medium'>Applying changes...</p>
         </div>
 
         <div className='grid max-w-md grid-cols-2 gap-4'>
