@@ -102,7 +102,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
             {/* Profile Completion Chip */}
             {isOwnProfile && (
-              <div className='flex flex-col items-center gap-1'>
+              <div className='flex items-center gap-2'>
                 <Chip
                   color={completionColor}
                   variant='flat'
@@ -112,8 +112,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 >
                   {completionPercentage}% Complete
                 </Chip>
-                <p className='text-xs text-default-500 hidden sm:block'>
-                  {completionMessage} • Complete your profile for better reach
+                <p className='text-xs text-default-500 hidden sm:inline'>
+                  Complete your profile for better reach
                 </p>
               </div>
             )}
