@@ -68,7 +68,7 @@ const Avatar = () => {
       >
         <DropdownItem
           key='profile'
-          className='hover:bg-primary/10 h-16 gap-3 rounded-lg opacity-100'
+          className='hover:bg-primary/10 h-16 gap-3 rounded-lg opacity-100 cursor-pointer transition-colors'
           textValue='Profile info'
           onPress={() => {
             router.push('/private/profile');
@@ -101,44 +101,15 @@ const Avatar = () => {
         <DropdownItem
           key='settings'
           startContent={<Icon icon='solar:settings-linear' className='text-lg' />}
-          onPress={() => {
-            router.push('/private/settings');
-          }}
+          className='hover:bg-default-100 cursor-pointer transition-colors'
         >
-          My Settings
-        </DropdownItem>
-
-        <DropdownItem
-          key='team_settings'
-          startContent={<Icon icon='solar:users-group-rounded-linear' className='text-lg' />}
-        >
-          Team Settings
-        </DropdownItem>
-
-        <DropdownItem
-          key='analytics'
-          startContent={<Icon icon='solar:chart-2-linear' className='text-lg' />}
-        >
-          Analytics
-        </DropdownItem>
-
-        <DropdownItem
-          key='system'
-          startContent={<Icon icon='solar:server-linear' className='text-lg' />}
-        >
-          System
-        </DropdownItem>
-
-        <DropdownItem
-          key='configurations'
-          startContent={<Icon icon='solar:widget-add-linear' className='text-lg' />}
-        >
-          Configurations
+          Settings
         </DropdownItem>
 
         <DropdownItem
           key='help_and_feedback'
           startContent={<Icon icon='solar:question-circle-linear' className='text-lg' />}
+          className='hover:bg-default-100 cursor-pointer transition-colors'
         >
           Help & Feedback
         </DropdownItem>
@@ -146,7 +117,7 @@ const Avatar = () => {
         <DropdownItem
           key='logout'
           color='danger'
-          className='text-danger'
+          className='text-danger hover:bg-danger/10 cursor-pointer transition-colors'
           startContent={<Icon icon='solar:logout-2-linear' className='text-lg' />}
           onPress={logout}
         >

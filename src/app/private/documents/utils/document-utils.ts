@@ -141,19 +141,19 @@ export const filterDocuments = (
       (doc) =>
         doc.documentName.toLowerCase().includes(query) ||
         doc.tags.some((tag) => tag.name.toLowerCase().includes(query)) ||
-        doc.type.name.toLowerCase().includes(query) ||
-        doc.status.name.toLowerCase().includes(query)
+        doc.type?.name.toLowerCase().includes(query) ||
+        doc.status?.name.toLowerCase().includes(query)
     );
   }
 
   // Apply type filter
   if (filters.type) {
-    filtered = filtered.filter((doc) => doc.type.name === filters.type);
+    filtered = filtered.filter((doc) => doc.type?.name === filters.type);
   }
 
   // Apply status filter
   if (filters.status) {
-    filtered = filtered.filter((doc) => doc.status.name === filters.status);
+    filtered = filtered.filter((doc) => doc.status?.name === filters.status);
   }
 
   // Apply tags filter
@@ -199,10 +199,10 @@ export const sortDocuments = (
         comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         break;
       case 'type':
-        comparison = a.type.name.localeCompare(b.type.name);
+        comparison = (a.type?.name || '').localeCompare(b.type?.name || '');
         break;
       case 'status':
-        comparison = a.status.name.localeCompare(b.status.name);
+        comparison = (a.status?.name || '').localeCompare(b.status?.name || '');
         break;
       default:
         comparison = 0;

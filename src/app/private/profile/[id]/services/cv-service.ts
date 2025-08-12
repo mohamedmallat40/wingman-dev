@@ -68,7 +68,7 @@ export class CVService {
           'Content-Type': 'multipart/form-data'
         }
       });
-      
+
       return response.data;
     } catch (error) {
       console.error('Error parsing CV:', error);
@@ -95,7 +95,8 @@ export class CVService {
         location: 'New York, NY',
         linkedIn: 'https://linkedin.com/in/alexandra-rodriguez',
         website: 'https://alexrodriguez.dev',
-        summary: 'Senior Full-Stack Engineer with 8+ years of experience building scalable web applications and leading development teams. Expertise in modern JavaScript frameworks, cloud architecture, and agile methodologies. Passionate about clean code, user experience, and mentoring junior developers. Successfully delivered 50+ projects with measurable business impact.'
+        summary:
+          'Senior Full-Stack Engineer with 8+ years of experience building scalable web applications and leading development teams. Expertise in modern JavaScript frameworks, cloud architecture, and agile methodologies. Passionate about clean code, user experience, and mentoring junior developers. Successfully delivered 50+ projects with measurable business impact.'
       },
       skills: [
         { name: 'JavaScript', category: 'Programming', level: 'Expert', years: 8 },
@@ -131,7 +132,8 @@ export class CVService {
           startDate: '2022-03-01',
           endDate: '',
           location: 'New York, NY',
-          description: 'Lead a team of 6 developers building enterprise-grade web applications. Architected and implemented microservices infrastructure serving 500K+ daily active users. Drove technical decisions and mentored junior developers.',
+          description:
+            'Lead a team of 6 developers building enterprise-grade web applications. Architected and implemented microservices infrastructure serving 500K+ daily active users. Drove technical decisions and mentored junior developers.',
           responsibilities: [
             'Led development of React-based dashboard serving 500K+ users',
             'Architected microservices infrastructure using Node.js and Docker',
@@ -149,7 +151,8 @@ export class CVService {
           startDate: '2020-01-01',
           endDate: '2022-02-01',
           location: 'San Francisco, CA',
-          description: 'Developed and maintained multiple web applications using React, Node.js, and cloud technologies. Worked closely with cross-functional teams to deliver high-quality software solutions.',
+          description:
+            'Developed and maintained multiple web applications using React, Node.js, and cloud technologies. Worked closely with cross-functional teams to deliver high-quality software solutions.',
           responsibilities: [
             'Built responsive web applications using React and TypeScript',
             'Developed RESTful APIs and GraphQL endpoints using Node.js',
@@ -166,7 +169,8 @@ export class CVService {
           startDate: '2018-06-01',
           endDate: '2019-12-01',
           location: 'Remote',
-          description: 'Built the frontend for a revolutionary fintech application from the ground up. Worked in a fast-paced startup environment with rapid iteration and deployment cycles.',
+          description:
+            'Built the frontend for a revolutionary fintech application from the ground up. Worked in a fast-paced startup environment with rapid iteration and deployment cycles.',
           responsibilities: [
             'Developed responsive React application from initial concept',
             'Implemented state management using Redux and Context API',
@@ -182,7 +186,8 @@ export class CVService {
           startDate: '2016-08-01',
           endDate: '2018-05-01',
           location: 'Boston, MA',
-          description: 'Started my career developing websites and web applications for various clients. Gained experience in multiple technologies and learned best practices in web development.',
+          description:
+            'Started my career developing websites and web applications for various clients. Gained experience in multiple technologies and learned best practices in web development.',
           responsibilities: [
             'Built custom WordPress themes and plugins for client websites',
             'Developed interactive web applications using jQuery and vanilla JavaScript',
@@ -215,7 +220,11 @@ export class CVService {
       ],
       languages: [
         { name: 'English', level: 'Native', proficiency: 'Native speaker' },
-        { name: 'Spanish', level: 'Professional', proficiency: 'C1 - Professional working proficiency' },
+        {
+          name: 'Spanish',
+          level: 'Professional',
+          proficiency: 'C1 - Professional working proficiency'
+        },
         { name: 'French', level: 'Intermediate', proficiency: 'B2 - Upper intermediate' },
         { name: 'Portuguese', level: 'Beginner', proficiency: 'A2 - Elementary' }
       ],
@@ -259,15 +268,26 @@ export class CVService {
       projects: [
         {
           name: 'E-Commerce Microservices Platform',
-          description: 'Built a comprehensive e-commerce platform using microservices architecture. Features include user management, product catalog, order processing, payment integration, and real-time inventory tracking. Serves 100K+ monthly active users.',
-          technologies: ['React', 'Node.js', 'MongoDB', 'Redis', 'Docker', 'Kubernetes', 'AWS', 'Stripe'],
+          description:
+            'Built a comprehensive e-commerce platform using microservices architecture. Features include user management, product catalog, order processing, payment integration, and real-time inventory tracking. Serves 100K+ monthly active users.',
+          technologies: [
+            'React',
+            'Node.js',
+            'MongoDB',
+            'Redis',
+            'Docker',
+            'Kubernetes',
+            'AWS',
+            'Stripe'
+          ],
           startDate: '2023-01-01',
           endDate: '2023-08-01',
           url: 'https://github.com/alexrodriguez/ecommerce-microservices'
         },
         {
           name: 'Real-Time Collaboration Tool',
-          description: 'Developed a Slack-like collaboration platform with real-time messaging, file sharing, video calls, and project management features. Built with modern web technologies and WebSocket for real-time communication.',
+          description:
+            'Developed a Slack-like collaboration platform with real-time messaging, file sharing, video calls, and project management features. Built with modern web technologies and WebSocket for real-time communication.',
           technologies: ['Next.js', 'Socket.io', 'PostgreSQL', 'Prisma', 'WebRTC', 'AWS S3'],
           startDate: '2022-09-01',
           endDate: '2023-02-01',
@@ -275,7 +295,8 @@ export class CVService {
         },
         {
           name: 'AI-Powered Analytics Dashboard',
-          description: 'Created an advanced analytics dashboard with machine learning insights, data visualization, and predictive analytics. Integrated multiple data sources and provided actionable business intelligence.',
+          description:
+            'Created an advanced analytics dashboard with machine learning insights, data visualization, and predictive analytics. Integrated multiple data sources and provided actionable business intelligence.',
           technologies: ['Vue.js', 'Python', 'Django', 'TensorFlow', 'D3.js', 'PostgreSQL'],
           startDate: '2022-04-01',
           endDate: '2022-10-01',
@@ -283,7 +304,8 @@ export class CVService {
         },
         {
           name: 'Mobile-First Progressive Web App',
-          description: 'Built a mobile-first PWA for a food delivery service with offline capabilities, push notifications, and location-based services. Achieved 98% Lighthouse performance score.',
+          description:
+            'Built a mobile-first PWA for a food delivery service with offline capabilities, push notifications, and location-based services. Achieved 98% Lighthouse performance score.',
           technologies: ['React', 'Service Workers', 'IndexedDB', 'Geolocation API', 'Push API'],
           startDate: '2021-11-01',
           endDate: '2022-04-01',
@@ -291,7 +313,8 @@ export class CVService {
         },
         {
           name: 'Blockchain Voting System',
-          description: 'Designed and implemented a secure blockchain-based voting system with smart contracts, ensuring transparency and immutability of votes. Built for academic research and proof of concept.',
+          description:
+            'Designed and implemented a secure blockchain-based voting system with smart contracts, ensuring transparency and immutability of votes. Built for academic research and proof of concept.',
           technologies: ['Solidity', 'Web3.js', 'Ethereum', 'React', 'MetaMask'],
           startDate: '2021-06-01',
           endDate: '2021-11-01',

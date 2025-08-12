@@ -18,7 +18,6 @@ wingman/
 │   │   │   ├── 📁 profile/        # 🆕 Unified profile system
 │   │   │   │   ├── [id]/          # Dynamic user profiles
 │   │   │   │   └── page.tsx       # Current user redirect
-│   │   │   ├── 📁 settings/       # User settings tabs
 │   │   │   ├── 📁 talent-pool/    # ⭐ Featured talent management
 │   │   │   ├── 📁 documents/      # 📄 Document management system
 │   │   │   ├── 📁 broadcasts/     # 📢 Broadcast center
@@ -42,7 +41,6 @@ wingman/
 ├── 📁 modules/                    # Feature modules
 │   ├── 📁 auth/                   # Authentication system
 │   ├── 📁 profile/                # Profile management
-│   └── 📁 settings/               # Settings schemas
 └── 📁 messages/                   # i18n translations
 ```
 
@@ -223,7 +221,6 @@ talent-pool/
 ├── talent-pool/          # Enhanced talent discovery system
 ├── documents/            # 🆕 Complete document management
 ├── broadcasts/           # 🆕 Professional broadcast center
-├── settings/             # Account settings with tabs
 ├── challenges/           # Challenge management
 ├── community/            # Social features
 └── solutions/            # Solutions marketplace

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { id } = await params;
-  
+
   if (!id) {
     notFound();
   }
