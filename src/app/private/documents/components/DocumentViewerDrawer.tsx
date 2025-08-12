@@ -32,15 +32,23 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
 }) => {
   const t = useTranslations('documents');
 
+  const previewUrl = useMemo(() => {
+    return document ? getDocumentPreviewUrl(document) : null;
+  }, [document]);
+
+  const downloadUrl = useMemo(() => {
+    return document ? getDocumentDownloadUrl(document) : null;
+  }, [document]);
+
   const isPDF = useMemo(() => {
-    if (!document?.url) return false;
-    return document.url.toLowerCase().includes('.pdf') || document.type?.name === 'PDF';
+    if (!document) return false;
+    return document.fileName.toLowerCase().endsWith('.pdf') || document.type?.name.toLowerCase() === 'pdf';
   }, [document]);
 
   const isImage = useMemo(() => {
-    if (!document?.url) return false;
+    if (!document) return false;
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp'];
-    return imageExtensions.some((ext) => document.url.toLowerCase().includes(ext));
+    return imageExtensions.some((ext) => document.fileName.toLowerCase().endsWith(ext));
   }, [document]);
 
   const renderDocumentContent = () => {
