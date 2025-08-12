@@ -35,7 +35,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
   const buttonSize = size === 'sm' ? 'h-6 w-6' : size === 'md' ? 'h-8 w-8' : 'h-10 w-10';
 
   return (
-    <div className='flex items-center gap-1'>
+    <div className='flex items-center gap-1 backdrop-blur-sm bg-background/30 rounded-lg p-1 border border-divider/50 hover:bg-background/60 transition-all duration-200'>
       {showEdit && onEdit && (
         <Tooltip content={editTooltip} size="sm" closeDelay={0}>
           <Button
