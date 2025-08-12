@@ -868,41 +868,41 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           </p>
         </div>
 
-        <div className='grid max-w-lg grid-cols-2 gap-4'>
+        <div className='grid max-w-md grid-cols-2 gap-3'>
           {[
             {
               icon: 'solar:user-check-outline',
-              label: 'Personal information updated',
+              label: 'Personal Info',
               count: '6 fields'
             },
             {
               icon: 'solar:code-outline',
-              label: 'Skills synchronized',
-              count: `${reviewData?.skills.length || 0} skills`
+              label: 'Skills',
+              count: `${reviewData?.skills.length || 0} items`
             },
             {
               icon: 'solar:briefcase-outline',
-              label: 'Experience added',
-              count: `${reviewData?.experience.length || 0} positions`
+              label: 'Experience',
+              count: `${reviewData?.experience.length || 0} entries`
             },
             {
               icon: 'solar:graduation-outline',
-              label: 'Education history updated',
+              label: 'Education',
               count: `${reviewData?.education.length || 0} degrees`
             }
           ].map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className='bg-success/10 border-success/20 rounded-xl border p-4 text-center'
+              transition={{ delay: index * 0.08 }}
+              className='bg-success/5 border-success/15 rounded-lg border p-3 text-center'
             >
-              <div className='mb-2 flex justify-center'>
-                <Icon icon={item.icon} className='text-success/70 h-6 w-6' />
+              <div className='mb-1 flex justify-center'>
+                <Icon icon={item.icon} className='text-success/60 h-4 w-4' />
               </div>
-              <p className='text-success text-sm font-medium'>{item.label}</p>
-              <p className='text-success/70 mt-1 text-xs'>{item.count}</p>
+              <p className='text-success text-xs font-medium'>{item.label}</p>
+              <p className='text-success/60 text-xs'>{item.count}</p>
             </motion.div>
           ))}
         </div>
