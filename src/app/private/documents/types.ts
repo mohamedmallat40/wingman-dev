@@ -27,6 +27,8 @@ export interface IDocument {
 
 export type DocumentType = 'all-documents' | 'shared-with-me';
 
+export type ViewMode = 'list' | 'grid';
+
 export interface DocumentFilters {
   search?: string;
   name?: string;
