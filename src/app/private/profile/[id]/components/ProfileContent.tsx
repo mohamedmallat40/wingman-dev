@@ -462,10 +462,10 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 />
               ) : (
                 <div className='flex items-center justify-center py-12 text-center'>
-                  <div>
+                  <div className='animate-fade-in'>
                     <Icon
                       icon='solar:document-text-linear'
-                      className='text-default-300 mx-auto mb-4 h-12 w-12'
+                      className='text-default-300 mx-auto mb-4 h-12 w-12 hover:text-primary transition-colors duration-300 hover:scale-110 transform'
                     />
                     <p className='text-foreground-500 mb-4'>
                       {t('talentPool.cards.noAboutAvailable')}
