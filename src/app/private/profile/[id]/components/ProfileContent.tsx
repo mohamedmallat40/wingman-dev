@@ -270,6 +270,21 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
     setIsSocialAccountsModalOpen(false);
   };
 
+  const handleEditSocialAccount = (account: SocialAccount) => {
+    // Find and edit specific social account
+    console.log('Editing social account:', account);
+    // Here you would open the edit form for the specific account
+    setIsSocialAccountsModalOpen(true);
+  };
+
+  const handleDeleteSocialAccount = (accountId: string) => {
+    const confirmed = confirm('Are you sure you want to delete this social account?');
+    if (confirmed) {
+      setLocalSocialAccounts(prev => prev.filter(account => account.id !== accountId));
+      console.log('Social account deleted:', accountId);
+    }
+  };
+
   // Experience handlers
   const handleAddExperience = () => {
     console.log('Opening experience modal for adding new experience');
