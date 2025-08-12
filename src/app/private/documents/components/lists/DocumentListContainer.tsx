@@ -17,6 +17,7 @@ interface DocumentListContainerProps {
   onUpload?: () => void;
   onRefresh?: () => void;
   handleOnEdit?: (document: IDocument) => void;
+  handleOnView?: (document: IDocument) => void;
 }
 
 const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
