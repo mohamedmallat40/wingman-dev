@@ -13,27 +13,13 @@ import {
   DrawerContent,
   DrawerFooter,
   DrawerHeader,
-  Input,
-  Textarea,
-  Select,
-  SelectItem,
   Progress,
   ScrollShadow,
-  Accordion,
-  AccordionItem,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Form,
-  Spacer,
-  Avatar,
   Badge,
   Tabs,
   Tab
 } from '@heroui/react';
+import { FileUpload } from '@/components/ui/file-upload';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CVService, type ParsedCVData } from '../services/cv-service';
