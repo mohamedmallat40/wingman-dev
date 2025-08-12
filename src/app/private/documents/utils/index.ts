@@ -2,4 +2,4 @@
 // DOCUMENT UTILS - ORGANIZED EXPORTS
 // ============================================================================
 
-export * from './document-utils';
+export * from './document-utilities';

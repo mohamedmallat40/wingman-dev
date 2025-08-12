@@ -364,8 +364,8 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           const requestData = {
             name: documentName.trim(),
             tags: tagIds,
-            type: selectedDocumentType.id,
-            status: selectedStatusObject.id,
+            typeId: selectedDocumentType.id,
+            statusId: selectedStatusObject.id,
             fileName: document.fileName
           };
           // Update document
@@ -374,7 +374,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           setUploadProgress(100);
         } else if (!isEditMode && onUpload) {
           let fileName = '';
-          if (selectedFile && !uploadedFileName) {
+          if (selectedFile) {
             const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
             fileName = uploadResponse.filename;
             setUploadedFileName(uploadResponse.filename);
@@ -394,9 +394,9 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           const requestData = {
             documentName: documentName.trim(),
             tags: tagIds,
-            type: selectedDocumentType.id,
-            status: selectedStatusObject.id,
-            fileName: document?.fileName
+            typeId: selectedDocumentType.id,
+            statusId: selectedStatusObject.id,
+            fileName: fileName
           };
 
           // Upload document
@@ -718,9 +718,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
 
                   {/* File Upload */}
                   <FormField
-                    label={
-                      isEditMode ? 'Replace file (optional)' : t('documents.upload.file.label')
-                    }
+                    label={isEditMode ? '' : t('documents.upload.file.label')}
                     required={!isEditMode}
                     delay={0.5}
                   >
@@ -734,19 +732,21 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                         </div>
                       </div>
                     )}
-                    <FileUpload
-                      selectedFile={selectedFile}
-                      onFileSelect={handleFileSelect}
-                      onFileRemove={handleFileRemove}
-                      isDragOver={isDragOver}
-                      onDragEnter={handleDragEnter}
-                      onDragLeave={handleDragLeave}
-                      onDragOver={handleDragOver}
-                      onDrop={handleDrop}
-                      acceptedFileTypes='.pdf,.jpg,.jpeg,.png'
-                      maxFileSize={10 * 1024 * 1024}
-                      disabled={isEditMode}
-                    />
+                    {!isEditMode && (
+                      <FileUpload
+                        selectedFile={selectedFile}
+                        onFileSelect={handleFileSelect}
+                        onFileRemove={handleFileRemove}
+                        isDragOver={isDragOver}
+                        onDragEnter={handleDragEnter}
+                        onDragLeave={handleDragLeave}
+                        onDragOver={handleDragOver}
+                        onDrop={handleDrop}
+                        acceptedFileTypes='.pdf,.jpg,.jpeg,.png'
+                        maxFileSize={10 * 1024 * 1024}
+                        disabled={isEditMode}
+                      />
+                    )}
                   </FormField>
 
                   {/* Upload Progress */}

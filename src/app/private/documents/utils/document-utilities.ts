@@ -12,9 +12,9 @@ export const formatFileSize = (bytes: number): string => {
 
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  const index = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return Number.parseFloat((bytes / Math.pow(k, index)).toFixed(2)) + ' ' + sizes[index];
 };
 
 /**
@@ -49,7 +49,7 @@ export const getFileIcon = (file: File | { name: string; type?: string }): strin
   }
 
   // Images
-  if (fileName.match(/\.(jpg|jpeg|png|gif|bmp|svg)$/i) || fileType.includes('image')) {
+  if (/\.(jpg|jpeg|png|gif|bmp|svg)$/i.test(fileName) || fileType.includes('image')) {
     return 'solar:gallery-bold';
   }
 
@@ -130,56 +130,46 @@ export const getDocumentTypeColor = (
 export const filterDocuments = (
   documents: IDocument[],
   filters: DocumentFilters,
-  searchQuery: string = ''
+  searchQuery: string
 ): IDocument[] => {
-  let filtered = documents;
+  return documents.filter((document) => {
+    // Search by document name (case-insensitive)
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      const documentName = document.documentName.toLowerCase() || '';
 
-  // Apply search query
-  if (searchQuery.trim()) {
-    const query = searchQuery.toLowerCase();
-    filtered = filtered.filter(
-      (doc) =>
-        doc.documentName.toLowerCase().includes(query) ||
-        doc.tags.some((tag) => tag.name.toLowerCase().includes(query)) ||
-        doc.type.name.toLowerCase().includes(query) ||
-        doc.status.name.toLowerCase().includes(query)
-    );
-  }
+      if (!documentName.includes(query)) {
+        return false;
+      }
+    }
 
-  // Apply type filter
-  if (filters.type) {
-    filtered = filtered.filter((doc) => doc.type.name === filters.type);
-  }
+    // Filter by tags
+    if (filters.tags && filters.tags.length > 0) {
+      const documentTagIds = document.tags?.map((tag) => tag.id) || [];
+      const hasMatchingTag = filters.tags.some((filterTagId) =>
+        documentTagIds.includes(filterTagId)
+      );
 
-  // Apply status filter
-  if (filters.status) {
-    filtered = filtered.filter((doc) => doc.status.name === filters.status);
-  }
+      if (!hasMatchingTag) {
+        return false;
+      }
+    }
 
-  // Apply tags filter
-  if (filters.tags && filters.tags.length > 0) {
-    filtered = filtered.filter((doc) =>
-      filters.tags!.some((filterTag) => doc.tags.some((docTag) => docTag.name === filterTag))
-    );
-  }
-
-  // Apply date range filter if provided
-  if (filters.dateFrom || filters.dateTo) {
-    filtered = filtered.filter((doc) => {
-      const docDate = new Date(doc.createdAt);
-      const from = filters.dateFrom ? new Date(filters.dateFrom) : null;
-      const to = filters.dateTo ? new Date(filters.dateTo) : null;
-
-      if (from && docDate < from) return false;
-      if (to && docDate > to) return false;
-
-      return true;
-    });
-  }
-
-  return filtered;
+    return true;
+  });
 };
 
+export const debounce = <T extends (...arguments_: any[]) => any>(
+  function_: T,
+  wait: number
+): ((...arguments_: Parameters<T>) => void) => {
+  let timeout: NodeJS.Timeout;
+
+  return (...arguments_: Parameters<T>) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => function_.apply(null, arguments_), wait);
+  };
+};
 /**
  * Sort documents by various criteria
  */
@@ -192,20 +182,25 @@ export const sortDocuments = (
     let comparison = 0;
 
     switch (sortBy) {
-      case 'name':
+      case 'name': {
         comparison = a.documentName.localeCompare(b.documentName);
         break;
-      case 'date':
+      }
+      case 'date': {
         comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
         break;
-      case 'type':
+      }
+      case 'type': {
         comparison = a.type.name.localeCompare(b.type.name);
         break;
-      case 'status':
+      }
+      case 'status': {
         comparison = a.status.name.localeCompare(b.status.name);
         break;
-      default:
+      }
+      default: {
         comparison = 0;
+      }
     }
 
     return sortOrder === 'asc' ? comparison : -comparison;

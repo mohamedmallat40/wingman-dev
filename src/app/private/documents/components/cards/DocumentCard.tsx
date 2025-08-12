@@ -11,16 +11,18 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Skeleton
+  Skeleton,
+  useDisclosure
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useDeleteDocument } from '@root/modules/documents/hooks/use-documents';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { formatDate } from '@/lib/utils/utilities';
+import ConfirmDeleteModal from '@/app/private/components/confirm-delete';
+import { formatDate, getBaseUrl } from '@/lib/utils/utilities';
 
-import { IDocument } from '../../types';
+import { type IDocument } from '../../types';
 import { DocumentShareModal } from '../modals';
 
 interface DocumentCardProperties {
@@ -170,18 +172,41 @@ export default function DocumentCard({
   const t = useTranslations('documents');
   const [showShareModal, setShowShareModal] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<{
+    type: string;
+    index: number;
+    id?: string;
+    name?: string;
+  } | null>(null);
+
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onOpenChange: onDeleteModalOpenChange
+  } = useDisclosure();
+
   const deleteMutation = useDeleteDocument();
 
   const handleDelete = async () => {
+    setItemToDelete({
+      type: 'document',
+      index: 0,
+      id: document.id,
+      name: document.documentName
+    });
+    onDeleteModalOpen();
+  };
+
+  const confirmDelete = async () => {
     try {
       await deleteMutation.mutateAsync(document.id);
     } catch (error) {
       console.error('Delete failed:', error);
     }
   };
+
   const handleShare = async (data: { users: string[]; message?: string; notifyUsers: boolean }) => {
     try {
-      console.log('Sharing document:', data);
       // Here you would integrate with your actual sharing API
       // await shareDocument(data);
     } catch (error) {
@@ -241,7 +266,12 @@ export default function DocumentCard({
         {/* Gradient overlay */}
         <div className='from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
 
-        <CardBody className='relative p-5'>
+        <CardBody
+          className='relative p-5 cursor-pointer'
+          onClick={() => {
+            window.open(`${getBaseUrl()}/upload/${document.fileName}`, '_blank');
+          }}
+        >
           <div className='mb-4 flex items-start justify-between'>
             <div className='flex flex-1 items-start gap-4'>
               {getDocumentIcon(document.type?.name)}
@@ -349,6 +379,9 @@ export default function DocumentCard({
                 <DropdownMenu className='min-w-[160px]'>
                   <DropdownItem
                     key='view'
+                    onPress={() => {
+                      window.open(`${getBaseUrl()}/upload/${document.fileName}`, '_blank');
+                    }}
                     startContent={<Icon icon='solar:eye-linear' className='h-4 w-4' />}
                   >
                     {t('actions.view')}
@@ -360,7 +393,7 @@ export default function DocumentCard({
                   >
                     {t('actions.edit')}
                   </DropdownItem>
-                  <DropdownItem
+                  {/* <DropdownItem
                     key='download'
                     startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
                   >
@@ -371,7 +404,7 @@ export default function DocumentCard({
                     startContent={<Icon icon='solar:copy-linear' className='h-4 w-4' />}
                   >
                     {t('actions.duplicate')}
-                  </DropdownItem>
+                  </DropdownItem> */}
                   <DropdownItem
                     key='delete'
                     className='text-danger'
@@ -397,6 +430,16 @@ export default function DocumentCard({
           onShare={handleShare}
         />
       </Card>
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={onDeleteModalOpenChange}
+        onConfirm={async () => {
+          await confirmDelete();
+        }}
+        title={'Delete document'}
+        itemName={itemToDelete?.name}
+        isLoading={deleteMutation.isPending}
+      />
     </motion.div>
   );
 }
