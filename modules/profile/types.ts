@@ -94,7 +94,7 @@ export interface IService {
 }
 export interface ILanguage {
   id: string;
-  key: string;
+  key: string | undefined;
   level: 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE';
 }
 

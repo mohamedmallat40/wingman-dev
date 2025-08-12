@@ -13,7 +13,8 @@ import {
   Input,
   Select,
   SelectItem,
-  Textarea
+  Textarea,
+  useDisclosure
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type IService } from '@root/modules/profile/types';
@@ -21,6 +22,8 @@ import useSettings from '@root/modules/settings/hooks/use-settings';
 import { servicesSchema } from '@root/modules/settings/schema/settings.schema';
 import { Edit, Plus, Save, Trash2, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
+
+import ConfirmDeleteModal from '../../components/confirm-delete';
 
 interface ServicesTabProperties {
   user: IUserProfile;
@@ -38,7 +41,12 @@ export default function ServicesTab({ user, services }: Readonly<ServicesTabProp
   const [updatingServiceId, setUpdatingServiceId] = useState<string | null>(null);
   const [editingServiceId, setEditingServiceId] = useState<string | null>(null);
   const [originalServiceData, setOriginalServiceData] = useState<any>(null);
-
+  const [itemToDelete, setItemToDelete] = useState<{
+    type: string;
+    index: number;
+    id?: string;
+    name?: string;
+  } | null>(null);
   const {
     createService,
     updateService,
@@ -48,6 +56,11 @@ export default function ServicesTab({ user, services }: Readonly<ServicesTabProp
     isUpdatingService,
     useAllSkills
   } = useSettings(user.id);
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onOpenChange: onDeleteModalOpenChange
+  } = useDisclosure();
 
   const form = useForm<ServicesFormData>({
     resolver: zodResolver(servicesSchema),
@@ -248,18 +261,27 @@ export default function ServicesTab({ user, services }: Readonly<ServicesTabProp
   };
 
   const handleDeleteService = (fieldIndex: number) => {
-    const serviceData = form.getValues(`services.${fieldIndex}`);
-    const actualId = serviceData.id;
+    const services = form.getValues('services');
+    const serviceData = services[fieldIndex];
+    setItemToDelete({
+      type: 'service',
+      index: fieldIndex,
+      id: serviceData?.id,
+      name: serviceData?.name
+    });
+    onDeleteModalOpen();
+  };
 
-    try {
-      if (actualId && !actualId.startsWith('temp_')) {
-        // If it's an existing service (has a real ID), delete from server
-        deleteService(actualId);
-      }
-      removeService(fieldIndex);
-    } catch (error) {
-      console.error('Error deleting service:', error);
+  const confirmDeleteService = async () => {
+    const fieldIndex = itemToDelete?.index;
+    const servicesData = form.getValues(`services`);
+    const actualId = servicesData[fieldIndex]?.id;
+
+    if (actualId && !actualId.startsWith('temp_')) {
+      deleteService(actualId);
     }
+    removeService(fieldIndex);
+    setItemToDelete(null);
   };
 
   const addSkillToService = (serviceIndex: number) => {
@@ -537,6 +559,16 @@ export default function ServicesTab({ user, services }: Readonly<ServicesTabProp
           </div>
         </form>
       </CardBody>
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={onDeleteModalOpenChange}
+        onConfirm={async () => {
+          await confirmDeleteService();
+        }}
+        title={'Delete service'}
+        itemName={itemToDelete?.name}
+        isLoading={isDeletingService}
+      />
     </Card>
   );
 }

@@ -2,27 +2,21 @@
 
 import React, { useState } from 'react';
 
-import {
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-  Divider,
-  Progress
-} from '@heroui/react';
+import { Avatar, Badge, Button, Card, CardBody, CardHeader, Chip, Divider } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import ISO6391 from 'iso-639-1';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import CVUploadDrawer from './CVUploadDrawer';
-
+import { getSkillIcon } from '@/app/private/talent-pool/utils/skill-icons';
+import {
+  getUserInitials,
+  mapUserType,
+  stripHtml,
+  truncateText
+} from '@/app/private/talent-pool/utils/talent-utils';
 import { getImageUrl } from '@/lib/utils/utilities';
 
-import { getSkillIcon } from '@/app/private/talent-pool/utils/skill-icons';
-import { getUserInitials, mapUserType, stripHtml, truncateText } from '@/app/private/talent-pool/utils/talent-utils';
 import {
   type Education,
   type Experience,
@@ -30,6 +24,7 @@ import {
   type ProfileUser,
   type UserNote
 } from '../types';
+import CVUploadDrawer from './CVUploadDrawer';
 
 interface ProfileContentProps {
   user: ProfileUser;
@@ -110,7 +105,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                     </p>
                   </div>
                 </div>
-                
+
                 {isOwnProfile && (
                   <Button
                     isIconOnly
@@ -137,7 +132,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                       icon='solar:document-text-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
-                    <p className='text-foreground-500 mb-4'>{t('talentPool.cards.noAboutAvailable')}</p>
+                    <p className='text-foreground-500 mb-4'>
+                      {t('talentPool.cards.noAboutAvailable')}
+                    </p>
                     {isOwnProfile && (
                       <Button
                         color='primary'
@@ -157,19 +154,21 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
           {/* CV Upload Section - Only for own profile */}
           {isOwnProfile && (
-            <Card className='border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5 shadow-sm'>
+            <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-r shadow-sm'>
               <CardBody className='p-6'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-4'>
                     <div className='bg-primary/15 rounded-2xl p-4'>
-                      <Icon icon='solar:document-add-bold-duotone' className='text-primary h-8 w-8' />
+                      <Icon
+                        icon='solar:document-add-bold-duotone'
+                        className='text-primary h-8 w-8'
+                      />
                     </div>
                     <div>
-                      <h3 className='text-foreground text-lg font-semibold mb-1'>
-                        Upload Your CV
-                      </h3>
+                      <h3 className='text-foreground mb-1 text-lg font-semibold'>Upload Your CV</h3>
                       <p className='text-foreground-600 text-sm'>
-                        Let AI analyze your CV and automatically fill out your profile with experience, skills, education, and more.
+                        Let AI analyze your CV and automatically fill out your profile with
+                        experience, skills, education, and more.
                       </p>
                     </div>
                   </div>
@@ -185,16 +184,16 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 <div className='mt-4 flex flex-wrap gap-3'>
-                  <div className='flex items-center gap-2 text-sm text-foreground-600'>
-                    <Icon icon='solar:check-circle-linear' className='h-4 w-4 text-success' />
+                  <div className='text-foreground-600 flex items-center gap-2 text-sm'>
+                    <Icon icon='solar:check-circle-linear' className='text-success h-4 w-4' />
                     <span>Supports PDF, DOC, DOCX</span>
                   </div>
-                  <div className='flex items-center gap-2 text-sm text-foreground-600'>
-                    <Icon icon='solar:shield-check-linear' className='h-4 w-4 text-success' />
+                  <div className='text-foreground-600 flex items-center gap-2 text-sm'>
+                    <Icon icon='solar:shield-check-linear' className='text-success h-4 w-4' />
                     <span>Secure AI parsing</span>
                   </div>
-                  <div className='flex items-center gap-2 text-sm text-foreground-600'>
-                    <Icon icon='solar:clock-circle-linear' className='h-4 w-4 text-success' />
+                  <div className='text-foreground-600 flex items-center gap-2 text-sm'>
+                    <Icon icon='solar:clock-circle-linear' className='text-success h-4 w-4' />
                     <span>Updates in seconds</span>
                   </div>
                 </div>
@@ -219,7 +218,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                     </p>
                   </div>
                 </div>
-                
+
                 {isOwnProfile && (
                   <Button
                     isIconOnly
@@ -325,7 +324,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                       icon='solar:case-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
-                    <p className='text-foreground-500 mb-4'>{t('talentPool.profile.noExperience')}</p>
+                    <p className='text-foreground-500 mb-4'>
+                      {t('talentPool.profile.noExperience')}
+                    </p>
                     {isOwnProfile && (
                       <Button
                         color='primary'
@@ -360,7 +361,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                     </p>
                   </div>
                 </div>
-                
+
                 {isOwnProfile && (
                   <Button
                     isIconOnly
@@ -446,7 +447,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                       icon='solar:diploma-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
-                    <p className='text-foreground-500 mb-4'>{t('talentPool.profile.noEducation')}</p>
+                    <p className='text-foreground-500 mb-4'>
+                      {t('talentPool.profile.noEducation')}
+                    </p>
                     {isOwnProfile && (
                       <Button
                         color='primary'
@@ -484,7 +487,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                     </p>
                   </div>
                 </div>
-                
+
                 {isOwnProfile && (
                   <Button
                     isIconOnly
@@ -503,7 +506,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 <div className='flex flex-wrap gap-3'>
                   {user.skills.map((skill, index) => {
                     const colors = ['primary', 'secondary', 'success', 'warning'] as const;
-                    const chipColor = colors[index % colors.length] as 'primary' | 'secondary' | 'success' | 'warning';
+                    const chipColor = colors[index % colors.length] as
+                      | 'primary'
+                      | 'secondary'
+                      | 'success'
+                      | 'warning';
 
                     return (
                       <Chip
@@ -526,7 +533,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                       icon='solar:verified-check-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
-                    <p className='text-foreground-500 mb-4'>{t('talentPool.cards.noSkillsListed')}</p>
+                    <p className='text-foreground-500 mb-4'>
+                      {t('talentPool.cards.noSkillsListed')}
+                    </p>
                     {isOwnProfile && (
                       <Button
                         color='primary'
@@ -561,7 +570,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                     </p>
                   </div>
                 </div>
-                
+
                 {isOwnProfile && (
                   <Button
                     isIconOnly
@@ -586,48 +595,23 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                       <CardBody className='p-4'>
                         <div className='mb-3 flex items-center justify-between'>
                           <div className='flex items-center gap-3'>
-                            <div className='border-default-200 h-4 w-6 overflow-hidden rounded-sm border shadow-sm'>
-                              <img
-                                src={`https://flagcdn.com/24x18/${
-                                  lang.key === 'EN' ? 'gb'
-                                  : lang.key === 'FR' ? 'fr'
-                                  : lang.key === 'NL' ? 'nl'
-                                  : lang.key === 'DE' ? 'de'
-                                  : lang.key === 'ES' ? 'es'
-                                  : lang.key === 'IT' ? 'it'
-                                  : 'un'
-                                }.png`}
-                                alt={`${lang.key} flag`}
-                                className='h-full w-full object-cover'
-                                onError={(e) => {
-                                  const target = e.currentTarget;
-                                  target.style.display = 'none';
-                                  const parent = target.parentElement;
-                                  if (parent) {
-                                    parent.innerHTML = `<div class="w-full h-full bg-default-200 flex items-center justify-center text-xs font-bold text-default-600">${lang.key}</div>`;
-                                  }
-                                }}
-                              />
-                            </div>
-                            <h4 className='text-foreground font-semibold'>
-                              {lang.key === 'EN' ? 'English'
-                               : lang.key === 'FR' ? 'French'
-                               : lang.key === 'NL' ? 'Dutch'
-                               : lang.key === 'DE' ? 'German'
-                               : lang.key === 'ES' ? 'Spanish'
-                               : lang.key === 'IT' ? 'Italian'
-                               : lang.name || lang.key}
+                            <h4 className='text-foreground text-lg font-bold'>
+                              {ISO6391.getName(lang.key.toLocaleLowerCase())}
                             </h4>
                           </div>
                           <div className='flex items-center gap-2'>
                             <Chip
                               size='sm'
                               color={
-                                lang.level === 'NATIVE' ? 'success'
-                                : lang.level === 'PROFESSIONAL' ? 'primary'
-                                : lang.level === 'INTERMEDIATE' ? 'warning'
-                                : lang.level === 'BEGINNER' ? 'secondary'
-                                : 'default'
+                                lang.level === 'NATIVE'
+                                  ? 'success'
+                                  : lang.level === 'PROFESSIONAL'
+                                    ? 'primary'
+                                    : lang.level === 'INTERMEDIATE'
+                                      ? 'warning'
+                                      : lang.level === 'BEGINNER'
+                                        ? 'secondary'
+                                        : 'default'
                               }
                               variant='flat'
                               className='text-tiny font-bold'
@@ -658,7 +642,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                       icon='solar:globe-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
-                    <p className='text-foreground-500 mb-4'>{t('talentPool.profile.noLanguages')}</p>
+                    <p className='text-foreground-500 mb-4'>
+                      {t('talentPool.profile.noLanguages')}
+                    </p>
                     {isOwnProfile && (
                       <Button
                         color='primary'
@@ -789,7 +775,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             <CardBody className='p-8 text-center'>
               <div className='mx-auto mb-4 h-20 w-20'>
                 {user.profileImage && user.profileImage.trim() ? (
-                  <div className='ring-primary/20 shadow-lg from-primary-200 to-secondary-200 h-full w-full overflow-hidden rounded-full bg-gradient-to-br ring-4'>
+                  <div className='ring-primary/20 from-primary-200 to-secondary-200 h-full w-full overflow-hidden rounded-full bg-gradient-to-br shadow-lg ring-4'>
                     <img
                       src={getImageUrl(user.profileImage)}
                       alt={`${user.firstName} ${user.lastName}`}
@@ -804,7 +790,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                     />
                   </div>
                 ) : (
-                  <div className='ring-primary/20 shadow-lg from-primary-200 to-secondary-200 text-primary-800 flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br text-xl font-bold ring-4'>
+                  <div className='ring-primary/20 from-primary-200 to-secondary-200 text-primary-800 flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br text-xl font-bold shadow-lg ring-4'>
                     {getUserInitials(user.firstName, user.lastName)}
                   </div>
                 )}

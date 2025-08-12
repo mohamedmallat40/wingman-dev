@@ -1,15 +1,17 @@
+import { on } from 'events';
 import { useState } from 'react';
 
 import type { IEducation } from '@root/modules/profile/types';
 import type { EducationFormData } from '@root/modules/settings/schema/settings.schema';
 
-import { Button, Card, CardBody, CardHeader, Input, Textarea } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Input, Textarea, useDisclosure } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type IUserProfile } from '@root/modules/profile/types';
 import useSettings from '@root/modules/settings/hooks/use-settings';
 import { educationSchema } from '@root/modules/settings/schema/settings.schema';
 import { Edit, Plus, Save, Trash2, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
+import ConfirmDeleteModal from '../../components/confirm-delete';
 
 interface EducationTabProperties {
   user: IUserProfile;
@@ -21,6 +23,13 @@ export default function EducationTab({ user, educations }: Readonly<EducationTab
   const [updatingEducationId, setUpdatingEducationId] = useState<string | null>(null);
   const [editingEducationId, setEditingEducationId] = useState<string | null>(null);
   const [originalEducationData, setOriginalEducationData] = useState<any>(null);
+  const [itemToDelete, setItemToDelete] = useState<{
+    type: string;
+    index: number;
+    id?: string;
+    name?: string;
+  } | null>(null);
+
   const {
     createEducation,
     updateEducation,
@@ -28,6 +37,11 @@ export default function EducationTab({ user, educations }: Readonly<EducationTab
     isDeletingEducation,
     isUpdatingEducation
   } = useSettings();
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onOpenChange: onDeleteModalOpenChange
+  } = useDisclosure();
 
   const form = useForm<EducationFormData>({
     resolver: zodResolver(educationSchema),
@@ -65,7 +79,9 @@ export default function EducationTab({ user, educations }: Readonly<EducationTab
   // Check if form is valid for new educations
   const isFormValidForNewEducations = () => {
     const formData = form.watch();
-    const newEducations = formData.education?.filter((item: { id: string; }) => item.id?.startsWith('temp_'));
+    const newEducations = formData.education?.filter((item: { id: string }) =>
+      item.id?.startsWith('temp_')
+    );
 
     if (newEducations.length === 0) return false;
 
@@ -128,7 +144,6 @@ export default function EducationTab({ user, educations }: Readonly<EducationTab
   // Check if field should be editable
   const isFieldEditable = (fieldIndex: number) => {
     const educationId = getEducationId(fieldIndex);
-    // New educations (temp_ IDs) are always editable
     // Existing educations are editable only when in edit mode
     return educationId?.startsWith('temp_') || editingEducationId === educationId;
   };
@@ -156,18 +171,26 @@ export default function EducationTab({ user, educations }: Readonly<EducationTab
   };
 
   const handleDeleteEducation = (fieldIndex: number) => {
-    const educationData = form.getValues(`education.${fieldIndex}`);
-    const actualId = educationData.id;
+    const educations = form.getValues('education');
+    const educationData = educations[fieldIndex];
 
-    try {
-      if (actualId && !actualId.startsWith('temp_')) {
-        // If it's an existing education (has a real ID), delete from server
-        deleteEducation(actualId);
-      }
-      removeEducation(fieldIndex);
-    } catch (error) {
-      console.error('Error deleting education:', error);
+    setItemToDelete({
+      type: 'education',
+      index: fieldIndex,
+      id: educationData?.id,
+      name: educationData?.degree
+    });
+    onDeleteModalOpen();
+  };
+  const confirmDeleteEducation = async () => {
+    const fieldIndex = itemToDelete?.index;
+    const educationData = form.getValues(`education`);
+    const actualId = educationData[fieldIndex].id;
+    if (actualId && !actualId.startsWith('temp_')) {
+      deleteEducation(actualId);
     }
+    removeEducation(fieldIndex);
+    setItemToDelete(null);
   };
 
   const handleUpdateSingleEducation = async (fieldIndex: number) => {
@@ -389,6 +412,16 @@ export default function EducationTab({ user, educations }: Readonly<EducationTab
           </div>
         </form>
       </CardBody>
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={onDeleteModalOpenChange}
+        onConfirm={async () => {
+          await confirmDeleteEducation();
+        }}
+        title={'Delete education'}
+        itemName={itemToDelete?.name}
+        isLoading={isDeletingEducation}
+      />
     </Card>
   );
 }

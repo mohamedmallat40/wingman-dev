@@ -5,13 +5,15 @@ import { useState } from 'react';
 import type { IExperience } from '@root/modules/profile/types';
 import type { ProjectsExpFormData } from '@root/modules/settings/schema/settings.schema';
 
-import { Button, Card, CardBody, CardHeader, Input, Textarea } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Input, Textarea, useDisclosure } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type IUserProfile } from '@root/modules/profile/types';
 import useSettings from '@root/modules/settings/hooks/use-settings';
 import { projectsExpSchema } from '@root/modules/settings/schema/settings.schema';
 import { Edit, Plus, Save, Trash2, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
+
+import ConfirmDeleteModal from '../../components/confirm-delete';
 
 interface ExperienceTabProperties {
   user: IUserProfile;
@@ -23,6 +25,13 @@ export default function ExperienceTab({ user, experiences }: Readonly<Experience
   const [updatingExperienceId, setUpdatingExperienceId] = useState<string | null>(null);
   const [editingExperienceId, setEditingExperienceId] = useState<string | null>(null);
   const [originalExperienceData, setOriginalExperienceData] = useState<any>(null);
+  const [itemToDelete, setItemToDelete] = useState<{
+    type: string;
+    index: number;
+    id?: string;
+    name?: string;
+  } | null>(null);
+
   const {
     createExperience,
     updateExperience,
@@ -30,6 +39,12 @@ export default function ExperienceTab({ user, experiences }: Readonly<Experience
     isDeletingExperience,
     isUpdatingExperience
   } = useSettings();
+
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onOpenChange: onDeleteModalOpenChange
+  } = useDisclosure();
 
   const form = useForm<ProjectsExpFormData>({
     resolver: zodResolver(projectsExpSchema),
@@ -143,17 +158,28 @@ export default function ExperienceTab({ user, experiences }: Readonly<Experience
   };
 
   const handleDeleteExperience = (fieldIndex: number) => {
-    const experienceData = form.getValues(`items.${fieldIndex}`);
-    const actualId = experienceData.id;
+    const experiences = form.getValues('items');
+    const experienceData = experiences[fieldIndex];
+    setItemToDelete({
+      type: 'experience',
+      index: fieldIndex,
+      id: experienceData?.id,
+      name: experienceData?.position
+    });
+    onDeleteModalOpen();
+  };
 
-    try {
-      if (actualId && !actualId.startsWith('temp_')) {
-        deleteExperience(actualId);
-      }
-      remove(fieldIndex);
-    } catch (error) {
-      console.error('Error deleting experience:', error);
+  const confirmDeleteExperience = async () => {
+    const fieldIndex = itemToDelete?.index;
+    const experienceData = form.getValues(`items`);
+    const actualId = experienceData[fieldIndex].id;
+
+    if (actualId && !actualId.startsWith('temp_')) {
+      deleteExperience(actualId);
     }
+    remove(fieldIndex);
+
+    setItemToDelete(null);
   };
 
   const handleUpdateSingleExperience = async (fieldIndex: number) => {
@@ -167,7 +193,7 @@ export default function ExperienceTab({ user, experiences }: Readonly<Experience
 
     setUpdatingExperienceId(experienceId ?? '');
     try {
-      await updateExperience(changedFields);
+      updateExperience(changedFields);
       setEditingExperienceId(null);
       setOriginalExperienceData(null);
     } catch (error) {
@@ -381,6 +407,16 @@ export default function ExperienceTab({ user, experiences }: Readonly<Experience
           </div>
         </form>
       </CardBody>
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={onDeleteModalOpenChange}
+        onConfirm={async () => {
+          await confirmDeleteExperience();
+        }}
+        title={'Delete Expereince'}
+        itemName={itemToDelete?.name}
+        isLoading={isDeletingExperience}
+      />
     </Card>
   );
 }

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import type {
   AddressFormData,
@@ -18,7 +18,8 @@ import {
   Input,
   Select,
   SelectItem,
-  Textarea
+  Textarea,
+  useDisclosure
 } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type ILanguage, type IUserProfile } from '@root/modules/profile/types';
@@ -37,7 +38,10 @@ import ISO6391 from 'iso-639-1';
 import { Plus, Save, Trash2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useFieldArray, useForm } from 'react-hook-form';
+
 import { getBaseUrl } from '@/lib/utils/utilities';
+
+import ConfirmDeleteModal from '../../components/confirm-delete';
 
 // Register locales
 countries.registerLocale(enLocale);
@@ -59,6 +63,18 @@ const levelOptions = [
 export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfoTabProperties>) {
   const locale = useLocale();
   const t = useTranslations();
+  const [itemToDelete, setItemToDelete] = useState<{
+    type: 'skill' | 'language';
+    index: number;
+    id?: string;
+    name?: string;
+  } | null>(null);
+
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onOpenChange: onDeleteModalOpenChange
+  } = useDisclosure();
 
   const {
     updateGeneralInfo,
@@ -327,7 +343,23 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
     updateGeneralInfo({ skills: allSkillIds });
   };
 
-  const handleRemoveSkill = async (skillIndex: number) => {
+  const handleRemoveSkill = (skillIndex: number) => {
+    const currentSkills = skillsForm.getValues('skills');
+    const skillToRemove = currentSkills[skillIndex];
+
+    setItemToDelete({
+      type: 'skill',
+      index: skillIndex,
+      id: skillToRemove?.id,
+      name: skillToRemove?.key
+    });
+    onDeleteModalOpen();
+  };
+
+  const confirmRemoveSkill = async () => {
+    if (!itemToDelete || itemToDelete.type !== 'skill') return;
+
+    const skillIndex = itemToDelete.index;
     const currentSkills = skillsForm.getValues('skills');
     const skillToRemove = currentSkills[skillIndex];
 
@@ -344,6 +376,8 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
 
       updateGeneralInfo({ skills: remainingSkills });
     }
+
+    setItemToDelete(null);
   };
 
   const getLanguageCode = (name: string): string => {
@@ -377,12 +411,29 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
 
   const handleDeleteLanguage = (languageId: string, fieldIndex: number) => {
     const languageData = languagesForm.getValues(`languages.${fieldIndex}`);
+
+    setItemToDelete({
+      type: 'language',
+      index: fieldIndex,
+      id: languageData.id,
+      name: languageData.key
+    });
+    onDeleteModalOpen();
+  };
+
+  const confirmDeleteLanguage = () => {
+    if (!itemToDelete || itemToDelete.type !== 'language') return;
+
+    const fieldIndex = itemToDelete.index;
+    const languageData = languagesForm.getValues(`languages.${fieldIndex}`);
     const actualLanguageId = languageData.id;
 
     if (actualLanguageId && !actualLanguageId.startsWith('temp_')) {
       deleteLanguage(actualLanguageId);
     }
     removeLanguage(fieldIndex);
+
+    setItemToDelete(null);
   };
 
   const onError = (errors: unknown) => {
@@ -752,9 +803,7 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
               {languageFields.map((field, index) => {
                 const languageData = languagesForm.watch(`languages.${index}`);
                 const isNewLanguage =
-                  !languageData?.id ||
-                  languageData.id === '' ||
-                  languageData.id.startsWith('temp_');
+                  !languageData.id || languageData.id === '' || languageData.id.startsWith('temp_');
 
                 return (
                   <div
@@ -852,6 +901,20 @@ export default function GeneralInfoTab({ user, languages }: Readonly<GeneralInfo
           </form>
         </CardBody>
       </Card>
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={onDeleteModalOpenChange}
+        onConfirm={async () => {
+          if (itemToDelete?.type === 'skill') {
+            await confirmRemoveSkill();
+          } else if (itemToDelete?.type === 'language') {
+            confirmDeleteLanguage();
+          }
+        }}
+        title={`Delete ${itemToDelete?.type === 'skill' ? 'Skill' : 'Language'}`}
+        itemName={itemToDelete?.name}
+        isLoading={itemToDelete?.type === 'language' ? isDeletingLanguage : isUpdatingGeneralInfo}
+      />
     </div>
   );
 }

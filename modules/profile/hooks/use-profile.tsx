@@ -8,7 +8,7 @@ import {
   serviceOptions,
   userProfileOptions
 } from '@root/modules/profile/hooks/profile.server';
-import { type IExperience, type IUserProfile } from '@root/modules/profile/types';
+import { ILanguage, type IExperience, type IUserProfile } from '@root/modules/profile/types';
 import { useQuery } from '@tanstack/react-query';
 
 const useProfile = (userId: string) => {
@@ -66,7 +66,7 @@ const useProfile = (userId: string) => {
     experience,
     services: serviceQuery.error ? [] : (serviceQuery.data?.data ?? []),
     education: educationQuery.error ? [] : (educationQuery.data?.data ?? []),
-    languages: languages,
+    languages: languages as ILanguage[],
     reviews: reviewsQuery.error ? [] : (reviewsQuery.data?.data ?? []),
     isLoading: isLoading || experienceQuery.isLoading || educationQuery.isLoading,
     error: error,

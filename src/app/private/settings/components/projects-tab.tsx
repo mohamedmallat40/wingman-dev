@@ -5,13 +5,15 @@ import { useState } from 'react';
 import type { IExperience } from '@root/modules/profile/types.ts';
 import type { ProjectsExpFormData } from '@root/modules/settings/schema/settings.schema';
 
-import { Button, Card, CardBody, CardHeader, Input, Textarea } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Input, Textarea, useDisclosure } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type IUserProfile } from '@root/modules/profile/types';
 import useSettings from '@root/modules/settings/hooks/use-settings';
 import { projectsExpSchema } from '@root/modules/settings/schema/settings.schema';
 import { Edit, Plus, Save, Trash2, X } from 'lucide-react';
 import { useFieldArray, useForm } from 'react-hook-form';
+
+import ConfirmDeleteModal from '../../components/confirm-delete';
 
 interface ProjectsTabProperties {
   user: IUserProfile;
@@ -23,6 +25,13 @@ export default function ProjectsTab({ user, projects }: Readonly<ProjectsTabProp
   const [updatingProjectId, setUpdatingProjectId] = useState<string | null>(null);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
   const [originalProjectData, setOriginalProjectData] = useState<any>(null);
+  const [itemToDelete, setItemToDelete] = useState<{
+    type: string;
+    index: number;
+    id?: string;
+    name?: string;
+  } | null>(null);
+
   const {
     createProject,
     updateExperience,
@@ -30,6 +39,12 @@ export default function ProjectsTab({ user, projects }: Readonly<ProjectsTabProp
     isDeletingProject,
     isUpdatingExperience
   } = useSettings();
+
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onDeleteModalOpen,
+    onOpenChange: onDeleteModalOpenChange
+  } = useDisclosure();
 
   const form = useForm<ProjectsExpFormData>({
     resolver: zodResolver(projectsExpSchema),
@@ -159,16 +174,25 @@ export default function ProjectsTab({ user, projects }: Readonly<ProjectsTabProp
 
   const handleDeleteProject = (fieldIndex: number) => {
     const projectData = form.getValues(`items.${fieldIndex}`);
-    const actualId = projectData.id;
+    setItemToDelete({
+      type: 'project',
+      index: fieldIndex,
+      id: projectData.id,
+      name: projectData.title
+    });
+    onDeleteModalOpen();
+  };
 
-    try {
-      if (actualId && !actualId.startsWith('temp_')) {
-        deleteProject(actualId);
-      }
-      remove(fieldIndex);
-    } catch (error) {
-      console.error('Error deleting project:', error);
+  const confirmDeleteProject = async () => {
+    const fieldIndex = itemToDelete?.index;
+    const projectsData = form.getValues(`items`);
+    const actualId = projectsData[fieldIndex]?.id;
+
+    if (actualId && !actualId.startsWith('temp_')) {
+      deleteProject(actualId);
     }
+    remove(fieldIndex);
+    setItemToDelete(null);
   };
 
   const handleUpdateSingleProject = async (fieldIndex: number) => {
@@ -411,6 +435,16 @@ export default function ProjectsTab({ user, projects }: Readonly<ProjectsTabProp
           </div>
         </form>
       </CardBody>
+      <ConfirmDeleteModal
+        isOpen={isDeleteModalOpen}
+        onOpenChange={onDeleteModalOpenChange}
+        onConfirm={async () => {
+          await confirmDeleteProject();
+        }}
+        title={'Delete Project'}
+        itemName={itemToDelete?.name}
+        isLoading={isDeletingProject}
+      />
     </Card>
   );
 }
