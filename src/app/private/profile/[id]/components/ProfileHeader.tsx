@@ -83,17 +83,25 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               {t('common.back')}
             </Button>
 
-            {/* Edit button for own profile */}
+            {/* AI-powered CV Upload button for own profile */}
             {isOwnProfile && (
               <Button
                 variant='flat'
                 color='primary'
                 size='sm'
-                startContent={<Icon icon='solar:document-add-linear' className='h-4 w-4' />}
+                startContent={
+                  <div className='relative'>
+                    <Icon icon='solar:document-add-linear' className='h-4 w-4' />
+                    <div className='absolute -top-0.5 -right-0.5 h-2 w-2 bg-success rounded-full animate-ping' />
+                    <div className='absolute -top-0.5 -right-0.5 h-2 w-2 bg-success rounded-full' />
+                  </div>
+                }
                 onPress={handleEditProfile}
-                className='rounded-full'
+                className='rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 hover:from-primary/30 hover:to-secondary/30 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl border-primary/30'
               >
-                Upload CV & Auto-Fill
+                <span className='bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-semibold'>
+                  ✨ Upload CV & Auto-Fill
+                </span>
               </Button>
             )}
           </nav>
