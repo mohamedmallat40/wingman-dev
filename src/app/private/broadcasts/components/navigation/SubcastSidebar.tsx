@@ -19,7 +19,6 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useTranslations } from 'next-intl';
 
 interface Subcast {
   id: string;
@@ -285,9 +284,6 @@ export default function SubcastSidebar({
   selectedSubcast,
   className = ''
 }: SubcastSidebarProps) {
-  const t = useTranslations('broadcasts.sidebar');
-  const tCategories = useTranslations('broadcasts.categories');
-  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('popularity');
@@ -375,8 +371,7 @@ export default function SubcastSidebar({
   };
 
   const getCategoryLabel = (category: string): string => {
-    const key = category.toLowerCase().replace(/\s+/g, '');
-    return tCategories(key, { default: category });
+    return category.charAt(0).toUpperCase() + category.slice(1);
   };
 
   const followingCount = subcasts.filter((s) => s.isFollowing).length;

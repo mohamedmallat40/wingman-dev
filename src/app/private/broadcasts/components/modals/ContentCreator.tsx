@@ -18,7 +18,6 @@ import {
   Avatar
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { useTranslations } from 'next-intl';
 
 import { type BroadcastPost } from '../../types';
 import { generatePostId, extractHashtags, calculateReadTime } from '../../utils/broadcast-utils';
@@ -40,8 +39,6 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   initialData,
   className = ''
 }) => {
-  const t = useTranslations('broadcasts.creator');
-  
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
     content: initialData?.content || '',
@@ -187,10 +184,10 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
             </div>
             <div>
               <h2 className='text-foreground text-xl font-semibold'>
-                {t('title')}
+                Create New Post
               </h2>
               <p className='text-foreground-500 text-sm'>
-                {t('subtitle')}
+                Share your thoughts with the community
               </p>
             </div>
           </div>

@@ -7,19 +7,17 @@ import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { type BroadcastPost, type Topic } from '../../types';
+import { type BroadcastPost } from '../../types';
 import { generateMockPosts } from '../../data/mock-posts';
 import PostCard from '../cards/PostCard';
 import BroadcastFeedSkeleton from '../states/BroadcastFeedSkeleton';
 
 interface BroadcastFeedProps {
-  selectedTopics: Topic[];
   selectedSubcast?: string | null;
   className?: string;
 }
 
 const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
-  selectedTopics,
   selectedSubcast,
   className = ''
 }) => {
@@ -32,23 +30,14 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
     // Simulate API call
     const loadPosts = async () => {
       setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 800));
       
       let filteredPosts = generateMockPosts();
       
-      // Filter by selected subcast
+      // Filter by selected subcast only
       if (selectedSubcast) {
         filteredPosts = filteredPosts.filter(post => 
           post.subcast?.id === selectedSubcast
-        );
-      }
-      
-      // Filter by selected topics
-      if (selectedTopics.length > 0) {
-        const topicNames = selectedTopics.map(t => t.name.toLowerCase());
-        filteredPosts = filteredPosts.filter(post =>
-          post.tags.some(tag => topicNames.includes(tag.toLowerCase())) ||
-          topicNames.includes(post.category.toLowerCase())
         );
       }
       
@@ -57,7 +46,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
     };
 
     loadPosts();
-  }, [selectedTopics, selectedSubcast]);
+  }, [selectedSubcast]);
 
   const handleLoadMore = () => {
     setVisiblePosts(prev => prev + 5);
@@ -107,16 +96,16 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
         <div className='bg-primary/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full'>
           <Icon icon='solar:satellite-linear' className='text-primary h-8 w-8' />
         </div>
-        <h3 className='text-foreground mb-2 text-xl font-semibold'>{t('feed.empty.title')}</h3>
+        <h3 className='text-foreground mb-2 text-xl font-semibold'>Your feed is empty</h3>
         <p className='text-foreground-500 mb-6 max-w-md leading-relaxed'>
-          {t('feed.empty.description')}
+          No posts available right now. Check back later for fresh content!
         </p>
         <Button 
           color='primary' 
           startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
           onPress={() => window.location.reload()}
         >
-          {t('feed.empty.refresh')}
+          Refresh Feed
         </Button>
       </div>
     );
@@ -127,9 +116,9 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
       {/* Feed Header */}
       <div className='flex items-center justify-between'>
         <div>
-          <h2 className='text-foreground text-2xl font-bold'>{t('feed.title')}</h2>
+          <h2 className='text-foreground text-2xl font-bold'>Your Broadcast Feed</h2>
           <p className='text-foreground-500'>
-            {t('feed.subtitle', { count: posts.length })}
+            Latest updates and content from the community
           </p>
         </div>
         
@@ -182,7 +171,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
             startContent={<Icon icon='solar:arrow-down-linear' className='h-4 w-4' />}
             className='min-w-48'
           >
-            {t('feed.loadMore')} ({posts.length - visiblePosts} more)
+            Load More ({posts.length - visiblePosts} more)
           </Button>
         </div>
       )}
