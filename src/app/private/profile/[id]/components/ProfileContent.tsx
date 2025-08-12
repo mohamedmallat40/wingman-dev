@@ -48,6 +48,7 @@ import { EducationForm } from './forms/EducationForm';
 import { ExperienceForm } from './forms/ExperienceForm';
 import { LanguagesForm } from './forms/LanguagesForm';
 import { EnhancedLanguagesForm } from './forms/EnhancedLanguagesForm';
+import { ActionButtons } from './ActionButtons';
 import { PersonalInfoForm } from './forms/PersonalInfoForm';
 import { SkillsForm } from './forms/SkillsForm';
 import { SocialAccountsForm } from './forms/SocialAccountsForm';
@@ -397,32 +398,21 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <div className='flex items-center gap-1'>
-                    <Button
-                      isIconOnly
-                      variant='light'
-                      size='sm'
-                      className='text-foreground-400 hover:text-primary'
-                      onPress={handleEditAbout}
-                    >
-                      <Icon icon='solar:pen-linear' className='h-4 w-4' />
-                    </Button>
-                    <Button
-                      isIconOnly
-                      variant='light'
-                      size='sm'
-                      className='text-foreground-400 hover:text-danger'
-                      onPress={() => {
-                        const confirmed = confirm('Are you sure you want to clear your about me section?');
-                        if (confirmed) {
-                          handlePersonalInfoChange('aboutMe', '');
-                          console.log('About me cleared');
-                        }
-                      }}
-                    >
-                      <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
-                    </Button>
-                  </div>
+                  <ActionButtons
+                    showEdit
+                    showDelete={!!user.aboutMe}
+                    onEdit={handleEditAbout}
+                    onDelete={() => {
+                      const confirmed = confirm('Are you sure you want to clear your about me section?');
+                      if (confirmed) {
+                        handlePersonalInfoChange('aboutMe', '');
+                        console.log('About me cleared');
+                      }
+                    }}
+                    editTooltip="Edit about me"
+                    deleteTooltip="Clear about me"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -479,16 +469,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={handleAddExperience}
-                    title='Add new experience'
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleAddExperience}
+                    addTooltip="Add new experience"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -521,34 +507,22 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                                     {exp.position}
                                   </h3>
                                   {isOwnProfile && (
-                                  <div className='flex items-center gap-1'>
-                                    <Button
-                                      isIconOnly
-                                      variant='light'
-                                      size='sm'
-                                      className='text-foreground-400 hover:text-primary h-6 w-6'
-                                      onPress={() => handleEditExperience(exp)}
-                                    >
-                                      <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                                    </Button>
-                                    <Button
-                                      isIconOnly
-                                      variant='light'
-                                      size='sm'
-                                      className='text-foreground-400 hover:text-danger h-6 w-6'
-                                      onPress={() => {
-                                        const confirmed = confirm(`Are you sure you want to delete the experience at ${exp.company}?`);
-                                        if (confirmed) {
-                                          const index = experiences.findIndex(e => e.id === exp.id);
-                                          if (index !== -1) {
-                                            handleRemoveExperience(index);
-                                          }
+                                  <ActionButtons
+                                    showEdit
+                                    showDelete
+                                    onEdit={() => handleEditExperience(exp)}
+                                    onDelete={() => {
+                                      const confirmed = confirm(`Are you sure you want to delete the experience at ${exp.company}?`);
+                                      if (confirmed) {
+                                        const index = experiences.findIndex(e => e.id === exp.id);
+                                        if (index !== -1) {
+                                          handleRemoveExperience(index);
                                         }
-                                      }}
-                                    >
-                                      <Icon icon='solar:trash-bin-minimalistic-linear' className='h-3 w-3' />
-                                    </Button>
-                                  </div>
+                                      }
+                                    }}
+                                    editTooltip={`Edit ${exp.position} at ${exp.company}`}
+                                    deleteTooltip={`Delete ${exp.position} experience`}
+                                  />
                                 )}
                                 </div>
                                 <p className='text-foreground-700 font-medium'>{exp.company}</p>
@@ -642,16 +616,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={handleAddEducation}
-                    title='Add new education'
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleAddEducation}
+                    addTooltip="Add new education"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -676,34 +646,22 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                                   {edu.university}
                                 </h3>
                                 {isOwnProfile && (
-                                  <div className='flex items-center gap-1'>
-                                    <Button
-                                      isIconOnly
-                                      variant='light'
-                                      size='sm'
-                                      className='text-foreground-400 hover:text-primary h-6 w-6'
-                                      onPress={() => handleEditEducation(edu)}
-                                    >
-                                      <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                                    </Button>
-                                    <Button
-                                      isIconOnly
-                                      variant='light'
-                                      size='sm'
-                                      className='text-foreground-400 hover:text-danger h-6 w-6'
-                                      onPress={() => {
-                                        const confirmed = confirm(`Are you sure you want to delete the education from ${edu.university}?`);
-                                        if (confirmed) {
-                                          const index = education.findIndex(e => e.id === edu.id);
-                                          if (index !== -1) {
-                                            handleRemoveEducation(index);
-                                          }
+                                  <ActionButtons
+                                    showEdit
+                                    showDelete
+                                    onEdit={() => handleEditEducation(edu)}
+                                    onDelete={() => {
+                                      const confirmed = confirm(`Are you sure you want to delete the education from ${edu.university}?`);
+                                      if (confirmed) {
+                                        const index = education.findIndex(e => e.id === edu.id);
+                                        if (index !== -1) {
+                                          handleRemoveEducation(index);
                                         }
-                                      }}
-                                    >
-                                      <Icon icon='solar:trash-bin-minimalistic-linear' className='h-3 w-3' />
-                                    </Button>
-                                  </div>
+                                      }
+                                    }}
+                                    editTooltip={`Edit ${edu.degree} at ${edu.university}`}
+                                    deleteTooltip={`Delete ${edu.university} education`}
+                                  />
                                 )}
                               </div>
                               <p className='text-foreground-700 font-medium'>{edu.degree}</p>
@@ -788,16 +746,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={handleEditSkills}
-                    title='Add new skills'
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleEditSkills}
+                    addTooltip="Add new skills"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -872,16 +826,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={() => handleEditLanguages()}
-                    title='Add new language'
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={() => handleEditLanguages()}
+                    addTooltip="Add new language"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -957,34 +907,22 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                                   {currentLevel.label}
                                 </Chip>
                                 {isOwnProfile && (
-                                  <div className='flex items-center gap-1'>
-                                    <Button
-                                      isIconOnly
-                                      variant='light'
-                                      size='sm'
-                                      className='text-foreground-400 hover:text-primary h-6 w-6'
-                                      onPress={() => handleEditLanguages(lang)}
-                                    >
-                                      <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                                    </Button>
-                                    <Button
-                                      isIconOnly
-                                      variant='light'
-                                      size='sm'
-                                      className='text-foreground-400 hover:text-danger h-6 w-6'
-                                      onPress={() => {
-                                        const confirmed = confirm(`Are you sure you want to delete ${lang.name || lang.key} language?`);
-                                        if (confirmed) {
-                                          const index = languages.findIndex(l => l.id === lang.id);
-                                          if (index !== -1) {
-                                            handleRemoveLanguage(index);
-                                          }
+                                  <ActionButtons
+                                    showEdit
+                                    showDelete
+                                    onEdit={() => handleEditLanguages(lang)}
+                                    onDelete={() => {
+                                      const confirmed = confirm(`Are you sure you want to delete ${lang.name || lang.key} language?`);
+                                      if (confirmed) {
+                                        const index = languages.findIndex(l => l.id === lang.id);
+                                        if (index !== -1) {
+                                          handleRemoveLanguage(index);
                                         }
-                                      }}
-                                    >
-                                      <Icon icon='solar:trash-bin-minimalistic-linear' className='h-3 w-3' />
-                                    </Button>
-                                  </div>
+                                      }
+                                    }}
+                                    editTooltip={`Edit ${lang.name || lang.key} language`}
+                                    deleteTooltip={`Delete ${lang.name || lang.key} language`}
+                                  />
                                 )}
                               </div>
                             </div>
@@ -1098,16 +1036,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={handleEditSocialAccounts}
-                    title='Add new social account'
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleEditSocialAccounts}
+                    addTooltip="Add new social account"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
