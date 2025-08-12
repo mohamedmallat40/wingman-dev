@@ -8,7 +8,6 @@
     "url": "https://wingam.com"
   },
   "scripts": {
-    "postinstall": "husky & playwright install",
     "dev": "next dev --turbopack",
     "qa": "cross-env NODE_ENV=qa next dev --turbopack",
     "build": "next build",
@@ -65,7 +64,6 @@
     "@eslint/eslintrc": "3.3.1",
     "@ianvs/prettier-plugin-sort-imports": "4.4.1",
     "@next/eslint-plugin-next": "15.3.2",
-    "@playwright/test": "1.52.0",
     "@tailwindcss/postcss": "^4.1.11",
     "@tanstack/eslint-plugin-query": "5.74.7",
     "@total-typescript/ts-reset": "0.6.1",
