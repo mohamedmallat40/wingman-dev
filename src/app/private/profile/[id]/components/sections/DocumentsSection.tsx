@@ -115,13 +115,13 @@ export const DocumentsSection: React.FC<DocumentsSectionProps> = ({
                 key={doc.id || index}
                 className='border border-default-200/50 hover:border-primary/30 transition-all duration-200 group'
               >
-                <CardBody className='p-4'>
+                <CardBody className='p-4 cursor-pointer' onClick={() => handleDocumentClick(doc)}>
                   <div className='flex items-center gap-3'>
                     {/* Document Icon */}
                     <div className={`flex h-10 w-10 items-center justify-center rounded-lg bg-${getDocumentColor(doc.type)}/10`}>
-                      <Icon 
-                        icon={getDocumentIcon(doc.type)} 
-                        className={`h-5 w-5 text-${getDocumentColor(doc.type)}`} 
+                      <Icon
+                        icon={getDocumentIcon(doc.type)}
+                        className={`h-5 w-5 text-${getDocumentColor(doc.type)}`}
                       />
                     </div>
 
