@@ -639,131 +639,21 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Education */}
-          <Card id='education' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-secondary/20'>
-            <CardHeader className='pb-4'>
-              <div className='flex w-full items-center justify-between'>
-                <div className='flex items-center gap-4'>
-                  <div className='bg-secondary/10 rounded-full p-3'>
-                    <Icon icon='solar:diploma-linear' className='text-secondary h-5 w-5' />
-                  </div>
-                  <div>
-                    <h2 className='text-foreground text-xl font-semibold'>
-                      {t('talentPool.profile.sections.education')}
-                    </h2>
-                    <p className='text-small text-foreground-500 mt-1'>
-                      {t('talentPool.profile.educationDescription')}
-                    </p>
-                  </div>
-                </div>
-
-                {isOwnProfile && (
-                  <ActionButtons
-                    showAdd
-                    onAdd={handleAddEducation}
-                    addTooltip="Add new education"
-                    size="md"
-                  />
-                )}
-              </div>
-            </CardHeader>
-            <CardBody className='px-8 pt-2'>
-              {education.length > 0 ? (
-                <div className='space-y-8'>
-                  {[...education]
-                    .sort(
-                      (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-                    )
-                    .map((edu, index) => (
-                      <div key={edu.id || index} className='flex gap-6'>
-                        <div className='flex-shrink-0'>
-                          <Icon icon='solar:book-linear' className='text-secondary mt-2 h-5 w-5' />
-                        </div>
-
-                        <div className='flex-1'>
-                          <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
-                            <div className='space-y-2'>
-                              <div className='flex items-center gap-2'>
-                                <h3 className='text-foreground text-lg font-semibold'>
-                                  {edu.university}
-                                </h3>
-                                {isOwnProfile && (
-                                  <ActionButtons
-                                    showEdit
-                                    showDelete
-                                    onEdit={() => handleEditEducation(edu)}
-                                    onDelete={() => {
-                                      const confirmed = confirm(`Are you sure you want to delete the education from ${edu.university}?`);
-                                      if (confirmed) {
-                                        const index = education.findIndex(e => e.id === edu.id);
-                                        if (index !== -1) {
-                                          handleRemoveEducation(index);
-                                        }
-                                      }
-                                    }}
-                                    editTooltip={`Edit ${edu.degree} at ${edu.university}`}
-                                    deleteTooltip={`Delete ${edu.university} education`}
-                                  />
-                                )}
-                              </div>
-                              <p className='text-foreground-700 font-medium'>{edu.degree}</p>
-                              {edu.field && (
-                                <p className='text-small text-foreground-500'>{edu.field}</p>
-                              )}
-                            </div>
-                            <div className='text-small text-foreground-500 bg-default-100 flex items-center gap-2 rounded-full px-3 py-2'>
-                              <Icon icon='solar:calendar-linear' className='h-4 w-4' />
-                              <span>
-                                {formatDate(edu.startDate)} —{' '}
-                                {edu.endDate
-                                  ? formatDate(edu.endDate)
-                                  : t('talentPool.profile.present')}
-                              </span>
-                            </div>
-                          </div>
-
-                          {edu.description && (
-                            <p className='text-foreground-600 mt-4 leading-relaxed'>
-                              {edu.description}
-                            </p>
-                          )}
-
-                          {edu.grade && (
-                            <div className='mt-4'>
-                              <Chip size='sm' variant='flat' color='success'>
-                                {t('talentPool.profile.grade')}: {edu.grade}
-                              </Chip>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className='flex items-center justify-center py-12 text-center'>
-                  <div>
-                    <Icon
-                      icon='solar:diploma-linear'
-                      className='text-default-300 mx-auto mb-4 h-12 w-12'
-                    />
-                    <p className='text-foreground-500 mb-4'>
-                      {t('talentPool.profile.noEducation')}
-                    </p>
-                    {isOwnProfile && (
-                      <Button
-                        color='primary'
-                        variant='flat'
-                        size='sm'
-                        startContent={<Icon icon='solar:plus-linear' className='h-4 w-4' />}
-                        onPress={handleAddEducation}
-                      >
-                        Add Education
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              )}
-            </CardBody>
-          </Card>
+          <EducationSection
+            education={education}
+            isOwnProfile={isOwnProfile}
+            onAdd={handleAddEducation}
+            onEdit={(edu) => handleEditEducation(edu)}
+            onDelete={(edu) => {
+              const confirmed = confirm(`Are you sure you want to delete the education from ${edu.university}?`);
+              if (confirmed) {
+                const index = education.findIndex(e => e.id === edu.id);
+                if (index !== -1) {
+                  handleRemoveEducation(index);
+                }
+              }
+            }}
+          />
         </div>
 
         {/* Sidebar */}
