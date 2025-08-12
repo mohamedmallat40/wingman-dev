@@ -893,7 +893,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                     return (
                       <Card
                         key={lang.id || index}
-                        className='shadow-small from-default-50/50 to-default-100/50 border-none bg-gradient-to-br hover:shadow-md transition-shadow'
+                        className='shadow-small from-default-50/50 to-default-100/50 border-none bg-gradient-to-br hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] hover:from-warning/5 hover:to-warning/10'
                       >
                         <CardBody className='p-4'>
                           <div className='space-y-3'>
