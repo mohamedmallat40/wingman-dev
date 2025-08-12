@@ -162,10 +162,23 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
       // Edit specific language item
       setEditingLanguage({item: language, isOpen: true});
     } else {
-      // Add new language
-      console.log('Opening languages modal for adding new language');
-      setLocalLanguages(languages);
-      setIsLanguagesModalOpen(true);
+      // Add new language directly
+      console.log('Adding new language directly');
+      const newLanguage: Language = {
+        id: `temp-${Date.now()}`,
+        name: '',
+        nativeName: '',
+        code: '',
+        key: '',
+        level: 'BEGINNER',
+        isNative: false,
+        canRead: true,
+        canWrite: true,
+        canSpeak: true,
+        canUnderstand: true,
+        yearsOfExperience: 0
+      };
+      setEditingLanguage({item: newLanguage, isOpen: true});
     }
   };
 
@@ -287,10 +300,19 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Experience handlers
   const handleAddExperience = () => {
-    console.log('Opening experience modal for adding new experience');
-    // Reset to empty experience for adding
-    setLocalExperiences(experiences);
-    setIsExperienceModalOpen(true);
+    console.log('Adding new experience directly');
+    // Create and add new empty experience
+    const newExperience: Experience = {
+      id: `temp-${Date.now()}`,
+      position: '',
+      company: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      skills: []
+    };
+    setEditingExperience({item: newExperience, isOpen: true});
   };
 
   const handleEditExperience = (experience?: Experience) => {
@@ -345,10 +367,19 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Education handlers
   const handleAddEducation = () => {
-    console.log('Opening education modal for adding new education');
-    // Reset to current education for adding
-    setLocalEducation(education);
-    setIsEducationModalOpen(true);
+    console.log('Adding new education directly');
+    // Create and add new empty education
+    const newEducation: Education = {
+      id: `temp-${Date.now()}`,
+      degree: '',
+      university: '',
+      field: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      grade: ''
+    };
+    setEditingEducation({item: newEducation, isOpen: true});
   };
 
   const handleEditEducation = (education?: Education) => {
