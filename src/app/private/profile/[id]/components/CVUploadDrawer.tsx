@@ -624,8 +624,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
                 }
               >
                 <div className='min-h-0 flex-1'>
-                  <ScrollShadow className='h-full w-full'>
-                    <div className='py-6'>
+                  <ScrollShadow className='h-full w-full' hideScrollBar>
+                    <div className='pb-2'>
                       {section.id === 'personal' && (
                         <PersonalInfoForm
                           data={reviewData.personalInfo}
