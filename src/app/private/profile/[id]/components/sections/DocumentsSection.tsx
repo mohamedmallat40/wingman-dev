@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button, Card, CardBody, CardHeader, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { ActionButtons } from '../ActionButtons';
+import { DocumentViewerDrawer } from '../DocumentViewerDrawer';
 
 interface Document {
   id: string;
