@@ -475,21 +475,57 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       <div className='max-w-2xl space-y-8 text-center'>
         <div className='flex justify-center'>
           <div className='relative'>
+            {/* Central AI brain icon */}
             <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
-              className='from-primary/20 to-secondary/20 rounded-3xl bg-gradient-to-br p-8'
+              className='relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm border border-primary/20'
+              animate={{ scale: [1, 1.05, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Icon icon='solar:cpu-outline' className='text-primary/70 h-20 w-20' />
+              <Icon icon='solar:cpu-bolt-outline' className='text-primary h-12 w-12' />
             </motion.div>
-            <div className='from-primary/20 absolute inset-0 animate-pulse rounded-3xl bg-gradient-to-r to-transparent' />
+
+            {/* Animated particles around */}
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className='absolute h-2 w-2 bg-primary/40 rounded-full'
+                style={{
+                  top: '50%',
+                  left: '50%',
+                  transformOrigin: '0 40px'
+                }}
+                animate={{
+                  rotate: [0, 360],
+                  scale: [0.5, 1, 0.5],
+                  opacity: [0.3, 1, 0.3]
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  delay: i * 0.3,
+                  ease: 'easeInOut'
+                }}
+              />
+            ))}
+
+            {/* Pulsing rings */}
+            <motion.div
+              className='absolute inset-0 rounded-full border-2 border-primary/20'
+              animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+            />
+            <motion.div
+              className='absolute inset-0 rounded-full border-2 border-secondary/20'
+              animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
+            />
           </div>
         </div>
 
-        <div className='space-y-4'>
-          <h3 className='text-foreground text-3xl font-bold'>Processing Your CV</h3>
-          <p className='text-default-600 text-lg'>
-            Our advanced AI is analyzing your CV and extracting all relevant information...
+        <div className='space-y-3'>
+          <h3 className='text-foreground text-xl font-semibold'>AI Analysis in Progress</h3>
+          <p className='text-default-600 text-sm leading-relaxed'>
+            Our intelligent system is carefully extracting and structuring your professional information
           </p>
         </div>
 
@@ -624,8 +660,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
                 }
               >
                 <div className='min-h-0 flex-1'>
-                  <ScrollShadow className='h-full w-full'>
-                    <div className='py-6'>
+                  <ScrollShadow className='h-full w-full' hideScrollBar>
+                    <div className='pb-2'>
                       {section.id === 'personal' && (
                         <PersonalInfoForm
                           data={reviewData.personalInfo}
@@ -705,21 +741,55 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       <div className='max-w-2xl space-y-8 text-center'>
         <div className='flex justify-center'>
           <div className='relative'>
+            {/* Central update icon */}
             <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className='from-success/20 to-primary/20 rounded-3xl bg-gradient-to-br p-8'
+              className='relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-success/10 to-primary/10 backdrop-blur-sm border border-success/20'
+              animate={{
+                rotateY: [0, 180, 360],
+                scale: [1, 1.05, 1]
+              }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Icon icon='solar:database-outline' className='text-success/70 h-20 w-20' />
+              <Icon icon='solar:refresh-circle-outline' className='text-success h-10 w-10' />
             </motion.div>
-            <div className='from-success/20 absolute inset-0 animate-pulse rounded-3xl bg-gradient-to-r to-transparent' />
+
+            {/* Flowing data streams */}
+            {[...Array(6)].map((_, i) => (
+              <motion.div
+                key={i}
+                className='absolute h-1 w-8 bg-gradient-to-r from-success/60 to-transparent rounded-full'
+                style={{
+                  top: '50%',
+                  left: '50%',
+                  transformOrigin: '0 0',
+                  transform: `rotate(${i * 60}deg) translateX(30px)`
+                }}
+                animate={{
+                  opacity: [0, 1, 0],
+                  scaleX: [0, 1, 0]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                  ease: 'easeInOut'
+                }}
+              />
+            ))}
+
+            {/* Success pulse ring */}
+            <motion.div
+              className='absolute inset-0 rounded-2xl border-2 border-success/30'
+              animate={{ scale: [1, 1.4], opacity: [0.6, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+            />
           </div>
         </div>
 
-        <div className='space-y-4'>
-          <h3 className='text-foreground text-3xl font-bold'>Updating Your Profile</h3>
-          <p className='text-default-600 text-lg'>
-            Applying the selected information to your profile. This may take a few moments...
+        <div className='space-y-3'>
+          <h3 className='text-foreground text-xl font-semibold'>Syncing Profile</h3>
+          <p className='text-default-600 text-sm leading-relaxed'>
+            Seamlessly integrating your information with your existing profile
           </p>
         </div>
 
@@ -727,14 +797,14 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           <Progress
             value={100}
             color='success'
-            className='h-3 w-full'
+            className='h-2 w-full'
             isIndeterminate
             classNames={{
-              track: 'drop-shadow-md border border-default',
-              indicator: 'bg-gradient-to-r from-success to-primary'
+              track: 'bg-default-200/50 border border-default-300/30',
+              indicator: 'bg-gradient-to-r from-success/80 to-primary/80'
             }}
           />
-          <p className='text-success mt-2 text-sm font-medium'>Processing your information...</p>
+          <p className='text-success/80 mt-2 text-xs font-medium'>Applying changes...</p>
         </div>
 
         <div className='grid max-w-md grid-cols-2 gap-4'>
@@ -770,67 +840,69 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       <div className='max-w-2xl space-y-8 text-center'>
         <div className='flex justify-center'>
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 10 }}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
             className='relative'
           >
-            <div className='from-success/20 to-primary/20 rounded-3xl bg-gradient-to-br p-8'>
-              <Icon icon='solar:check-circle-outline' className='text-success/70 h-20 w-20' />
+            <div className='flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-success/10 to-primary/10 backdrop-blur-sm border border-success/20'>
+              <Icon icon='solar:check-circle-bold' className='text-success h-8 w-8' />
             </div>
             <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className='bg-success absolute -top-2 -right-2 rounded-full p-2'
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 10, 0]
+              }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className='bg-success absolute -top-1 -right-1 rounded-full p-1.5'
             >
-              <Icon icon='solar:star-outline' className='h-6 w-6 text-white' />
+              <Icon icon='solar:stars-outline' className='h-3 w-3 text-white' />
             </motion.div>
           </motion.div>
         </div>
 
-        <div className='space-y-4'>
-          <h3 className='text-foreground text-3xl font-bold'>Profile Updated Successfully!</h3>
-          <p className='text-default-600 text-lg'>
-            Your CV information has been successfully applied to your profile. Your profile is now
-            more complete and professional.
+        <div className='space-y-3'>
+          <h3 className='text-foreground text-xl font-semibold'>Profile Enhanced Successfully</h3>
+          <p className='text-default-600 text-sm leading-relaxed'>
+            Your CV information has been seamlessly integrated into your profile
           </p>
         </div>
 
-        <div className='grid max-w-lg grid-cols-2 gap-4'>
+        <div className='grid max-w-md grid-cols-2 gap-3'>
           {[
             {
               icon: 'solar:user-check-outline',
-              label: 'Personal information updated',
+              label: 'Personal Info',
               count: '6 fields'
             },
             {
               icon: 'solar:code-outline',
-              label: 'Skills synchronized',
-              count: `${reviewData?.skills.length || 0} skills`
+              label: 'Skills',
+              count: `${reviewData?.skills.length || 0} items`
             },
             {
               icon: 'solar:briefcase-outline',
-              label: 'Experience added',
-              count: `${reviewData?.experience.length || 0} positions`
+              label: 'Experience',
+              count: `${reviewData?.experience.length || 0} entries`
             },
             {
               icon: 'solar:graduation-outline',
-              label: 'Education history updated',
+              label: 'Education',
               count: `${reviewData?.education.length || 0} degrees`
             }
           ].map((item, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className='bg-success/10 border-success/20 rounded-xl border p-4 text-center'
+              transition={{ delay: index * 0.08 }}
+              className='bg-success/5 border-success/15 rounded-lg border p-3 text-center'
             >
-              <div className='mb-2 flex justify-center'>
-                <Icon icon={item.icon} className='text-success/70 h-6 w-6' />
+              <div className='mb-1 flex justify-center'>
+                <Icon icon={item.icon} className='text-success/60 h-4 w-4' />
               </div>
-              <p className='text-success text-sm font-medium'>{item.label}</p>
-              <p className='text-success/70 mt-1 text-xs'>{item.count}</p>
+              <p className='text-success text-xs font-medium'>{item.label}</p>
+              <p className='text-success/60 text-xs'>{item.count}</p>
             </motion.div>
           ))}
         </div>

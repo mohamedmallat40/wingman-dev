@@ -276,6 +276,9 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         user={profileData.user}
         connectionStatus={profileData.connectionStatus}
         isOwnProfile={isOwnProfile}
+        experiences={profileData.experiences}
+        education={profileData.education}
+        languages={profileData.languages}
         onConnect={handleConnect}
         onAccept={handleAccept}
         onRefuse={handleRefuse}

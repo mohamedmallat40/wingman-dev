@@ -48,6 +48,10 @@ import { EducationForm } from './forms/EducationForm';
 import { ExperienceForm } from './forms/ExperienceForm';
 import { LanguagesForm } from './forms/LanguagesForm';
 import { EnhancedLanguagesForm } from './forms/EnhancedLanguagesForm';
+import { ActionButtons } from './ActionButtons';
+import { SocialAccountCard } from './cards/SocialAccountCard';
+import { LanguagesSection } from './sections/LanguagesSection';
+import { EducationSection } from './sections/EducationSection';
 import { PersonalInfoForm } from './forms/PersonalInfoForm';
 import { SkillsForm } from './forms/SkillsForm';
 import { SocialAccountsForm } from './forms/SocialAccountsForm';
@@ -126,7 +130,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Skills handlers
   const handleEditSkills = () => {
-    console.log('Opening skills modal');
+    console.log('Opening skills modal for adding new skills');
+    // Ensure we start with current skills
+    setLocalSkills(user.skills || []);
     setIsSkillsModalOpen(true);
   };
 
@@ -158,9 +164,23 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
       // Edit specific language item
       setEditingLanguage({item: language, isOpen: true});
     } else {
-      // Edit all languages
-      console.log('Opening languages modal');
-      setIsLanguagesModalOpen(true);
+      // Add new language directly
+      console.log('Adding new language directly');
+      const newLanguage: Language = {
+        id: `temp-${Date.now()}`,
+        name: '',
+        nativeName: '',
+        code: '',
+        key: '',
+        level: 'BEGINNER',
+        isNative: false,
+        canRead: true,
+        canWrite: true,
+        canSpeak: true,
+        canUnderstand: true,
+        yearsOfExperience: 0
+      };
+      setEditingLanguage({item: newLanguage, isOpen: true});
     }
   };
 
@@ -234,7 +254,9 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Social Accounts handlers
   const handleEditSocialAccounts = () => {
-    console.log('Opening social accounts modal');
+    console.log('Opening social accounts modal for adding new account');
+    // Ensure we start with current social accounts
+    setLocalSocialAccounts(user.socialAccounts || []);
     setIsSocialAccountsModalOpen(true);
   };
 
@@ -263,10 +285,36 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
     setIsSocialAccountsModalOpen(false);
   };
 
+  const handleEditSocialAccount = (account: SocialAccount) => {
+    // Find and edit specific social account
+    console.log('Editing social account:', account);
+    // Here you would open the edit form for the specific account
+    setIsSocialAccountsModalOpen(true);
+  };
+
+  const handleDeleteSocialAccount = (accountId: string) => {
+    const confirmed = confirm('Are you sure you want to delete this social account?');
+    if (confirmed) {
+      setLocalSocialAccounts(prev => prev.filter(account => account.id !== accountId));
+      console.log('Social account deleted:', accountId);
+    }
+  };
+
   // Experience handlers
   const handleAddExperience = () => {
-    console.log('Opening experience modal');
-    setIsExperienceModalOpen(true);
+    console.log('Adding new experience directly');
+    // Create and add new empty experience
+    const newExperience: Experience = {
+      id: `temp-${Date.now()}`,
+      position: '',
+      company: '',
+      location: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      skills: []
+    };
+    setEditingExperience({item: newExperience, isOpen: true});
   };
 
   const handleEditExperience = (experience?: Experience) => {
@@ -321,7 +369,19 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Education handlers
   const handleAddEducation = () => {
-    setIsEducationModalOpen(true);
+    console.log('Adding new education directly');
+    // Create and add new empty education
+    const newEducation: Education = {
+      id: `temp-${Date.now()}`,
+      degree: '',
+      university: '',
+      field: '',
+      startDate: '',
+      endDate: '',
+      description: '',
+      grade: ''
+    };
+    setEditingEducation({item: newEducation, isOpen: true});
   };
 
   const handleEditEducation = (education?: Education) => {
@@ -364,38 +424,35 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
 
   return (
-    <section className='container mx-auto px-6 pb-20'>
+    <section className='container mx-auto px-6 pb-20 transition-all duration-300'>
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
         {/* Main content */}
-        <div className='space-y-8 lg:col-span-2'>
+        <div className='space-y-8 lg:col-span-2 animate-slide-up'>
           {/* About */}
-          <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm'>
-            <CardHeader className='pb-4'>
+          <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
+            <CardHeader className='pb-4 hover:pb-5 transition-all duration-200'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
-                  <div className='bg-primary/10 rounded-full p-3'>
+                  <div className='bg-primary/10 rounded-full p-3 hover:bg-primary/15 transition-colors duration-200 hover:scale-105 transform'>
                     <Icon icon='solar:user-speak-linear' className='text-primary h-5 w-5' />
                   </div>
                   <div>
-                    <h2 className='text-foreground text-xl font-semibold'>
+                    <h2 className='text-foreground text-xl font-semibold hover:text-primary transition-colors duration-200'>
                       {t('talentPool.profile.sections.about')}
                     </h2>
-                    <p className='text-small text-foreground-500 mt-1'>
+                    <p className='text-small text-foreground-500 mt-1 hover:text-foreground-600 transition-colors duration-200'>
                       {t('talentPool.profile.aboutDescription')}
                     </p>
                   </div>
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-primary'
-                    onPress={handleEditAbout}
-                  >
-                    <Icon icon='solar:pen-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showEdit
+                    onEdit={handleEditAbout}
+                    editTooltip="Edit about me"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -407,10 +464,10 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 />
               ) : (
                 <div className='flex items-center justify-center py-12 text-center'>
-                  <div>
+                  <div className='animate-fade-in'>
                     <Icon
                       icon='solar:document-text-linear'
-                      className='text-default-300 mx-auto mb-4 h-12 w-12'
+                      className='text-default-300 mx-auto mb-4 h-12 w-12 hover:text-primary transition-colors duration-300 hover:scale-110 transform'
                     />
                     <p className='text-foreground-500 mb-4'>
                       {t('talentPool.cards.noAboutAvailable')}
@@ -423,7 +480,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
                         onPress={handleEditAbout}
                       >
-                        Add About Me
+                        <span className='hidden sm:inline'>Add About Me</span>
+                        <span className='sm:hidden'>Add</span>
                       </Button>
                     )}
                   </div>
@@ -434,7 +492,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
 
           {/* Experience */}
-          <Card id='experience' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='experience' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -452,15 +510,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={handleAddExperience}
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleAddExperience}
+                    addTooltip="Add new experience"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -493,16 +548,23 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                                     {exp.position}
                                   </h3>
                                   {isOwnProfile && (
-                                    <Button
-                                      isIconOnly
-                                      variant='light'
-                                      size='sm'
-                                      className='text-foreground-400 hover:text-primary h-6 w-6'
-                                      onPress={() => handleEditExperience(exp)}
-                                    >
-                                      <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                                    </Button>
-                                  )}
+                                  <ActionButtons
+                                    showEdit
+                                    showDelete
+                                    onEdit={() => handleEditExperience(exp)}
+                                    onDelete={() => {
+                                      const confirmed = confirm(`Are you sure you want to delete the experience at ${exp.company}?`);
+                                      if (confirmed) {
+                                        const index = experiences.findIndex(e => e.id === exp.id);
+                                        if (index !== -1) {
+                                          handleRemoveExperience(index);
+                                        }
+                                      }
+                                    }}
+                                    editTooltip={`Edit ${exp.position} at ${exp.company}`}
+                                    deleteTooltip={`Delete ${exp.position} experience`}
+                                  />
+                                )}
                                 </div>
                                 <p className='text-foreground-700 font-medium'>{exp.company}</p>
                                 {exp.location && (
@@ -577,133 +639,27 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Education */}
-          <Card id='education' className='border-default-200/50 scroll-mt-24 shadow-sm'>
-            <CardHeader className='pb-4'>
-              <div className='flex w-full items-center justify-between'>
-                <div className='flex items-center gap-4'>
-                  <div className='bg-secondary/10 rounded-full p-3'>
-                    <Icon icon='solar:diploma-linear' className='text-secondary h-5 w-5' />
-                  </div>
-                  <div>
-                    <h2 className='text-foreground text-xl font-semibold'>
-                      {t('talentPool.profile.sections.education')}
-                    </h2>
-                    <p className='text-small text-foreground-500 mt-1'>
-                      {t('talentPool.profile.educationDescription')}
-                    </p>
-                  </div>
-                </div>
-
-                {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={handleAddEducation}
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardBody className='px-8 pt-2'>
-              {education.length > 0 ? (
-                <div className='space-y-8'>
-                  {[...education]
-                    .sort(
-                      (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-                    )
-                    .map((edu, index) => (
-                      <div key={edu.id || index} className='flex gap-6'>
-                        <div className='flex-shrink-0'>
-                          <Icon icon='solar:book-linear' className='text-secondary mt-2 h-5 w-5' />
-                        </div>
-
-                        <div className='flex-1'>
-                          <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
-                            <div className='space-y-2'>
-                              <div className='flex items-center gap-2'>
-                                <h3 className='text-foreground text-lg font-semibold'>
-                                  {edu.university}
-                                </h3>
-                                {isOwnProfile && (
-                                  <Button
-                                    isIconOnly
-                                    variant='light'
-                                    size='sm'
-                                    className='text-foreground-400 hover:text-primary h-6 w-6'
-                                    onPress={() => handleEditEducation(edu)}
-                                  >
-                                    <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                                  </Button>
-                                )}
-                              </div>
-                              <p className='text-foreground-700 font-medium'>{edu.degree}</p>
-                              {edu.field && (
-                                <p className='text-small text-foreground-500'>{edu.field}</p>
-                              )}
-                            </div>
-                            <div className='text-small text-foreground-500 bg-default-100 flex items-center gap-2 rounded-full px-3 py-2'>
-                              <Icon icon='solar:calendar-linear' className='h-4 w-4' />
-                              <span>
-                                {formatDate(edu.startDate)} —{' '}
-                                {edu.endDate
-                                  ? formatDate(edu.endDate)
-                                  : t('talentPool.profile.present')}
-                              </span>
-                            </div>
-                          </div>
-
-                          {edu.description && (
-                            <p className='text-foreground-600 mt-4 leading-relaxed'>
-                              {edu.description}
-                            </p>
-                          )}
-
-                          {edu.grade && (
-                            <div className='mt-4'>
-                              <Chip size='sm' variant='flat' color='success'>
-                                {t('talentPool.profile.grade')}: {edu.grade}
-                              </Chip>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              ) : (
-                <div className='flex items-center justify-center py-12 text-center'>
-                  <div>
-                    <Icon
-                      icon='solar:diploma-linear'
-                      className='text-default-300 mx-auto mb-4 h-12 w-12'
-                    />
-                    <p className='text-foreground-500 mb-4'>
-                      {t('talentPool.profile.noEducation')}
-                    </p>
-                    {isOwnProfile && (
-                      <Button
-                        color='primary'
-                        variant='flat'
-                        size='sm'
-                        startContent={<Icon icon='solar:plus-linear' className='h-4 w-4' />}
-                        onPress={handleAddEducation}
-                      >
-                        Add Education
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              )}
-            </CardBody>
-          </Card>
+          <EducationSection
+            education={education}
+            isOwnProfile={isOwnProfile}
+            onAdd={handleAddEducation}
+            onEdit={(edu) => handleEditEducation(edu)}
+            onDelete={(edu) => {
+              const confirmed = confirm(`Are you sure you want to delete the education from ${edu.university}?`);
+              if (confirmed) {
+                const index = education.findIndex(e => e.id === edu.id);
+                if (index !== -1) {
+                  handleRemoveEducation(index);
+                }
+              }
+            }}
+          />
         </div>
 
         {/* Sidebar */}
-        <div className='space-y-8'>
+        <div className='space-y-8 animate-slide-up [animation-delay:200ms]'>
           {/* Skills */}
-          <Card id='skills' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='skills' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-success/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -721,15 +677,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={handleEditSkills}
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleEditSkills}
+                    addTooltip="Add new skills"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -750,7 +703,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         size='sm'
                         color={chipColor}
                         variant='flat'
-                        className='font-medium'
+                        className='font-medium hover:scale-105 transform transition-all duration-200 cursor-default hover:shadow-md'
                         startContent={<Icon icon={getSkillIcon(skill.key)} className='h-3 w-3' />}
                       >
                         {skill.key.trim()}
@@ -786,213 +739,24 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Languages */}
-          <Card id='languages' className='border-default-200/50 scroll-mt-24 shadow-sm'>
-            <CardHeader className='pb-4'>
-              <div className='flex w-full items-center justify-between'>
-                <div className='flex items-center gap-4'>
-                  <div className='bg-warning/10 rounded-full p-3'>
-                    <Icon icon='solar:globe-linear' className='text-warning h-5 w-5' />
-                  </div>
-                  <div>
-                    <h3 className='text-foreground text-lg font-semibold'>
-                      {t('talentPool.profile.sections.languages')}
-                    </h3>
-                    <p className='text-small text-foreground-500 mt-1'>
-                      {t('talentPool.profile.languagesDescription')}
-                    </p>
-                  </div>
-                </div>
-
-                {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={() => handleEditLanguages()}
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
-                )}
-              </div>
-            </CardHeader>
-            <CardBody className='px-8 pt-2'>
-              {languages.length > 0 ? (
-                <div className='space-y-3'>
-                  {languages.map((lang, index) => {
-                    const levelInfo = {
-                      NATIVE: { color: 'success', percentage: 100, label: 'Native' },
-                      FLUENT: { color: 'success', percentage: 95, label: 'Fluent' },
-                      PROFESSIONAL: { color: 'primary', percentage: 85, label: 'Professional' },
-                      CONVERSATIONAL: { color: 'secondary', percentage: 75, label: 'Conversational' },
-                      INTERMEDIATE: { color: 'warning', percentage: 60, label: 'Intermediate' },
-                      BEGINNER: { color: 'default', percentage: 40, label: 'Beginner' },
-                      ELEMENTARY: { color: 'default', percentage: 25, label: 'Elementary' }
-                    };
-                    
-                    const currentLevel = levelInfo[lang.level as keyof typeof levelInfo] || levelInfo.BEGINNER;
-                    const flagCode = lang.countryFlag || (lang.code ? lang.code.toLowerCase() : 'un');
-                    
-                    return (
-                      <Card
-                        key={lang.id || index}
-                        className='shadow-small from-default-50/50 to-default-100/50 border-none bg-gradient-to-br hover:shadow-md transition-shadow'
-                      >
-                        <CardBody className='p-4'>
-                          <div className='space-y-3'>
-                            {/* Header */}
-                            <div className='flex items-center justify-between'>
-                              <div className='flex items-center gap-3'>
-                                <div className='relative'>
-                                  <div className='border-default-200 h-6 w-8 overflow-hidden rounded-sm border shadow-sm'>
-                                    <img
-                                      src={`https://flagcdn.com/24x18/${flagCode}.png`}
-                                      alt={`${lang.name || lang.key} flag`}
-                                      className='h-full w-full object-cover'
-                                      onError={(e) => {
-                                        const target = e.currentTarget;
-                                        target.style.display = 'none';
-                                        const parent = target.parentElement;
-                                        if (parent) {
-                                          parent.innerHTML = `<div class="w-full h-full bg-default-200 flex items-center justify-center text-xs font-bold text-default-600">${(lang.code || lang.key).substring(0, 2).toUpperCase()}</div>`;
-                                        }
-                                      }}
-                                    />
-                                  </div>
-                                  {lang.isNative && (
-                                    <Badge
-                                      content="N"
-                                      color="success"
-                                      size="sm"
-                                      className="absolute -top-1 -right-1"
-                                    />
-                                  )}
-                                </div>
-                                <div className='flex-1'>
-                                  <h4 className='text-foreground font-semibold text-sm'>
-                                    {lang.name || lang.key}
-                                  </h4>
-                                  {lang.nativeName && lang.nativeName !== (lang.name || lang.key) && (
-                                    <p className='text-xs text-default-500'>{lang.nativeName}</p>
-                                  )}
-                                </div>
-                              </div>
-                              
-                              <div className='flex items-center gap-2'>
-                                <Chip
-                                  size='sm'
-                                  color={currentLevel.color as any}
-                                  variant='flat'
-                                  className='text-tiny font-bold'
-                                >
-                                  {currentLevel.label}
-                                </Chip>
-                                {isOwnProfile && (
-                                  <Button
-                                    isIconOnly
-                                    variant='light'
-                                    size='sm'
-                                    className='text-foreground-400 hover:text-primary h-6 w-6'
-                                    onPress={() => handleEditLanguages(lang)}
-                                  >
-                                    <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Proficiency Progress */}
-                            <div className='space-y-2'>
-                              <div className='flex items-center justify-between'>
-                                <span className='text-xs text-default-600'>Proficiency</span>
-                                <span className='text-xs text-default-600'>{currentLevel.percentage}%</span>
-                              </div>
-                              <Progress
-                                size='sm'
-                                value={currentLevel.percentage}
-                                color={currentLevel.color as any}
-                                className='max-w-full'
-                              />
-                            </div>
-
-                            {/* Skills indicators */}
-                            <div className='flex flex-wrap gap-1'>
-                              {[
-                                { key: 'canSpeak', icon: 'solar:microphone-linear', label: 'Speaking' },
-                                { key: 'canUnderstand', icon: 'solar:headphones-linear', label: 'Listening' },
-                                { key: 'canRead', icon: 'solar:book-linear', label: 'Reading' },
-                                { key: 'canWrite', icon: 'solar:pen-linear', label: 'Writing' }
-                              ].map((skill) => (
-                                <Chip
-                                  key={skill.key}
-                                  size='sm'
-                                  variant={lang[skill.key as keyof Language] ? 'solid' : 'bordered'}
-                                  color={lang[skill.key as keyof Language] ? 'primary' : 'default'}
-                                  className='text-tiny px-1'
-                                  startContent={<Icon icon={skill.icon} className='h-2 w-2' />}
-                                >
-                                  {skill.label.substring(0, 3)}
-                                </Chip>
-                              ))}
-                            </div>
-
-                            {/* Certification badge */}
-                            {lang.certificationName && (
-                              <div className='flex items-center gap-2 p-2 bg-success-50 rounded-md'>
-                                <Icon icon='solar:diploma-linear' className='h-3 w-3 text-success-600' />
-                                <span className='text-xs font-medium text-success-800'>
-                                  {lang.certificationName}
-                                </span>
-                                {lang.certificationLevel && (
-                                  <Chip size='sm' color='success' variant='flat' className='text-tiny'>
-                                    {lang.certificationLevel}
-                                  </Chip>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Years of experience */}
-                            {lang.yearsOfExperience && lang.yearsOfExperience > 0 && (
-                              <div className='flex items-center gap-1 text-xs text-default-600'>
-                                <Icon icon='solar:calendar-linear' className='h-3 w-3' />
-                                <span>{lang.yearsOfExperience}y experience</span>
-                              </div>
-                            )}
-                          </div>
-                        </CardBody>
-                      </Card>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className='flex items-center justify-center py-12 text-center'>
-                  <div>
-                    <Icon
-                      icon='solar:globe-linear'
-                      className='text-default-300 mx-auto mb-4 h-12 w-12'
-                    />
-                    <p className='text-foreground-500 mb-4'>
-                      {t('talentPool.profile.noLanguages')}
-                    </p>
-                    {isOwnProfile && (
-                      <Button
-                        color='primary'
-                        variant='flat'
-                        size='sm'
-                        startContent={<Icon icon='solar:plus-linear' className='h-4 w-4' />}
-                        onPress={() => handleEditLanguages()}
-                      >
-                        Add Languages
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              )}
-            </CardBody>
-          </Card>
+          <LanguagesSection
+            languages={languages}
+            isOwnProfile={isOwnProfile}
+            onAdd={() => handleEditLanguages()}
+            onEdit={(lang) => handleEditLanguages(lang)}
+            onDelete={(lang) => {
+              const confirmed = confirm(`Are you sure you want to delete ${lang.name || lang.key} language?`);
+              if (confirmed) {
+                const index = languages.findIndex(l => l.id === lang.id);
+                if (index !== -1) {
+                  handleRemoveLanguage(index);
+                }
+              }
+            }}
+          />
 
           {/* Social Accounts */}
-          <Card id='social-accounts' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+          <Card id='social-accounts' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-purple/20'>
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -1010,15 +774,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 </div>
 
                 {isOwnProfile && (
-                  <Button
-                    isIconOnly
-                    variant='light'
-                    size='sm'
-                    className='text-foreground-400 hover:text-success'
-                    onPress={handleEditSocialAccounts}
-                  >
-                    <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-                  </Button>
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleEditSocialAccounts}
+                    addTooltip="Add new social account"
+                    size="md"
+                  />
                 )}
               </div>
             </CardHeader>
@@ -1027,42 +788,15 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 <div className='grid grid-cols-2 gap-3'>
                   {localSocialAccounts
                     .filter(account => account.isPublic)
-                    .map((account, index) => {
-                      const platformDetails = {
-                        linkedin: { icon: 'solar:linkedin-linear', color: 'text-blue-600', bg: 'bg-blue-50' },
-                        github: { icon: 'solar:code-square-linear', color: 'text-gray-800', bg: 'bg-gray-50' },
-                        twitter: { icon: 'solar:twitter-linear', color: 'text-blue-400', bg: 'bg-blue-50' },
-                        instagram: { icon: 'solar:instagram-linear', color: 'text-pink-600', bg: 'bg-pink-50' },
-                        facebook: { icon: 'solar:facebook-linear', color: 'text-blue-700', bg: 'bg-blue-50' },
-                        youtube: { icon: 'solar:youtube-linear', color: 'text-red-600', bg: 'bg-red-50' },
-                        tiktok: { icon: 'solar:music-note-linear', color: 'text-black', bg: 'bg-gray-50' },
-                        behance: { icon: 'solar:palette-linear', color: 'text-blue-500', bg: 'bg-blue-50' },
-                        dribbble: { icon: 'solar:basketball-linear', color: 'text-pink-500', bg: 'bg-pink-50' },
-                        medium: { icon: 'solar:pen-new-square-linear', color: 'text-green-600', bg: 'bg-green-50' },
-                        portfolio: { icon: 'solar:folder-open-linear', color: 'text-purple-600', bg: 'bg-purple-50' },
-                        other: { icon: 'solar:link-linear', color: 'text-default-600', bg: 'bg-default-50' }
-                      };
-                      
-                      const details = platformDetails[account.platform as keyof typeof platformDetails] || platformDetails.other;
-                      
-                      return (
-                        <a
-                          key={account.id || index}
-                          href={account.url}
-                          target='_blank'
-                          rel='noopener noreferrer'
-                          className={`${details.bg} hover:scale-105 transition-all duration-200 flex flex-col items-center gap-2 rounded-lg p-3 text-center hover:shadow-sm`}
-                        >
-                          <Icon icon={details.icon} className={`h-6 w-6 ${details.color}`} />
-                          <div>
-                            <p className='text-tiny font-medium text-foreground'>
-                              {account.displayName || account.platform.charAt(0).toUpperCase() + account.platform.slice(1)}
-                            </p>
-                            <p className='text-tiny text-foreground-500'>@{account.username}</p>
-                          </div>
-                        </a>
-                      );
-                    })}
+                    .map((account, index) => (
+                      <SocialAccountCard
+                        key={account.id || index}
+                        account={account}
+                        isOwnProfile={isOwnProfile}
+                        onEdit={() => handleEditSocialAccount(account)}
+                        onDelete={() => handleDeleteSocialAccount(account.id)}
+                      />
+                    ))}
                 </div>
               ) : (
                 <div className='flex items-center justify-center py-12 text-center'>
@@ -1093,7 +827,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
           {/* Contact - Only show for other users */}
           {!isOwnProfile && (
-            <Card id='contact' className='border-default-200/50 scroll-mt-24 shadow-sm'>
+            <Card id='contact' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-danger/20'>
               <CardHeader className='pb-4'>
                 <div className='flex items-center gap-4'>
                   <div className='bg-danger/10 rounded-full p-3'>
@@ -1200,7 +934,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           )}
 
           {/* Profile summary card */}
-          <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-br shadow-sm'>
+          <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-br shadow-sm hover:shadow-lg transition-all duration-300 hover:border-primary/30 hover:from-primary/8 hover:to-secondary/8'>
             <CardBody className='p-8 text-center'>
               <div className='mx-auto mb-4 h-20 w-20'>
                 {user.profileImage && user.profileImage.trim() ? (

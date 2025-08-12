@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-import { Avatar, Badge, Button, Card, CardBody, CardHeader, Divider } from '@heroui/react';
+import { Avatar, Badge, Button, Card, CardBody, CardHeader, Divider, Chip, Progress } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -18,13 +18,17 @@ import {
 } from '@/app/private/talent-pool/utils/talent-utils';
 import { getImageUrl } from '@/lib/utils/utilities';
 
-import { type ConnectionStatus, type ProfileUser } from '../types';
+import { type ConnectionStatus, type ProfileUser, type Experience, type Education, type Language } from '../types';
+import { calculateProfileCompletion, getCompletionColor, getCompletionMessage } from '../utils/profileCompletion';
 import CVUploadDrawer from './CVUploadDrawer';
 
 interface ProfileHeaderProps {
   user: ProfileUser;
   connectionStatus: ConnectionStatus;
   isOwnProfile: boolean;
+  experiences?: Experience[];
+  education?: Education[];
+  languages?: Language[];
   onConnect: () => void;
   onAccept: () => void;
   onRefuse: () => void;
@@ -35,6 +39,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   user,
   connectionStatus,
   isOwnProfile,
+  experiences = [],
+  education = [],
+  languages = [],
   onConnect,
   onAccept,
   onRefuse,
@@ -64,6 +71,16 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     // to reflect the newly imported information
   };
 
+  // Calculate profile completion
+  const completionPercentage = calculateProfileCompletion({
+    user,
+    experiences,
+    education,
+    languages
+  });
+  const completionColor = getCompletionColor(completionPercentage);
+  const completionMessage = getCompletionMessage(completionPercentage);
+
   return (
     <>
       <section className='from-background via-background to-default-50/30 relative overflow-hidden bg-gradient-to-br'>
@@ -80,21 +97,25 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
               onPress={onBack}
               className='text-foreground-500 hover:text-primary rounded-md transition-colors'
             >
-              {t('common.back')}
+              <span className='hidden sm:inline'>{t('common.back')}</span>
             </Button>
 
-            {/* Edit button for own profile */}
+            {/* Profile Completion Chip */}
             {isOwnProfile && (
-              <Button
-                variant='flat'
-                color='primary'
-                size='sm'
-                startContent={<Icon icon='solar:document-add-linear' className='h-4 w-4' />}
-                onPress={handleEditProfile}
-                className='rounded-full'
-              >
-                Upload CV & Auto-Fill
-              </Button>
+              <div className='flex items-center gap-2'>
+                <Chip
+                  color={completionColor}
+                  variant='flat'
+                  size='sm'
+                  className='font-semibold'
+                  startContent={<Icon icon='solar:chart-outline' className='h-3 w-3' />}
+                >
+                  {completionPercentage}% Complete
+                </Chip>
+                <p className='text-xs text-default-500 hidden sm:inline'>
+                  Complete your profile for better reach
+                </p>
+              </div>
             )}
           </nav>
 

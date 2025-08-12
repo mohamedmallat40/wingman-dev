@@ -1,192 +1,181 @@
 'use client';
 
-import React, { useState } from 'react';
-
-import { Button, Card, CardBody, CardHeader, Progress } from '@heroui/react';
+import React from 'react';
+import { Button, Card, CardBody, CardHeader, Chip, Divider } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
-
+import { ActionButtons } from '../ActionButtons';
 import { type Language } from '../../types';
-import { cn, LANGUAGE_LEVELS } from '../../utils/profile-styles';
 
 interface LanguagesSectionProps {
   languages: Language[];
   isOwnProfile: boolean;
-  onAdd: (language: Omit<Language, 'id'>) => Promise<void>;
-  onUpdate: (id: string, language: Partial<Language>) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
-  isLoading?: boolean;
+  onAdd: () => void;
+  onEdit: (language: Language) => void;
+  onDelete: (language: Language) => void;
 }
 
 export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
   languages,
   isOwnProfile,
   onAdd,
-  onUpdate,
-  onDelete,
-  isLoading = false
+  onEdit,
+  onDelete
 }) => {
   const t = useTranslations();
-  const [isAdding, setIsAdding] = useState(false);
 
-  const getProficiencyLevel = (level: string) => {
-    const levelKey = level.toUpperCase() as keyof typeof LANGUAGE_LEVELS;
-    return LANGUAGE_LEVELS[levelKey] || LANGUAGE_LEVELS.BEGINNER;
+  const getLevelColor = (level: string) => {
+    const colors = {
+      NATIVE: 'success',
+      FLUENT: 'success', 
+      PROFESSIONAL: 'primary',
+      CONVERSATIONAL: 'secondary',
+      INTERMEDIATE: 'warning',
+      BEGINNER: 'default',
+      ELEMENTARY: 'default'
+    };
+    return colors[level as keyof typeof colors] || 'default';
   };
 
-  const isEmpty = languages.length === 0;
+  const getLevelLabel = (level: string) => {
+    const labels = {
+      NATIVE: 'Native',
+      FLUENT: 'Fluent',
+      PROFESSIONAL: 'Professional', 
+      CONVERSATIONAL: 'Conversational',
+      INTERMEDIATE: 'Intermediate',
+      BEGINNER: 'Beginner',
+      ELEMENTARY: 'Elementary'
+    };
+    return labels[level as keyof typeof labels] || 'Beginner';
+  };
+
+  const getCountryFlag = (lang: Language) => {
+    const flagCode = lang.countryFlag || (lang.code ? lang.code.toLowerCase() : 'un');
+    return `https://flagcdn.com/w20/${flagCode}.png`;
+  };
 
   return (
-    <Card className={cn('transition-all duration-200', isLoading && 'animate-pulse')}>
-      <CardHeader className='pb-3'>
+    <Card className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-warning/20'>
+      <CardHeader className='pb-4'>
         <div className='flex w-full items-center justify-between'>
-          <div className='flex items-center gap-3'>
-            <div className='bg-warning/10 flex h-10 w-10 items-center justify-center rounded-full'>
-              <Icon icon='solar:global-linear' className='text-warning h-5 w-5' />
+          <div className='flex items-center gap-4'>
+            <div className='bg-warning/10 rounded-full p-3 hover:bg-warning/15 transition-colors duration-200'>
+              <Icon icon='solar:translation-outline' className='text-warning h-5 w-5' />
             </div>
             <div>
               <h3 className='text-foreground text-lg font-semibold'>
                 Languages ({languages.length})
               </h3>
-              <p className='text-default-500 text-sm'>Languages you speak and proficiency levels</p>
+              <p className='text-small text-foreground-500 mt-1'>
+                Communicate across cultures
+              </p>
             </div>
           </div>
 
           {isOwnProfile && (
-            <Button
-              isIconOnly
-              size='sm'
-              variant='light'
-              color='warning'
-              onPress={() => setIsAdding(true)}
-            >
-              <Icon icon='solar:add-circle-linear' className='h-4 w-4' />
-            </Button>
+            <ActionButtons
+              showAdd
+              onAdd={onAdd}
+              addTooltip="Add new language"
+              size="md"
+            />
           )}
         </div>
       </CardHeader>
 
       <CardBody className='pt-0'>
-        {isEmpty ? (
+        {languages.length > 0 ? (
+          <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-3'>
+            {languages.map((lang, index) => (
+              <Card
+                key={lang.id || index}
+                className='border border-default-200/50 bg-gradient-to-br from-background to-default-50/30 hover:shadow-md transition-all duration-300 hover:border-warning/30 group'
+              >
+                <CardBody className='p-3'>
+                  <div className='space-y-2'>
+                    {/* Header with flag and name */}
+                    <div className='flex items-center justify-between'>
+                      <div className='flex items-center gap-2 min-w-0 flex-1'>
+                        <div className='relative flex-shrink-0'>
+                          <div className='h-5 w-7 overflow-hidden rounded border border-default-200 shadow-sm bg-default-100'>
+                            <img
+                              src={getCountryFlag(lang)}
+                              alt={`${lang.name || lang.key} flag`}
+                              className='h-full w-full object-cover'
+                              onError={(e) => {
+                                const target = e.currentTarget;
+                                target.style.display = 'none';
+                                const parent = target.parentElement;
+                                if (parent) {
+                                  parent.innerHTML = `<div class="w-full h-full bg-default-200 flex items-center justify-center text-xs font-bold text-default-600">${(lang.code || lang.key).substring(0, 2).toUpperCase()}</div>`;
+                                }
+                              }}
+                            />
+                          </div>
+                          {lang.isNative && (
+                            <div className='absolute -top-0.5 -right-0.5 h-2 w-2 bg-success rounded-full border border-background' />
+                          )}
+                        </div>
+
+                        <div className='min-w-0 flex-1'>
+                          <h4 className='font-semibold text-foreground text-sm truncate'>
+                            {lang.name || lang.key}
+                          </h4>
+                        </div>
+                      </div>
+
+                      {isOwnProfile && (
+                        <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0'>
+                          <ActionButtons
+                            showEdit
+                            showDelete
+                            onEdit={() => onEdit(lang)}
+                            onDelete={() => onDelete(lang)}
+                            editTooltip={`Edit ${lang.name || lang.key}`}
+                            deleteTooltip={`Delete ${lang.name || lang.key}`}
+                            size="sm"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Level badge */}
+                    <div className='flex justify-center'>
+                      <Chip
+                        size='sm'
+                        color={getLevelColor(lang.level) as any}
+                        variant='flat'
+                        className='font-medium text-xs'
+                      >
+                        {getLevelLabel(lang.level)}
+                      </Chip>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+        ) : (
           <div className='flex flex-col items-center justify-center py-8 text-center'>
-            <div className='bg-warning/10 mb-4 flex h-16 w-16 items-center justify-center rounded-full'>
-              <Icon icon='solar:global-linear' className='text-warning/60 h-8 w-8' />
+            <div className='mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-warning/10'>
+              <Icon icon='solar:translation-outline' className='h-6 w-6 text-warning/60' />
             </div>
-            <p className='text-default-500 mb-2 text-sm'>No languages added yet</p>
+            <p className='text-sm text-default-500 mb-3'>
+              No languages added yet
+            </p>
             {isOwnProfile && (
               <Button
                 size='sm'
                 variant='flat'
                 color='warning'
-                onPress={() => setIsAdding(true)}
-                startContent={<Icon icon='solar:add-circle-linear' className='h-4 w-4' />}
+                onPress={onAdd}
+                startContent={<Icon icon='solar:add-circle-outline' className='h-4 w-4' />}
               >
-                Add your first language
+                <span className='hidden sm:inline'>Add Your First Language</span>
+                <span className='sm:hidden'>Add Language</span>
               </Button>
             )}
-          </div>
-        ) : (
-          <div className='space-y-4'>
-            {languages.map((language) => {
-              const proficiency = getProficiencyLevel(language.level);
-
-              return (
-                <div key={language.id} className='space-y-2'>
-                  <div className='flex items-center justify-between'>
-                    <div className='flex items-center gap-3'>
-                      {language.countryFlag && (
-                        <span className='text-2xl' role='img' aria-label={language.name}>
-                          {language.countryFlag}
-                        </span>
-                      )}
-                      <div>
-                        <h4 className='text-foreground font-medium'>
-                          {language.name}
-                          {language.nativeName && language.nativeName !== language.name && (
-                            <span className='text-default-500 ml-1 text-sm'>
-                              ({language.nativeName})
-                            </span>
-                          )}
-                        </h4>
-                        <div className='flex items-center gap-2'>
-                          <span
-                            className={cn(
-                              'rounded-full px-2 py-1 text-sm',
-                              `text-${proficiency.color}`
-                            )}
-                          >
-                            {language.level}
-                          </span>
-                          {language.isNative && (
-                            <span className='bg-success/10 text-success rounded-full px-2 py-1 text-xs'>
-                              Native
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {isOwnProfile && (
-                      <div className='flex gap-1'>
-                        <Button
-                          isIconOnly
-                          size='sm'
-                          variant='light'
-                          className='text-default-500 hover:text-primary'
-                        >
-                          <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                        </Button>
-                        <Button
-                          isIconOnly
-                          size='sm'
-                          variant='light'
-                          color='danger'
-                          onPress={() => onDelete(language.id)}
-                          className='text-default-500 hover:text-danger'
-                        >
-                          <Icon icon='solar:trash-bin-minimalistic-linear' className='h-3 w-3' />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  <Progress
-                    size='sm'
-                    value={proficiency.percentage}
-                    color={proficiency.color}
-                    className='max-w-md'
-                  />
-
-                  {(language.canRead ||
-                    language.canWrite ||
-                    language.canSpeak ||
-                    language.canUnderstand) && (
-                    <div className='flex flex-wrap gap-1 text-xs'>
-                      {language.canSpeak && (
-                        <span className='bg-primary/10 text-primary rounded-full px-2 py-1'>
-                          Speaking
-                        </span>
-                      )}
-                      {language.canUnderstand && (
-                        <span className='bg-secondary/10 text-secondary rounded-full px-2 py-1'>
-                          Listening
-                        </span>
-                      )}
-                      {language.canRead && (
-                        <span className='bg-success/10 text-success rounded-full px-2 py-1'>
-                          Reading
-                        </span>
-                      )}
-                      {language.canWrite && (
-                        <span className='bg-warning/10 text-warning rounded-full px-2 py-1'>
-                          Writing
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
           </div>
         )}
       </CardBody>
