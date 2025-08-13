@@ -30,9 +30,7 @@ export const useSaveDraft = () => {
       console.error('Failed to save draft:', error);
       
       // Show error message
-      if (typeof toast !== 'undefined') {
-        toast.error(t('errors.draftSaveFailed'));
-      }
+      console.error('Error:', t('errors.draftSaveFailed'));
     }
   });
 };
