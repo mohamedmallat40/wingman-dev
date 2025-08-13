@@ -400,7 +400,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
   // Poll handling functions
   const addPollOption = useCallback(() => {
     if (pollOptions.length >= 6) {
-      toast.warning('Maximum 6 poll options allowed');
+      console.warn('Maximum 6 poll options allowed');
       return;
     }
     setPollOptions(prev => [...prev, { id: Date.now().toString(), text: '' }]);
@@ -408,7 +408,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
 
   const removePollOption = useCallback((id: string) => {
     if (pollOptions.length <= 2) {
-      toast.warning('Minimum 2 poll options required');
+      console.warn('Minimum 2 poll options required');
       return;
     }
     setPollOptions(prev => prev.filter(option => option.id !== id));
