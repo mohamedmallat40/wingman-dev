@@ -491,11 +491,11 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
       
       // Handle specific errors
       if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
+        console.error('Error:', error.response.data.message);
       } else if (error.message) {
-        toast.error(error.message);
+        console.error('Error:', error.message);
       } else {
-        toast.error('Failed to publish post. Please try again.');
+        console.error('Failed to publish post. Please try again.');
       }
     }
   };
