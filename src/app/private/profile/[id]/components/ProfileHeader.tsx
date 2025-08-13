@@ -84,7 +84,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   };
 
   const handleCVDataParsed = (data: any) => {
-    console.log('CV data parsed:', data);
     // Here you would typically refresh the profile data or update the UI
     // to reflect the newly imported information
     if (onProfileUpdate) {

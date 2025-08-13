@@ -21,7 +21,6 @@ import { Icon } from '@iconify/react';
 import { type IReview, type IService } from '@root/modules/profile/types';
 import ISO6391, { getName } from 'iso-639-1';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 
 import ConfirmDeleteModal from '@/app/private/components/confirm-delete';
 import { getSkillIcon } from '@/app/private/talent-pool/utils/skill-icons';
@@ -86,7 +85,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   isOwnProfile
 }) => {
   const t = useTranslations();
-  const router = useRouter();
 
   // Modal states for all forms
   const [isPersonalInfoModalOpen, setIsPersonalInfoModalOpen] = useState(false);
@@ -305,7 +303,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
   // Certifications handlers
   const handleEditCertifications = () => {
-    console.log('Opening certifications modal');
     setIsCertificationsModalOpen(true);
   };
 
@@ -332,13 +329,11 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   const handleSaveCertifications = () => {
-    console.log('Saving certifications:', localCertifications);
     setIsCertificationsModalOpen(false);
   };
 
   // Social Accounts handlers
   const handleEditSocialAccounts = () => {
-    console.log('Opening social accounts modal for adding new account');
     // Ensure we start with current social accounts
     setLocalSocialAccounts(user.socialAccounts || []);
     setIsSocialAccountsModalOpen(true);
@@ -367,13 +362,11 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   const handleSaveSocialAccounts = () => {
-    console.log('Saving social accounts:', localSocialAccounts);
     setIsSocialAccountsModalOpen(false);
   };
 
   const handleEditSocialAccount = (account: SocialAccount) => {
     // Find and edit specific social account
-    console.log('Editing social account:', account);
     // Here you would open the edit form for the specific account
     setIsSocialAccountsModalOpen(true);
   };
