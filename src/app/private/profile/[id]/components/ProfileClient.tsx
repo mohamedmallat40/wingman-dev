@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { Card, CardBody, CardHeader, Skeleton, Spinner } from '@heroui/react';
+import { Card, CardBody, CardHeader, Skeleton } from '@heroui/react';
 import { addToast } from '@heroui/toast';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { useTranslations } from 'next-intl';
