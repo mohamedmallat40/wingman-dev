@@ -42,7 +42,7 @@ import { useCreatePost, useSaveDraft, useUploadMedia } from '../../hooks';
 import { useBroadcastStore } from '../../store/useBroadcastStore';
 import { type BroadcastPost } from '../../types';
 import { calculateReadTime, extractHashtags, generatePostId } from '../../utils/broadcast-utils';
-import { toast } from '@heroui/toast';
+// Remove toast import for now - will implement proper notification system
 
 // Enhanced schema with comprehensive validation
 const createBroadcastSchema = z.object({
