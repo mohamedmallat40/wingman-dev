@@ -94,7 +94,6 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
   const filteredUsers = useMemo(() => {
     const existingUserIds = new Set(existingSharedUsers.map((user) => user.id));
     const selectedUserIds = new Set(selectedUsers);
-    console.log(networkUsers);
     return networkUsers?.filter((user: unknown) => {
         if (existingUserIds.has(user.id) || selectedUserIds.has(user.id)) {
           return false;

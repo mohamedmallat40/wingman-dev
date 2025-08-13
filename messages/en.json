@@ -296,7 +296,7 @@
       "available": "Available",
       "availableForProjects": "Available for Projects", 
       "partTimeAvailable": "Part-time Available",
-      "busy": "Busy"
+      "notAvailable": "Not available"
     },
     "workType": {
       "remote": "remote",

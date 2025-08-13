@@ -47,6 +47,8 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         languagesResponse,
         educationResponse,
         notesResponse,
+        servicesResponse,
+        testimonialsResponse,
         connectionResponse
       ] = await Promise.allSettled([
         wingManApi.get(`users/${userId}`),
@@ -54,6 +56,8 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         wingManApi.get(`languages/byUser/${userId}`),
         wingManApi.get(`education/byUser/${userId}`),
         wingManApi.get(`notes/${userId}`),
+        wingManApi.get(`services/user/${userId}`),
+        wingManApi.get(`public-reviews/${userId}/active`),
         // Only check connection status if not own profile
         isOwnProfile
           ? Promise.resolve({ data: null })
@@ -71,7 +75,10 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
           experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data : [],
         languages: languagesResponse.status === 'fulfilled' ? languagesResponse.value.data : [],
         education: educationResponse.status === 'fulfilled' ? educationResponse.value.data : [],
-        notes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
+        userNotes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
+        projects: experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data.filter((item: IExperience) => item.title) : [],
+        services: servicesResponse.status === 'fulfilled' ? servicesResponse.value.data : [],
+        testimonials: testimonialsResponse.status === 'fulfilled' ? testimonialsResponse.value.data : [],
         connectionStatus: isOwnProfile
           ? {
               isConnected: true, // Own profile is always "connected"
@@ -290,8 +297,11 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         experiences={profileData.experiences}
         languages={profileData.languages}
         education={profileData.education}
-        notes={profileData.notes}
+        userNotes={profileData.userNotes}
         isOwnProfile={isOwnProfile}
+        projects={profileData.projects}
+        services={profileData.services}
+        testimonials={profileData.testimonials}
       />
     </div>
   );

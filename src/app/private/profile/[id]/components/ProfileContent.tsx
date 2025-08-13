@@ -1,6 +1,9 @@
 'use client';
 
+import test from 'node:test';
 import React, { useState } from 'react';
+
+import type { IEducation, Note } from '@root/modules/profile/types';
 
 import {
   Button,
@@ -9,26 +12,26 @@ import {
   CardHeader,
   Chip,
   Divider,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
-  ModalHeader,
-  Select,
-  SelectItem,
-  Textarea
+  ModalHeader
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { type IReview, type IService } from '@root/modules/profile/types';
+import ISO6391, { getName } from 'iso-639-1';
 import { useTranslations } from 'next-intl';
 
+import ConfirmDeleteModal from '@/app/private/components/confirm-delete';
 import { getSkillIcon } from '@/app/private/talent-pool/utils/skill-icons';
 import {
   getUserInitials,
   mapUserType,
   stripHtml,
   truncateText
-} from '@/app/private/talent-pool/utils/talent-utils';
+} from '@/app/private/talent-pool/utils/talent-utilities';
+import wingManApi from '@/lib/axios';
 import { getImageUrl } from '@/lib/utils/utilities';
 
 import {
@@ -39,59 +42,135 @@ import {
   type SocialAccount,
   type UserNote
 } from '../types';
-import { CertificationsForm } from './forms/CertificationsForm';
-import { EducationForm } from './forms/EducationForm';
-import { ExperienceForm } from './forms/ExperienceForm';
-import { EnhancedLanguagesForm } from './forms/EnhancedLanguagesForm';
 import { ActionButtons } from './ActionButtons';
 import { SocialAccountCard } from './cards/SocialAccountCard';
-import { LanguagesSection } from './sections/LanguagesSection';
-import { EducationSection } from './sections/EducationSection';
+import { CertificationsForm } from './forms/CertificationsForm';
+import { EnhancedLanguagesForm } from './forms/EnhancedLanguagesForm';
 import { PersonalInfoForm } from './forms/PersonalInfoForm';
 import { SkillsForm } from './forms/SkillsForm';
 import { SocialAccountsForm } from './forms/SocialAccountsForm';
+import AboutMeModal from './modals/about-me';
+import EducationModal from './modals/education-modal';
+import ExperienceModal from './modals/experience-modal';
+import LanguageModal from './modals/language-modal';
+import { NotesModal } from './modals/notes-modal';
+import ProjectModal from './modals/projects-modal';
+import ServiceModal from './modals/services-modal';
+import SkillsModal from './modals/skills-modal';
+import TestimonialModal from './modals/testimonials-modal';
+import { EducationSection } from './sections/EducationSection';
+import { NotesSection } from './sections/notes-section';
+import { ProjectsSection } from './sections/projects-section';
+import { ServicesSection } from './sections/services-section';
+import { TestimonialsSection } from './sections/testimonials-section';
 
-interface ProfileContentProps {
+interface ProfileContentProperties {
   user: ProfileUser;
   experiences: Experience[];
   languages: Language[];
   education: Education[];
-  notes: UserNote[];
+  userNotes: Note[];
   isOwnProfile: boolean;
+  projects?: Experience[];
+  services?: IService[];
+  testimonials?: IReview[];
 }
 
-const ProfileContent: React.FC<ProfileContentProps> = ({
+const ProfileContent: React.FC<ProfileContentProperties> = ({
   user,
   experiences,
   languages,
   education,
-  notes,
+  userNotes,
+  projects,
+  services,
+  testimonials,
   isOwnProfile
 }) => {
   const t = useTranslations();
 
   // Modal states for all forms
-  const [isPersonalInfoModalOpen, setIsPersonalInfoModalOpen] = useState(false);
-  const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
-  const [isEducationModalOpen, setIsEducationModalOpen] = useState(false);
   const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
-  const [isLanguagesModalOpen, setIsLanguagesModalOpen] = useState(false);
   const [isCertificationsModalOpen, setIsCertificationsModalOpen] = useState(false);
   const [isSocialAccountsModalOpen, setIsSocialAccountsModalOpen] = useState(false);
+  const [isAboutMeModalOpen, setIsAboutMeModalOpen] = useState(false);
+
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
+  const [notes, setNotes] = useState<Note[]>(userNotes);
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
 
   // Individual item modals
-  const [editingExperience, setEditingExperience] = useState<{item: Experience | null, isOpen: boolean}>({item: null, isOpen: false});
-  const [editingEducation, setEditingEducation] = useState<{item: Education | null, isOpen: boolean}>({item: null, isOpen: false});
-  const [editingLanguage, setEditingLanguage] = useState<{item: Language | null, isOpen: boolean}>({item: null, isOpen: false});
+  const [editingExperience, setEditingExperience] = useState<{
+    item: Experience | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+  const [editingEducation, setEditingEducation] = useState<{
+    item: IEducation | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+  const [editingLanguage, setEditingLanguage] = useState<{
+    item: Language | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+
+  const [educationToDelete, setEducationToDelete] = useState<{
+    education: IEducation | null;
+    isOpen: boolean;
+  }>({ education: null, isOpen: false });
+
+  const [experienceToDelete, setExperienceToDelete] = useState<{
+    experience: Experience | null;
+    isOpen: boolean;
+  }>({ experience: null, isOpen: false });
+
+  const [languageToDelete, setLanguageToDelete] = useState<{
+    language: ILanguage | null;
+    isOpen: boolean;
+  }>({ language: null, isOpen: false });
+  const [editingProject, setEditingProject] = useState<{
+    item: Experience | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+
+  const [editingService, setEditingService] = useState<{
+    item: IService | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+
+  const [viewingTestimonial, setViewingTestimonial] = useState<{
+    item: IReview | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+
+  // Add delete states
+  const [projectToDelete, setProjectToDelete] = useState<{
+    project: Experience | null;
+    isOpen: boolean;
+  }>({ project: null, isOpen: false });
+
+  const [serviceToDelete, setServiceToDelete] = useState<{
+    service: IService | null;
+    isOpen: boolean;
+  }>({ service: null, isOpen: false });
+
+  const [testimonialToDelete, setTestimonialToDelete] = useState<{
+    testimonial: IReview | null;
+    isOpen: boolean;
+  }>({ testimonial: null, isOpen: false });
+
+  const [noteToDelete, setNoteToDelete] = useState<{
+    note: Note | null;
+    isOpen: boolean;
+  }>({ note: null, isOpen: false });
 
   // Local state for forms
   const [localUser, setLocalUser] = useState(user);
-  const [localExperiences, setLocalExperiences] = useState<Experience[]>(experiences);
-  const [localEducation, setLocalEducation] = useState<Education[]>(education);
-  const [localLanguages, setLocalLanguages] = useState<Language[]>(languages);
-  const [localSkills, setLocalSkills] = useState(user.skills || []);
   const [localCertifications, setLocalCertifications] = useState([]);
-  const [localSocialAccounts, setLocalSocialAccounts] = useState<SocialAccount[]>(user.socialAccounts || []);
+  const [localSocialAccounts, setLocalSocialAccounts] = useState<SocialAccount[]>(
+    user.socialAccounts || []
+  );
 
   const formatDate = (dateString: string) => {
     try {
@@ -107,105 +186,125 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   const fullName = `${user.firstName} ${user.lastName}`;
 
-  // Personal Info handlers
   const handleEditAbout = () => {
-    setIsPersonalInfoModalOpen(true);
+    console.log('Opening about me modal');
+    setIsAboutMeModalOpen(true);
   };
 
-  const handlePersonalInfoChange = (field: string, value: string) => {
-    setLocalUser((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleSavePersonalInfo = () => {
-    setIsPersonalInfoModalOpen(false);
+  const handleAboutMeSuccess = (updatedAboutMe: string) => {
+    // Update the local user state with the new about me
+    setLocalUser((previous) => ({ ...previous, aboutMe: updatedAboutMe }));
+    console.log('About me updated successfully:', updatedAboutMe);
+    // Optionally call a prop function here to refresh the parent component's data
   };
 
   // Skills handlers
   const handleEditSkills = () => {
-    // Ensure we start with current skills
-    setLocalSkills(user.skills || []);
+    console.log('Opening skills modal');
     setIsSkillsModalOpen(true);
   };
 
-  const handleAddSkill = () => {
-    const newSkill = {
-      id: `temp-${Date.now()}`,
-      name: '',
-      level: 'Beginner'
-    };
-    setLocalSkills((prev) => [...prev, newSkill]);
+  const handleSkillsSuccess = () => {
+    // Refresh skills data here - you might want to refetch from your API
+    // or update the local state accordingly
+    console.log('Skills operation successful - refresh data');
+    // You can call a prop function here to refresh the parent component's data
   };
 
-  const handleRemoveSkill = (index: number) => {
-    setLocalSkills((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleUpdateSkill = (index: number, data: any) => {
-    setLocalSkills((prev) => prev.map((skill, i) => (i === index ? data : skill)));
-  };
-
-  const handleSaveSkills = () => {
-    setIsSkillsModalOpen(false);
+  // Helper function to get skill color
+  const getSkillColor = (index: number) => {
+    const colors = ['primary', 'secondary', 'success', 'warning'] as const;
+    return colors[index % colors.length];
   };
 
   // Languages handlers
-  const handleEditLanguages = (language?: Language) => {
-    if (language) {
-      // Edit specific language item
-      setEditingLanguage({item: language, isOpen: true});
-    } else {
-      // Add new language directly
-      const newLanguage: Language = {
-        id: `temp-${Date.now()}`,
-        name: '',
-        nativeName: '',
-        code: '',
-        key: '',
-        level: 'BEGINNER',
-        isNative: false,
-        canRead: true,
-        canWrite: true,
-        canSpeak: true,
-        canUnderstand: true,
-        yearsOfExperience: 0
-      };
-      setEditingLanguage({item: newLanguage, isOpen: true});
+  const handleAddLanguage = () => {
+    setEditingLanguage({
+      item: {
+        id: '',
+        key: undefined,
+        level: 'BEGINNER'
+      },
+      isOpen: true
+    });
+  };
+
+  const handleEditLanguage = (language: ILanguage) => {
+    console.log('Editing language:', language);
+    setEditingLanguage({ item: language, isOpen: true });
+  };
+
+  const handleDeleteLanguage = (language: ILanguage) => {
+    setLanguageToDelete({ language, isOpen: true });
+  };
+
+  const confirmDeleteLanguage = async () => {
+    if (!languageToDelete.language?.id) return;
+
+    try {
+      await wingManApi.delete(`/languages/${languageToDelete.language.id}`);
+      addToast('Language deleted successfully', 'success');
+
+      // Refresh the language data here
+      handleLanguageSuccess();
+
+      setLanguageToDelete({ language: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting language:', error);
+
+      let errorMessage = 'Failed to delete language';
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Language record not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this language.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+
+      addToast(errorMessage, 'error');
     }
   };
 
-  const handleAddLanguage = () => {
-    const newLanguage: Language = {
-      id: `temp-${Date.now()}`,
-      name: '',
-      nativeName: '',
-      code: '',
-      key: '', // For backwards compatibility
-      level: 'BEGINNER',
-      isNative: false,
-      canRead: true,
-      canWrite: true,
-      canSpeak: true,
-      canUnderstand: true,
-      yearsOfExperience: 0
+  const handleLanguageSuccess = () => {
+    // Refresh language data here - you might want to refetch from your API
+    // or update the local state accordingly
+    console.log('Language operation successful - refresh data');
+    // You can call a prop function here to refresh the parent component's data
+  };
+
+  const getLanguageName = (code: string | undefined): string => {
+    if (!code) return 'Unknown';
+
+    // Try to get name from iso-639-1
+    const isoName = ISO6391.getName(code.toLowerCase());
+    if (isoName) return isoName;
+
+    // Fallback to code if name not found
+    return code;
+  };
+
+  const getLevelDisplay = (level: ILanguage['level']): string => {
+    const levelMap = {
+      NATIVE: 'Native',
+      PROFESSIONAL: 'Professional',
+      INTERMEDIATE: 'Intermediate',
+      BEGINNER: 'Beginner'
     };
-    setLocalLanguages((prev) => [...prev, newLanguage]);
+    return levelMap[level] || level;
   };
 
-  const handleRemoveLanguage = (index: number) => {
-    setLocalLanguages((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleUpdateLanguage = (index: number, data: Language) => {
-    setLocalLanguages((prev) => prev.map((lang, i) => (i === index ? data : lang)));
-  };
-
-  const handleSaveLanguages = () => {
-    setIsLanguagesModalOpen(false);
-  };
-
-  const handleSaveIndividualLanguage = (updatedLanguage: Language) => {
-    // Here you would save to your backend
-    setEditingLanguage({item: null, isOpen: false});
+  // Helper function to get level color
+  const getLevelColor = (level: ILanguage['level']): string => {
+    const colorMap = {
+      NATIVE: 'success',
+      PROFESSIONAL: 'primary',
+      INTERMEDIATE: 'warning',
+      BEGINNER: 'default'
+    };
+    return colorMap[level] || 'default';
   };
 
   // Certifications handlers
@@ -222,15 +321,17 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
       expiryDate: '',
       credentialId: ''
     };
-    setLocalCertifications((prev) => [...prev, newCertification]);
+    setLocalCertifications((previous) => [...previous, newCertification]);
   };
 
   const handleRemoveCertification = (index: number) => {
-    setLocalCertifications((prev) => prev.filter((_, i) => i !== index));
+    setLocalCertifications((previous) => previous.filter((_, index_) => index_ !== index));
   };
 
   const handleUpdateCertification = (index: number, data: any) => {
-    setLocalCertifications((prev) => prev.map((cert, i) => (i === index ? data : cert)));
+    setLocalCertifications((previous) =>
+      previous.map((cert, index_) => (index_ === index ? data : cert))
+    );
   };
 
   const handleSaveCertifications = () => {
@@ -253,15 +354,17 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
       isPublic: true,
       displayName: ''
     };
-    setLocalSocialAccounts((prev) => [...prev, newSocialAccount]);
+    setLocalSocialAccounts((previous) => [...previous, newSocialAccount]);
   };
 
   const handleRemoveSocialAccount = (index: number) => {
-    setLocalSocialAccounts((prev) => prev.filter((_, i) => i !== index));
+    setLocalSocialAccounts((previous) => previous.filter((_, index_) => index_ !== index));
   };
 
   const handleUpdateSocialAccount = (index: number, data: SocialAccount) => {
-    setLocalSocialAccounts((prev) => prev.map((account, i) => (i === index ? data : account)));
+    setLocalSocialAccounts((previous) =>
+      previous.map((account, index_) => (index_ === index ? data : account))
+    );
   };
 
   const handleSaveSocialAccounts = () => {
@@ -277,145 +380,332 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   const handleDeleteSocialAccount = (accountId: string) => {
     const confirmed = confirm('Are you sure you want to delete this social account?');
     if (confirmed) {
-      setLocalSocialAccounts(prev => prev.filter(account => account.id !== accountId));
+      setLocalSocialAccounts((previous) => previous.filter((account) => account.id !== accountId));
+      console.log('Social account deleted:', accountId);
     }
   };
 
   // Experience handlers
   const handleAddExperience = () => {
-    // Create and add new empty experience
-    const newExperience: Experience = {
-      id: `temp-${Date.now()}`,
-      position: '',
-      company: '',
-      location: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-      skills: []
-    };
-    setEditingExperience({item: newExperience, isOpen: true});
+    console.log('Adding new experience');
+    setEditingExperience({
+      item: {
+        company: '',
+        position: '',
+        startDate: '',
+        endDate: '',
+        description: ''
+      },
+      isOpen: true
+    });
   };
 
-  const handleEditExperience = (experience?: Experience) => {
-    if (experience) {
-      // Edit specific experience item
-      setEditingExperience({item: experience, isOpen: true});
-    } else {
-      // Edit all experiences
-      setIsExperienceModalOpen(true);
+  const handleEditExperience = (experience: Experience) => {
+    console.log('Editing experience:', experience);
+    setEditingExperience({ item: experience, isOpen: true });
+  };
+
+  const handleDeleteExperience = (experience: Experience) => {
+    setExperienceToDelete({ experience, isOpen: true });
+  };
+
+  const confirmDeleteExperience = async () => {
+    if (!experienceToDelete.experience?.id) return;
+
+    try {
+      await wingManApi.delete(`/experience/${experienceToDelete.experience.id}`);
+      addToast('Experience deleted successfully', 'success');
+
+      // Refresh the experience data here - you might want to call a prop function
+      // or refetch from your API to update the experiences list
+      handleExperienceSuccess();
+
+      setExperienceToDelete({ experience: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting experience:', error);
+
+      let errorMessage = 'Failed to delete experience';
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Experience record not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this experience.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+
+      addToast(errorMessage, 'error');
     }
   };
 
-  const handleAddExperienceItem = () => {
-    const newExperience: Experience = {
-      id: `temp-${Date.now()}`,
-      position: '',
-      company: '',
-      location: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-      skills: []
-    };
-    setLocalExperiences((prev) => [...prev, newExperience]);
-  };
-
-  const handleRemoveExperience = (index: number) => {
-    setLocalExperiences((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleUpdateExperience = (index: number, data: Experience) => {
-    setLocalExperiences((prev) => prev.map((exp, i) => (i === index ? data : exp)));
-  };
-
-  const handleSaveExperiences = () => {
-    // Here you would save to your backend
-    setIsExperienceModalOpen(false);
-  };
-
-  const handleSaveIndividualExperience = (updatedExperience: Experience) => {
-    // Here you would save to your backend
-    setEditingExperience({item: null, isOpen: false});
-  };
-
-  const handleSaveIndividualEducation = (updatedEducation: Education) => {
-    // Here you would save to your backend
-    setEditingEducation({item: null, isOpen: false});
+  const handleExperienceSuccess = () => {
+    // Refresh experience data here - you might want to refetch from your API
+    // or update the local state accordingly
+    console.log('Experience operation successful - refresh data');
+    // You can call a prop function here to refresh the parent component's data
   };
 
   // Education handlers
   const handleAddEducation = () => {
-    // Create and add new empty education
-    const newEducation: Education = {
-      id: `temp-${Date.now()}`,
-      degree: '',
-      university: '',
-      field: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-      grade: ''
-    };
-    setEditingEducation({item: newEducation, isOpen: true});
+    setEditingEducation({ item: null, isOpen: true });
   };
 
-  const handleEditEducation = (education?: Education) => {
-    if (education) {
-      // Edit specific education item
-      setEditingEducation({item: education, isOpen: true});
-    } else {
-      // Edit all education
-      setIsEducationModalOpen(true);
+  const handleEditEducation = (education: IEducation) => {
+    setEditingEducation({ item: education, isOpen: true });
+  };
+
+  const handleEducationSuccess = () => {
+    // Refresh education data here - you might want to refetch from your API
+    // or update the local state accordingly
+    console.log('Education operation successful - refresh data');
+    // You can call a prop function here to refresh the parent component's data
+  };
+  const addToast = (message: string, type: 'success' | 'error') => {
+    // Implement your toast notification logic here
+    console.log(`${type.toUpperCase()}: ${message}`);
+  };
+  const handleDeleteEducation = (education: IEducation) => {
+    setEducationToDelete({ education, isOpen: true });
+  };
+
+  const confirmDeleteEducation = async () => {
+    try {
+      await wingManApi.delete(`/education/${educationToDelete.education.id}`);
+      addToast('Education deleted successfully', 'success');
+
+      // Refresh the education data here
+      handleEducationSuccess();
+
+      setEducationToDelete({ education: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting education:', error);
+
+      let errorMessage = 'Failed to delete education';
+
+      if (error.response?.data?.message) {
+        errorMessage = error?.response?.data?.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Education record not found.';
+      } else if (error!.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this education.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+
+      addToast(errorMessage, 'error');
+    }
+  };
+  const handleAddProject = () => {
+    setEditingProject({
+      item: {
+        title: '',
+        company: '',
+        position: '',
+        startDate: '',
+        endDate: '',
+        description: '',
+        location: ''
+      },
+      isOpen: true
+    });
+    setIsProjectModalOpen(true);
+  };
+
+  const handleEditProject = (project: Experience) => {
+    setIsProjectModalOpen(true);
+
+    setEditingProject({ item: project, isOpen: true });
+  };
+
+  const handleDeleteProject = (project: Experience) => {
+    setProjectToDelete({ project, isOpen: true });
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!projectToDelete.project?.id) return;
+
+    try {
+      await wingManApi.delete(`/experience/${projectToDelete.project.id}`);
+      addToast('Project deleted successfully', 'success');
+      handleProjectSuccess();
+      setProjectToDelete({ project: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting project:', error);
+      let errorMessage = 'Failed to delete project';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Project not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this project.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      addToast(errorMessage, 'error');
     }
   };
 
-  const handleAddEducationItem = () => {
-    const newEducation: Education = {
-      id: `temp-${Date.now()}`,
-      degree: '',
-      university: '',
-      field: '',
-      startDate: '',
-      endDate: '',
-      description: '',
-      grade: ''
-    };
-    setLocalEducation((prev) => [...prev, newEducation]);
+  const handleProjectSuccess = () => {
+    console.log('Project operation successful - refresh data');
+    // Refresh projects data here
   };
 
-  const handleRemoveEducation = (index: number) => {
-    setLocalEducation((prev) => prev.filter((_, i) => i !== index));
+  const handleAddService = () => {
+    setEditingService({
+      item: {
+        name: '',
+        description: '',
+        price: 0,
+        type: 'HOURLY_BASED',
+        skills: []
+      },
+      isOpen: true
+    });
+    setIsServiceModalOpen(true);
   };
 
-  const handleUpdateEducation = (index: number, data: Education) => {
-    setLocalEducation((prev) => prev.map((edu, i) => (i === index ? data : edu)));
+  const handleEditService = (service: IService) => {
+    setIsServiceModalOpen(true);
+    setEditingService({ item: service, isOpen: true });
   };
 
-  const handleSaveEducation = () => {
-    // Here you would save to your backend
-    setIsEducationModalOpen(false);
+  const handleDeleteService = (service: IService) => {
+    setServiceToDelete({ service, isOpen: true });
   };
 
+  const confirmDeleteService = async () => {
+    try {
+      await wingManApi.delete(`/services/${serviceToDelete.service?.id}`);
+      addToast('Service deleted successfully', 'success');
+      handleServiceSuccess();
+      setServiceToDelete({ service: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting service:', error);
+      let errorMessage = 'Failed to delete service';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Service not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this service.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      addToast(errorMessage, 'error');
+    }
+  };
+
+  const handleServiceSuccess = () => {
+    console.log('Service operation successful - refresh data');
+    // Refresh services data here
+  };
+
+  const handleViewTestimonial = (testimonial: IReview) => {
+    setViewingTestimonial({ item: testimonial, isOpen: true });
+  };
+
+  const handleDeleteTestimonial = (testimonial: IReview) => {
+    setTestimonialToDelete({ testimonial, isOpen: true });
+  };
+
+  const confirmDeleteTestimonial = async () => {
+    if (!testimonialToDelete.testimonial?.id) return;
+
+    try {
+      await wingManApi.delete(`/public-reviews/${testimonialToDelete.testimonial.id}`);
+      addToast('Testimonial deleted successfully', 'success');
+      handleTestimonialSuccess();
+      setTestimonialToDelete({ testimonial: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting testimonial:', error);
+      let errorMessage = 'Failed to delete testimonial';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Testimonial not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this testimonial.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      addToast(errorMessage, 'error');
+    }
+  };
+
+  const handleTestimonialSuccess = () => {
+    console.log('Testimonial operation successful - refresh data');
+    // Refresh testimonials data here
+  };
+
+  const handleAddNote = () => {
+    setIsNotesModalOpen(true);
+  };
+
+  const handleDeleteNote = (note: Note) => {
+    setNoteToDelete({ note, isOpen: true });
+  };
+
+  const confirmDeleteNote = async () => {
+    if (!noteToDelete.note?.id) return;
+
+    try {
+      await wingManApi.delete(`/notes/${noteToDelete.note.id}`);
+      addToast('Note deleted successfully', 'success');
+
+      // Remove the note from local state
+      setNotes((previousNotes) => previousNotes.filter((n) => n.id !== noteToDelete.note?.id));
+      setNoteToDelete({ note: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting note:', error);
+
+      let errorMessage = 'Failed to delete note';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Note not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this note.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+
+      addToast(errorMessage, 'error');
+    }
+  };
+
+  const handleNotesSuccess = async () => {
+    // Refresh notes data
+    try {
+      const updatedNotes = await notesApi.getNotes(user.id);
+      setNotes(updatedNotes);
+    } catch (error) {
+      console.error('Error refreshing notes:', error);
+    }
+  };
 
   return (
     <section className='container mx-auto px-6 pb-20 transition-all duration-300'>
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
         {/* Main content */}
-        <div className='space-y-8 lg:col-span-2 animate-slide-up'>
+        <div className='animate-slide-up space-y-8 lg:col-span-2'>
           {/* About */}
-          <Card id='about' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
-            <CardHeader className='pb-4 hover:pb-5 transition-all duration-200'>
+          <Card
+            id='about'
+            className='border-default-200/50 hover:border-primary/20 scroll-mt-24 shadow-sm transition-all duration-300 hover:shadow-md'
+          >
+            <CardHeader className='pb-4 transition-all duration-200 hover:pb-5'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
-                  <div className='bg-primary/10 rounded-full p-3 hover:bg-primary/15 transition-colors duration-200 hover:scale-105 transform'>
+                  <div className='bg-primary/10 hover:bg-primary/15 transform rounded-full p-3 transition-colors duration-200 hover:scale-105'>
                     <Icon icon='solar:user-speak-linear' className='text-primary h-5 w-5' />
                   </div>
                   <div>
-                    <h2 className='text-foreground text-xl font-semibold hover:text-primary transition-colors duration-200'>
+                    <h2 className='text-foreground hover:text-primary text-xl font-semibold transition-colors duration-200'>
                       {t('talentPool.profile.sections.about')}
                     </h2>
-                    <p className='text-small text-foreground-500 mt-1 hover:text-foreground-600 transition-colors duration-200'>
+                    <p className='text-small text-foreground-500 hover:text-foreground-600 mt-1 transition-colors duration-200'>
                       {t('talentPool.profile.aboutDescription')}
                     </p>
                   </div>
@@ -425,8 +715,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                   <ActionButtons
                     showEdit
                     onEdit={handleEditAbout}
-                    editTooltip="Edit about me"
-                    size="md"
+                    editTooltip='Edit about me'
+                    size='md'
                   />
                 )}
               </div>
@@ -442,7 +732,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                   <div className='animate-fade-in'>
                     <Icon
                       icon='solar:document-text-linear'
-                      className='text-default-300 mx-auto mb-4 h-12 w-12 hover:text-primary transition-colors duration-300 hover:scale-110 transform'
+                      className='text-default-300 hover:text-primary mx-auto mb-4 h-12 w-12 transform transition-colors duration-300 hover:scale-110'
                     />
                     <p className='text-foreground-500 mb-4'>
                       {t('talentPool.cards.noAboutAvailable')}
@@ -465,9 +755,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             </CardBody>
           </Card>
 
-
           {/* Experience */}
-          <Card id='experience' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-primary/20'>
+          <Card
+            id='experience'
+            className='border-default-200/50 hover:border-primary/20 scroll-mt-24 shadow-sm transition-all duration-300 hover:shadow-md'
+          >
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -488,8 +780,8 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                   <ActionButtons
                     showAdd
                     onAdd={handleAddExperience}
-                    addTooltip="Add new experience"
-                    size="md"
+                    addTooltip='Add new experience'
+                    size='md'
                   />
                 )}
               </div>
@@ -523,31 +815,21 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                                     {exp.position}
                                   </h3>
                                   {isOwnProfile && (
-                                  <ActionButtons
-                                    showEdit
-                                    showDelete
-                                    onEdit={() => handleEditExperience(exp)}
-                                    onDelete={() => {
-                                      const confirmed = confirm(`Are you sure you want to delete the experience at ${exp.company}?`);
-                                      if (confirmed) {
-                                        const index = experiences.findIndex(e => e.id === exp.id);
-                                        if (index !== -1) {
-                                          handleRemoveExperience(index);
-                                        }
-                                      }
-                                    }}
-                                    editTooltip={`Edit ${exp.position} at ${exp.company}`}
-                                    deleteTooltip={`Delete ${exp.position} experience`}
-                                  />
-                                )}
+                                    <ActionButtons
+                                      showEdit
+                                      showDelete
+                                      onEdit={() => {
+                                        handleEditExperience(exp);
+                                      }}
+                                      onDelete={() => {
+                                        handleDeleteExperience(exp);
+                                      }}
+                                      editTooltip={`Edit ${exp.position} at ${exp.company}`}
+                                      deleteTooltip={`Delete ${exp.position} experience`}
+                                    />
+                                  )}
                                 </div>
                                 <p className='text-foreground-700 font-medium'>{exp.company}</p>
-                                {exp.location && (
-                                  <p className='text-small text-foreground-500 flex items-center gap-1.5'>
-                                    <Icon icon='solar:map-point-linear' className='h-3 w-3' />
-                                    {exp.location}
-                                  </p>
-                                )}
                               </div>
                               <div className='text-small text-foreground-500 bg-default-100 flex items-center gap-2 rounded-full px-3 py-2'>
                                 <Icon icon='solar:calendar-linear' className='h-4 w-4' />
@@ -564,22 +846,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                               <p className='text-foreground-600 leading-relaxed'>
                                 {exp.description}
                               </p>
-                            )}
-
-                            {exp.skills && exp.skills.length > 0 && (
-                              <div className='mt-4 flex flex-wrap gap-2'>
-                                {exp.skills.map((skill, skillIndex) => (
-                                  <Chip
-                                    key={skillIndex}
-                                    size='sm'
-                                    variant='flat'
-                                    color='primary'
-                                    className='text-tiny font-medium'
-                                  >
-                                    {skill}
-                                  </Chip>
-                                ))}
-                              </div>
                             )}
                           </div>
                         </div>
@@ -618,59 +884,80 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             education={education}
             isOwnProfile={isOwnProfile}
             onAdd={handleAddEducation}
-            onEdit={(edu) => handleEditEducation(edu)}
-            onDelete={(edu) => {
-              const confirmed = confirm(`Are you sure you want to delete the education from ${edu.university}?`);
-              if (confirmed) {
-                const index = education.findIndex(e => e.id === edu.id);
-                if (index !== -1) {
-                  handleRemoveEducation(index);
-                }
-              }
+            onEdit={(edu) => {
+              handleEditEducation(edu);
             }}
+            onDelete={(edu) => {
+              handleDeleteEducation(edu);
+            }}
+          />
+          <ProjectsSection
+            projects={projects}
+            isOwnProfile={isOwnProfile}
+            onAdd={handleAddProject}
+            onEdit={handleEditProject}
+            onDelete={handleDeleteProject}
+            t={t}
+          />
+
+          {/* Services */}
+          <ServicesSection
+            services={services}
+            isOwnProfile={isOwnProfile}
+            onAdd={handleAddService}
+            onEdit={handleEditService}
+            onDelete={handleDeleteService}
+            t={t}
+          />
+
+          {/* Testimonials */}
+          <TestimonialsSection
+            testimonials={testimonials}
+            isOwnProfile={isOwnProfile}
+            onView={handleViewTestimonial}
+            onDelete={handleDeleteTestimonial}
+            t={t}
           />
         </div>
 
         {/* Sidebar */}
-        <div className='space-y-8 animate-slide-up [animation-delay:200ms]'>
+        <div className='animate-slide-up space-y-8 [animation-delay:200ms]'>
           {/* Skills */}
-          <Card id='skills' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-success/20'>
+          <Card
+            id='skills'
+            className='border-default-200/50 hover:border-success/20 scroll-mt-24 shadow-sm transition-all duration-300 hover:shadow-md'
+          >
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
                   <div className='bg-success/10 rounded-full p-3'>
-                    <Icon icon='solar:verified-check-linear' className='text-success h-5 w-5' />
+                    <Icon icon='solar:medal-star-linear' className='text-success h-5 w-5' />
                   </div>
                   <div>
                     <h3 className='text-foreground text-lg font-semibold'>
-                      {t('talentPool.profile.sections.skills')}
+                      Skills ({user.skills.length || 0})
                     </h3>
                     <p className='text-small text-foreground-500 mt-1'>
-                      {t('talentPool.profile.skillsDescription')}
+                      Technical and professional skills
                     </p>
                   </div>
                 </div>
 
                 {isOwnProfile && (
                   <ActionButtons
-                    showAdd
-                    onAdd={handleEditSkills}
-                    addTooltip="Add new skills"
-                    size="md"
+                    showEdit
+                    onEdit={handleEditSkills}
+                    editTooltip='Manage skills'
+                    size='md'
                   />
                 )}
               </div>
             </CardHeader>
             <CardBody className='pt-2'>
-              {user.skills && user.skills.length > 0 ? (
+              {user.skills.length > 0 ? (
                 <div className='flex flex-wrap gap-3'>
                   {user.skills.map((skill, index) => {
-                    const colors = ['primary', 'secondary', 'success', 'warning'] as const;
-                    const chipColor = colors[index % colors.length] as
-                      | 'primary'
-                      | 'secondary'
-                      | 'success'
-                      | 'warning';
+                    const chipColor = getSkillColor(index);
 
                     return (
                       <Chip
@@ -678,10 +965,22 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                         size='sm'
                         color={chipColor}
                         variant='flat'
-                        className='font-medium hover:scale-105 transform transition-all duration-200 cursor-default hover:shadow-md'
-                        startContent={<Icon icon={getSkillIcon(skill.key)} className='h-3 w-3' />}
+                        className='transform cursor-default font-medium transition-all duration-200 hover:scale-105 hover:shadow-md'
+                        startContent={
+                          <Icon icon='solar:verified-check-linear' className='h-3 w-3' />
+                        }
                       >
-                        {skill.key.trim()}
+                        <div className='flex items-center gap-1'>
+                          <span>{skill.key}</span>
+                          {skill.level && (
+                            <span className='ml-1 text-xs opacity-75'>
+                              (
+                              {SKILL_LEVELS[skill.level]?.toLowerCase() ||
+                                skill.level.toLowerCase()}
+                              )
+                            </span>
+                          )}
+                        </div>
                       </Chip>
                     );
                   })}
@@ -690,12 +989,10 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                 <div className='flex items-center justify-center py-12 text-center'>
                   <div>
                     <Icon
-                      icon='solar:verified-check-linear'
+                      icon='solar:medal-star-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
-                    <p className='text-foreground-500 mb-4'>
-                      {t('talentPool.cards.noSkillsListed')}
-                    </p>
+                    <p className='text-foreground-500 mb-4'>No skills listed</p>
                     {isOwnProfile && (
                       <Button
                         color='primary'
@@ -714,24 +1011,127 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </Card>
 
           {/* Languages */}
-          <LanguagesSection
-            languages={languages}
+          <Card
+            id='languages'
+            className='border-default-200/50 hover:border-warning/20 scroll-mt-24 shadow-sm transition-all duration-300 hover:shadow-md'
+          >
+            <CardHeader className='pb-4'>
+              <div className='flex w-full items-center justify-between'>
+                <div className='flex items-center gap-4'>
+                  <div className='bg-warning/10 rounded-full p-3'>
+                    <Icon icon='solar:globe-linear' className='text-warning h-5 w-5' />
+                  </div>
+                  <div>
+                    <h3 className='text-foreground text-lg font-semibold'>Languages</h3>
+                    <p className='text-small text-foreground-500 mt-1'>
+                      Languages I can communicate in
+                    </p>
+                  </div>
+                </div>
+
+                {isOwnProfile && (
+                  <ActionButtons
+                    showAdd
+                    onAdd={handleAddLanguage}
+                    addTooltip='Add new language'
+                    size='md'
+                  />
+                )}
+              </div>
+            </CardHeader>
+            <CardBody className='pt-2'>
+              {languages && languages.length > 0 ? (
+                <div className='space-y-4'>
+                  {languages.map((lang, index) => (
+                    <div
+                      key={lang.id || index}
+                      className='bg-default-50 hover:bg-default-100 flex items-center justify-between rounded-lg p-4 transition-colors duration-200'
+                    >
+                      <div className='flex items-center gap-4'>
+                        <div className='bg-warning/20 rounded-full p-2'>
+                          <Icon icon='solar:translation-linear' className='text-warning h-4 w-4' />
+                        </div>
+                        <div>
+                          <div className='flex items-center gap-2'>
+                            <h4 className='text-foreground font-medium'>
+                              {getLanguageName(lang.key)}
+                            </h4>
+                            {lang.key && (
+                              <span className='text-tiny text-foreground-400 bg-default-200 rounded px-2 py-1'>
+                                {lang.key.toUpperCase()}
+                              </span>
+                            )}
+                          </div>
+                          <Chip
+                            size='sm'
+                            color={getLevelColor(lang.level) as any}
+                            variant='flat'
+                            className='text-tiny text-foreground-500 mt-1'
+                          >
+                            {getLevelDisplay(lang.level)}
+                          </Chip>
+                        </div>
+                      </div>
+
+                      {isOwnProfile && (
+                        <div className='flex gap-1'>
+                          <ActionButtons
+                            showEdit
+                            showDelete
+                            onEdit={() => {
+                              handleEditLanguage(lang);
+                            }}
+                            onDelete={() => {
+                              handleDeleteLanguage(lang);
+                            }}
+                            editTooltip={`Edit ${getLanguageName(lang.key)} language`}
+                            deleteTooltip={`Delete ${getLanguageName(lang.key)} language`}
+                            size='sm'
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className='flex items-center justify-center py-12 text-center'>
+                  <div>
+                    <Icon
+                      icon='solar:globe-linear'
+                      className='text-default-300 mx-auto mb-4 h-12 w-12'
+                    />
+                    <p className='text-foreground-500 mb-4'>No languages listed</p>
+                    {isOwnProfile && (
+                      <Button
+                        color='primary'
+                        variant='flat'
+                        size='sm'
+                        startContent={<Icon icon='solar:plus-linear' className='h-4 w-4' />}
+                        onPress={handleAddLanguage}
+                      >
+                        Add Languages
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CardBody>
+          </Card>
+
+          {/* Notes */}
+          <NotesSection
+            notes={notes}
             isOwnProfile={isOwnProfile}
-            onAdd={() => handleEditLanguages()}
-            onEdit={(lang) => handleEditLanguages(lang)}
-            onDelete={(lang) => {
-              const confirmed = confirm(`Are you sure you want to delete ${lang.name || lang.key} language?`);
-              if (confirmed) {
-                const index = languages.findIndex(l => l.id === lang.id);
-                if (index !== -1) {
-                  handleRemoveLanguage(index);
-                }
-              }
-            }}
+            onAdd={handleAddNote}
+            onDelete={handleDeleteNote}
+            t={t}
           />
 
           {/* Social Accounts */}
-          <Card id='social-accounts' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-purple/20'>
+          <Card
+            id='social-accounts'
+            className='border-default-200/50 hover:border-purple/20 scroll-mt-24 shadow-sm transition-all duration-300 hover:shadow-md'
+          >
             <CardHeader className='pb-4'>
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -739,9 +1139,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                     <Icon icon='solar:link-circle-linear' className='text-purple h-5 w-5' />
                   </div>
                   <div>
-                    <h3 className='text-foreground text-lg font-semibold'>
-                      Social Accounts
-                    </h3>
+                    <h3 className='text-foreground text-lg font-semibold'>Social Accounts</h3>
                     <p className='text-small text-foreground-500 mt-1'>
                       Connect with me on social platforms
                     </p>
@@ -752,24 +1150,28 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                   <ActionButtons
                     showAdd
                     onAdd={handleEditSocialAccounts}
-                    addTooltip="Add new social account"
-                    size="md"
+                    addTooltip='Add new social account'
+                    size='md'
                   />
                 )}
               </div>
             </CardHeader>
             <CardBody className='px-8 pt-2'>
-              {localSocialAccounts.filter(account => account.isPublic).length > 0 ? (
+              {localSocialAccounts.some((account) => account.isPublic) ? (
                 <div className='grid grid-cols-2 gap-3'>
                   {localSocialAccounts
-                    .filter(account => account.isPublic)
+                    .filter((account) => account.isPublic)
                     .map((account, index) => (
                       <SocialAccountCard
                         key={account.id || index}
                         account={account}
                         isOwnProfile={isOwnProfile}
-                        onEdit={() => handleEditSocialAccount(account)}
-                        onDelete={() => handleDeleteSocialAccount(account.id)}
+                        onEdit={() => {
+                          handleEditSocialAccount(account);
+                        }}
+                        onDelete={() => {
+                          handleDeleteSocialAccount(account.id);
+                        }}
                       />
                     ))}
                 </div>
@@ -780,9 +1182,7 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
                       icon='solar:link-circle-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
-                    <p className='text-foreground-500 mb-4'>
-                      No social accounts available
-                    </p>
+                    <p className='text-foreground-500 mb-4'>No social accounts available</p>
                     {isOwnProfile && (
                       <Button
                         color='primary'
@@ -802,7 +1202,10 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
           {/* Contact - Only show for other users */}
           {!isOwnProfile && (
-            <Card id='contact' className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-danger/20'>
+            <Card
+              id='contact'
+              className='border-default-200/50 hover:border-danger/20 scroll-mt-24 shadow-sm transition-all duration-300 hover:shadow-md'
+            >
               <CardHeader className='pb-4'>
                 <div className='flex items-center gap-4'>
                   <div className='bg-danger/10 rounded-full p-3'>
@@ -909,10 +1312,10 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           )}
 
           {/* Profile summary card */}
-          <Card className='border-primary/20 from-primary/5 to-secondary/5 bg-gradient-to-br shadow-sm hover:shadow-lg transition-all duration-300 hover:border-primary/30 hover:from-primary/8 hover:to-secondary/8'>
+          <Card className='border-primary/20 from-primary/5 to-secondary/5 hover:border-primary/30 hover:from-primary/8 hover:to-secondary/8 bg-gradient-to-br shadow-sm transition-all duration-300 hover:shadow-lg'>
             <CardBody className='p-8 text-center'>
               <div className='mx-auto mb-4 h-20 w-20'>
-                {user.profileImage && user.profileImage.trim() ? (
+                {user.profileImage?.trim() ? (
                   <div className='ring-primary/20 from-primary-200 to-secondary-200 h-full w-full overflow-hidden rounded-full bg-gradient-to-br shadow-lg ring-4'>
                     <img
                       src={getImageUrl(user.profileImage)}
@@ -952,190 +1355,32 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
         </div>
       </div>
 
+      <AboutMeModal
+        isOpen={isAboutMeModalOpen}
+        onClose={() => {
+          setIsAboutMeModalOpen(false);
+        }}
+        currentAboutMe={localUser.aboutMe || ''}
+        onSuccess={handleAboutMeSuccess}
+        addToast={addToast}
+      />
 
-      {/* Experience Modal */}
-      <Modal
-        isOpen={isExperienceModalOpen}
-        onClose={() => setIsExperienceModalOpen(false)}
-        size='3xl'
-        scrollBehavior='inside'
-      >
-        <ModalContent>
-          <ModalHeader className='flex items-center gap-3'>
-            <div className='bg-primary/20 rounded-xl p-2'>
-              <Icon icon='solar:case-linear' className='text-primary h-5 w-5' />
-            </div>
-            <div>
-              <h2 className='text-xl font-semibold'>Manage Experience</h2>
-              <p className='text-foreground-500 text-sm'>
-                Add, edit, or remove your work experience
-              </p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <ExperienceForm
-              experience={localExperiences}
-              onAdd={handleAddExperienceItem}
-              onRemove={handleRemoveExperience}
-              onUpdate={handleUpdateExperience}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button variant='light' onPress={() => setIsExperienceModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button color='primary' onPress={handleSaveExperiences}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Education Modal */}
-      <Modal
-        isOpen={isEducationModalOpen}
-        onClose={() => setIsEducationModalOpen(false)}
-        size='3xl'
-        scrollBehavior='inside'
-      >
-        <ModalContent>
-          <ModalHeader className='flex items-center gap-3'>
-            <div className='bg-secondary/20 rounded-xl p-2'>
-              <Icon icon='solar:diploma-linear' className='text-secondary h-5 w-5' />
-            </div>
-            <div>
-              <h2 className='text-xl font-semibold'>Manage Education</h2>
-              <p className='text-foreground-500 text-sm'>Add, edit, or remove your education</p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <EducationForm
-              education={localEducation}
-              onAdd={handleAddEducationItem}
-              onRemove={handleRemoveEducation}
-              onUpdate={handleUpdateEducation}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button variant='light' onPress={() => setIsEducationModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button color='primary' onPress={handleSaveEducation}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Personal Info Modal */}
-      <Modal
-        isOpen={isPersonalInfoModalOpen}
-        onClose={() => setIsPersonalInfoModalOpen(false)}
-        size='3xl'
-        scrollBehavior='inside'
-      >
-        <ModalContent>
-          <ModalHeader className='flex items-center gap-3'>
-            <div className='bg-primary/20 rounded-xl p-2'>
-              <Icon icon='solar:user-speak-linear' className='text-primary h-5 w-5' />
-            </div>
-            <div>
-              <h2 className='text-xl font-semibold'>Edit Personal Information</h2>
-              <p className='text-foreground-500 text-sm'>Update your personal details and bio</p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <PersonalInfoForm data={localUser} onChange={handlePersonalInfoChange} />
-          </ModalBody>
-          <ModalFooter>
-            <Button variant='light' onPress={() => setIsPersonalInfoModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button color='primary' onPress={handleSavePersonalInfo}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Skills Modal */}
-      <Modal
+      <SkillsModal
         isOpen={isSkillsModalOpen}
-        onClose={() => setIsSkillsModalOpen(false)}
-        size='3xl'
-        scrollBehavior='inside'
-      >
-        <ModalContent>
-          <ModalHeader className='flex items-center gap-3'>
-            <div className='bg-success/20 rounded-xl p-2'>
-              <Icon icon='solar:verified-check-linear' className='text-success h-5 w-5' />
-            </div>
-            <div>
-              <h2 className='text-xl font-semibold'>Manage Skills</h2>
-              <p className='text-foreground-500 text-sm'>Add, edit, or remove your skills</p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <SkillsForm
-              skills={localSkills}
-              onAdd={handleAddSkill}
-              onRemove={handleRemoveSkill}
-              onUpdate={handleUpdateSkill}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button variant='light' onPress={() => setIsSkillsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button color='primary' onPress={handleSaveSkills}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Languages Modal */}
-      <Modal
-        isOpen={isLanguagesModalOpen}
-        onClose={() => setIsLanguagesModalOpen(false)}
-        size='3xl'
-        scrollBehavior='inside'
-      >
-        <ModalContent>
-          <ModalHeader className='flex items-center gap-3'>
-            <div className='bg-warning/20 rounded-xl p-2'>
-              <Icon icon='solar:globe-linear' className='text-warning h-5 w-5' />
-            </div>
-            <div>
-              <h2 className='text-xl font-semibold'>Manage Languages</h2>
-              <p className='text-foreground-500 text-sm'>
-                Add, edit, or remove languages you speak
-              </p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <EnhancedLanguagesForm
-              languages={localLanguages}
-              onAdd={handleAddLanguage}
-              onRemove={handleRemoveLanguage}
-              onUpdate={handleUpdateLanguage}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button variant='light' onPress={() => setIsLanguagesModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button color='primary' onPress={handleSaveLanguages}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        onClose={() => {
+          setIsSkillsModalOpen(false);
+        }}
+        userSkills={user.skills}
+        onSuccess={handleSkillsSuccess}
+        addToast={addToast}
+      />
 
       {/* Certifications Modal */}
       <Modal
         isOpen={isCertificationsModalOpen}
-        onClose={() => setIsCertificationsModalOpen(false)}
+        onClose={() => {
+          setIsCertificationsModalOpen(false);
+        }}
         size='3xl'
         scrollBehavior='inside'
       >
@@ -1160,7 +1405,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             />
           </ModalBody>
           <ModalFooter>
-            <Button variant='light' onPress={() => setIsCertificationsModalOpen(false)}>
+            <Button
+              variant='light'
+              onPress={() => {
+                setIsCertificationsModalOpen(false);
+              }}
+            >
               Cancel
             </Button>
             <Button color='primary' onPress={handleSaveCertifications}>
@@ -1171,255 +1421,80 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
       </Modal>
 
       {/* Individual Experience Item Modal */}
-      <Modal 
+      <ExperienceModal
         isOpen={editingExperience.isOpen}
-        onClose={() => setEditingExperience({item: null, isOpen: false})}
-        size="2xl"
-        scrollBehavior="inside"
-      >
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-3">
-            <div className="bg-primary/20 rounded-xl p-2">
-              <Icon icon="solar:case-linear" className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold">Edit Experience</h2>
-              <p className="text-sm text-foreground-500">Update this work experience</p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            {editingExperience.item && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Position"
-                    value={editingExperience.item.position}
-                    onChange={(e) => setEditingExperience(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, position: e.target.value} : null
-                    }))}
-                  />
-                  <Input
-                    label="Company"
-                    value={editingExperience.item.company}
-                    onChange={(e) => setEditingExperience(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, company: e.target.value} : null
-                    }))}
-                  />
-                </div>
-                <Input
-                  label="Location"
-                  value={editingExperience.item.location || ''}
-                  onChange={(e) => setEditingExperience(prev => ({
-                    ...prev,
-                    item: prev.item ? {...prev.item, location: e.target.value} : null
-                  }))}
-                />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Start Date"
-                    type="date"
-                    value={editingExperience.item.startDate?.split('T')[0] || ''}
-                    onChange={(e) => setEditingExperience(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, startDate: e.target.value} : null
-                    }))}
-                  />
-                  <Input
-                    label="End Date"
-                    type="date"
-                    value={editingExperience.item.endDate?.split('T')[0] || ''}
-                    onChange={(e) => setEditingExperience(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, endDate: e.target.value} : null
-                    }))}
-                  />
-                </div>
-                <Textarea
-                  label="Description"
-                  value={editingExperience.item.description || ''}
-                  onChange={(e) => setEditingExperience(prev => ({
-                    ...prev,
-                    item: prev.item ? {...prev.item, description: e.target.value} : null
-                  }))}
-                  minRows={3}
-                />
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={() => setEditingExperience({item: null, isOpen: false})}>
-              Cancel
-            </Button>
-            <Button color="primary" onPress={() => editingExperience.item && handleSaveIndividualExperience(editingExperience.item)}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        onClose={() => {
+          setEditingExperience({ item: null, isOpen: false });
+        }}
+        experience={editingExperience.item}
+        onSuccess={handleExperienceSuccess}
+        addToast={addToast}
+      />
 
       {/* Individual Education Item Modal */}
-      <Modal 
+      <EducationModal
         isOpen={editingEducation.isOpen}
-        onClose={() => setEditingEducation({item: null, isOpen: false})}
-        size="2xl"
-        scrollBehavior="inside"
-      >
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-3">
-            <div className="bg-secondary/20 rounded-xl p-2">
-              <Icon icon="solar:diploma-linear" className="h-5 w-5 text-secondary" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold">Edit Education</h2>
-              <p className="text-sm text-foreground-500">Update this education entry</p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            {editingEducation.item && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Degree"
-                    value={editingEducation.item.degree}
-                    onChange={(e) => setEditingEducation(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, degree: e.target.value} : null
-                    }))}
-                  />
-                  <Input
-                    label="University"
-                    value={editingEducation.item.university}
-                    onChange={(e) => setEditingEducation(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, university: e.target.value} : null
-                    }))}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Field of Study"
-                    value={editingEducation.item.field || ''}
-                    onChange={(e) => setEditingEducation(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, field: e.target.value} : null
-                    }))}
-                  />
-                  <Input
-                    label="Grade"
-                    value={editingEducation.item.grade || ''}
-                    onChange={(e) => setEditingEducation(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, grade: e.target.value} : null
-                    }))}
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Input
-                    label="Start Date"
-                    type="date"
-                    value={editingEducation.item.startDate?.split('T')[0] || ''}
-                    onChange={(e) => setEditingEducation(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, startDate: e.target.value} : null
-                    }))}
-                  />
-                  <Input
-                    label="End Date"
-                    type="date"
-                    value={editingEducation.item.endDate?.split('T')[0] || ''}
-                    onChange={(e) => setEditingEducation(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, endDate: e.target.value} : null
-                    }))}
-                  />
-                </div>
-                <Textarea
-                  label="Description"
-                  value={editingEducation.item.description || ''}
-                  onChange={(e) => setEditingEducation(prev => ({
-                    ...prev,
-                    item: prev.item ? {...prev.item, description: e.target.value} : null
-                  }))}
-                  minRows={3}
-                />
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={() => setEditingEducation({item: null, isOpen: false})}>
-              Cancel
-            </Button>
-            <Button color="primary" onPress={() => editingEducation.item && handleSaveIndividualEducation(editingEducation.item)}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        onClose={() => {
+          setEditingEducation({ item: null, isOpen: false });
+        }}
+        education={editingEducation.item}
+        onSuccess={handleEducationSuccess}
+        addToast={addToast}
+      />
 
       {/* Individual Language Item Modal */}
-      <Modal 
+      <LanguageModal
         isOpen={editingLanguage.isOpen}
-        onClose={() => setEditingLanguage({item: null, isOpen: false})}
-        size="md"
-        scrollBehavior="inside"
-      >
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-3">
-            <div className="bg-secondary/20 rounded-xl p-2">
-              <Icon icon="solar:globe-linear" className="h-5 w-5 text-secondary" />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold">Edit Language</h2>
-              <p className="text-sm text-foreground-500">Update this language skill</p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            {editingLanguage.item && (
-              <div className="space-y-4">
-                <Input
-                  label="Language"
-                  value={editingLanguage.item.key}
-                  onChange={(e) => setEditingLanguage(prev => ({
-                    ...prev,
-                    item: prev.item ? {...prev.item, key: e.target.value} : null
-                  }))}
-                />
-                <Select
-                  label="Proficiency Level"
-                  selectedKeys={[editingLanguage.item.level]}
-                  onSelectionChange={(keys) => {
-                    const level = Array.from(keys)[0] as string;
-                    setEditingLanguage(prev => ({
-                      ...prev,
-                      item: prev.item ? {...prev.item, level} : null
-                    }));
-                  }}
-                >
-                  <SelectItem key="NATIVE">Native</SelectItem>
-                  <SelectItem key="PROFESSIONAL">Professional</SelectItem>
-                  <SelectItem key="INTERMEDIATE">Intermediate</SelectItem>
-                  <SelectItem key="BEGINNER">Beginner</SelectItem>
-                </Select>
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={() => setEditingLanguage({item: null, isOpen: false})}>
-              Cancel
-            </Button>
-            <Button color="primary" onPress={() => editingLanguage.item && handleSaveIndividualLanguage(editingLanguage.item)}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+        onClose={() => {
+          setEditingLanguage({ item: null, isOpen: false });
+        }}
+        language={editingLanguage.item}
+        onSuccess={handleLanguageSuccess}
+        addToast={addToast}
+      />
+      <ProjectModal
+        isOpen={isProjectModalOpen}
+        onClose={() => {
+          setIsProjectModalOpen(false);
+        }}
+        project={editingProject.item}
+        onSuccess={handleProjectSuccess}
+        addToast={addToast}
+      />
+      <ServiceModal
+        isOpen={isServiceModalOpen}
+        onClose={() => {
+          setIsServiceModalOpen(false);
+        }}
+        service={editingService.item}
+        onSuccess={handleServiceSuccess}
+        addToast={addToast}
+      />
+      <TestimonialModal
+        isOpen={isTestimonialModalOpen}
+        onClose={() => {
+          setIsTestimonialModalOpen(false);
+        }}
+        testimonial={viewingTestimonial.item}
+        onSuccess={handleTestimonialSuccess}
+        addToast={addToast}
+      />
+      <NotesModal
+        isOpen={isNotesModalOpen}
+        onClose={() => {
+          setIsNotesModalOpen(false);
+        }}
+        userId={user.id}
+        onSuccess={handleNotesSuccess}
+        addToast={addToast}
+      />
 
       {/* Social Accounts Modal */}
       <Modal
         isOpen={isSocialAccountsModalOpen}
-        onClose={() => setIsSocialAccountsModalOpen(false)}
+        onClose={() => {
+          setIsSocialAccountsModalOpen(false);
+        }}
         size='3xl'
         scrollBehavior='inside'
       >
@@ -1444,7 +1519,12 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
             />
           </ModalBody>
           <ModalFooter>
-            <Button variant='light' onPress={() => setIsSocialAccountsModalOpen(false)}>
+            <Button
+              variant='light'
+              onPress={() => {
+                setIsSocialAccountsModalOpen(false);
+              }}
+            >
               Cancel
             </Button>
             <Button color='primary' onPress={handleSaveSocialAccounts}>
@@ -1453,6 +1533,77 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <ConfirmDeleteModal
+        isOpen={educationToDelete.isOpen}
+        onClose={() => {
+          setEducationToDelete({ education: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteEducation}
+        title='Delete Education'
+        message={`Are you sure you want to delete the education from ${educationToDelete.education?.university}?`}
+        itemName={educationToDelete.education?.degree}
+      />
+      <ConfirmDeleteModal
+        isOpen={experienceToDelete.isOpen}
+        onClose={() => {
+          setExperienceToDelete({ experience: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteExperience}
+        title='Delete Experience'
+        message={`Are you sure you want to delete the experience at ${experienceToDelete.experience?.company}?`}
+        itemName={experienceToDelete.experience?.position}
+      />
+      <ConfirmDeleteModal
+        isOpen={languageToDelete.isOpen}
+        onClose={() => {
+          setLanguageToDelete({ language: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteLanguage}
+        title='Delete Language'
+        message={`Are you sure you want to delete ${getLanguageName(languageToDelete.language?.key)} language?`}
+        itemName={getLanguageName(languageToDelete.language?.key)}
+      />
+      <ConfirmDeleteModal
+        isOpen={projectToDelete.isOpen}
+        onClose={() => {
+          setProjectToDelete({ project: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteProject}
+        title='Delete Project'
+        message={`Are you sure you want to delete the project from ${projectToDelete.project?.company}?`}
+        itemName={projectToDelete.project?.title}
+      />
+      <ConfirmDeleteModal
+        isOpen={serviceToDelete.isOpen}
+        onClose={() => {
+          setServiceToDelete({ service: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteService}
+        title='Delete Service'
+        message={`Are you sure you want to delete the service from ${serviceToDelete.service?.name}?`}
+        itemName={serviceToDelete.service?.name}
+      />
+      <ConfirmDeleteModal
+        isOpen={testimonialToDelete.isOpen}
+        onClose={() => {
+          setTestimonialToDelete({ testimonial: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteTestimonial}
+        title='Delete Testimonial'
+        message={`Are you sure you want to delete the testimonial from ${testimonialToDelete.testimonial?.name}?`}
+        itemName={testimonialToDelete.testimonial?.name}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={noteToDelete.isOpen}
+        onClose={() => {
+          setNoteToDelete({ note: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteNote}
+        title='Delete Note'
+        message='Are you sure you want to delete this note? This action cannot be undone.'
+        itemName='Note'
+      />
     </section>
   );
 };

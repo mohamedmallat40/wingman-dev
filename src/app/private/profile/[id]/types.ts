@@ -18,7 +18,7 @@ export interface ProfileUser {
   aboutMe?: string;
   profileImage?: string;
   profileCover?: string;
-  statusAvailability: string;
+  statusAviability: string;
   phoneNumber?: string;
   linkedinProfile?: string;
   profileWebsite?: string;

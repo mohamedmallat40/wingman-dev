@@ -129,6 +129,15 @@ export default function PremiumWizard() {
   useEffect(() => {
     const subscriptionType = parameters.get('subscription_type');
     const senderId = parameters.get('senderId');
+
+    // Handle OAuth parameters
+    const isOAuth = parameters.get('is_oauth') === 'true';
+    const oauthEmail = parameters.get('oauth_email');
+    const oauthFirstName = parameters.get('oauth_firstName');
+    const oauthLastName = parameters.get('oauth_lastName');
+    const oauthToken = parameters.get('oauth_token');
+    const chatToken = parameters.get('chat_token');
+
     const update: Partial<RegistrationData> = {};
 
     if (subscriptionType) {
@@ -140,6 +149,22 @@ export default function PremiumWizard() {
 
     if (senderId) {
       update.senderId = senderId;
+    }
+
+    // Handle OAuth data
+    if (isOAuth && oauthEmail && oauthFirstName && oauthLastName) {
+      setIsOAuthUser(true);
+      setOauthToken(oauthToken || undefined);
+
+      update.email = oauthEmail;
+      update.firstName = oauthFirstName;
+      update.lastName = oauthLastName;
+
+      // Skip to category step since credentials are already filled
+      const categoryStepIndex = steps.findIndex((step) => step.id === 'category');
+      if (categoryStepIndex !== -1) {
+        setCurrentStep(categoryStepIndex);
+      }
     }
 
     if (Object.keys(update).length > 0) {

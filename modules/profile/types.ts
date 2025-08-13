@@ -94,7 +94,7 @@ export interface IService {
 }
 export interface ILanguage {
   id: string;
-  key: string;
+  key: string | undefined;
   level: 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE';
 }
 
@@ -113,4 +113,11 @@ export interface IReview {
   companyName: string;
   position: string;
   createdAt: string;
+}
+export interface Note {
+  id: string;
+  note: string;
+  created_at: string;
+  owner: IUserProfile;
+  target: IUserProfile;
 }

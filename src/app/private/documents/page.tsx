@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
@@ -25,7 +25,7 @@ import {
 } from './constants';
 import { useDocuments, useDocumentState } from './hooks';
 import { type DocumentType, type IDocument } from './types';
-import { filterDocuments } from './utils';
+import { debounce, filterDocuments } from './utils';
 
 export default function DocumentsPage() {
   const t = useTranslations('documents');
@@ -39,6 +39,7 @@ export default function DocumentsPage() {
   // Add these mutations after existing hooks
   const uploadMutation = useUploadDocument();
   const updateMutation = useUpdateDocument();
+
   // Enhanced state management using custom hooks
   const documentState = useDocumentState();
   const {
@@ -55,24 +56,49 @@ export default function DocumentsPage() {
     handleSearch
   } = documentState;
 
+  // Debounced search to improve performance
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((query: string) => {
+        // This will automatically trigger the filteredDocuments useMemo
+        // since searchQuery is a dependency
+      }, 300),
+    []
+  );
+
+  // Handle search input changes with debouncing
+  const handleSearchChange = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+      debouncedSearch(query);
+    },
+    [setSearchQuery, debouncedSearch]
+  );
+
   // Filter documents based on active tab and search query
   const filteredDocuments = useMemo(() => {
+
     if (!result?.data) return [];
 
     let documents = result.data;
 
-    // Filter by tab
+    // Filter by tab first
     if (activeTab === 'shared-with-me') {
-      documents = documents.filter((document_) => document_.sharedWith.length > 0);
+      documents = documents.filter(
+        (document_) => document_.sharedWith && document_.sharedWith.length > 0
+      );
     }
     // 'all-documents' shows all documents, so no additional filtering needed
 
     // Apply filters and search using utility function
-    return filterDocuments(documents, filters, searchQuery);
+    const filtered = filterDocuments(documents, filters, searchQuery);
+
+    return filtered;
   }, [result?.data, activeTab, searchQuery, filters]);
 
   const handleUploadModalClose = useCallback(() => {
     setShowUploadModal(false);
+    setEditingDocument(null);
   }, []);
 
   const handleUploadDocument = useCallback(() => {
@@ -90,12 +116,12 @@ export default function DocumentsPage() {
         formData.append('typeId', data.type);
         formData.append('statusId', data.status);
 
-        for (const [index, tagId] of data.tags.entries()) {
-          formData.append(`tags`, tagId);
+        for (const tagId of data.tags) {
+          formData.append('tags', tagId);
         }
 
         await uploadMutation.mutateAsync(formData);
-        console.log('Document uploaded successfully:', data);
+        setShowUploadModal(false);
       } catch (error) {
         console.error('Upload failed:', error);
         throw error;
@@ -135,12 +161,13 @@ export default function DocumentsPage() {
           formData.append('image', data.file);
         }
 
-        for (const [index, tagId] of data.tags.entries()) {
-          formData.append(`tags`, tagId);
+        for (const tagId of data.tags) {
+          formData.append('tags', tagId);
         }
 
         await updateMutation.mutateAsync({ documentId, formData });
-        console.log('Document updated successfully:', data);
+        setShowUploadModal(false);
+        setEditingDocument(null);
       } catch (error) {
         console.error('Update failed:', error);
         throw error;
@@ -153,6 +180,12 @@ export default function DocumentsPage() {
     // In a real app, this would refetch the data
     globalThis.location.reload();
   }, []);
+
+  // Clear search and filters when tab changes
+  useEffect(() => {
+    setSearchQuery('');
+    setFilters({});
+  }, [activeTab, setSearchQuery, setFilters]);
 
   // Breadcrumbs configuration
   const getBreadcrumbs = () => {
@@ -168,15 +201,14 @@ export default function DocumentsPage() {
   };
 
   // Action items with handlers
-  const actionItems = ACTION_ITEMS.map((item) => ({
-    ...item,
-    onClick:
-      item.key === 'upload'
-        ? handleUploadDocument
-        : () => {
-            console.log(`${item.label} clicked`);
-          }
-  }));
+  const actionItems = useMemo(
+    () =>
+      ACTION_ITEMS.map((item) => ({
+        ...item,
+        onClick: item.key === 'upload' ? handleUploadDocument : undefined
+      })),
+    [handleUploadDocument]
+  );
 
   return (
     <DashboardLayout
@@ -195,9 +227,7 @@ export default function DocumentsPage() {
               startContent={
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
-              onPress={() => {
-                action.onClick?.();
-              }}
+              onPress={action.onClick}
               className='font-medium transition-all duration-200 hover:shadow-md'
             >
               {action.label}
@@ -215,8 +245,8 @@ export default function DocumentsPage() {
               setActiveTab(tab as DocumentType);
             }}
             searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onSearch={handleSearch}
+            onSearchChange={handleSearchChange}
+            onSearch={handleSearchChange}
             documentsCount={filteredDocuments.length}
             onToggleFilters={toggleFilters}
             showFilters={showFilters}
@@ -227,18 +257,19 @@ export default function DocumentsPage() {
           {/* Enhanced Filters Panel with Document Content */}
           <DocumentFiltersPanel
             searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
+            onSearchChange={handleSearchChange}
             filters={filters}
             onFiltersChange={setFilters}
             activeTab={activeTab}
             onSearch={handleSearch}
             showFiltersPanel={showFilters}
             onToggleFiltersPanel={toggleFilters}
+            documents={result?.data || []}
           >
             {/* Document List Container */}
             <AnimatePresence mode='wait'>
               <motion.div
-                key={activeTab}
+                key={`${activeTab}-${searchQuery}-${JSON.stringify(filters)}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
