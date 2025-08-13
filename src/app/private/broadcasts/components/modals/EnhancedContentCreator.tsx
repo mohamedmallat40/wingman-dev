@@ -372,12 +372,12 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
 
     const currentTags = getValues('tags');
     if (currentTags.includes(trimmedTag)) {
-      toast.warning('Tag already exists');
+      console.warn('Tag already exists');
       return;
     }
 
     if (currentTags.length >= 10) {
-      toast.warning('Maximum 10 tags allowed');
+      console.warn('Maximum 10 tags allowed');
       return;
     }
 
