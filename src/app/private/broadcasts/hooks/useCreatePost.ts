@@ -15,9 +15,7 @@ export const useCreatePost = () => {
       queryClient.invalidateQueries({ queryKey: ['broadcasts'] });
       
       // Show success message
-      if (typeof toast !== 'undefined') {
-        toast.success(t('success.published'));
-      }
+      console.log('Success:', t('success.published'));
       
       console.log('Post created successfully:', data);
     },
