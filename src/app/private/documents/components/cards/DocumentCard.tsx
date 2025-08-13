@@ -26,6 +26,7 @@ import { DocumentShareModal } from '../modals';
 interface DocumentCardProperties {
   document: IDocument;
   onEdit?: (document: IDocument) => void;
+  onView?: (document: IDocument) => void;
   viewMode?: 'list' | 'grid';
 }
 
@@ -165,6 +166,7 @@ const getTranslatedType = (type: string, t: any) => {
 export default function DocumentCard({
   document,
   onEdit,
+  onView,
   viewMode = 'list'
 }: Readonly<DocumentCardProperties>) {
   const t = useTranslations('documents');
@@ -351,6 +353,7 @@ export default function DocumentCard({
                   <DropdownItem
                     key='view'
                     startContent={<Icon icon='solar:eye-linear' className='h-4 w-4' />}
+                    onPress={() => onView?.(document)}
                   >
                     {t('actions.view')}
                   </DropdownItem>

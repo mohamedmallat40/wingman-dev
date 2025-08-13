@@ -32,3 +32,4 @@ export { default as DocumentTabs } from './navigation/DocumentTabs';
 // New exports
 export { default as DocumentFiltersPanel } from './filters/DocumentFiltersPanel';
 export { default as DocumentListContainer } from './lists/DocumentListContainer';
+export { DocumentViewerDrawer } from './DocumentViewerDrawer';

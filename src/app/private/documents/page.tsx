@@ -16,6 +16,7 @@ import {
   DocumentTabs,
   DocumentUploadModal
 } from './components';
+import { DocumentViewerDrawer } from './components/DocumentViewerDrawer';
 import {
   ACTION_ITEMS,
   BREADCRUMB_CONFIG,
@@ -32,6 +33,8 @@ export default function DocumentsPage() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editingDocument, setEditingDocument] = useState<IDocument | null>(null);
   const [modalMode, setModalMode] = useState<'upload' | 'edit'>('upload');
+  const [viewingDocument, setViewingDocument] = useState<IDocument | null>(null);
+  const [showViewerDrawer, setShowViewerDrawer] = useState(false);
 
   // Add these mutations after existing hooks
   const uploadMutation = useUploadDocument();
@@ -105,6 +108,16 @@ export default function DocumentsPage() {
     setModalMode('edit');
     setEditingDocument(document);
     setShowUploadModal(true);
+  }, []);
+
+  const handleViewDocument = useCallback((document: IDocument) => {
+    setViewingDocument(document);
+    setShowViewerDrawer(true);
+  }, []);
+
+  const handleCloseViewer = useCallback(() => {
+    setShowViewerDrawer(false);
+    setViewingDocument(null);
   }, []);
 
   const handleUpdate = useCallback(
@@ -239,6 +252,7 @@ export default function DocumentsPage() {
                   onUpload={handleUploadDocument}
                   onRefresh={handleRefresh}
                   handleOnEdit={handleEditDocument}
+                  handleOnView={handleViewDocument}
                 />
               </motion.div>
             </AnimatePresence>
@@ -254,6 +268,14 @@ export default function DocumentsPage() {
         onUpdate={handleUpdate}
         document={editingDocument}
         mode={modalMode}
+      />
+
+      {/* Document Viewer Drawer */}
+      <DocumentViewerDrawer
+        isOpen={showViewerDrawer}
+        onClose={handleCloseViewer}
+        document={viewingDocument}
+        onEdit={handleEditDocument}
       />
     </DashboardLayout>
   );

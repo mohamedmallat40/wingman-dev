@@ -17,6 +17,7 @@ interface DocumentListContainerProps {
   onUpload?: () => void;
   onRefresh?: () => void;
   handleOnEdit?: (document: IDocument) => void;
+  handleOnView?: (document: IDocument) => void;
 }
 
 const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
@@ -26,7 +27,8 @@ const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
   error = null,
   onUpload,
   onRefresh,
-  handleOnEdit
+  handleOnEdit,
+  handleOnView
 }) => {
   // Loading state
   if (isLoading) {
@@ -110,7 +112,7 @@ const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
               delay: index * 0.05 // Stagger animation
             }}
           >
-            <DocumentCard document={document} viewMode={viewMode} onEdit={handleOnEdit} />
+            <DocumentCard document={document} viewMode={viewMode} onEdit={handleOnEdit} onView={handleOnView} />
           </motion.div>
         ))}
       </AnimatePresence>
