@@ -3,7 +3,7 @@
 import test from 'node:test';
 import React, { useState } from 'react';
 
-import type { IEducation } from '@root/modules/profile/types';
+import type { IEducation, Note } from '@root/modules/profile/types';
 
 import {
   Button,
@@ -53,11 +53,13 @@ import AboutMeModal from './modals/about-me';
 import EducationModal from './modals/education-modal';
 import ExperienceModal from './modals/experience-modal';
 import LanguageModal from './modals/language-modal';
+import { NotesModal } from './modals/notes-modal';
 import ProjectModal from './modals/projects-modal';
 import ServiceModal from './modals/services-modal';
 import SkillsModal from './modals/skills-modal';
 import TestimonialModal from './modals/testimonials-modal';
 import { EducationSection } from './sections/EducationSection';
+import { NotesSection } from './sections/notes-section';
 import { ProjectsSection } from './sections/projects-section';
 import { ServicesSection } from './sections/services-section';
 import { TestimonialsSection } from './sections/testimonials-section';
@@ -67,7 +69,7 @@ interface ProfileContentProperties {
   experiences: Experience[];
   languages: Language[];
   education: Education[];
-  notes: UserNote[];
+  userNotes: Note[];
   isOwnProfile: boolean;
   projects?: Experience[];
   services?: IService[];
@@ -79,7 +81,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   experiences,
   languages,
   education,
-  //notes,
+  userNotes,
   projects,
   services,
   testimonials,
@@ -88,9 +90,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const t = useTranslations();
 
   // Modal states for all forms
-  const [isPersonalInfoModalOpen, setIsPersonalInfoModalOpen] = useState(false);
   const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false);
-  const [isLanguagesModalOpen, setIsLanguagesModalOpen] = useState(false);
   const [isCertificationsModalOpen, setIsCertificationsModalOpen] = useState(false);
   const [isSocialAccountsModalOpen, setIsSocialAccountsModalOpen] = useState(false);
   const [isAboutMeModalOpen, setIsAboutMeModalOpen] = useState(false);
@@ -98,6 +98,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
+  const [notes, setNotes] = useState<Note[]>(userNotes);
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false);
 
   // Individual item modals
   const [editingExperience, setEditingExperience] = useState<{
@@ -157,6 +159,11 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
     testimonial: IReview | null;
     isOpen: boolean;
   }>({ testimonial: null, isOpen: false });
+
+  const [noteToDelete, setNoteToDelete] = useState<{
+    note: Note | null;
+    isOpen: boolean;
+  }>({ note: null, isOpen: false });
 
   // Local state for forms
   const [localUser, setLocalUser] = useState(user);
@@ -632,6 +639,52 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
     // Refresh testimonials data here
   };
 
+  const handleAddNote = () => {
+    setIsNotesModalOpen(true);
+  };
+
+  const handleDeleteNote = (note: Note) => {
+    setNoteToDelete({ note, isOpen: true });
+  };
+
+  const confirmDeleteNote = async () => {
+    if (!noteToDelete.note?.id) return;
+
+    try {
+      await wingManApi.delete(`/notes/${noteToDelete.note.id}`);
+      addToast('Note deleted successfully', 'success');
+
+      // Remove the note from local state
+      setNotes((previousNotes) => previousNotes.filter((n) => n.id !== noteToDelete.note?.id));
+      setNoteToDelete({ note: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting note:', error);
+
+      let errorMessage = 'Failed to delete note';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Note not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this note.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+
+      addToast(errorMessage, 'error');
+    }
+  };
+
+  const handleNotesSuccess = async () => {
+    // Refresh notes data
+    try {
+      const updatedNotes = await notesApi.getNotes(user.id);
+      setNotes(updatedNotes);
+    } catch (error) {
+      console.error('Error refreshing notes:', error);
+    }
+  };
+
   return (
     <section className='container mx-auto px-6 pb-20 transition-all duration-300'>
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-3'>
@@ -1065,6 +1118,15 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
             </CardBody>
           </Card>
 
+          {/* Notes */}
+          <NotesSection
+            notes={notes}
+            isOwnProfile={isOwnProfile}
+            onAdd={handleAddNote}
+            onDelete={handleDeleteNote}
+            t={t}
+          />
+
           {/* Social Accounts */}
           <Card
             id='social-accounts'
@@ -1292,6 +1354,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
           </Card>
         </div>
       </div>
+
       <AboutMeModal
         isOpen={isAboutMeModalOpen}
         onClose={() => {
@@ -1416,6 +1479,15 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
         onSuccess={handleTestimonialSuccess}
         addToast={addToast}
       />
+      <NotesModal
+        isOpen={isNotesModalOpen}
+        onClose={() => {
+          setIsNotesModalOpen(false);
+        }}
+        userId={user.id}
+        onSuccess={handleNotesSuccess}
+        addToast={addToast}
+      />
 
       {/* Social Accounts Modal */}
       <Modal
@@ -1520,6 +1592,17 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
         title='Delete Testimonial'
         message={`Are you sure you want to delete the testimonial from ${testimonialToDelete.testimonial?.name}?`}
         itemName={testimonialToDelete.testimonial?.name}
+      />
+
+      <ConfirmDeleteModal
+        isOpen={noteToDelete.isOpen}
+        onClose={() => {
+          setNoteToDelete({ note: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteNote}
+        title='Delete Note'
+        message='Are you sure you want to delete this note? This action cannot be undone.'
+        itemName='Note'
       />
     </section>
   );

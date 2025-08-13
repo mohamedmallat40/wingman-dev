@@ -14,7 +14,6 @@ import { type ProfileData } from '../types';
 import ErrorState from './ErrorState';
 import ProfileContent from './ProfileContent';
 import ProfileHeader from './ProfileHeader';
-import { profile } from 'console';
 
 interface ProfileClientProps {
   userId: string;
@@ -76,7 +75,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
           experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data : [],
         languages: languagesResponse.status === 'fulfilled' ? languagesResponse.value.data : [],
         education: educationResponse.status === 'fulfilled' ? educationResponse.value.data : [],
-        notes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
+        userNotes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
         projects: experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data.filter((item: IExperience) => item.title) : [],
         services: servicesResponse.status === 'fulfilled' ? servicesResponse.value.data : [],
         testimonials: testimonialsResponse.status === 'fulfilled' ? testimonialsResponse.value.data : [],
@@ -298,7 +297,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         experiences={profileData.experiences}
         languages={profileData.languages}
         education={profileData.education}
-        notes={profileData.notes}
+        userNotes={profileData.userNotes}
         isOwnProfile={isOwnProfile}
         projects={profileData.projects}
         services={profileData.services}

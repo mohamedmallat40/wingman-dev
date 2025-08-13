@@ -114,3 +114,10 @@ export interface IReview {
   position: string;
   createdAt: string;
 }
+export interface Note {
+  id: string;
+  note: string;
+  created_at: string;
+  owner: IUserProfile;
+  target: IUserProfile;
+}
