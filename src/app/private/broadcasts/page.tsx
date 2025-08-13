@@ -12,7 +12,7 @@ import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import { BroadcastFilters } from './components/filters';
 import BroadcastFeed from './components/lists/BroadcastFeed';
-import ContentCreator from './components/modals/ContentCreator';
+import EnhancedContentCreator from './components/modals/EnhancedContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
 import SubcastSidebar from './components/navigation/SubcastSidebar';
