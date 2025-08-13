@@ -511,11 +511,11 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
       };
 
       await saveDraftMutation.mutateAsync(draftData);
-      toast.success('Draft saved successfully!');
+      console.log('Draft saved successfully!');
       onSaveDraft(draftData);
     } catch (error) {
       console.error('Failed to save draft:', error);
-      toast.error('Failed to save draft. Please try again.');
+      console.error('Failed to save draft. Please try again.');
     }
   };
 
