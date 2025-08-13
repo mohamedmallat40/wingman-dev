@@ -37,7 +37,7 @@ import {
   CertificationsForm,
   EducationForm,
   ExperienceForm,
-  LanguagesForm,
+  EnhancedLanguagesForm,
   PersonalInfoForm,
   SkillsForm
 } from './forms';
@@ -112,19 +112,11 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           setCurrentStep('review');
         }, 800);
       } catch (apiError) {
-        console.log('API not available, using comprehensive mock data');
+        console.error('Error parsing CV:', apiError);
         clearInterval(progressInterval);
-        setUploadProgress(100);
-
-        setTimeout(() => {
-          const mockData = CVService.getMockCVData();
-          setParsedData(mockData);
-          setReviewData(transformToReviewData(mockData));
-          setSelectedSections(
-            new Set(['personalInfo', 'skills', 'experience', 'education', 'languages'])
-          );
-          setCurrentStep('review');
-        }, 1200);
+        setUploadProgress(0);
+        setCurrentStep('upload');
+        throw apiError;
       }
     } catch (error) {
       console.error('Error parsing CV:', error);
@@ -693,7 +685,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
                         />
                       )}
                       {section.id === 'languages' && (
-                        <LanguagesForm
+                        <EnhancedLanguagesForm
                           languages={reviewData.languages}
                           onAdd={handleLanguageAdd}
                           onRemove={handleLanguageRemove}

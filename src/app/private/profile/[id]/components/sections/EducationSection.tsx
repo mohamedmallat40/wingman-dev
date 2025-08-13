@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Button, Card, CardBody, CardHeader, Chip, Divider } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { ActionButtons } from '../ActionButtons';
