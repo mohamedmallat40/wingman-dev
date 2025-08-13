@@ -22,9 +22,7 @@ export const useSaveDraft = () => {
     mutationFn: (draftData: DraftData) => saveDraft(draftData),
     onSuccess: (data) => {
       // Show success message
-      if (typeof toast !== 'undefined') {
-        toast.success(t('success.draftSaved'));
-      }
+      console.log('Success:', t('success.draftSaved'));
       
       console.log('Draft saved successfully:', data);
     },
