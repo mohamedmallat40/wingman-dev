@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { Card, CardBody, CardHeader, Skeleton, Spinner } from '@heroui/react';
+import { Card, CardBody, CardHeader, Skeleton } from '@heroui/react';
 import { addToast } from '@heroui/toast';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { useTranslations } from 'next-intl';
@@ -14,6 +14,7 @@ import { type ProfileData } from '../types';
 import ErrorState from './ErrorState';
 import ProfileContent from './ProfileContent';
 import ProfileHeader from './ProfileHeader';
+import { profile } from 'console';
 
 interface ProfileClientProps {
   userId: string;
@@ -47,6 +48,8 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         languagesResponse,
         educationResponse,
         notesResponse,
+        servicesResponse,
+        testimonialsResponse,
         connectionResponse
       ] = await Promise.allSettled([
         wingManApi.get(`users/${userId}`),
@@ -54,6 +57,8 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         wingManApi.get(`languages/byUser/${userId}`),
         wingManApi.get(`education/byUser/${userId}`),
         wingManApi.get(`notes/${userId}`),
+        wingManApi.get(`services/user/${userId}`),
+        wingManApi.get(`public-reviews/${userId}/active`),
         // Only check connection status if not own profile
         isOwnProfile
           ? Promise.resolve({ data: null })
@@ -72,6 +77,8 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         languages: languagesResponse.status === 'fulfilled' ? languagesResponse.value.data : [],
         education: educationResponse.status === 'fulfilled' ? educationResponse.value.data : [],
         notes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
+        services: servicesResponse.status === 'fulfilled' ? servicesResponse.value.data : [],
+        testimonials: testimonialsResponse.status === 'fulfilled' ? testimonialsResponse.value.data : [],
         connectionStatus: isOwnProfile
           ? {
               isConnected: true, // Own profile is always "connected"
@@ -292,6 +299,9 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         education={profileData.education}
         notes={profileData.notes}
         isOwnProfile={isOwnProfile}
+        projects={profileData.projects}
+        services={profileData.services}
+        testimonials={profileData.testimonials}
       />
     </div>
   );

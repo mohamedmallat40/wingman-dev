@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-import { Avatar, Badge, Button, Card, CardBody, CardHeader, Divider, Chip, Progress } from '@heroui/react';
+import { Button, Card, CardBody, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -18,9 +18,20 @@ import {
 } from '@/app/private/talent-pool/utils/talent-utils';
 import { getImageUrl } from '@/lib/utils/utilities';
 
-import { type ConnectionStatus, type ProfileUser, type Experience, type Education, type Language } from '../types';
-import { calculateProfileCompletion, getCompletionColor, getCompletionMessage } from '../utils/profileCompletion';
+import {
+  type ConnectionStatus,
+  type Education,
+  type Experience,
+  type Language,
+  type ProfileUser
+} from '../types';
+import {
+  calculateProfileCompletion,
+  getCompletionColor,
+  getCompletionMessage
+} from '../utils/profileCompletion';
 import CVUploadDrawer from './CVUploadDrawer';
+import EditPersonalDataModal from './modals/edit-personal-data';
 
 interface ProfileHeaderProps {
   user: ProfileUser;
@@ -33,6 +44,7 @@ interface ProfileHeaderProps {
   onAccept: () => void;
   onRefuse: () => void;
   onBack: () => void;
+  onProfileUpdate?: () => void; // Added callback for profile updates
 }
 
 const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -45,11 +57,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onConnect,
   onAccept,
   onRefuse,
-  onBack
+  onBack,
+  onProfileUpdate
 }) => {
   const t = useTranslations();
   const router = useRouter();
   const [isCVUploadOpen, setIsCVUploadOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Added state for edit modal
 
   const fullName = `${user.firstName} ${user.lastName}`;
   const availabilityConfig = getAvailabilityConfig(user.statusAvailability);
@@ -62,13 +76,27 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   );
 
   const handleEditProfile = () => {
-    setIsCVUploadOpen(true);
+    setIsEditModalOpen(true); // Open edit modal instead of CV upload
+  };
+
+  const handleCVUpload = () => {
+    setIsCVUploadOpen(true); // Separate function for CV upload
   };
 
   const handleCVDataParsed = (data: any) => {
     console.log('CV data parsed:', data);
     // Here you would typically refresh the profile data or update the UI
     // to reflect the newly imported information
+    if (onProfileUpdate) {
+      onProfileUpdate();
+    }
+  };
+
+  const handleProfileUpdateSuccess = () => {
+    // Called when profile is successfully updated
+    if (onProfileUpdate) {
+      onProfileUpdate();
+    }
   };
 
   // Calculate profile completion
@@ -112,7 +140,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 >
                   {completionPercentage}% Complete
                 </Chip>
-                <p className='text-xs text-default-500 hidden sm:inline'>
+                <p className='text-default-500 hidden text-xs sm:inline'>
                   Complete your profile for better reach
                 </p>
               </div>
@@ -322,11 +350,13 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   {isOwnProfile ? (
                     // Own profile actions
                     <div className='space-y-2'>
+
                       <Button
-                        color='primary'
+                        variant='flat'
+                        color='secondary'
                         size='lg'
                         startContent={<Icon icon='solar:document-add-linear' className='h-4 w-4' />}
-                        onPress={handleEditProfile}
+                        onPress={handleCVUpload}
                         className='w-full rounded-full'
                       >
                         Upload CV & Auto-Fill
@@ -334,7 +364,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
                       <Button
                         variant='flat'
-                        color='secondary'
+                        color='default'
                         size='lg'
                         startContent={<Icon icon='solar:eye-linear' className='h-4 w-4' />}
                         onPress={() => router.push('/private/profile')}
@@ -571,6 +601,14 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         isOpen={isCVUploadOpen}
         onOpenChange={setIsCVUploadOpen}
         onDataParsed={handleCVDataParsed}
+      />
+
+      {/* Edit Personal Data Modal */}
+      <EditPersonalDataModal
+        isOpen={isEditModalOpen}
+        onOpenChange={setIsEditModalOpen}
+        user={user}
+        onSuccess={handleProfileUpdateSuccess}
       />
     </>
   );

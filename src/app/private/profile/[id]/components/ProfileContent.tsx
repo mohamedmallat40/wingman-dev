@@ -2,6 +2,8 @@
 
 import React, { useState } from 'react';
 
+import type { IEducation } from '@root/modules/profile/types';
+
 import {
   Button,
   Card,
@@ -16,8 +18,8 @@ import {
   ModalHeader
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { type IEducation } from '@root/modules/profile/types';
-import { getName } from 'iso-639-1';
+import { type IReview, type IService } from '@root/modules/profile/types';
+import ISO6391, { getName } from 'iso-639-1';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
@@ -47,11 +49,18 @@ import { EnhancedLanguagesForm } from './forms/EnhancedLanguagesForm';
 import { PersonalInfoForm } from './forms/PersonalInfoForm';
 import { SkillsForm } from './forms/SkillsForm';
 import { SocialAccountsForm } from './forms/SocialAccountsForm';
+import AboutMeModal from './modals/about-me';
 import EducationModal from './modals/education-modal';
 import ExperienceModal from './modals/experience-modal';
 import LanguageModal from './modals/language-modal';
+import ProjectModal from './modals/projects-modal';
+import ServiceModal from './modals/services-modal';
+import SkillsModal from './modals/skills-modal';
+import TestimonialModal from './modals/testimonials-modal';
 import { EducationSection } from './sections/EducationSection';
-import { LanguagesSection } from './sections/LanguagesSection';
+import { ProjectsSection } from './sections/projects-section';
+import { ServicesSection } from './sections/services-section';
+import { TestimonialsSection } from './sections/testimonials-section';
 
 interface ProfileContentProperties {
   user: ProfileUser;
@@ -60,6 +69,10 @@ interface ProfileContentProperties {
   education: Education[];
   notes: UserNote[];
   isOwnProfile: boolean;
+
+  projects?: Experience[];
+  services?: IService[];
+  testimonials?: IReview[];
 }
 
 const ProfileContent: React.FC<ProfileContentProperties> = ({
@@ -68,6 +81,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   languages,
   education,
   notes,
+  services,
+  testimonials,
   isOwnProfile
 }) => {
   const t = useTranslations();
@@ -79,6 +94,11 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const [isLanguagesModalOpen, setIsLanguagesModalOpen] = useState(false);
   const [isCertificationsModalOpen, setIsCertificationsModalOpen] = useState(false);
   const [isSocialAccountsModalOpen, setIsSocialAccountsModalOpen] = useState(false);
+  const [isAboutMeModalOpen, setIsAboutMeModalOpen] = useState(false);
+
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [isTestimonialModalOpen, setIsTestimonialModalOpen] = useState(false);
 
   // Individual item modals
   const [editingExperience, setEditingExperience] = useState<{
@@ -108,6 +128,36 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
     language: ILanguage | null;
     isOpen: boolean;
   }>({ language: null, isOpen: false });
+  const [editingProject, setEditingProject] = useState<{
+    item: Experience | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+
+  const [editingService, setEditingService] = useState<{
+    item: IService | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+
+  const [viewingTestimonial, setViewingTestimonial] = useState<{
+    item: IReview | null;
+    isOpen: boolean;
+  }>({ item: null, isOpen: false });
+
+  // Add delete states
+  const [projectToDelete, setProjectToDelete] = useState<{
+    project: Experience | null;
+    isOpen: boolean;
+  }>({ project: null, isOpen: false });
+
+  const [serviceToDelete, setServiceToDelete] = useState<{
+    service: IService | null;
+    isOpen: boolean;
+  }>({ service: null, isOpen: false });
+
+  const [testimonialToDelete, setTestimonialToDelete] = useState<{
+    testimonial: IReview | null;
+    isOpen: boolean;
+  }>({ testimonial: null, isOpen: false });
 
   // Local state for forms
   const [localUser, setLocalUser] = useState(user);
@@ -132,51 +182,35 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
   const fullName = `${user.firstName} ${user.lastName}`;
 
-  // Personal Info handlers
   const handleEditAbout = () => {
-    console.log('Opening personal info modal');
-    setIsPersonalInfoModalOpen(true);
+    console.log('Opening about me modal');
+    setIsAboutMeModalOpen(true);
   };
 
-  const handlePersonalInfoChange = (field: string, value: string) => {
-    setLocalUser((previous) => ({ ...previous, [field]: value }));
-  };
-
-  const handleSavePersonalInfo = () => {
-    console.log('Saving personal info:', localUser);
-    setIsPersonalInfoModalOpen(false);
+  const handleAboutMeSuccess = (updatedAboutMe: string) => {
+    // Update the local user state with the new about me
+    setLocalUser((previous) => ({ ...previous, aboutMe: updatedAboutMe }));
+    console.log('About me updated successfully:', updatedAboutMe);
+    // Optionally call a prop function here to refresh the parent component's data
   };
 
   // Skills handlers
   const handleEditSkills = () => {
-    console.log('Opening skills modal for adding new skills');
-    // Ensure we start with current skills
-    setLocalSkills(user.skills || []);
+    console.log('Opening skills modal');
     setIsSkillsModalOpen(true);
   };
 
-  const handleAddSkill = () => {
-    const newSkill = {
-      id: `temp-${Date.now()}`,
-      name: '',
-      level: 'Beginner'
-    };
-    setLocalSkills((previous) => [...previous, newSkill]);
+  const handleSkillsSuccess = () => {
+    // Refresh skills data here - you might want to refetch from your API
+    // or update the local state accordingly
+    console.log('Skills operation successful - refresh data');
+    // You can call a prop function here to refresh the parent component's data
   };
 
-  const handleRemoveSkill = (index: number) => {
-    setLocalSkills((previous) => previous.filter((_, index_) => index_ !== index));
-  };
-
-  const handleUpdateSkill = (index: number, data: any) => {
-    setLocalSkills((previous) =>
-      previous.map((skill, index_) => (index_ === index ? data : skill))
-    );
-  };
-
-  const handleSaveSkills = () => {
-    console.log('Saving skills:', localSkills);
-    setIsSkillsModalOpen(false);
+  // Helper function to get skill color
+  const getSkillColor = (index: number) => {
+    const colors = ['primary', 'secondary', 'success', 'warning'] as const;
+    return colors[index % colors.length];
   };
 
   // Languages handlers
@@ -241,7 +275,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
     if (!code) return 'Unknown';
 
     // Try to get name from iso-639-1
-    const isoName = getName(code);
+    const isoName = ISO6391.getName(code.toLowerCase());
     if (isoName) return isoName;
 
     // Fallback to code if name not found
@@ -414,18 +448,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
     // You can call a prop function here to refresh the parent component's data
   };
 
-  const handleSaveIndividualExperience = (updatedExperience: Experience) => {
-    console.log('Saving individual experience:', updatedExperience);
-    // Here you would save to your backend
-    setEditingExperience({ item: null, isOpen: false });
-  };
-
-  const handleSaveIndividualEducation = (updatedEducation: Education) => {
-    console.log('Saving individual education:', updatedEducation);
-    // Here you would save to your backend
-    setEditingEducation({ item: null, isOpen: false });
-  };
-
   // Education handlers
   const handleAddEducation = () => {
     setEditingEducation({ item: null, isOpen: true });
@@ -464,10 +486,10 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
       let errorMessage = 'Failed to delete education';
 
       if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
+        errorMessage = error?.response?.data?.message;
       } else if (error.response?.status === 404) {
         errorMessage = 'Education record not found.';
-      } else if (error.response?.status === 401) {
+      } else if (error!.response?.status === 401) {
         errorMessage = 'You are not authorized to delete this education.';
       } else if (error.response?.status >= 500) {
         errorMessage = 'Server error. Please try again later.';
@@ -475,6 +497,148 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
       addToast(errorMessage, 'error');
     }
+  };
+  const handleAddProject = () => {
+    setEditingProject({
+      item: {
+        title: '',
+        company: '',
+        position: '',
+        startDate: '',
+        endDate: '',
+        description: '',
+        location: ''
+      },
+      isOpen: true
+    });
+    setIsProjectModalOpen(true);
+  };
+
+  const handleEditProject = (project: Experience) => {
+    setIsProjectModalOpen(true);
+
+    setEditingProject({ item: project, isOpen: true });
+  };
+
+  const handleDeleteProject = (project: Experience) => {
+    setProjectToDelete({ project, isOpen: true });
+  };
+
+  const confirmDeleteProject = async () => {
+    if (!projectToDelete.project?.id) return;
+
+    try {
+      await wingManApi.delete(`/experience/${projectToDelete.project.id}`);
+      addToast('Project deleted successfully', 'success');
+      handleProjectSuccess();
+      setProjectToDelete({ project: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting project:', error);
+      let errorMessage = 'Failed to delete project';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Project not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this project.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      addToast(errorMessage, 'error');
+    }
+  };
+
+  const handleProjectSuccess = () => {
+    console.log('Project operation successful - refresh data');
+    // Refresh projects data here
+  };
+
+  const handleAddService = () => {
+    setEditingService({
+      item: {
+        name: '',
+        description: '',
+        price: 0,
+        type: 'HOURLY_BASED',
+        skills: []
+      },
+      isOpen: true
+    });
+    setIsServiceModalOpen(true);
+  };
+
+  const handleEditService = (service: IService) => {
+    setIsServiceModalOpen(true);
+    setEditingService({ item: service, isOpen: true });
+  };
+
+  const handleDeleteService = (service: IService) => {
+    setServiceToDelete({ service, isOpen: true });
+  };
+
+  const confirmDeleteService = async () => {
+
+    try {
+      await wingManApi.delete(`/services/${serviceToDelete.service?.id}`);
+      addToast('Service deleted successfully', 'success');
+      handleServiceSuccess();
+      setServiceToDelete({ service: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting service:', error);
+      let errorMessage = 'Failed to delete service';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Service not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this service.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      addToast(errorMessage, 'error');
+    }
+  };
+
+  const handleServiceSuccess = () => {
+    console.log('Service operation successful - refresh data');
+    // Refresh services data here
+  };
+
+  const handleViewTestimonial = (testimonial: IReview) => {
+    setViewingTestimonial({ item: testimonial, isOpen: true });
+  };
+
+  const handleDeleteTestimonial = (testimonial: IReview) => {
+    setTestimonialToDelete({ testimonial, isOpen: true });
+  };
+
+  const confirmDeleteTestimonial = async () => {
+    if (!testimonialToDelete.testimonial?.id) return;
+
+    try {
+      await wingManApi.delete(`/public-reviews/${testimonialToDelete.testimonial.id}`);
+      addToast('Testimonial deleted successfully', 'success');
+      handleTestimonialSuccess();
+      setTestimonialToDelete({ testimonial: null, isOpen: false });
+    } catch (error: any) {
+      console.error('Error deleting testimonial:', error);
+      let errorMessage = 'Failed to delete testimonial';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.response?.status === 404) {
+        errorMessage = 'Testimonial not found.';
+      } else if (error.response?.status === 401) {
+        errorMessage = 'You are not authorized to delete this testimonial.';
+      } else if (error.response?.status >= 500) {
+        errorMessage = 'Server error. Please try again later.';
+      }
+      addToast(errorMessage, 'error');
+    }
+  };
+
+  const handleTestimonialSuccess = () => {
+    console.log('Testimonial operation successful - refresh data');
+    // Refresh testimonials data here
   };
 
   return (
@@ -683,6 +847,33 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
               handleDeleteEducation(edu);
             }}
           />
+          {/* <ProjectsSection
+            projects={localProjects}
+            isOwnProfile={isOwnProfile}
+            onAdd={handleAddProject}
+            onEdit={handleEditProject}
+            onDelete={handleDeleteProject}
+            t={t}
+          /> */}
+
+          {/* Services */}
+          <ServicesSection
+            services={services}
+            isOwnProfile={isOwnProfile}
+            onAdd={handleAddService}
+            onEdit={handleEditService}
+            onDelete={handleDeleteService}
+            t={t}
+          />
+
+          {/* Testimonials */}
+          <TestimonialsSection
+            testimonials={testimonials}
+            isOwnProfile={isOwnProfile}
+            onView={handleViewTestimonial}
+            onDelete={handleDeleteTestimonial}
+            t={t}
+          />
         </div>
 
         {/* Sidebar */}
@@ -696,34 +887,33 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
               <div className='flex w-full items-center justify-between'>
                 <div className='flex items-center gap-4'>
                   <div className='bg-success/10 rounded-full p-3'>
-                    <Icon icon='solar:verified-check-linear' className='text-success h-5 w-5' />
+                    <Icon icon='solar:medal-star-linear' className='text-success h-5 w-5' />
                   </div>
                   <div>
                     <h3 className='text-foreground text-lg font-semibold'>
-                      {t('talentPool.profile.sections.skills')}
+                      Skills ({user.skills.length || 0})
                     </h3>
                     <p className='text-small text-foreground-500 mt-1'>
-                      {t('talentPool.profile.skillsDescription')}
+                      Technical and professional skills
                     </p>
                   </div>
                 </div>
 
                 {isOwnProfile && (
                   <ActionButtons
-                    showAdd
-                    onAdd={handleEditSkills}
-                    addTooltip='Add new skills'
+                    showEdit
+                    onEdit={handleEditSkills}
+                    editTooltip='Manage skills'
                     size='md'
                   />
                 )}
               </div>
             </CardHeader>
             <CardBody className='pt-2'>
-              {user.skills && user.skills.length > 0 ? (
+              {user.skills.length > 0 ? (
                 <div className='flex flex-wrap gap-3'>
                   {user.skills.map((skill, index) => {
-                    const colors = ['primary', 'secondary', 'success', 'warning'] as const;
-                    const chipColor = colors[index % colors.length]!;
+                    const chipColor = getSkillColor(index);
 
                     return (
                       <Chip
@@ -732,9 +922,21 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
                         color={chipColor}
                         variant='flat'
                         className='transform cursor-default font-medium transition-all duration-200 hover:scale-105 hover:shadow-md'
-                        startContent={<Icon icon={getSkillIcon(skill.key)} className='h-3 w-3' />}
+                        startContent={
+                          <Icon icon='solar:verified-check-linear' className='h-3 w-3' />
+                        }
                       >
-                        {skill.key.trim()}
+                        <div className='flex items-center gap-1'>
+                          <span>{skill.key}</span>
+                          {skill.level && (
+                            <span className='ml-1 text-xs opacity-75'>
+                              (
+                              {SKILL_LEVELS[skill.level]?.toLowerCase() ||
+                                skill.level.toLowerCase()}
+                              )
+                            </span>
+                          )}
+                        </div>
                       </Chip>
                     );
                   })}
@@ -743,12 +945,10 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
                 <div className='flex items-center justify-center py-12 text-center'>
                   <div>
                     <Icon
-                      icon='solar:verified-check-linear'
+                      icon='solar:medal-star-linear'
                       className='text-default-300 mx-auto mb-4 h-12 w-12'
                     />
-                    <p className='text-foreground-500 mb-4'>
-                      {t('talentPool.cards.noSkillsListed')}
-                    </p>
+                    <p className='text-foreground-500 mb-4'>No skills listed</p>
                     {isOwnProfile && (
                       <Button
                         color='primary'
@@ -818,16 +1018,14 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
                               </span>
                             )}
                           </div>
-                          <p className='text-small text-foreground-500 mt-1'>
-                            <Chip
-                              size='sm'
-                              color={getLevelColor(lang.level) as any}
-                              variant='flat'
-                              className='text-tiny'
-                            >
-                              {getLevelDisplay(lang.level)}
-                            </Chip>
-                          </p>
+                          <Chip
+                            size='sm'
+                            color={getLevelColor(lang.level) as any}
+                            variant='flat'
+                            className='text-tiny text-foreground-500 mt-1'
+                          >
+                            {getLevelDisplay(lang.level)}
+                          </Chip>
                         </div>
                       </div>
 
@@ -836,8 +1034,12 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
                           <ActionButtons
                             showEdit
                             showDelete
-                            onEdit={() => handleEditLanguage(lang)}
-                            onDelete={() => handleDeleteLanguage(lang)}
+                            onEdit={() => {
+                              handleEditLanguage(lang);
+                            }}
+                            onDelete={() => {
+                              handleDeleteLanguage(lang);
+                            }}
                             editTooltip={`Edit ${getLanguageName(lang.key)} language`}
                             deleteTooltip={`Delete ${getLanguageName(lang.key)} language`}
                             size='sm'
@@ -1099,94 +1301,25 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
           </Card>
         </div>
       </div>
+      <AboutMeModal
+        isOpen={isAboutMeModalOpen}
+        onClose={() => {
+          setIsAboutMeModalOpen(false);
+        }}
+        currentAboutMe={localUser.aboutMe || ''}
+        onSuccess={handleAboutMeSuccess}
+        addToast={addToast}
+      />
 
-      {/* Skills Modal */}
-      <Modal
+      <SkillsModal
         isOpen={isSkillsModalOpen}
         onClose={() => {
           setIsSkillsModalOpen(false);
         }}
-        size='3xl'
-        scrollBehavior='inside'
-      >
-        <ModalContent>
-          <ModalHeader className='flex items-center gap-3'>
-            <div className='bg-success/20 rounded-xl p-2'>
-              <Icon icon='solar:verified-check-linear' className='text-success h-5 w-5' />
-            </div>
-            <div>
-              <h2 className='text-xl font-semibold'>Manage Skills</h2>
-              <p className='text-foreground-500 text-sm'>Add, edit, or remove your skills</p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <SkillsForm
-              skills={localSkills}
-              onAdd={handleAddSkill}
-              onRemove={handleRemoveSkill}
-              onUpdate={handleUpdateSkill}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant='light'
-              onPress={() => {
-                setIsSkillsModalOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button color='primary' onPress={handleSaveSkills}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* Languages Modal */}
-      {/* <Modal
-        isOpen={isLanguagesModalOpen}
-        onClose={() => {
-          setIsLanguagesModalOpen(false);
-        }}
-        size='3xl'
-        scrollBehavior='inside'
-      >
-        <ModalContent>
-          <ModalHeader className='flex items-center gap-3'>
-            <div className='bg-warning/20 rounded-xl p-2'>
-              <Icon icon='solar:globe-linear' className='text-warning h-5 w-5' />
-            </div>
-            <div>
-              <h2 className='text-xl font-semibold'>Manage Languages</h2>
-              <p className='text-foreground-500 text-sm'>
-                Add, edit, or remove languages you speak
-              </p>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            <EnhancedLanguagesForm
-              languages={localLanguages}
-              onAdd={handleAddLanguage}
-              onRemove={handleRemoveLanguage}
-              onUpdate={handleUpdateLanguage}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              variant='light'
-              onPress={() => {
-                setIsLanguagesModalOpen(false);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button color='primary' onPress={handleSaveLanguages}>
-              Save Changes
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal> */}
+        userSkills={user.skills}
+        onSuccess={handleSkillsSuccess}
+        addToast={addToast}
+      />
 
       {/* Certifications Modal */}
       <Modal
@@ -1265,6 +1398,33 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
         onSuccess={handleLanguageSuccess}
         addToast={addToast}
       />
+      <ProjectModal
+        isOpen={isProjectModalOpen}
+        onClose={() => {
+          setIsProjectModalOpen(false);
+        }}
+        project={editingProject.item}
+        onSuccess={handleProjectSuccess}
+        addToast={addToast}
+      />
+      <ServiceModal
+        isOpen={isServiceModalOpen}
+        onClose={() => {
+          setIsServiceModalOpen(false);
+        }}
+        service={editingService.item}
+        onSuccess={handleServiceSuccess}
+        addToast={addToast}
+      />
+      <TestimonialModal
+        isOpen={isTestimonialModalOpen}
+        onClose={() => {
+          setIsTestimonialModalOpen(false);
+        }}
+        testimonial={viewingTestimonial.item}
+        onSuccess={handleTestimonialSuccess}
+        addToast={addToast}
+      />
 
       {/* Social Accounts Modal */}
       <Modal
@@ -1340,6 +1500,26 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
         message={`Are you sure you want to delete ${getLanguageName(languageToDelete.language?.key)} language?`}
         itemName={getLanguageName(languageToDelete.language?.key)}
       />
+      <ConfirmDeleteModal
+        isOpen={projectToDelete.isOpen}
+        onClose={() => {
+          setProjectToDelete({ project: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteProject}
+        title='Delete Project'
+        message={`Are you sure you want to delete the project from ${projectToDelete.project?.company}?`}
+        itemName={projectToDelete.project?.title}
+      />
+      <ConfirmDeleteModal
+        isOpen={serviceToDelete.isOpen}
+        onClose={() => {
+          setServiceToDelete({ service: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteService}
+        title='Delete Service'
+        message={`Are you sure you want to delete the service from ${serviceToDelete.service?.name}?`}
+        itemName={serviceToDelete.service?.name}
+        />
     </section>
   );
 };

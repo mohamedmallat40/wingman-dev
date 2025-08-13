@@ -1,4 +1,6 @@
-import { type ClassValue, clsx } from 'clsx';
+import type { ClassValue } from 'clsx';
+
+import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
@@ -16,28 +18,28 @@ export function cn(...inputs: ClassValue[]) {
 export const PROFILE_SECTIONS = {
   about: {
     color: 'default' as const,
-    icon: 'solar:user-linear',
+    icon: 'solar:user-linear'
   },
   experience: {
     color: 'primary' as const,
-    icon: 'solar:case-minimalistic-linear',
+    icon: 'solar:case-minimalistic-linear'
   },
   education: {
     color: 'secondary' as const,
-    icon: 'solar:diploma-linear',
+    icon: 'solar:diploma-linear'
   },
   skills: {
     color: 'success' as const,
-    icon: 'solar:medal-star-linear',
+    icon: 'solar:medal-star-linear'
   },
   languages: {
     color: 'warning' as const,
-    icon: 'solar:global-linear',
+    icon: 'solar:global-linear'
   },
   socialAccounts: {
     color: 'secondary' as const,
-    icon: 'solar:share-linear',
-  },
+    icon: 'solar:share-linear'
+  }
 } as const;
 
 /**
@@ -47,63 +49,63 @@ export const SOCIAL_PLATFORMS = {
   linkedin: {
     icon: 'solar:linkedin-linear',
     brandColor: '#0077B5',
-    hoverClass: 'hover:bg-[#0077B5]/10',
+    hoverClass: 'hover:bg-[#0077B5]/10'
   },
   github: {
     icon: 'solar:code-square-linear',
     brandColor: '#333333',
-    hoverClass: 'hover:bg-default-100',
+    hoverClass: 'hover:bg-default-100'
   },
   twitter: {
     icon: 'solar:twitter-linear',
     brandColor: '#1DA1F2',
-    hoverClass: 'hover:bg-[#1DA1F2]/10',
+    hoverClass: 'hover:bg-[#1DA1F2]/10'
   },
   instagram: {
     icon: 'solar:camera-linear',
     brandColor: '#E4405F',
-    hoverClass: 'hover:bg-[#E4405F]/10',
+    hoverClass: 'hover:bg-[#E4405F]/10'
   },
   facebook: {
     icon: 'solar:facebook-linear',
     brandColor: '#1877F2',
-    hoverClass: 'hover:bg-[#1877F2]/10',
+    hoverClass: 'hover:bg-[#1877F2]/10'
   },
   youtube: {
     icon: 'solar:videocamera-record-linear',
     brandColor: '#FF0000',
-    hoverClass: 'hover:bg-[#FF0000]/10',
+    hoverClass: 'hover:bg-[#FF0000]/10'
   },
   tiktok: {
     icon: 'solar:music-note-linear',
     brandColor: '#000000',
-    hoverClass: 'hover:bg-default-100',
+    hoverClass: 'hover:bg-default-100'
   },
   behance: {
     icon: 'solar:palette-linear',
     brandColor: '#1769FF',
-    hoverClass: 'hover:bg-[#1769FF]/10',
+    hoverClass: 'hover:bg-[#1769FF]/10'
   },
   dribbble: {
     icon: 'solar:basketball-linear',
     brandColor: '#EA4C89',
-    hoverClass: 'hover:bg-[#EA4C89]/10',
+    hoverClass: 'hover:bg-[#EA4C89]/10'
   },
   medium: {
     icon: 'solar:pen-new-square-linear',
     brandColor: '#00AB6C',
-    hoverClass: 'hover:bg-[#00AB6C]/10',
+    hoverClass: 'hover:bg-[#00AB6C]/10'
   },
   portfolio: {
     icon: 'solar:folder-open-linear',
     brandColor: '#6366F1',
-    hoverClass: 'hover:bg-[#6366F1]/10',
+    hoverClass: 'hover:bg-[#6366F1]/10'
   },
   other: {
     icon: 'solar:link-linear',
     brandColor: 'currentColor',
-    hoverClass: 'hover:bg-default-100',
-  },
+    hoverClass: 'hover:bg-default-100'
+  }
 } as const;
 
 /**
@@ -116,7 +118,7 @@ export const LANGUAGE_LEVELS = {
   CONVERSATIONAL: { color: 'secondary' as const, percentage: 70 },
   INTERMEDIATE: { color: 'warning' as const, percentage: 55 },
   BEGINNER: { color: 'default' as const, percentage: 35 },
-  ELEMENTARY: { color: 'default' as const, percentage: 20 },
+  ELEMENTARY: { color: 'default' as const, percentage: 20 }
 } as const;
 
 /**
@@ -126,7 +128,14 @@ export const SKILL_LEVELS = {
   EXPERT: { color: 'success' as const, percentage: 95 },
   ADVANCED: { color: 'primary' as const, percentage: 80 },
   INTERMEDIATE: { color: 'warning' as const, percentage: 60 },
-  BEGINNER: { color: 'default' as const, percentage: 35 },
+  BEGINNER: { color: 'default' as const, percentage: 35 }
+} as const;
+
+export const SKILL_LEVEL_NAMES = {
+  EXPERT: 'Expert',
+  ADVANCED: 'Advanced',
+  INTERMEDIATE: 'Intermediate',
+  BEGINNER: 'Beginner'
 } as const;
 
 /**
@@ -135,28 +144,28 @@ export const SKILL_LEVELS = {
 export const AVAILABILITY_STATUS = {
   AVAILABLE: { color: 'success' as const, pulse: true },
   BUSY: { color: 'warning' as const, pulse: false },
-  UNAVAILABLE: { color: 'danger' as const, pulse: false },
+  UNAVAILABLE: { color: 'danger' as const, pulse: false }
 } as const;
 
 /**
  * Connection status using HeroUI colors
  */
 export const CONNECTION_STATUS = {
-  connected: { 
-    color: 'success' as const, 
+  connected: {
+    color: 'success' as const,
     icon: 'solar:check-circle-linear',
-    label: 'Connected' 
+    label: 'Connected'
   },
-  pending: { 
-    color: 'warning' as const, 
+  pending: {
+    color: 'warning' as const,
     icon: 'solar:clock-circle-linear',
-    label: 'Pending' 
+    label: 'Pending'
   },
-  notConnected: { 
-    color: 'default' as const, 
+  notConnected: {
+    color: 'default' as const,
     icon: 'solar:user-plus-linear',
-    label: 'Connect' 
-  },
+    label: 'Connect'
+  }
 } as const;
 
 /**
@@ -167,7 +176,7 @@ export const ANIMATIONS = {
   slideUp: 'animate-slide-up',
   bounce: 'animate-bounce-gentle',
   pulse: 'animate-pulse',
-  spin: 'animate-spin',
+  spin: 'animate-spin'
 } as const;
 
 /**
@@ -178,7 +187,7 @@ export const getResponsiveGrid = (columns: 1 | 2 | 3 | 4 = 2) => {
     1: 'grid-cols-1',
     2: 'grid-cols-1 md:grid-cols-2',
     3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
+    4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
   };
   return `grid ${grids[columns]} gap-4`;
 };
@@ -189,10 +198,10 @@ export const getResponsiveGrid = (columns: 1 | 2 | 3 | 4 = 2) => {
 export const getSpacing = (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'md') => {
   const spacing = {
     xs: 'gap-1',
-    sm: 'gap-2', 
+    sm: 'gap-2',
     md: 'gap-4',
     lg: 'gap-6',
-    xl: 'gap-8',
+    xl: 'gap-8'
   };
   return spacing[size];
 };

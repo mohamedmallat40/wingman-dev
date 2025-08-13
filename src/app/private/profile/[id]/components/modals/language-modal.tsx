@@ -159,16 +159,12 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
     }
   };
 
-  const getLanguageName = (code: string | undefined): string => {
+  const getLanguageName = (code: string | undefined) => {
     if (!code) return '';
 
     // Try to get name from iso-639-1
-    const isoName = ISO6391.getName(code);
+    const isoName = ISO6391.getName(code.toLowerCase());
     if (isoName) return isoName;
-
-    // Fallback to our common languages list
-    const commonLang = commonLanguages.find((lang) => lang.code === code);
-    return commonLang?.name || code;
   };
 
   const handleSubmit = async () => {
