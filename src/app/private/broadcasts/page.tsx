@@ -222,7 +222,7 @@ export default function BroadcastsPage() {
         onClose={() => closeNotificationCenter()}
       />
 
-      <ContentCreator
+      <EnhancedContentCreator
         isOpen={ui.contentCreatorOpen}
         onClose={() => closeContentCreator()}
         onPublish={handlePublishPost}
