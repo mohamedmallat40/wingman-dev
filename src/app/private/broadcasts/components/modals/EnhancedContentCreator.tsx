@@ -482,7 +482,11 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
 
       await createPostMutation.mutateAsync(postData);
       
-      console.log('Post published successfully!');
+      try {
+        toast.success('Post published successfully!');
+      } catch (e) {
+        console.log('Post published successfully!');
+      }
       onPublish(postData);
       handleClose();
       
