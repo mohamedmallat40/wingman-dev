@@ -23,9 +23,7 @@ export const useCreatePost = () => {
       console.error('Failed to create post:', error);
       
       // Show error message
-      if (typeof toast !== 'undefined') {
-        toast.error(t('errors.publishFailed'));
-      }
+      console.error('Error:', t('errors.publishFailed'));
     }
   });
 };
