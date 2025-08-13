@@ -1,26 +1,30 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+
+import type { CreatePostData } from '../../services/broadcast.service';
 
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
+  Avatar,
   Button,
-  Textarea,
-  Input,
-  Select,
-  SelectItem,
   Chip,
   Divider,
-  Avatar
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Select,
+  SelectItem,
+  Textarea
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 
+import { useCreatePost, useSaveDraft } from '../../hooks';
+import { useBroadcastStore } from '../../store/useBroadcastStore';
 import { type BroadcastPost } from '../../types';
-import { generatePostId, extractHashtags, calculateReadTime } from '../../utils/broadcast-utils';
+import { calculateReadTime, extractHashtags, generatePostId } from '../../utils/broadcast-utils';
 
 interface ContentCreatorProps {
   isOpen: boolean;
@@ -39,18 +43,33 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   initialData,
   className = ''
 }) => {
+  const { preferences } = useBroadcastStore();
+  const createPostMutation = useCreatePost();
+  const saveDraftMutation = useSaveDraft();
+
   const [formData, setFormData] = useState({
     title: initialData?.title || '',
     content: initialData?.content || '',
-    type: initialData?.type || 'article',
+    type: (initialData?.type as CreatePostData['type']) || 'article',
     category: initialData?.category || '',
-    priority: initialData?.priority || 'normal',
-    tags: initialData?.tags || []
+    priority: (initialData?.priority as CreatePostData['priority']) || 'normal',
+    tags: initialData?.tags || [],
+    topicId: initialData?.topic?.id || undefined
   });
-  
-  const [isPublishing, setIsPublishing] = useState(false);
-  const [isSavingDraft, setIsSavingDraft] = useState(false);
+
+  const [mediaFiles, setMediaFiles] = useState<File[]>([]);
+  const [linkData, setLinkData] = useState<{
+    url: string;
+    title: string;
+    description: string;
+  } | null>(null);
+  const [pollData, setPollData] = useState<{
+    question: string;
+    options: string[];
+  } | null>(null);
+
   const [tagInput, setTagInput] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const postTypes = [
     { key: 'article', label: 'Article', icon: 'solar:document-text-linear' },
@@ -81,12 +100,12 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   ];
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleAddTag = () => {
     if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, tagInput.trim()]
       }));
@@ -95,9 +114,9 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
+      tags: prev.tags.filter((tag) => tag !== tagToRemove)
     }));
   };
 
@@ -108,42 +127,99 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     }
   };
 
-  const handlePublish = async () => {
-    setIsPublishing(true);
-    
-    const postData: Partial<BroadcastPost> = {
-      ...formData,
-      id: generatePostId(),
-      timestamp: new Date().toISOString(),
-      readTime: calculateReadTime(formData.content),
-      tags: [...formData.tags, ...extractHashtags(formData.content)],
-      engagement: {
-        likes: 0,
-        comments: 0,
-        shares: 0,
-        bookmarks: 0,
-        views: 0
-      }
-    };
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
 
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-    onPublish(postData);
-    setIsPublishing(false);
-    handleClose();
+    if (!formData.title.trim()) {
+      newErrors.title = 'Title is required';
+    }
+
+    if (!formData.content.trim()) {
+      newErrors.content = 'Content is required';
+    }
+
+    if (!formData.category) {
+      newErrors.category = 'Category is required';
+    }
+
+    if (formData.type === 'poll' && !pollData?.question) {
+      newErrors.poll = 'Poll question is required';
+    }
+
+    if (formData.type === 'link' && !linkData?.url) {
+      newErrors.link = 'Link URL is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handlePublish = async () => {
+    if (!validateForm()) return;
+
+    try {
+      const postData: CreatePostData = {
+        type: formData.type,
+        title: formData.title,
+        content: formData.content,
+        category: formData.category,
+        tags: [...formData.tags, ...extractHashtags(formData.content)],
+        priority: formData.priority,
+        topicId: formData.topicId
+      };
+
+      // Add media data based on post type
+      if (mediaFiles.length > 0) {
+        postData.media = {
+          type: formData.type === 'video' ? 'video' : 'image',
+          files: mediaFiles
+        };
+      }
+
+      if (linkData && formData.type === 'link') {
+        postData.media = {
+          type: 'link',
+          linkData
+        };
+      }
+
+      if (pollData && formData.type === 'poll') {
+        postData.poll = {
+          question: pollData.question,
+          options: pollData.options,
+          duration: 24 // Default 24 hours
+        };
+      }
+
+      await createPostMutation.mutateAsync(postData);
+
+      if (onPublish) {
+        onPublish(postData as any);
+      }
+
+      handleClose();
+    } catch (error) {
+      console.error('Failed to publish post:', error);
+      // Error handling is done by the mutation
+    }
   };
 
   const handleSaveDraft = async () => {
-    setIsSavingDraft(true);
-    
-    const draftData: Partial<BroadcastPost> = {
-      ...formData,
-      id: initialData?.id || generatePostId(),
-      timestamp: new Date().toISOString()
-    };
+    try {
+      const draftData = {
+        ...formData,
+        id: initialData?.id,
+        timestamp: new Date().toISOString()
+      };
 
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate API call
-    onSaveDraft(draftData);
-    setIsSavingDraft(false);
+      await saveDraftMutation.mutateAsync(draftData);
+
+      if (onSaveDraft) {
+        onSaveDraft(draftData as any);
+      }
+    } catch (error) {
+      console.error('Failed to save draft:', error);
+    }
   };
 
   const handleClose = () => {
@@ -159,9 +235,28 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     onClose();
   };
 
-  const isFormValid = formData.title.trim() && formData.content.trim() && formData.category;
+  // Memoize form validation to prevent infinite re-renders
+  const isFormValid = useMemo(() => {
+    return (
+      formData.title.trim() !== '' &&
+      formData.content.trim() !== '' &&
+      formData.category !== '' &&
+      (formData.type !== 'poll' || pollData?.question) &&
+      (formData.type !== 'link' || linkData?.url)
+    );
+  }, [
+    formData.title,
+    formData.content,
+    formData.category,
+    formData.type,
+    pollData?.question,
+    linkData?.url
+  ]);
+
   const wordCount = formData.content.trim().split(/\s+/).length;
   const readTime = calculateReadTime(formData.content);
+  const isPublishing = createPostMutation.isPending;
+  const isSavingDraft = saveDraftMutation.isPending;
 
   return (
     <Modal
@@ -183,12 +278,8 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
               <Icon icon='solar:pen-new-square-linear' className='text-primary h-6 w-6' />
             </div>
             <div>
-              <h2 className='text-foreground text-xl font-semibold'>
-                Create New Post
-              </h2>
-              <p className='text-foreground-500 text-sm'>
-                Share your thoughts with the community
-              </p>
+              <h2 className='text-foreground text-xl font-semibold'>Create New Post</h2>
+              <p className='text-foreground-500 text-sm'>Share your thoughts with the community</p>
             </div>
           </div>
         </ModalHeader>
@@ -206,14 +297,20 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                   handleInputChange('type', selected);
                 }}
                 startContent={
-                  <Icon 
-                    icon={postTypes.find(p => p.key === formData.type)?.icon || 'solar:document-linear'} 
-                    className='h-4 w-4' 
+                  <Icon
+                    icon={
+                      postTypes.find((p) => p.key === formData.type)?.icon ||
+                      'solar:document-linear'
+                    }
+                    className='h-4 w-4'
                   />
                 }
               >
                 {postTypes.map((type) => (
-                  <SelectItem key={type.key} startContent={<Icon icon={type.icon} className='h-4 w-4' />}>
+                  <SelectItem
+                    key={type.key}
+                    startContent={<Icon icon={type.icon} className='h-4 w-4' />}
+                  >
                     {type.label}
                   </SelectItem>
                 ))}
@@ -229,9 +326,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                 }}
               >
                 {priorities.map((priority) => (
-                  <SelectItem key={priority.key}>
-                    {priority.label}
-                  </SelectItem>
+                  <SelectItem key={priority.key}>{priority.label}</SelectItem>
                 ))}
               </Select>
             </div>
@@ -243,6 +338,8 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
               value={formData.title}
               onValueChange={(value) => handleInputChange('title', value)}
               startContent={<Icon icon='solar:text-field-linear' className='h-4 w-4' />}
+              isInvalid={!!errors.title}
+              errorMessage={errors.title}
               classNames={{
                 input: 'text-lg'
               }}
@@ -257,11 +354,11 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                 const selected = Array.from(keys)[0] as string;
                 handleInputChange('category', selected);
               }}
+              isInvalid={!!errors.category}
+              errorMessage={errors.category}
             >
               {categories.map((category) => (
-                <SelectItem key={category}>
-                  {category}
-                </SelectItem>
+                <SelectItem key={category}>{category}</SelectItem>
               ))}
             </Select>
 
@@ -274,6 +371,8 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
               minRows={8}
               maxRows={20}
               description={`${wordCount} words • ${readTime} min read`}
+              isInvalid={!!errors.content}
+              errorMessage={errors.content}
             />
 
             {/* Tags */}
@@ -321,7 +420,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                 <Icon icon='solar:eye-linear' className='h-4 w-4' />
                 Preview
               </h4>
-              
+
               <div className='bg-background rounded-lg border p-4'>
                 <div className='mb-3 flex items-center gap-3'>
                   <Avatar size='sm' />
@@ -330,17 +429,15 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                     <p className='text-foreground-500 text-xs'>@username • now</p>
                   </div>
                 </div>
-                
+
                 {formData.title && (
-                  <h3 className='text-foreground mb-2 font-bold'>
-                    {formData.title}
-                  </h3>
+                  <h3 className='text-foreground mb-2 font-bold'>{formData.title}</h3>
                 )}
-                
+
                 <p className='text-foreground-700 mb-3 text-sm'>
                   {formData.content || 'Your content will appear here...'}
                 </p>
-                
+
                 {formData.tags.length > 0 && (
                   <div className='flex flex-wrap gap-1'>
                     {formData.tags.slice(0, 3).map((tag, index) => (
@@ -374,7 +471,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                 Save Draft
               </Button>
             </div>
-            
+
             <div className='flex gap-2'>
               <Button variant='light' onPress={handleClose}>
                 Cancel

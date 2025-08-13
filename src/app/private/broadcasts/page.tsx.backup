@@ -2,22 +2,21 @@
 
 import React, { useState } from 'react';
 
-import type { CreatePostData } from './services/broadcast.service';
-
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import { BroadcastFilters } from './components/filters';
 import BroadcastFeed from './components/lists/BroadcastFeed';
 import ContentCreator from './components/modals/ContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
 import SubcastSidebar from './components/navigation/SubcastSidebar';
-import { useCreatePost } from './hooks';
+import { BroadcastFilters } from './components/filters';
 import { useBroadcastStore, useUnreadNotificationsCount } from './store/useBroadcastStore';
+import { useCreatePost } from './hooks';
+import type { CreatePostData } from './services/broadcast.service';
 
 export default function BroadcastsPage() {
   const t = useTranslations('broadcasts');
@@ -32,10 +31,10 @@ export default function BroadcastsPage() {
     openNotificationCenter,
     closeNotificationCenter
   } = useBroadcastStore();
-
+  
   const unreadCount = useUnreadNotificationsCount();
   const createPost = useCreatePost();
-
+  
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -68,7 +67,7 @@ export default function BroadcastsPage() {
   return (
     <>
       {/* Live Activity Bar */}
-      <LiveActivityBar
+      <LiveActivityBar 
         onNotificationClick={() => openNotificationCenter()}
         unreadCount={unreadCount}
       />
@@ -92,7 +91,7 @@ export default function BroadcastsPage() {
             >
               Filters
             </Button>
-
+            
             {/* Create Post Button */}
             <Button
               color='primary'
@@ -107,6 +106,7 @@ export default function BroadcastsPage() {
         }
       >
         <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
+          {/* Left Sidebar - Topic & Filters */
           <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
             <div className='sticky top-4 space-y-4 overflow-visible'>
               <SubcastSidebar
@@ -114,22 +114,30 @@ export default function BroadcastsPage() {
                 onSubcastSelect={handleTopicSelect}
                 selectedSubcast={activeTopic}
               />
-
+              
               {/* Filters Panel */}
               {showFilters && (
-                <BroadcastFilters isOpen={showFilters} onClose={() => setShowFilters(false)} />
+                <BroadcastFilters
+                  isOpen={showFilters}
+                  onClose={() => setShowFilters(false)}
+                />
               )}
             </div>
           </div>
 
+          {/* Main Content - Feed */}
           <div className='min-w-0 flex-1'>
             <div className='py-6'>
-              <BroadcastFeed selectedTopic={activeTopic} />
+              <BroadcastFeed
+                selectedTopic={activeTopic}
+              />
             </div>
           </div>
 
+          {/* Right Sidebar - Quick Actions & Trending (on larger screens) */}
           <div className='hidden w-64 flex-shrink-0 xl:block'>
             <div className='sticky top-4 space-y-4'>
+              {/* Quick Actions Card */}
               <div className='bg-content1 border-default-200 rounded-lg border p-4'>
                 <h3 className='text-foreground mb-3 text-sm font-semibold'>Quick Actions</h3>
                 <div className='space-y-3'>
@@ -173,6 +181,7 @@ export default function BroadcastsPage() {
                 </div>
               </div>
 
+              {/* Trending Topics Mini Card */}
               <div className='bg-content1 border-default-200 rounded-lg border p-4'>
                 <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
                   <Icon icon='solar:fire-linear' className='text-warning h-4 w-4' />
@@ -190,6 +199,7 @@ export default function BroadcastsPage() {
                 </div>
               </div>
 
+              {/* Active Users Mini Card */}
               <div className='bg-content1 border-default-200 rounded-lg border p-4'>
                 <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
                   <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
@@ -217,9 +227,10 @@ export default function BroadcastsPage() {
         </div>
       </DashboardLayout>
 
-      <NotificationCenter
-        isOpen={ui.notificationCenterOpen}
-        onClose={() => closeNotificationCenter()}
+      {/* Modals */}
+      <NotificationCenter 
+        isOpen={ui.notificationCenterOpen} 
+        onClose={() => closeNotificationCenter()} 
       />
 
       <ContentCreator
