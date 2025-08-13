@@ -1,6 +1,8 @@
 import React from 'react';
-import { Card, CardBody, CardHeader, Button } from '@heroui/react';
+
+import { Button, Card, CardBody, CardHeader } from '@heroui/react';
 import { Icon } from '@iconify/react';
+
 import { ActionButtons } from '../ActionButtons';
 
 interface Experience {
@@ -56,7 +58,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
             </div>
             <div>
               <h2 className='text-foreground text-xl font-semibold'>
-                Projects ({projects.length})
+                Projects ({projects?.length})
               </h2>
               <p className='text-small text-foreground-500 mt-1'>
                 Featured projects and portfolio work
@@ -65,12 +67,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
           </div>
 
           {isOwnProfile && (
-            <ActionButtons
-              showAdd
-              onAdd={onAdd}
-              addTooltip='Add new project'
-              size='md'
-            />
+            <ActionButtons showAdd onAdd={onAdd} addTooltip='Add new project' size='md' />
           )}
         </div>
       </CardHeader>
@@ -78,9 +75,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
         {projects.length > 0 ? (
           <div className='space-y-8'>
             {[...projects]
-              .sort(
-                (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-              )
+              .sort((a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
               .map((project, index) => (
                 <div key={project.id || index} className='relative'>
                   {index < projects.length - 1 && (
@@ -99,9 +94,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
                         <div className='space-y-2'>
                           <div className='flex items-center gap-2'>
-                            <h3 className='text-foreground text-lg font-bold'>
-                              {project.title}
-                            </h3>
+                            <h3 className='text-foreground text-lg font-bold'>{project.title}</h3>
                             {isOwnProfile && (
                               <ActionButtons
                                 showEdit
@@ -117,7 +110,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                             <p className='text-foreground-700 font-medium'>{project.company}</p>
                             <p className='text-foreground-600 text-sm'>{project.position}</p>
                             {project.location && (
-                              <p className='text-foreground-500 text-sm flex items-center gap-1'>
+                              <p className='text-foreground-500 flex items-center gap-1 text-sm'>
                                 <Icon icon='solar:map-point-linear' className='h-3 w-3' />
                                 {project.location}
                               </p>
@@ -128,17 +121,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                           <Icon icon='solar:calendar-linear' className='h-4 w-4' />
                           <span>
                             {formatDate(project.startDate)} —{' '}
-                            {project.endDate
-                              ? formatDate(project.endDate)
-                              : 'Ongoing'}
+                            {project.endDate ? formatDate(project.endDate) : 'Ongoing'}
                           </span>
                         </div>
                       </div>
 
                       {project.description && (
-                        <p className='text-foreground-600 leading-relaxed'>
-                          {project.description}
-                        </p>
+                        <p className='text-foreground-600 leading-relaxed'>{project.description}</p>
                       )}
                     </div>
                   </div>
@@ -152,9 +141,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                 icon='solar:code-square-linear'
                 className='text-default-300 mx-auto mb-4 h-12 w-12'
               />
-              <p className='text-foreground-500 mb-4'>
-                No projects to display
-              </p>
+              <p className='text-foreground-500 mb-4'>No projects to display</p>
               {isOwnProfile && (
                 <Button
                   color='primary'

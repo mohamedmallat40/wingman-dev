@@ -30,7 +30,7 @@ export interface User {
   skills: Skill[];
   hourlyRate: number;
   dailyRate: number;
-  statusAvailability: AvailabilityStatus;
+  statusAviability: AvailabilityStatus;
   isConnected: boolean;
   isCompleted: boolean;
   aboutMe?: string;

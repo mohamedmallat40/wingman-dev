@@ -31,7 +31,7 @@ import {
   mapWorkingTime,
   stripHtml,
   truncateText
-} from '../../utils/talent-utils';
+} from '../../utils/talent-utilities';
 
 const TalentCard: React.FC<TalentCardProps> = ({
   user,
@@ -51,7 +51,7 @@ const TalentCard: React.FC<TalentCardProps> = ({
     region,
     city,
     skills,
-    statusAvailability,
+    statusAviability,
     isConnected,
     aboutMe,
     experienceYears,
@@ -64,7 +64,7 @@ const TalentCard: React.FC<TalentCardProps> = ({
     averageRating
   } = user;
 
-  const availabilityConfig = getAvailabilityConfig(statusAvailability);
+  const availabilityConfig = getAvailabilityConfig(statusAviability);
   const workTypeConfig = getWorkTypeConfig(workType || '');
   const displaySkills = skills.slice(0, 4);
   const hasMoreSkills = skills.length > 4;

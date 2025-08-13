@@ -15,7 +15,7 @@ import {
   getWorkTypeConfig,
   mapUserType,
   mapWorkingTime
-} from '@/app/private/talent-pool/utils/talent-utils';
+} from '@/app/private/talent-pool/utils/talent-utilities';
 import { getImageUrl } from '@/lib/utils/utilities';
 
 import {
@@ -66,8 +66,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Added state for edit modal
 
   const fullName = `${user.firstName} ${user.lastName}`;
-  const availabilityConfig = getAvailabilityConfig(user.statusAvailability);
-  const workTypeConfig = getWorkTypeConfig(user.workType || '');
+  const availabilityConfig = getAvailabilityConfig(user!.statusAviability);
+  const workTypeConfig = getWorkTypeConfig(user.workType ?? '');
   const rate = formatRate(
     user.amount || 0,
     user.currency || 'EUR',
@@ -260,17 +260,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         >
                           {t(availabilityConfig.labelKey)}
                         </span>
-                        {isOwnProfile && (
-                          <Button
-                            isIconOnly
-                            variant='light'
-                            size='sm'
-                            className='text-foreground-400 hover:text-primary -mr-1 h-4 w-4'
-                            onPress={handleEditProfile}
-                          >
-                            <Icon icon='solar:pen-linear' className='h-3 w-3' />
-                          </Button>
-                        )}
                       </div>
                     </div>
 
@@ -349,7 +338,6 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                   {isOwnProfile ? (
                     // Own profile actions
                     <div className='space-y-2'>
-
                       <Button
                         variant='flat'
                         color='secondary'

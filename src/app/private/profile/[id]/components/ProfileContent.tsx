@@ -1,5 +1,6 @@
 'use client';
 
+import test from 'node:test';
 import React, { useState } from 'react';
 
 import type { IEducation } from '@root/modules/profile/types';
@@ -29,7 +30,7 @@ import {
   mapUserType,
   stripHtml,
   truncateText
-} from '@/app/private/talent-pool/utils/talent-utils';
+} from '@/app/private/talent-pool/utils/talent-utilities';
 import wingManApi from '@/lib/axios';
 import { getImageUrl } from '@/lib/utils/utilities';
 
@@ -68,7 +69,6 @@ interface ProfileContentProperties {
   education: Education[];
   notes: UserNote[];
   isOwnProfile: boolean;
-
   projects?: Experience[];
   services?: IService[];
   testimonials?: IReview[];
@@ -79,7 +79,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   experiences,
   languages,
   education,
-  notes,
+  //notes,
+  projects,
   services,
   testimonials,
   isOwnProfile
@@ -159,8 +160,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
   // Local state for forms
   const [localUser, setLocalUser] = useState(user);
-  const [localLanguages, setLocalLanguages] = useState<Language[]>(languages);
-  const [localSkills, setLocalSkills] = useState(user.skills || []);
   const [localCertifications, setLocalCertifications] = useState([]);
   const [localSocialAccounts, setLocalSocialAccounts] = useState<SocialAccount[]>(
     user.socialAccounts || []
@@ -570,7 +569,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   const confirmDeleteService = async () => {
-
     try {
       await wingManApi.delete(`/services/${serviceToDelete.service?.id}`);
       addToast('Service deleted successfully', 'success');
@@ -840,14 +838,14 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
               handleDeleteEducation(edu);
             }}
           />
-          {/* <ProjectsSection
-            projects={localProjects}
+          <ProjectsSection
+            projects={projects}
             isOwnProfile={isOwnProfile}
             onAdd={handleAddProject}
             onEdit={handleEditProject}
             onDelete={handleDeleteProject}
             t={t}
-          /> */}
+          />
 
           {/* Services */}
           <ServicesSection
@@ -1512,7 +1510,17 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
         title='Delete Service'
         message={`Are you sure you want to delete the service from ${serviceToDelete.service?.name}?`}
         itemName={serviceToDelete.service?.name}
-        />
+      />
+      <ConfirmDeleteModal
+        isOpen={testimonialToDelete.isOpen}
+        onClose={() => {
+          setTestimonialToDelete({ testimonial: null, isOpen: false });
+        }}
+        onConfirm={confirmDeleteTestimonial}
+        title='Delete Testimonial'
+        message={`Are you sure you want to delete the testimonial from ${testimonialToDelete.testimonial?.name}?`}
+        itemName={testimonialToDelete.testimonial?.name}
+      />
     </section>
   );
 };

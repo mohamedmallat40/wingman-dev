@@ -16,60 +16,68 @@ export interface WorkTypeConfig {
 // Availability status configuration
 export const getAvailabilityConfig = (status: AvailabilityStatus | string): AvailabilityConfig => {
   switch (status) {
-    case 'OPEN_FOR_PROJECT':
+    case 'OPEN_FOR_PROJECT': {
       return {
         color: 'success',
         labelKey: 'talentPool.availability.availableForProjects',
         icon: 'solar:check-circle-bold'
       };
-    case 'OPEN_FOR_PART_TIME':
+    }
+    case 'OPEN_FOR_PART_TIME': {
       return {
         color: 'warning',
         labelKey: 'talentPool.availability.partTimeAvailable',
         icon: 'solar:clock-circle-bold'
       };
-    case 'BUSY':
+    }
+    case 'NOT_AVAILABLE': {
       return {
         color: 'danger',
-        labelKey: 'talentPool.availability.busy',
+        labelKey: 'talentPool.availability.notAvailable',
         icon: 'solar:close-circle-bold'
       };
-    default:
+    }
+    default: {
       return {
         color: 'success',
         labelKey: 'talentPool.availability.available',
         icon: 'solar:check-circle-bold'
       };
+    }
   }
 };
 
-// Work type configuration  
+// Work type configuration
 export const getWorkTypeConfig = (workType: WorkType | string): WorkTypeConfig => {
   switch (workType) {
-    case 'REMOTE':
+    case 'REMOTE': {
       return {
         icon: 'solar:home-wifi-linear',
         color: 'success',
         labelKey: 'talentPool.workType.remote'
       };
-    case 'ON_LOCATION':
+    }
+    case 'ON_LOCATION': {
       return {
         icon: 'solar:buildings-linear',
         color: 'warning',
         labelKey: 'talentPool.workType.onLocation'
       };
-    case 'HYBRID':
+    }
+    case 'HYBRID': {
       return {
         icon: 'solar:laptop-linear',
         color: 'secondary',
         labelKey: 'talentPool.workType.hybrid'
       };
-    default:
+    }
+    default: {
       return {
         icon: 'solar:case-linear',
         color: 'default',
         labelKey: 'talentPool.workType.unknown'
       };
+    }
   }
 };
 
@@ -81,9 +89,14 @@ export const formatRate = (
   t?: (key: string) => string
 ): string => {
   const currencySymbol = currency === 'EUR' ? '€' : '$';
-  const period = paymentType === 'HOURLY_BASED' 
-    ? (t ? t('talentPool.paymentTypes.hourly') : '/hour')
-    : (t ? t('talentPool.paymentTypes.daily') : '/day');
+  const period =
+    paymentType === 'HOURLY_BASED'
+      ? t
+        ? t('talentPool.paymentTypes.hourly')
+        : '/hour'
+      : t
+        ? t('talentPool.paymentTypes.daily')
+        : '/day';
   const rateAmount = amount || 0;
   return `${currencySymbol}${rateAmount}${period}`;
 };
@@ -123,16 +136,16 @@ export const mapWorkingTime = (workingTime: string, t?: (key: string) => string)
   if (translationKey && t) {
     return t(translationKey);
   }
-  
+
   // Fallback for when no translation function is provided or unknown working time
-  return workingTime.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  return workingTime.replaceAll('_', ' ').replaceAll(/\b\w/g, (l) => l.toUpperCase());
 };
 
 // User type mapping with i18n keys
 const USER_TYPE_MAP = {
   FULL_TIME_FREELANCER: 'talentPool.userTypes.fullTimeFreelancer',
   PART_TIME_FREELANCER: 'talentPool.userTypes.partTimeFreelancer',
-  STUDENT: 'talentPool.userTypes.student', 
+  STUDENT: 'talentPool.userTypes.student',
   FREELANCER: 'talentPool.userTypes.freelancer',
   AGENCY: 'talentPool.userTypes.agency',
   CONTRACTOR: 'talentPool.userTypes.contractor'
@@ -143,24 +156,34 @@ export const mapUserType = (userType: UserKind | string, t?: (key: string) => st
   if (translationKey && t) {
     return t(translationKey);
   }
-  
+
   // Fallback for when no translation function is provided
   switch (userType) {
-    case 'FULL_TIME_FREELANCER':
+    case 'FULL_TIME_FREELANCER': {
       return 'Full time freelancer';
-    case 'PART_TIME_FREELANCER':
+    }
+    case 'PART_TIME_FREELANCER': {
       return 'Part time freelancer';
-    case 'STUDENT':
+    }
+    case 'STUDENT': {
       return 'Student';
-    case 'FREELANCER':
+    }
+    case 'FREELANCER': {
       return 'Freelancer';
-    case 'AGENCY':
+    }
+    case 'AGENCY': {
       return 'Agency';
-    case 'CONTRACTOR':
+    }
+    case 'CONTRACTOR': {
       return 'Contractor';
-    default:
+    }
+    default: {
       // Format unknown types by replacing underscores and capitalizing
-      return userType.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      return userType
+        .toLowerCase()
+        .replaceAll('_', ' ')
+        .replaceAll(/\b\w/g, (l) => l.toUpperCase());
+    }
   }
 };
 
@@ -174,10 +197,10 @@ export const getUserInitials = (firstName?: string, lastName?: string): string =
 // Truncate text with ellipsis
 export const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text;
-  return `${text.substring(0, maxLength)}...`;
+  return `${text.slice(0, Math.max(0, maxLength))}...`;
 };
 
 // Clean HTML from text content
 export const stripHtml = (html: string): string => {
-  return html.replace(/<[^>]*>/g, '');
+  return html.replaceAll(/<[^>]*>/g, '');
 };

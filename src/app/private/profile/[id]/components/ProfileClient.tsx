@@ -77,6 +77,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         languages: languagesResponse.status === 'fulfilled' ? languagesResponse.value.data : [],
         education: educationResponse.status === 'fulfilled' ? educationResponse.value.data : [],
         notes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
+        projects: experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data.filter((item: IExperience) => item.title) : [],
         services: servicesResponse.status === 'fulfilled' ? servicesResponse.value.data : [],
         testimonials: testimonialsResponse.status === 'fulfilled' ? testimonialsResponse.value.data : [],
         connectionStatus: isOwnProfile

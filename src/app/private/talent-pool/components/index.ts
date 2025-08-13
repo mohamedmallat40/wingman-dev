@@ -47,4 +47,4 @@ export type {
 } from '../types';
 
 // Re-export utilities
-export * from '../utils/talent-utils';
+export * from '../utils/talent-utilities';
