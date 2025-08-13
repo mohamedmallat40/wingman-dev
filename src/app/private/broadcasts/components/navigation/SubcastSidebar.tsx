@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 import {
   Avatar,
@@ -19,6 +19,8 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+import { useTopics } from '../../hooks';
 
 interface Subcast {
   id: string;
@@ -43,6 +45,7 @@ interface Subcast {
     activeUsers: number;
   };
   tags?: string[];
+  key?: string | null; // Added key field from API
 }
 
 interface TrendingTopic {
@@ -287,11 +290,74 @@ export default function SubcastSidebar({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('popularity');
-  const [activeTab, setActiveTab] = useState('following');
-  const [subcasts, setSubcasts] = useState<Subcast[]>(ENHANCED_SUBCASTS);
+  const [activeTab, setActiveTab] = useState('all');
+  // Fetch topics from API
+  const { data: topicsData, isLoading: topicsLoading, error: topicsError } = useTopics();
+  const [subcasts, setSubcasts] = useState<Subcast[]>([]);
+
+  // Debug logging (can be removed later)
+  console.log('🔍 Debug Info - Topics loaded:', subcasts.length, 'Loading:', topicsLoading);
+
+  // Update subcasts when API data comes in
+  useEffect(() => {
+    console.log('📊 Topics data received:', topicsData);
+    console.log('📊 Is Array?:', Array.isArray(topicsData));
+    console.log('📊 Has data property?:', topicsData?.data);
+    
+    if (topicsData && Array.isArray(topicsData)) {
+      console.log('🔄 Transforming topics data:', topicsData);
+      // Transform API topics to match Subcast interface
+      const transformedTopics: Subcast[] = topicsData.map((topic: any) => ({
+        id: topic.id,
+        name: topic.title, // API uses 'title' not 'name'
+        description: topic.description,
+        icon: topic.icon,
+        followerCount: topic.followers_count || 0, // Will be added later
+        postCount: topic.broadcasts_count || 0, // Will be added later
+        isFollowing: false, // Will be determined by user's subscriptions
+        category: 'tech', // Default category since not provided
+        color: topic.background || topic.background_color || '#3B82F6', // Use background or fallback
+        isVerified: true, // Default to verified
+        trending: false, // Default to not trending
+        tags: [], // Default empty tags
+        key: topic.key // Store the key field if needed
+      }));
+      console.log('✅ Transformed topics:', transformedTopics);
+      setSubcasts(transformedTopics);
+    } else if (topicsData?.data && Array.isArray(topicsData.data)) {
+      // Handle case where response is wrapped in a data object
+      console.log('🔄 Transforming nested topics data:', topicsData.data);
+      const transformedTopics: Subcast[] = topicsData.data.map((topic: any) => ({
+        id: topic.id,
+        name: topic.title,
+        description: topic.description,
+        icon: topic.icon,
+        followerCount: topic.followers_count || 0,
+        postCount: topic.broadcasts_count || 0,
+        isFollowing: false,
+        category: 'tech',
+        color: topic.background || topic.background_color || '#3B82F6',
+        isVerified: true,
+        trending: false,
+        tags: [],
+        key: topic.key
+      }));
+      console.log('✅ Transformed topics:', transformedTopics);
+      setSubcasts(transformedTopics);
+    } else if (topicsData) {
+      console.log('⚠️  Topics data structure unexpected:', topicsData);
+    }
+  }, [topicsData]);
 
   // Filter and sort subcasts
   const filteredSubcasts = useMemo(() => {
+    console.log('🔍 Filtering subcasts:', {
+      totalSubcasts: subcasts.length,
+      searchQuery,
+      selectedCategory,
+      activeTab
+    });
+    
     let filtered = subcasts.filter(
       (subcast) =>
         subcast.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -311,9 +377,6 @@ export default function SubcastSidebar({
         break;
       case 'trending':
         filtered = filtered.filter(subcast => subcast.trending);
-        break;
-      case 'discover':
-        filtered = filtered.filter(subcast => !subcast.isFollowing);
         break;
       case 'all':
       default:
@@ -338,6 +401,7 @@ export default function SubcastSidebar({
         break;
     }
 
+    console.log('✅ Filtered result:', filtered.length, 'topics');
     return filtered;
   }, [subcasts, searchQuery, selectedCategory, sortBy, activeTab]);
 
@@ -377,6 +441,97 @@ export default function SubcastSidebar({
   const followingCount = subcasts.filter((s) => s.isFollowing).length;
   const categories = ['all', ...Array.from(new Set(subcasts.map(s => s.category)))];
 
+  // Show skeleton loading state
+  if (topicsLoading) {
+    return (
+      <div className={`flex h-full flex-col ${className}`}>
+        <Card className="border-default-200 h-full rounded-none border-r shadow-none">
+          <CardBody className="flex h-full flex-col p-4">
+            {/* Header Skeleton */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="bg-default-200 animate-pulse rounded-full p-2 w-8 h-8"></div>
+                <div>
+                  <div className="bg-default-200 animate-pulse h-4 w-16 rounded mb-1"></div>
+                  <div className="bg-default-200 animate-pulse h-3 w-20 rounded"></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Search Skeleton */}
+            <div className="mb-4">
+              <div className="bg-default-200 animate-pulse h-10 w-full rounded-lg"></div>
+            </div>
+
+            {/* Tabs Skeleton */}
+            <div className="mb-4">
+              <div className="flex gap-2">
+                <div className="bg-default-200 animate-pulse h-8 w-20 rounded-full"></div>
+                <div className="bg-default-200 animate-pulse h-8 w-16 rounded-full"></div>
+                <div className="bg-default-200 animate-pulse h-8 w-14 rounded-full"></div>
+              </div>
+            </div>
+
+            {/* Topics List Skeleton */}
+            <div className="flex-1 overflow-hidden">
+              <div className="space-y-3">
+                {[...Array(6)].map((_, index) => (
+                  <Card key={index} className="border-default-200 animate-pulse">
+                    <CardBody className="p-3">
+                      <div className="flex items-start gap-3">
+                        {/* Icon skeleton */}
+                        <div className="bg-default-200 rounded-lg w-10 h-10 flex-shrink-0"></div>
+                        
+                        <div className="flex-1 min-w-0">
+                          {/* Topic name skeleton */}
+                          <div className="bg-default-200 h-4 w-3/4 rounded mb-2"></div>
+                          
+                          {/* Description skeleton */}
+                          <div className="space-y-1">
+                            <div className="bg-default-200 h-3 w-full rounded"></div>
+                            <div className="bg-default-200 h-3 w-2/3 rounded"></div>
+                          </div>
+                          
+                          {/* Stats skeleton */}
+                          <div className="flex items-center gap-4 mt-2">
+                            <div className="bg-default-200 h-3 w-12 rounded"></div>
+                            <div className="bg-default-200 h-3 w-16 rounded"></div>
+                          </div>
+                        </div>
+
+                        {/* Follow button skeleton */}
+                        <div className="bg-default-200 h-8 w-16 rounded-full"></div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (topicsError) {
+    return (
+      <div className={`flex h-full flex-col ${className}`}>
+        <Card className="border-default-200 h-full rounded-none border-r shadow-none">
+          <CardBody className="flex h-full flex-col p-4">
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <Icon icon="solar:danger-circle-linear" className="h-8 w-8 text-danger mx-auto mb-2" />
+                <p className="text-foreground-500 text-sm">Failed to load topics</p>
+                <p className="text-foreground-400 text-xs mt-1">Please try again later</p>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className={`flex h-full flex-col ${className}`}>
       <Card className="border-default-200 h-full rounded-none border-r shadow-none">
@@ -410,10 +565,9 @@ export default function SubcastSidebar({
               cursor: "bg-primary"
             }}
           >
+            <Tab key="all" title="All" />
             <Tab key="following" title="Following" />
             <Tab key="trending" title="Trending" />
-            <Tab key="discover" title="Discover" />
-            <Tab key="all" title="All" />
           </Tabs>
 
           {/* Search and Filters */}
@@ -538,8 +692,7 @@ export default function SubcastSidebar({
                         ? 'border-primary/30 bg-primary/5 shadow-sm'
                         : 'border-default-200 hover:border-primary/50 hover:bg-primary/5 hover:shadow-lg'
                   }`}
-                  isPressable
-                  onPress={() => onSubcastSelect?.(subcast.id)}
+                  onClick={() => onSubcastSelect?.(subcast.id)}
                 >
                       <CardBody className="p-3">
                         <div className="flex items-start gap-3">
@@ -602,8 +755,11 @@ export default function SubcastSidebar({
                                   : 'bg-default-100 text-default-600 hover:bg-emerald-50 hover:text-emerald-600'
                               }`}
                               onPress={(e) => {
-                                e.stopPropagation();
+                                e?.stopPropagation?.();
                                 handleFollowToggle(subcast.id);
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
                               }}
                             >
                               {subcast.isFollowing ? 'Following' : 'Follow'}
@@ -645,12 +801,19 @@ export default function SubcastSidebar({
               </AnimatePresence>
             </div>
 
-            {filteredSubcasts.length === 0 && (
+            {filteredSubcasts.length === 0 && !topicsLoading && (
               <div className="py-8 text-center">
                 <div className="bg-default-100 mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full">
                   <Icon icon="solar:inbox-linear" className="text-default-400 h-6 w-6" />
                 </div>
-                <p className="text-sm text-foreground-500">No topics found</p>
+                <p className="text-sm text-foreground-500">
+                  {subcasts.length === 0 ? 'No topics available' : 'No topics match your filters'}
+                </p>
+                {subcasts.length === 0 && (
+                  <p className="text-xs text-foreground-400 mt-1">
+                    Topics will appear here once they're available
+                  </p>
+                )}
               </div>
             )}
           </div>

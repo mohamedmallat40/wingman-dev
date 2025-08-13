@@ -34,5 +34,17 @@ export const API_ROUTES = {
   },
   upload: {
     single: '/upload'
+  },
+  broadcasts: {
+    posts: '/broadcasts/posts',
+    create: '/broadcasts/posts',
+    like: '/broadcasts/posts',
+    bookmark: '/broadcasts/posts',
+    comment: '/broadcasts/posts',
+    share: '/broadcasts/posts',
+    feed: '/broadcasts/feed',
+    trending: '/broadcasts/trending',
+    search: '/broadcasts/search',
+    topics: '/broadcast/topics'
   }
 };

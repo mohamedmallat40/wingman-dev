@@ -29,7 +29,7 @@ export interface BroadcastPost {
   isLiked?: boolean;
   isBookmarked?: boolean;
   category: string;
-  subcast?: {
+  topic?: {
     id: string;
     name: string;
     icon: string;

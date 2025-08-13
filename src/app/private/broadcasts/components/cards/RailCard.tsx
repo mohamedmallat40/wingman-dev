@@ -1,30 +1,26 @@
-"use client"
+'use client';
 
-import type { Topic } from "../../types"
-import { cn } from "@/lib/utils"
-import { motion } from "framer-motion"
-import { getTopicBackgroundImage } from "../../utils"
+import type { Topic } from '../../types';
+
+import { motion } from 'framer-motion';
+
+import { cn } from '@/lib/utils';
+
+import { getTopicBackgroundImage } from '../../utils';
 
 type RailCardProps = {
-  topic: Topic
-  isSelected: boolean
-  onToggle: (id: string) => void
-  width: number
-  height: number
-  gap: number
-}
+  topic: Topic;
+  isSelected: boolean;
+  onToggle: (id: string) => void;
+  width: number;
+  height: number;
+  gap: number;
+};
 
-export function RailCard({
-  topic,
-  isSelected,
-  onToggle,
-  width,
-  height,
-  gap,
-}: RailCardProps) {
+export function RailCard({ topic, isSelected, onToggle, width, height, gap }: RailCardProps) {
   return (
     <motion.div
-      className="flex-none"
+      className='flex-none'
       style={{ width, height, marginRight: gap }}
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
@@ -32,37 +28,37 @@ export function RailCard({
       <div
         onClick={() => onToggle(topic.id)}
         className={cn(
-          "relative h-full w-full cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-300 shadow-md",
+          'relative h-full w-full cursor-pointer overflow-hidden rounded-lg border-2 shadow-md transition-all duration-300',
           isSelected
-            ? "border-primary ring-2 ring-primary/30 shadow-lg transform scale-105"
-            : "border-transparent hover:border-foreground/30 hover:shadow-lg"
+            ? 'border-primary ring-primary/30 scale-105 transform shadow-lg ring-2'
+            : 'hover:border-foreground/30 border-transparent hover:shadow-lg'
         )}
       >
         <div
-          className="h-full w-full bg-cover bg-center transition-transform duration-300 hover:scale-105"
+          className='h-full w-full bg-cover bg-center transition-transform duration-300 hover:scale-105'
           style={{ backgroundImage: `url(${getTopicBackgroundImage(topic.id)})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <h3 className="text-sm font-semibold text-white mb-1">{topic.name}</h3>
+        <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent' />
+        <div className='absolute right-0 bottom-0 left-0 p-3'>
+          <h3 className='mb-1 text-sm font-semibold text-white'>{topic.name}</h3>
           {topic.featured && (
-            <div className="absolute top-2 right-2">
-              <div className="h-2 w-2 rounded-full bg-secondary shadow-sm ring-1 ring-white/50" />
+            <div className='absolute top-2 right-2'>
+              <div className='bg-secondary h-2 w-2 rounded-full shadow-sm ring-1 ring-white/50' />
             </div>
           )}
         </div>
         {isSelected && (
-          <div className="absolute top-2 left-2 h-6 w-6 rounded-full bg-primary shadow-lg flex items-center justify-center ring-2 ring-white">
-            <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+          <div className='bg-primary absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-full shadow-lg ring-2 ring-white'>
+            <svg className='h-3 w-3 text-white' fill='currentColor' viewBox='0 0 20 20'>
               <path
-                fillRule="evenodd"
-                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                clipRule="evenodd"
+                fillRule='evenodd'
+                d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
+                clipRule='evenodd'
               />
             </svg>
           </div>
         )}
       </div>
     </motion.div>
-  )
+  );
 }

@@ -1,5 +1,7 @@
 # dependencies
 /node_modules
+/database-seeds
+/backend
 /.pnp
 .pnp.js
 .claude

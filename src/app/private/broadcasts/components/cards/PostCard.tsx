@@ -25,6 +25,8 @@ interface PostCardProps {
   onBookmark: (postId: string) => void;
   onComment: (postId: string) => void;
   onShare: (postId: string) => void;
+  onClick?: (postId: string) => void;
+  isLoading?: boolean;
   className?: string;
 }
 
@@ -34,6 +36,8 @@ const PostCard: React.FC<PostCardProps> = ({
   onBookmark,
   onComment,
   onShare,
+  onClick,
+  isLoading = false,
   className = ''
 }) => {
   const t = useTranslations('broadcasts');
@@ -112,13 +116,13 @@ const PostCard: React.FC<PostCardProps> = ({
                 {post.type}
               </Chip>
               
-              {post.subcast && (
+              {post.topic && (
                 <Chip
                   size='sm'
                   variant='bordered'
-                  startContent={<Icon icon={post.subcast.icon} className='h-3 w-3' />}
+                  startContent={<Icon icon={post.topic.icon} className='h-3 w-3' />}
                 >
-                  {post.subcast.name}
+                  {post.topic.name}
                 </Chip>
               )}
               
