@@ -1,6 +1,7 @@
 export { PersonalInfoForm } from './PersonalInfoForm';
-export { SkillsForm } from './SkillsForm';
 export { ExperienceForm } from './ExperienceForm';
 export { EducationForm } from './EducationForm';
-export { LanguagesForm } from './LanguagesForm';
+export { SkillsForm } from './SkillsForm';
+export { EnhancedLanguagesForm } from './EnhancedLanguagesForm';
 export { CertificationsForm } from './CertificationsForm';
+export { SocialAccountsForm } from './SocialAccountsForm';

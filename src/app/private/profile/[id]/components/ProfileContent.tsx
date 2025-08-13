@@ -3,8 +3,6 @@
 import React, { useState } from 'react';
 
 import {
-  Avatar,
-  Badge,
   Button,
   Card,
   CardBody,
@@ -17,14 +15,12 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Progress,
   Select,
   SelectItem,
   Textarea
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
 
 import { getSkillIcon } from '@/app/private/talent-pool/utils/skill-icons';
 import {
@@ -46,7 +42,6 @@ import {
 import { CertificationsForm } from './forms/CertificationsForm';
 import { EducationForm } from './forms/EducationForm';
 import { ExperienceForm } from './forms/ExperienceForm';
-import { LanguagesForm } from './forms/LanguagesForm';
 import { EnhancedLanguagesForm } from './forms/EnhancedLanguagesForm';
 import { ActionButtons } from './ActionButtons';
 import { SocialAccountCard } from './cards/SocialAccountCard';
@@ -74,7 +69,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   isOwnProfile
 }) => {
   const t = useTranslations();
-  const router = useRouter();
 
   // Modal states for all forms
   const [isPersonalInfoModalOpen, setIsPersonalInfoModalOpen] = useState(false);
@@ -115,7 +109,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   // Personal Info handlers
   const handleEditAbout = () => {
-    console.log('Opening personal info modal');
     setIsPersonalInfoModalOpen(true);
   };
 
@@ -124,13 +117,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   };
 
   const handleSavePersonalInfo = () => {
-    console.log('Saving personal info:', localUser);
     setIsPersonalInfoModalOpen(false);
   };
 
   // Skills handlers
   const handleEditSkills = () => {
-    console.log('Opening skills modal for adding new skills');
     // Ensure we start with current skills
     setLocalSkills(user.skills || []);
     setIsSkillsModalOpen(true);
@@ -154,7 +145,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   };
 
   const handleSaveSkills = () => {
-    console.log('Saving skills:', localSkills);
     setIsSkillsModalOpen(false);
   };
 
@@ -165,7 +155,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
       setEditingLanguage({item: language, isOpen: true});
     } else {
       // Add new language directly
-      console.log('Adding new language directly');
       const newLanguage: Language = {
         id: `temp-${Date.now()}`,
         name: '',
@@ -211,19 +200,16 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   };
 
   const handleSaveLanguages = () => {
-    console.log('Saving languages:', localLanguages);
     setIsLanguagesModalOpen(false);
   };
 
   const handleSaveIndividualLanguage = (updatedLanguage: Language) => {
-    console.log('Saving individual language:', updatedLanguage);
     // Here you would save to your backend
     setEditingLanguage({item: null, isOpen: false});
   };
 
   // Certifications handlers
   const handleEditCertifications = () => {
-    console.log('Opening certifications modal');
     setIsCertificationsModalOpen(true);
   };
 
@@ -248,13 +234,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   };
 
   const handleSaveCertifications = () => {
-    console.log('Saving certifications:', localCertifications);
     setIsCertificationsModalOpen(false);
   };
 
   // Social Accounts handlers
   const handleEditSocialAccounts = () => {
-    console.log('Opening social accounts modal for adding new account');
     // Ensure we start with current social accounts
     setLocalSocialAccounts(user.socialAccounts || []);
     setIsSocialAccountsModalOpen(true);
@@ -281,13 +265,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
   };
 
   const handleSaveSocialAccounts = () => {
-    console.log('Saving social accounts:', localSocialAccounts);
     setIsSocialAccountsModalOpen(false);
   };
 
   const handleEditSocialAccount = (account: SocialAccount) => {
     // Find and edit specific social account
-    console.log('Editing social account:', account);
     // Here you would open the edit form for the specific account
     setIsSocialAccountsModalOpen(true);
   };
@@ -296,13 +278,11 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
     const confirmed = confirm('Are you sure you want to delete this social account?');
     if (confirmed) {
       setLocalSocialAccounts(prev => prev.filter(account => account.id !== accountId));
-      console.log('Social account deleted:', accountId);
     }
   };
 
   // Experience handlers
   const handleAddExperience = () => {
-    console.log('Adding new experience directly');
     // Create and add new empty experience
     const newExperience: Experience = {
       id: `temp-${Date.now()}`,
@@ -351,25 +331,21 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   const handleSaveExperiences = () => {
     // Here you would save to your backend
-    console.log('Saving experiences:', localExperiences);
     setIsExperienceModalOpen(false);
   };
 
   const handleSaveIndividualExperience = (updatedExperience: Experience) => {
-    console.log('Saving individual experience:', updatedExperience);
     // Here you would save to your backend
     setEditingExperience({item: null, isOpen: false});
   };
 
   const handleSaveIndividualEducation = (updatedEducation: Education) => {
-    console.log('Saving individual education:', updatedEducation);
     // Here you would save to your backend
     setEditingEducation({item: null, isOpen: false});
   };
 
   // Education handlers
   const handleAddEducation = () => {
-    console.log('Adding new education directly');
     // Create and add new empty education
     const newEducation: Education = {
       id: `temp-${Date.now()}`,
@@ -418,7 +394,6 @@ const ProfileContent: React.FC<ProfileContentProps> = ({
 
   const handleSaveEducation = () => {
     // Here you would save to your backend
-    console.log('Saving education:', localEducation);
     setIsEducationModalOpen(false);
   };
 
