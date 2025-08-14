@@ -1,11 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
+
 import { useQueryClient } from '@tanstack/react-query';
 
 import { type BroadcastPost } from '../types';
 
 // ===== TYPES =====
 interface RealtimeEvent {
-  type: 'new_post' | 'post_updated' | 'post_deleted' | 'new_like' | 'new_comment' | 'new_share' | 'user_online' | 'user_offline';
+  type:
+    | 'new_post'
+    | 'post_updated'
+    | 'post_deleted'
+    | 'new_like'
+    | 'new_comment'
+    | 'new_share'
+    | 'user_online'
+    | 'user_offline';
   data: any;
   timestamp: string;
 }
@@ -27,16 +36,12 @@ interface RealtimeOptions {
  * Hook for managing WebSocket connection for real-time updates
  */
 export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
-  const {
-    autoReconnect = true,
-    reconnectInterval = 3000,
-    maxReconnectAttempts = 5
-  } = options;
+  const { autoReconnect = true, reconnectInterval = 3000, maxReconnectAttempts = 5 } = options;
 
   const [isConnected, setIsConnected] = useState(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [activeUsers, setActiveUsers] = useState<number>(0);
-  
+
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttemptsRef = useRef(0);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -46,11 +51,10 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
     try {
       const token = localStorage.getItem('token');
       const wsUrl = `${process.env.NEXT_PUBLIC_WS_BASE_URL}/broadcasts?token=${token}`;
-      
+
       wsRef.current = new WebSocket(wsUrl);
 
       wsRef.current.onopen = () => {
-        console.log('WebSocket connected');
         setIsConnected(true);
         setConnectionError(null);
         reconnectAttemptsRef.current = 0;
@@ -61,30 +65,25 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
           const message: WebSocketMessage = JSON.parse(event.data);
           handleRealtimeEvent(message);
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          // Handle WebSocket message parsing error
         }
       };
 
       wsRef.current.onclose = (event) => {
-        console.log('WebSocket disconnected:', event.code, event.reason);
         setIsConnected(false);
-        
+
         if (autoReconnect && reconnectAttemptsRef.current < maxReconnectAttempts) {
           reconnectAttemptsRef.current++;
           reconnectTimeoutRef.current = setTimeout(() => {
-            console.log(`Reconnecting... Attempt ${reconnectAttemptsRef.current}`);
             connect();
           }, reconnectInterval);
         }
       };
 
       wsRef.current.onerror = (error) => {
-        console.error('WebSocket error:', error);
         setConnectionError('Connection failed');
       };
-
     } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
       setConnectionError('Failed to connect');
     }
   };
@@ -93,11 +92,11 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
     }
-    
+
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       wsRef.current.close();
     }
-    
+
     setIsConnected(false);
   };
 
@@ -137,7 +136,7 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
         // Handle user presence updates
         break;
       default:
-        console.log('Unknown realtime event:', event, data);
+        // Unknown realtime event - could be logged in development
     }
   };
 
@@ -145,7 +144,7 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
     // Add new post to the top of the feed
     queryClient.setQueryData(['broadcasts', 'feed'], (oldData: any) => {
       if (!oldData || !oldData.pages) return oldData;
-      
+
       const newData = { ...oldData };
       newData.pages[0].data.unshift(post);
       return newData;
@@ -160,15 +159,15 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
   const handlePostUpdated = (updatedPost: BroadcastPost) => {
     // Update specific post in cache
     queryClient.setQueryData(['broadcasts', 'post', updatedPost.id], updatedPost);
-    
+
     // Update feed data
     queryClient.setQueryData(['broadcasts', 'feed'], (oldData: any) => {
       if (!oldData || !oldData.pages) return oldData;
-      
+
       const newData = { ...oldData };
       newData.pages = newData.pages.map((page: any) => ({
         ...page,
-        data: page.data.map((post: BroadcastPost) => 
+        data: page.data.map((post: BroadcastPost) =>
           post.id === updatedPost.id ? updatedPost : post
         )
       }));
@@ -179,11 +178,11 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
   const handlePostDeleted = (postId: string) => {
     // Remove post from cache
     queryClient.removeQueries({ queryKey: ['broadcasts', 'post', postId] });
-    
+
     // Remove from feed
     queryClient.setQueryData(['broadcasts', 'feed'], (oldData: any) => {
       if (!oldData || !oldData.pages) return oldData;
-      
+
       const newData = { ...oldData };
       newData.pages = newData.pages.map((page: any) => ({
         ...page,
@@ -195,47 +194,56 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
 
   const handleNewLike = (data: { postId: string; likesCount: number }) => {
     // Update engagement count
-    queryClient.setQueryData(['broadcasts', 'post', data.postId], (oldPost: BroadcastPost | undefined) => {
-      if (!oldPost) return oldPost;
-      return {
-        ...oldPost,
-        engagement: {
-          ...oldPost.engagement,
-          likes: data.likesCount
-        }
-      };
-    });
+    queryClient.setQueryData(
+      ['broadcasts', 'post', data.postId],
+      (oldPost: BroadcastPost | undefined) => {
+        if (!oldPost) return oldPost;
+        return {
+          ...oldPost,
+          engagement: {
+            ...oldPost.engagement,
+            likes: data.likesCount
+          }
+        };
+      }
+    );
   };
 
   const handleNewComment = (data: { postId: string; commentsCount: number }) => {
     // Update comment count
-    queryClient.setQueryData(['broadcasts', 'post', data.postId], (oldPost: BroadcastPost | undefined) => {
-      if (!oldPost) return oldPost;
-      return {
-        ...oldPost,
-        engagement: {
-          ...oldPost.engagement,
-          comments: data.commentsCount
-        }
-      };
-    });
-    
+    queryClient.setQueryData(
+      ['broadcasts', 'post', data.postId],
+      (oldPost: BroadcastPost | undefined) => {
+        if (!oldPost) return oldPost;
+        return {
+          ...oldPost,
+          engagement: {
+            ...oldPost.engagement,
+            comments: data.commentsCount
+          }
+        };
+      }
+    );
+
     // Invalidate comments for this post
     queryClient.invalidateQueries({ queryKey: ['broadcasts', 'comments', data.postId] });
   };
 
   const handleNewShare = (data: { postId: string; sharesCount: number }) => {
     // Update share count
-    queryClient.setQueryData(['broadcasts', 'post', data.postId], (oldPost: BroadcastPost | undefined) => {
-      if (!oldPost) return oldPost;
-      return {
-        ...oldPost,
-        engagement: {
-          ...oldPost.engagement,
-          shares: data.sharesCount
-        }
-      };
-    });
+    queryClient.setQueryData(
+      ['broadcasts', 'post', data.postId],
+      (oldPost: BroadcastPost | undefined) => {
+        if (!oldPost) return oldPost;
+        return {
+          ...oldPost,
+          engagement: {
+            ...oldPost.engagement,
+            shares: data.sharesCount
+          }
+        };
+      }
+    );
   };
 
   // Subscribe to specific events
@@ -269,7 +277,7 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
 
   useEffect(() => {
     connect();
-    
+
     return () => {
       disconnect();
     };
@@ -297,7 +305,7 @@ export const useRealtimeBroadcasts = (options: RealtimeOptions = {}) => {
 export const useRealtimeSSE = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [activeUsers, setActiveUsers] = useState<number>(0);
-  
+
   const eventSourceRef = useRef<EventSource | null>(null);
   const queryClient = useQueryClient();
 
@@ -305,11 +313,11 @@ export const useRealtimeSSE = () => {
     try {
       const token = localStorage.getItem('token');
       const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/broadcasts/events?token=${token}`;
-      
+
       eventSourceRef.current = new EventSource(url);
 
       eventSourceRef.current.onopen = () => {
-        console.log('SSE connected');
+        // SSE connected
         setIsConnected(true);
       };
 
@@ -318,17 +326,15 @@ export const useRealtimeSSE = () => {
           const data = JSON.parse(event.data);
           handleRealtimeEvent(data);
         } catch (error) {
-          console.error('Failed to parse SSE message:', error);
+          // Handle SSE message parsing error
         }
       };
 
       eventSourceRef.current.onerror = (error) => {
-        console.error('SSE error:', error);
         setIsConnected(false);
       };
-
     } catch (error) {
-      console.error('Failed to create SSE connection:', error);
+      // Handle SSE connection error
     }
   };
 
@@ -352,13 +358,13 @@ export const useRealtimeSSE = () => {
         setActiveUsers(data.count);
         break;
       default:
-        console.log('Unknown SSE event:', data.type, data);
+        // Unknown SSE event - could be logged in development
     }
   };
 
   useEffect(() => {
     connect();
-    
+
     return () => {
       disconnect();
     };

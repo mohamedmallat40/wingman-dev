@@ -13,19 +13,9 @@ export interface CreatePostData {
   priority?: 'low' | 'normal' | 'high';
   topicId?: string;
   media?: {
-    type: 'video' | 'image' | 'gallery' | 'link';
+    type: 'video' | 'image' | 'gallery';
     files?: File[];
     urls?: string[];
-    linkData?: {
-      url: string;
-      title: string;
-      description: string;
-    };
-  };
-  poll?: {
-    question: string;
-    options: string[];
-    duration?: number; // in hours
   };
 }
 
@@ -72,7 +62,7 @@ export interface CommentData {
  */
 export const getBroadcastFeed = async (params: FeedParams = {}) => {
   const { page = 1, limit = 10, topicId, sortBy = 'newest', category } = params;
-  
+
   const queryParams = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
@@ -109,45 +99,42 @@ export const createPost = async (postData: CreatePostData) => {
   // If there are files to upload, use FormData
   if (postData.media?.files && postData.media.files.length > 0) {
     const formData = new FormData();
-    
+
     // Add basic post data
     formData.append('type', postData.type);
     formData.append('title', postData.title);
     formData.append('content', postData.content);
     formData.append('category', postData.category);
-    
+
     if (postData.tags) {
       formData.append('tags', JSON.stringify(postData.tags));
     }
-    
+
     if (postData.priority) {
       formData.append('priority', postData.priority);
     }
-    
+
     if (postData.topicId) {
       formData.append('topicId', postData.topicId);
     }
-    
-    if (postData.poll) {
-      formData.append('poll', JSON.stringify(postData.poll));
-    }
-    
+
+
     // Add media files
     postData.media.files.forEach((file, index) => {
       formData.append(`media_${index}`, file);
     });
-    
+
     formData.append('mediaType', postData.media.type);
-    
+
     const response = await wingManApi.post(API_ROUTES.broadcasts.create, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    
+
     return response.data;
   }
-  
+
   // For posts without file uploads
   const response = await wingManApi.post(API_ROUTES.broadcasts.create, postData);
   return response.data;
@@ -198,8 +185,14 @@ export const togglePostBookmark = async (postId: string) => {
 /**
  * Share a post
  */
-export const sharePost = async (postId: string, shareData?: { message?: string; platform?: string }) => {
-  const response = await wingManApi.post(`${API_ROUTES.broadcasts.share}/${postId}/share`, shareData);
+export const sharePost = async (
+  postId: string,
+  shareData?: { message?: string; platform?: string }
+) => {
+  const response = await wingManApi.post(
+    `${API_ROUTES.broadcasts.share}/${postId}/share`,
+    shareData
+  );
   return response.data;
 };
 
@@ -264,10 +257,7 @@ export const voteComment = async (commentId: string, voteType: 'up' | 'down') =>
  * Get all topics (categories/channels)
  */
 export const getTopics = async () => {
-  console.log('📡 Making API call to:', API_ROUTES.broadcasts.topics);
   const response = await wingManApi.get(API_ROUTES.broadcasts.topics);
-  console.log('📥 API Response:', response);
-  console.log('📦 Response data:', response.data);
   return response.data;
 };
 

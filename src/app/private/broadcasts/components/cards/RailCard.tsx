@@ -6,7 +6,10 @@ import { motion } from 'framer-motion';
 
 import { cn } from '@/lib/utils';
 
-import { getTopicBackgroundImage } from '../../utils';
+// Simple utility function
+const getTopicBackgroundImage = (topicId: string) => {
+  return `https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=400&h=200&fit=crop&crop=center`;
+};
 
 type RailCardProps = {
   topic: Topic;

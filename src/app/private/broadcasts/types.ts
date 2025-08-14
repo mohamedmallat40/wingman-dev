@@ -1,6 +1,6 @@
 export interface BroadcastPost {
   id: string;
-  type: 'article' | 'video' | 'image' | 'poll' | 'quote' | 'gallery' | 'link';
+  type: 'text';
   title: string;
   content: string;
   author: {
@@ -19,7 +19,7 @@ export interface BroadcastPost {
     views: number;
   };
   media?: {
-    type: 'video' | 'image' | 'gallery' | 'link';
+    type: 'video' | 'image' | 'gallery';
     url: string | string[];
     thumbnail?: string;
     duration?: string;
@@ -38,27 +38,7 @@ export interface BroadcastPost {
   readTime?: number;
   isTrending?: boolean;
   shareUrl?: string;
-  poll?: {
-    question: string;
-    options: {
-      id: string;
-      text: string;
-      votes: number;
-      percentage: number;
-    }[];
-    totalVotes: number;
-    userVoted?: string;
-    endsAt?: string;
-  };
-  link?: {
-    url: string;
-    title: string;
-    description: string;
-    image: string;
-    domain: string;
-  };
 }
-
 
 export interface Comment {
   id: string;
@@ -89,3 +69,12 @@ export interface PostInteraction {
   timestamp: string;
 }
 
+export interface Topic {
+  id: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  postCount?: number;
+  isSubscribed?: boolean;
+}

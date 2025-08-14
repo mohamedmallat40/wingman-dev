@@ -7,21 +7,21 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Checkbox,
+  CheckboxGroup,
+  Chip,
+  DatePicker,
+  Divider,
   Input,
   Select,
-  SelectItem,
-  Chip,
-  Divider,
-  DatePicker,
-  Checkbox,
-  CheckboxGroup
+  SelectItem
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 
-import { type BroadcastPost } from '../../types';
-import { useBroadcastStore, useActiveFiltersCount } from '../../store/useBroadcastStore';
 import { useTopics } from '../../hooks';
+import { useActiveFiltersCount, useBroadcastStore } from '../../store/useBroadcastStore';
+import { type BroadcastPost } from '../../types';
 
 interface BroadcastFiltersProps {
   isOpen: boolean;
@@ -29,11 +29,7 @@ interface BroadcastFiltersProps {
   className?: string;
 }
 
-const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
-  isOpen,
-  onClose,
-  className = ''
-}) => {
+const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, className = '' }) => {
   const t = useTranslations('broadcasts');
   const {
     filters,
@@ -45,10 +41,10 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
     setPostTypes,
     clearFilters
   } = useBroadcastStore();
-  
+
   const { data: topics } = useTopics();
   const activeFiltersCount = useActiveFiltersCount();
-  
+
   const [localSearchQuery, setLocalSearchQuery] = useState(filters.searchQuery);
 
   const categories = [
@@ -108,12 +104,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
             </Chip>
           )}
         </div>
-        <Button
-          isIconOnly
-          variant='light'
-          size='sm'
-          onPress={onClose}
-        >
+        <Button isIconOnly variant='light' size='sm' onPress={onClose}>
           <Icon icon='solar:close-linear' className='h-4 w-4' />
         </Button>
       </CardHeader>
@@ -130,12 +121,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
               onKeyDown={handleKeyPress}
               startContent={<Icon icon='solar:magnifer-linear' className='h-4 w-4' />}
             />
-            <Button
-              color='primary'
-              variant='flat'
-              onPress={handleSearchSubmit}
-              isIconOnly
-            >
+            <Button color='primary' variant='flat' onPress={handleSearchSubmit} isIconOnly>
               <Icon icon='solar:arrow-right-linear' className='h-4 w-4' />
             </Button>
           </div>
@@ -203,9 +189,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
             placeholder='Select category'
           >
             {categories.map((category) => (
-              <SelectItem key={category}>
-                {category}
-              </SelectItem>
+              <SelectItem key={category}>{category}</SelectItem>
             ))}
           </Select>
         </div>
@@ -224,14 +208,14 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
             placeholder='Select topic'
             isLoading={!topics || (!Array.isArray(topics) && !topics?.data)}
           >
-            {((Array.isArray(topics) ? topics : topics?.data)?.map((topic: any) => (
+            {(Array.isArray(topics) ? topics : topics?.data)?.map((topic: any) => (
               <SelectItem
                 key={topic.id}
                 startContent={<Icon icon={topic.icon} className='h-4 w-4' />}
               >
                 {topic.title || topic.name}
               </SelectItem>
-            )) || [])}
+            )) || []}
           </Select>
         </div>
 
@@ -244,7 +228,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
             <DatePicker
               label='From'
               value={filters.dateRange?.from}
-              onChange={(date) => 
+              onChange={(date) =>
                 setDateRange({
                   from: date,
                   to: filters.dateRange?.to || null
@@ -254,7 +238,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
             <DatePicker
               label='To'
               value={filters.dateRange?.to}
-              onChange={(date) => 
+              onChange={(date) =>
                 setDateRange({
                   from: filters.dateRange?.from || null,
                   to: date
@@ -277,11 +261,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
           >
             Clear All
           </Button>
-          <Button
-            color='primary'
-            onPress={onClose}
-            fullWidth
-          >
+          <Button color='primary' onPress={onClose} fullWidth>
             Apply
           </Button>
         </div>

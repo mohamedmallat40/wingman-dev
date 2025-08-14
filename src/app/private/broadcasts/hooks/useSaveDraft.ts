@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
+
 // import { toast } from '@heroui/toast'; // Commented out for now
 
 import { saveDraft } from '../services/broadcast.service';
@@ -21,16 +22,10 @@ export const useSaveDraft = () => {
   return useMutation({
     mutationFn: (draftData: DraftData) => saveDraft(draftData),
     onSuccess: (data) => {
-      // Show success message
-      console.log('Success:', t('success.draftSaved'));
-      
-      console.log('Draft saved successfully:', data);
+      // Success handled by UI components
     },
     onError: (error: any) => {
-      console.error('Failed to save draft:', error);
-      
-      // Show error message
-      console.error('Error:', t('errors.draftSaveFailed'));
+      // Error handled by UI components
     }
   });
 };

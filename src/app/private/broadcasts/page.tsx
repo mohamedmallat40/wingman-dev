@@ -40,7 +40,7 @@ export default function BroadcastsPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const handleTopicToggle = (topicId: string) => {
-    console.log('Toggle topic:', topicId);
+    // Handle topic toggle logic here
   };
 
   const handleTopicSelect = (topicId: string | null) => {
@@ -57,12 +57,12 @@ export default function BroadcastsPage() {
       await createPost.mutateAsync(postData);
       closeContentCreator();
     } catch (error) {
-      console.error('Failed to publish post:', error);
+      // Post publish error is handled by the mutation's onError
     }
   };
 
   const handleSaveDraft = (draftData: any) => {
-    console.log('Saved draft:', draftData);
+    // Handle draft saving logic here
   };
 
   return (
@@ -90,7 +90,7 @@ export default function BroadcastsPage() {
               startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
               onPress={() => setShowFilters(!showFilters)}
             >
-              Filters
+              {t('feed.filterPlaceholder.sort')}
             </Button>
 
             {/* Create Post Button */}
@@ -101,7 +101,7 @@ export default function BroadcastsPage() {
               onPress={handleCreatePost}
               isLoading={createPost.isPending}
             >
-              Create Post
+              {t('feed.createPost')}
             </Button>
           </div>
         }
@@ -143,7 +143,7 @@ export default function BroadcastsPage() {
                     onPress={handleCreatePost}
                     className='justify-start border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100'
                   >
-                    Create Post
+                    {t('feed.createPost')}
                   </Button>
                   <Button
                     variant='flat'

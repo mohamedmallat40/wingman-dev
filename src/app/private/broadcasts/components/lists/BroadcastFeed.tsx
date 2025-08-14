@@ -183,7 +183,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
                 onLike={() => handlePostLike(post.id)}
                 onBookmark={() => handlePostBookmark(post.id)}
                 onComment={() => handlePostClick(post.id)}
-                onShare={() => console.log('Share:', post.id)}
+                onShare={() => {/* Share functionality would be implemented here */}}
                 onClick={() => handlePostClick(post.id)}
                 isLoading={likePost.isPending || bookmarkPost.isPending}
               />

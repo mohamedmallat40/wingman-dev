@@ -2,22 +2,30 @@
 
 import React, { useState } from 'react';
 
-import { 
-  Card, 
-  CardBody, 
-  CardHeader,
-  Button, 
-  Avatar, 
-  Chip,
-  Tooltip,
-  Divider
-} from '@heroui/react';
+import { Avatar, Button, Card, CardBody, CardHeader, Chip, Divider, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { type BroadcastPost } from '../../types';
-import { formatTimeAgo, formatEngagementCount } from '../../utils/broadcast-utils';
+
+// Utility functions
+const formatTimeAgo = (timestamp: string): string => {
+  const now = new Date();
+  const postTime = new Date(timestamp);
+  const diffInSeconds = Math.floor((now.getTime() - postTime.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return 'just now';
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+  return `${Math.floor(diffInSeconds / 86400)}d ago`;
+};
+
+const formatEngagementCount = (count: number): string => {
+  if (count < 1000) return count.toString();
+  if (count < 1000000) return `${(count / 1000).toFixed(1)}K`;
+  return `${(count / 1000000).toFixed(1)}M`;
+};
 
 interface PostCardProps {
   post: BroadcastPost;
@@ -44,38 +52,55 @@ const PostCard: React.FC<PostCardProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   const shouldTruncate = post.content.length > 280;
-  const displayContent = isExpanded || !shouldTruncate 
-    ? post.content 
-    : `${post.content.substring(0, 280)}...`;
+  const displayContent =
+    isExpanded || !shouldTruncate ? post.content : `${post.content.substring(0, 280)}...`;
 
   const getPostIcon = () => {
     switch (post.type) {
-      case 'article': return 'solar:document-text-linear';
-      case 'video': return 'solar:videocamera-linear';
-      case 'image': return 'solar:camera-linear';
-      case 'poll': return 'solar:chart-2-linear';
-      case 'quote': return 'solar:quote-up-linear';
-      case 'gallery': return 'solar:gallery-linear';
-      case 'link': return 'solar:link-linear';
-      default: return 'solar:document-linear';
+      case 'article':
+        return 'solar:document-text-linear';
+      case 'video':
+        return 'solar:videocamera-linear';
+      case 'image':
+        return 'solar:camera-linear';
+      case 'poll':
+        return 'solar:chart-2-linear';
+      case 'quote':
+        return 'solar:quote-up-linear';
+      case 'gallery':
+        return 'solar:gallery-linear';
+      case 'link':
+        return 'solar:link-linear';
+      default:
+        return 'solar:document-linear';
     }
   };
 
   const getPostTypeColor = () => {
     switch (post.type) {
-      case 'article': return 'primary';
-      case 'video': return 'secondary';
-      case 'image': return 'success';
-      case 'poll': return 'warning';
-      case 'quote': return 'default';
-      case 'gallery': return 'success';
-      case 'link': return 'primary';
-      default: return 'default';
+      case 'article':
+        return 'primary';
+      case 'video':
+        return 'secondary';
+      case 'image':
+        return 'success';
+      case 'poll':
+        return 'warning';
+      case 'quote':
+        return 'default';
+      case 'gallery':
+        return 'success';
+      case 'link':
+        return 'primary';
+      default:
+        return 'default';
     }
   };
 
   return (
-    <Card className={`border-divider/50 shadow-sm transition-all duration-200 hover:shadow-md ${className}`}>
+    <Card
+      className={`border-divider/50 shadow-sm transition-all duration-200 hover:shadow-md ${className}`}
+    >
       <CardHeader className='pb-3'>
         <div className='flex w-full items-start gap-3'>
           {/* Author Avatar */}
@@ -87,7 +112,7 @@ const PostCard: React.FC<PostCardProps> = ({
               className='ring-primary/20 ring-offset-background ring-2 ring-offset-2'
             />
             {post.author.verified && (
-              <div className='bg-primary absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white'>
+              <div className='bg-primary absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white'>
                 <Icon icon='solar:verified-check-bold' className='h-3 w-3 text-white' />
               </div>
             )}
@@ -96,16 +121,12 @@ const PostCard: React.FC<PostCardProps> = ({
           {/* Author Info & Post Metadata */}
           <div className='min-w-0 flex-1'>
             <div className='flex flex-wrap items-center gap-2'>
-              <h3 className='text-foreground truncate font-semibold'>
-                {post.author.name}
-              </h3>
+              <h3 className='text-foreground truncate font-semibold'>{post.author.name}</h3>
               <span className='text-foreground-500'>@{post.author.handle}</span>
               <span className='text-foreground-400'>·</span>
-              <time className='text-foreground-500 text-sm'>
-                {formatTimeAgo(post.timestamp)}
-              </time>
+              <time className='text-foreground-500 text-sm'>{formatTimeAgo(post.timestamp)}</time>
             </div>
-            
+
             <div className='mt-1 flex flex-wrap items-center gap-2'>
               <Chip
                 size='sm'
@@ -115,7 +136,7 @@ const PostCard: React.FC<PostCardProps> = ({
               >
                 {post.type}
               </Chip>
-              
+
               {post.topic && (
                 <Chip
                   size='sm'
@@ -125,7 +146,7 @@ const PostCard: React.FC<PostCardProps> = ({
                   {post.topic.name}
                 </Chip>
               )}
-              
+
               {post.isTrending && (
                 <Chip
                   size='sm'
@@ -150,9 +171,9 @@ const PostCard: React.FC<PostCardProps> = ({
                 onPress={() => onBookmark(post.id)}
                 className='min-w-unit-8 h-unit-8'
               >
-                <Icon 
-                  icon={post.isBookmarked ? 'solar:bookmark-bold' : 'solar:bookmark-linear'} 
-                  className='h-4 w-4' 
+                <Icon
+                  icon={post.isBookmarked ? 'solar:bookmark-bold' : 'solar:bookmark-linear'}
+                  className='h-4 w-4'
                 />
               </Button>
             </Tooltip>
@@ -163,9 +184,7 @@ const PostCard: React.FC<PostCardProps> = ({
       <CardBody className='pt-0'>
         {/* Post Title */}
         {post.title && (
-          <h2 className='text-foreground mb-3 text-lg font-bold leading-tight'>
-            {post.title}
-          </h2>
+          <h2 className='text-foreground mb-3 text-lg leading-tight font-bold'>{post.title}</h2>
         )}
 
         {/* Post Content */}
@@ -237,9 +256,9 @@ const PostCard: React.FC<PostCardProps> = ({
               variant='light'
               color={post.isLiked ? 'danger' : 'default'}
               startContent={
-                <Icon 
-                  icon={post.isLiked ? 'solar:heart-bold' : 'solar:heart-linear'} 
-                  className='h-4 w-4' 
+                <Icon
+                  icon={post.isLiked ? 'solar:heart-bold' : 'solar:heart-linear'}
+                  className='h-4 w-4'
                 />
               }
               onPress={() => onLike(post.id)}

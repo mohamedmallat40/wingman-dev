@@ -381,9 +381,6 @@ export default function DocumentCard({
                 <DropdownMenu className='min-w-[160px]'>
                   <DropdownItem
                     key='view'
-                    onPress={() => {
-                      window.open(`${getBaseUrl()}/upload/${document.fileName}`, '_blank');
-                    }}
                     startContent={<Icon icon='solar:eye-linear' className='h-4 w-4' />}
                     onPress={() => onView?.(document)}
                   >

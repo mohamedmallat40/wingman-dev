@@ -609,6 +609,14 @@
       "autoSave": "Automatisch concepten opslaan",
       "advancedOptions": "Geavanceerde Opties",
       "uploadProgress": "Media uploaden...",
+      "success": {
+        "title": "Post Gepubliceerd",
+        "description": "Je post is succesvol gepubliceerd!"
+      },
+      "draft": {
+        "success": "Concept Opgeslagen",
+        "successDescription": "Je concept is succesvol opgeslagen!"
+      },
       "tabs": {
         "content": "Inhoud",
         "media": "Media",
@@ -757,7 +765,12 @@
       "tooManyRequests": "Te veel verzoeken. Wacht even voor je opnieuw probeert.",
       "contentTooLong": "Inhoud is te lang. Maak het korter.",
       "invalidData": "Ongeldige gegevens verstrekt. Controleer je invoer.",
-      "sessionExpired": "Je sessie is verlopen. Log opnieuw in."
+      "sessionExpired": "Je sessie is verlopen. Log opnieuw in.",
+      "notFound": "De gevraagde bron werd niet gevonden.",
+      "badRequest": "Ongeldig verzoek. Controleer je gegevens en probeer opnieuw.",
+      "internalError": "Er is een onverwachte fout opgetreden. Probeer later opnieuw.",
+      "timeout": "Verzoek verlopen. Probeer opnieuw.",
+      "offline": "Je lijkt offline te zijn. Controleer je internetverbinding."
     },
     "onboarding": {
       "title": "Maak Je Perfecte Broadcast Feed",
@@ -975,6 +988,33 @@
       "searchPosts": "Zoeken door artikelen",
       "filterTopics": "Artikelen filteren op onderwerp",
       "sortPosts": "Sorteervolgorde van artikelen wijzigen"
+    },
+    "feed": {
+      "createPost": "Post Aanmaken",
+      "searchPlaceholder": "Zoek posts...",
+      "filterPlaceholder": {
+        "sort": "Selecteer sorteervolgorde",
+        "category": "Selecteer categorie", 
+        "topic": "Selecteer onderwerp"
+      },
+      "tabs": {
+        "all": "Alles",
+        "following": "Volgend",
+        "trending": "Trending"
+      },
+      "placeholders": {
+        "searchTopics": "Zoek onderwerpen...",
+        "category": "Categorie",
+        "sort": "Sorteren",
+        "selectTopics": "Selecteer onderwerpen voor je post"
+      }
+    },
+    "notifications": {
+      "tabs": {
+        "activity": "Activiteit",
+        "live": "Live",
+        "trending": "Trending"
+      }
     }
   },
   "navigation": {

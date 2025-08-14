@@ -1,2 +1,2 @@
-export { default as ContentCreator } from './ContentCreator';
+export { default as EnhancedContentCreator } from './EnhancedContentCreator';
 export { default as NotificationCenter } from './NotificationCenter';

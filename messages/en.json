@@ -621,6 +621,14 @@
       "autoSave": "Auto-save drafts",
       "advancedOptions": "Advanced Options",
       "uploadProgress": "Uploading media...",
+      "success": {
+        "title": "Post Published",
+        "description": "Your post has been published successfully!"
+      },
+      "draft": {
+        "success": "Draft Saved",
+        "successDescription": "Your draft has been saved successfully!"
+      },
       "tabs": {
         "content": "Content",
         "media": "Media",
@@ -769,7 +777,12 @@
       "tooManyRequests": "Too many requests. Please wait before trying again.",
       "contentTooLong": "Content is too long. Please shorten it.",
       "invalidData": "Invalid data provided. Please check your inputs.",
-      "sessionExpired": "Your session has expired. Please log in again."
+      "sessionExpired": "Your session has expired. Please log in again.",
+      "notFound": "The requested resource was not found.",
+      "badRequest": "Invalid request. Please check your data and try again.",
+      "internalError": "An unexpected error occurred. Please try again later.",
+      "timeout": "Request timed out. Please try again.",
+      "offline": "You appear to be offline. Please check your internet connection."
     },
     "onboarding": {
       "title": "Craft Your Perfect Broadcast Feed",
@@ -987,6 +1000,33 @@
       "searchPosts": "Search through posts",
       "filterTopics": "Filter posts by topic",
       "sortPosts": "Change post sorting order"
+    },
+    "feed": {
+      "createPost": "Create Post",
+      "searchPlaceholder": "Search posts...",
+      "filterPlaceholder": {
+        "sort": "Select sort order",
+        "category": "Select category", 
+        "topic": "Select topic"
+      },
+      "tabs": {
+        "all": "All",
+        "following": "Following",
+        "trending": "Trending"
+      },
+      "placeholders": {
+        "searchTopics": "Search topics...",
+        "category": "Category",
+        "sort": "Sort",
+        "selectTopics": "Select topics for your post"
+      }
+    },
+    "notifications": {
+      "tabs": {
+        "activity": "Activity",
+        "live": "Live",
+        "trending": "Trending"
+      }
     }
   },
   "navigation": {

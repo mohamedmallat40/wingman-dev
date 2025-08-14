@@ -609,6 +609,14 @@
       "autoSave": "Sauvegarde automatique des brouillons",
       "advancedOptions": "Options Avancées",
       "uploadProgress": "Téléchargement des médias...",
+      "success": {
+        "title": "Post Publié",
+        "description": "Votre post a été publié avec succès!"
+      },
+      "draft": {
+        "success": "Brouillon Sauvegardé",
+        "successDescription": "Votre brouillon a été sauvegardé avec succès!"
+      },
       "tabs": {
         "content": "Contenu",
         "media": "Médias",
@@ -757,7 +765,12 @@
       "tooManyRequests": "Trop de requêtes. Veuillez attendre avant de réessayer.",
       "contentTooLong": "Le contenu est trop long. Veuillez le raccourcir.",
       "invalidData": "Données invalides fournies. Veuillez vérifier vos entrées.",
-      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter."
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "notFound": "La ressource demandée n'a pas été trouvée.",
+      "badRequest": "Requête invalide. Veuillez vérifier vos données et réessayer.",
+      "internalError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
+      "timeout": "Délai d'attente de la requête dépassé. Veuillez réessayer.",
+      "offline": "Vous semblez être hors ligne. Veuillez vérifier votre connexion internet."
     },
     "onboarding": {
       "title": "Créez Votre Flux de Diffusion Parfait",
@@ -975,6 +988,33 @@
       "searchPosts": "Rechercher parmi les articles",
       "filterTopics": "Filtrer les articles par sujet",
       "sortPosts": "Changer l'ordre de tri des articles"
+    },
+    "feed": {
+      "createPost": "Créer un Post",
+      "searchPlaceholder": "Rechercher des posts...",
+      "filterPlaceholder": {
+        "sort": "Sélectionnez l'ordre de tri",
+        "category": "Sélectionnez une catégorie", 
+        "topic": "Sélectionnez un sujet"
+      },
+      "tabs": {
+        "all": "Tout",
+        "following": "Suivi",
+        "trending": "Tendances"
+      },
+      "placeholders": {
+        "searchTopics": "Rechercher des sujets...",
+        "category": "Catégorie",
+        "sort": "Tri",
+        "selectTopics": "Sélectionnez des sujets pour votre post"
+      }
+    },
+    "notifications": {
+      "tabs": {
+        "activity": "Activité",
+        "live": "En direct",
+        "trending": "Tendances"
+      }
     }
   },
   "navigation": {

@@ -1,9 +1,10 @@
+import { useCallback, useState } from 'react';
+
 import { useMutation } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
-import { useState, useCallback } from 'react';
 
-import wingManApi from '@/lib/axios';
 import { API_ROUTES } from '@/lib/api-routes';
+import wingManApi from '@/lib/axios';
 
 export interface UploadProgress {
   file: File;
@@ -36,7 +37,7 @@ export const useUploadMedia = () => {
     mutationFn: async (formData: FormData): Promise<UploadResponse> => {
       const file = formData.get('file') as File;
       const type = formData.get('type') as string;
-      
+
       if (!file) {
         throw new Error('No file provided');
       }
@@ -44,25 +45,28 @@ export const useUploadMedia = () => {
       // Validate file size
       const maxSize = type === 'video' ? 100 * 1024 * 1024 : 10 * 1024 * 1024; // 100MB for video, 10MB for image
       if (file.size > maxSize) {
-        throw new Error(t('fileTooLarge', { 
-          filename: file.name, 
-          maxSize: type === 'video' ? '100MB' : '10MB' 
-        }));
+        throw new Error(
+          t('fileTooLarge', {
+            filename: file.name,
+            maxSize: type === 'video' ? '100MB' : '10MB'
+          })
+        );
       }
 
       // Validate file type
-      const validTypes = type === 'video' 
-        ? ['video/mp4', 'video/webm', 'video/mov', 'video/avi', 'video/quicktime']
-        : ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-      
+      const validTypes =
+        type === 'video'
+          ? ['video/mp4', 'video/webm', 'video/mov', 'video/avi', 'video/quicktime']
+          : ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+
       if (!validTypes.includes(file.type)) {
         throw new Error(t('invalidFileType', { filename: file.name, type }));
       }
 
       const fileId = `${Date.now()}-${Math.random()}`;
-      
+
       // Initialize progress tracking
-      setUploadProgress(prev => ({
+      setUploadProgress((prev) => ({
         ...prev,
         [fileId]: {
           file,
@@ -80,7 +84,7 @@ export const useUploadMedia = () => {
           onUploadProgress: (progressEvent) => {
             if (progressEvent.total) {
               const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-              setUploadProgress(prev => ({
+              setUploadProgress((prev) => ({
                 ...prev,
                 [fileId]: {
                   ...prev[fileId],
@@ -92,7 +96,7 @@ export const useUploadMedia = () => {
         });
 
         // Mark as uploaded
-        setUploadProgress(prev => ({
+        setUploadProgress((prev) => ({
           ...prev,
           [fileId]: {
             ...prev[fileId],
@@ -108,48 +112,52 @@ export const useUploadMedia = () => {
         };
       } catch (error: any) {
         // Mark as error
-        setUploadProgress(prev => ({
+        setUploadProgress((prev) => ({
           ...prev,
           [fileId]: {
             ...prev[fileId],
             error: error.message || 'Upload failed'
           }
         }));
-        
+
         throw error;
       }
     },
     onError: (error: any) => {
-      console.error('Upload error:', error);
-    }
+      // Error is handled by UI error state
+    },
+    retry: false
   });
 
-  const uploadMultipleFiles = useCallback(async (files: File[], type: 'image' | 'video') => {
-    const maxFiles = type === 'image' ? 10 : 1; // Max 10 images or 1 video
-    
-    if (files.length > maxFiles) {
-      throw new Error(t('maxFilesExceeded', { maxFiles }));
-    }
+  const uploadMultipleFiles = useCallback(
+    async (files: File[], type: 'image' | 'video') => {
+      const maxFiles = type === 'image' ? 10 : 1; // Max 10 images or 1 video
 
-    const uploadPromises = Array.from(files).map(async (file) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', type);
-      
-      return uploadMutation.mutateAsync(formData);
-    });
+      if (files.length > maxFiles) {
+        throw new Error(t('maxFilesExceeded', { maxFiles }));
+      }
 
-    try {
-      const results = await Promise.all(uploadPromises);
-      return results;
-    } catch (error) {
-      throw new Error(t('uploadFailed', { type }));
-    }
-  }, [uploadMutation, t]);
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', type);
+
+        return uploadMutation.mutateAsync(formData);
+      });
+
+      try {
+        const results = await Promise.all(uploadPromises);
+        return results;
+      } catch (error) {
+        throw new Error(t('uploadFailed', { type }));
+      }
+    },
+    [uploadMutation, t]
+  );
 
   const clearProgress = useCallback((fileId?: string) => {
     if (fileId) {
-      setUploadProgress(prev => {
+      setUploadProgress((prev) => {
         const { [fileId]: removed, ...rest } = prev;
         return rest;
       });
