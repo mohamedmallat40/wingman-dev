@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
@@ -10,17 +10,25 @@ import wingManApi from '@/lib/axios';
 
 import { getCountryNameFromCode } from '../../data/countries';
 import { type Group, type TalentPoolFilters, type TeamResponse } from '../../types';
+import { searchUtilities } from '../../utils/search-utilities';
 import { TalentGroupCard } from '../cards';
 import { TalentEmptyState, TalentErrorState, TalentLoadingSkeleton } from '../states';
 
 interface TeamListProps {
   filters?: TalentPoolFilters;
+  searchQuery?: string;
   onViewTeam?: (teamId: string) => void;
   onJoinTeam?: (teamId: string) => void;
   onCountChange?: (count: number) => void;
 }
 
-const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, onCountChange }) => {
+const TeamList: React.FC<TeamListProps> = ({
+  filters,
+  onViewTeam,
+  searchQuery,
+  onJoinTeam,
+  onCountChange
+}) => {
   const t = useTranslations();
   const [teams, setTeams] = useState<Group[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,8 +72,8 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
       if (filters?.skills?.length) {
         params.skills = filters.skills.join(',');
       }
-      if (filters?.statusAviability) {
-        params.statusAviability = filters.statusAviability;
+      if (filters?.availability) {
+        params.availability = filters.availability;
       }
       if (filters?.profession) {
         params.profession = filters.profession;
@@ -169,6 +177,16 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
     };
   }, [loadMore, hasNextPage, isLoadingMore, isLoading]);
 
+  const searchFilteredTeams = useMemo(() => {
+    return searchUtilities.searchTeams(teams, searchQuery ?? '') as Group[];
+  }, [teams, searchQuery]);
+
+  const filteredTeams = useMemo(() => {
+    let result = searchFilteredTeams;
+
+    return result;
+  }, [searchFilteredTeams]);
+
   const handleRetry = () => {
     fetchTeams(1);
   };
@@ -207,7 +225,7 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
     return <TalentLoadingSkeleton />;
   }
 
-  if (teams.length === 0) {
+  if (filteredTeams.length === 0) {
     return (
       <TalentEmptyState
         icon='solar:users-group-rounded-linear'
@@ -222,7 +240,7 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
     <div className='space-y-6'>
       {/* Teams Grid */}
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {teams.map((team, index) => (
+        {filteredTeams.map((team, index) => (
           <motion.div
             key={`team-${team.id}-${index}`}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}

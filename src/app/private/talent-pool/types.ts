@@ -54,7 +54,7 @@ export interface Tool {
 
 export interface Connection {
   id: string;
-  // Add other connection fields as needed
+  target: User;
 }
 
 export interface Group {

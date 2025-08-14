@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
@@ -10,19 +10,22 @@ import { useLocale, useTranslations } from 'next-intl';
 import wingManApi from '@/lib/axios';
 
 import { type TalentPoolFilters, type User, type UserResponse } from '../../types';
+import { searchUtilities } from '../../utils/search-utilities';
 import { TalentCard } from '../cards';
 import { TalentGroupModal, TalentNoteModal, TalentTagsModal } from '../modals';
 import { TalentEmptyState, TalentErrorState, TalentLoadingSkeleton } from '../states';
 
-interface AgencyListProps {
+interface AgencyListProperties {
   filters?: TalentPoolFilters;
   onViewProfile?: (userId: string) => void;
   onConnect?: (userId: string) => void;
   onCountChange?: (count: number) => void;
+  searchQuery?: string;
 }
 
-const AgencyList: React.FC<AgencyListProps> = ({
+const AgencyList: React.FC<AgencyListProperties> = ({
   filters,
+  searchQuery,
   onViewProfile,
   onConnect,
   onCountChange
@@ -47,7 +50,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
   const itemsPerPage = 12; // 3x4 grid layout for enhanced cards
 
-  const fetchAgencies = async (page: number = 1, append: boolean = false) => {
+  const fetchAgencies = async (page = 1, append = false) => {
     try {
       if (append) {
         setIsLoadingMore(true);
@@ -115,7 +118,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
 
       if (append) {
         setPreviousCount(agencies.length);
-        setAgencies((prev) => [...prev, ...data.items]);
+        setAgencies((previous) => [...previous, ...data.items]);
         setIsInitialLoad(false);
       } else {
         setPreviousCount(0);
@@ -127,9 +130,9 @@ const AgencyList: React.FC<AgencyListProps> = ({
       setTotalItems(data.meta.totalItems);
       setCurrentPage(data.meta.currentPage);
       setHasNextPage(data.meta.currentPage < data.meta.totalPages);
-    } catch (err) {
-      console.error('Error fetching agencies:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch agencies');
+    } catch (error_) {
+      console.error('Error fetching agencies:', error_);
+      setError(error_ instanceof Error ? error_.message : 'Failed to fetch agencies');
     } finally {
       if (!append) {
         setIsLoading(false);
@@ -184,6 +187,16 @@ const AgencyList: React.FC<AgencyListProps> = ({
     };
   }, [loadMore, hasNextPage, isLoadingMore, isLoading]);
 
+    const searchFilteredAgencies = useMemo(() => {
+      return searchUtilities.searchAgencies(agencies, searchQuery || '') as User[];
+    }, [searchQuery]);
+
+    const filteredAgencies = useMemo(() => {
+      const result = searchFilteredAgencies;
+
+      return result;
+    }, [searchFilteredAgencies, filters]);
+
   const handleRetry = () => {
     fetchAgencies(1);
   };
@@ -204,11 +217,11 @@ const AgencyList: React.FC<AgencyListProps> = ({
       onConnect?.(userId);
 
       // Update local state to reflect connection
-      setAgencies((prev) =>
-        prev.map((user) => (user.id === userId ? { ...user, isConnected: true } : user))
+      setAgencies((previous) =>
+        previous.map((user) => (user.id === userId ? { ...user, isConnected: true } : user))
       );
-    } catch (err) {
-      console.error('Error connecting to agency:', err);
+    } catch (error_) {
+      console.error('Error connecting to agency:', error_);
     }
   };
 
@@ -283,7 +296,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
     return <TalentLoadingSkeleton />;
   }
 
-  if (agencies.length === 0) {
+  if (filteredAgencies.length === 0) {
     return (
       <TalentEmptyState
         icon='solar:buildings-linear'
@@ -298,7 +311,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
     <div className='space-y-6'>
       {/* Agencies Grid */}
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {agencies.map((agency, index) => (
+        {filteredAgencies.map((agency, index) => (
           <motion.div
             key={`agency-${agency.id}-${index}`}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
@@ -343,21 +356,27 @@ const AgencyList: React.FC<AgencyListProps> = ({
       {/* Modals */}
       <TalentNoteModal
         isOpen={noteModalOpen}
-        onClose={() => setNoteModalOpen(false)}
+        onClose={() => {
+          setNoteModalOpen(false);
+        }}
         user={selectedUser}
         onSaveNote={handleSaveNote}
       />
 
       <TalentGroupModal
         isOpen={groupModalOpen}
-        onClose={() => setGroupModalOpen(false)}
+        onClose={() => {
+          setGroupModalOpen(false);
+        }}
         user={selectedUser}
         onAddToGroups={handleAddToGroups}
       />
 
       <TalentTagsModal
         isOpen={tagsModalOpen}
-        onClose={() => setTagsModalOpen(false)}
+        onClose={() => {
+          setTagsModalOpen(false);
+        }}
         user={selectedUser}
         onAssignTags={handleAssignUserTags}
       />

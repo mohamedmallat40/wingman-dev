@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Skeleton, Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
@@ -10,12 +10,14 @@ import { useLocale, useTranslations } from 'next-intl';
 import wingManApi from '@/lib/axios';
 
 import { type TalentPoolFilters, type User, type UserResponse } from '../../types';
+import { searchUtilities } from '../../utils/search-utilities';
 import { TalentCard } from '../cards';
 import { TalentGroupModal, TalentNoteModal, TalentTagsModal } from '../modals';
 import { TalentEmptyState, TalentErrorState, TalentLoadingSkeleton } from '../states';
 
 interface FreelancerListProperties {
   filters?: TalentPoolFilters;
+  searchQuery?: string;
   onViewProfile?: (userId: string) => void;
   onConnect?: (userId: string) => void;
   onCountChange?: (count: number) => void;
@@ -109,12 +111,13 @@ const LoadingSkeleton: React.FC = () => (
 
 const FreelancerList: React.FC<FreelancerListProperties> = ({
   filters,
+  searchQuery,
   onViewProfile,
   onConnect,
   onCountChange
 }) => {
   const t = useTranslations();
-  const locale= useLocale();
+  const locale = useLocale();
   const [freelancers, setFreelancers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -267,6 +270,15 @@ const FreelancerList: React.FC<FreelancerListProperties> = ({
     };
   }, [loadMore, hasNextPage, isLoadingMore, isLoading]);
 
+  const searchFilteredFreelancers = useMemo(() => {
+    return searchUtilities.searchFreelancers(freelancers, searchQuery || '') as User[];
+  }, [freelancers, searchQuery]);
+
+  const filteredFreelancers = useMemo(() => {
+    let result = searchFilteredFreelancers;
+    return result;
+  }, [searchFilteredFreelancers]);
+
   const handleRetry = () => {
     fetchFreelancers(1);
   };
@@ -367,7 +379,7 @@ const FreelancerList: React.FC<FreelancerListProperties> = ({
     return <TalentLoadingSkeleton />;
   }
 
-  if (freelancers.length === 0) {
+  if (filteredFreelancers.length === 0) {
     return (
       <TalentEmptyState
         icon='solar:user-search-linear'
@@ -382,7 +394,7 @@ const FreelancerList: React.FC<FreelancerListProperties> = ({
     <div className='space-y-6'>
       {/* Freelancers Grid */}
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {freelancers.map((freelancer, index) => (
+        {filteredFreelancers.map((freelancer, index) => (
           <motion.div
             key={`freelancer-${freelancer.id}-${index}`}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}

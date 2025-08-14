@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 
 import { type TalentType } from '../../types';
 
-interface HeroTabsProps {
+interface HeroTabsProperties {
   activeTab: TalentType;
   onTabChange: (tab: TalentType) => void;
   counts?: {
@@ -29,7 +29,7 @@ interface HeroTabsProps {
   filtersCount?: number;
 }
 
-const HeroTabs: React.FC<HeroTabsProps> = ({
+const HeroTabs: React.FC<HeroTabsProperties> = ({
   activeTab,
   onTabChange,
   counts,
@@ -87,7 +87,9 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
 
     if (isSearchExpanded) {
       document.addEventListener('keydown', handleEscKey);
-      return () => document.removeEventListener('keydown', handleEscKey);
+      return () => {
+        document.removeEventListener('keydown', handleEscKey);
+      };
     }
   }, [isSearchExpanded]);
 
@@ -98,7 +100,7 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
     if (newState) {
       // Focus the input when expanding - wait for animation
       setTimeout(() => {
-        const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement;
+        const searchInput = document.querySelector('[data-search-input]')!;
         if (searchInput) {
           searchInput.focus();
         }
@@ -127,14 +129,16 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                   exit={{
                     opacity: 0,
                     x: -50,
-                    transition: { duration: 0.3, ease: [0.4, 0.0, 0.2, 1] }
+                    transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] }
                   }}
                   className='flex w-full items-center justify-between px-2'
                 >
                   <div className='flex-1'>
                     <Tabs
                       selectedKey={activeTab}
-                      onSelectionChange={(key) => onTabChange(key as TalentType)}
+                      onSelectionChange={(key) => {
+                        onTabChange(key as TalentType);
+                      }}
                       variant='underlined'
                       color='primary'
                       size='lg'
@@ -225,7 +229,7 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
                     x: 100,
                     transition: {
                       duration: 0.2,
-                      ease: [0.4, 0.0, 0.2, 1]
+                      ease: [0.4, 0, 0.2, 1]
                     }
                   }}
                   className='flex w-full items-center justify-between px-2'
@@ -355,30 +359,32 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
 
           {/* Filter Button - Always visible on the right */}
           <div className='flex h-[80px] items-center pr-2'>
-            <Tooltip content='Toggle advanced filters' placement='bottom' delay={500}>
-              <Button
-                variant='solid'
-                size='md'
-                color='primary'
-                onPress={() => {
-                  console.log('Desktop filter button clicked, current showFilters:', showFilters);
-                  onToggleFilters?.();
-                }}
-                className='hover:shadow-medium'
-                startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
-                as={motion.button}
-                whileHover={{ scale: 1.02, y: -1 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {t('talentPool.filters.button')}
-                {filtersCount > 0 && (
-                  <div className='relative inline-flex shrink-0'>
-                    •
-                    <span className='font-regular text-tiny transition-transform-opacity !ease-soft-spring border-background bg-danger text-danger-foreground absolute top-[5%] right-[5%] z-10 box-border flex h-3 min-h-3 w-3 min-w-3 origin-center translate-x-1/2 -translate-y-1/2 scale-100 flex-wrap place-content-center items-center rounded-full border-2 px-1 whitespace-nowrap subpixel-antialiased opacity-100 !duration-300 select-none data-[invisible=true]:scale-0 data-[invisible=true]:opacity-0'></span>
-                  </div>
-                )}
-              </Button>
-            </Tooltip>
+            {activeTab != 'teams' && (
+              <Tooltip content='Toggle advanced filters' placement='bottom' delay={500}>
+                <Button
+                  variant='solid'
+                  size='md'
+                  color='primary'
+                  onPress={() => {
+                    console.log('Desktop filter button clicked, current showFilters:', showFilters);
+                    onToggleFilters?.();
+                  }}
+                  className='hover:shadow-medium'
+                  startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
+                  as={motion.button}
+                  whileHover={{ scale: 1.02, y: -1 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {t('talentPool.filters.button')}
+                  {filtersCount > 0 && (
+                    <div className='relative inline-flex shrink-0'>
+                      •
+                      <span className='font-regular text-tiny transition-transform-opacity !ease-soft-spring border-background bg-danger text-danger-foreground absolute top-[5%] right-[5%] z-10 box-border flex h-3 min-h-3 w-3 min-w-3 origin-center translate-x-1/2 -translate-y-1/2 scale-100 flex-wrap place-content-center items-center rounded-full border-2 px-1 whitespace-nowrap subpixel-antialiased opacity-100 !duration-300 select-none data-[invisible=true]:scale-0 data-[invisible=true]:opacity-0'></span>
+                    </div>
+                  )}
+                </Button>
+              </Tooltip>
+            )}
           </div>
         </div>
       </div>
@@ -490,7 +496,9 @@ const HeroTabs: React.FC<HeroTabsProps> = ({
               return (
                 <motion.button
                   key={tabKey}
-                  onClick={() => onTabChange(tabKey)}
+                  onClick={() => {
+                    onTabChange(tabKey);
+                  }}
                   className={`relative flex flex-1 flex-col items-center gap-1 rounded-lg px-3 py-3 transition-all duration-200 ${
                     isActive
                       ? 'bg-background text-primary-600 shadow-sm'

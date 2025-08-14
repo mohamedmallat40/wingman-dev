@@ -69,9 +69,12 @@ const TalentPoolPage: React.FC = () => {
     // In real app: call connection API
   }, []);
 
-  const handleViewTeam = useCallback((teamId: string) => {
-    // In real app: router.push(`/team/${teamId}`);
-  }, []);
+  const handleViewTeam = useCallback(
+    (teamId: string) => {
+      router.push(`/private/teams/${teamId}`);
+    },
+    [router]
+  );
 
   const handleJoinTeam = useCallback((teamId: string) => {
     // In real app: call join team API
@@ -135,6 +138,7 @@ const TalentPoolPage: React.FC = () => {
   const renderActiveTabContent = () => {
     const commonProps = {
       filters,
+      searchQuery,
       onViewProfile: handleViewProfile,
       onConnect: handleConnect
     };
@@ -150,6 +154,7 @@ const TalentPoolPage: React.FC = () => {
         return (
           <TeamListContainer
             filters={filters}
+            searchQuery={searchQuery}
             onViewTeam={handleViewTeam}
             onJoinTeam={handleJoinTeam}
             onCountChange={handleTeamCountChange}
@@ -209,7 +214,7 @@ const TalentPoolPage: React.FC = () => {
         </div>
       }
     >
-      <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
+      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
         {/* Enhanced Tabs Navigation with Integrated Search */}
         <div className='space-y-6'>
           <TalentPoolTabs
