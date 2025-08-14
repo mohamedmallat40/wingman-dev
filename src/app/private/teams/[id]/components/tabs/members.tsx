@@ -91,7 +91,7 @@ export const TeamMembersTab: React.FC<TeamMembersTabProperties> = ({
                     />
                     <div>
                       <div className='mb-1 flex items-center gap-2'>
-                        <h4 className='font-semibold text-gray-900'>
+                        <h4 className='font-semibold text-gray-900 dark:text-gray-100'>
                           {member.firstName} {member.lastName}
                         </h4>
                         <Chip

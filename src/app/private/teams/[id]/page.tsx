@@ -15,7 +15,7 @@ import { TeamMembersTab } from './components/tabs/members';
 import { TeamOverviewTab } from './components/tabs/overview';
 import { useTeamDetails } from './hooks/useTeamsDetails';
 //import { TeamProjectsTab } from './components/tabs/projects';
-//import { TeamToolsTab } from './components/tabs/tools';
+import { TeamToolsTab } from './components/tabs/tools-tab';
 // Import constants
 // Import hooks
 import { type TeamDetailsTab as TabType } from './types';
@@ -37,7 +37,9 @@ const TeamDetailsPage: React.FC = () => {
 
   // Custom hook to fetch team data
   const { team, loading, error, refetch } = useTeamDetails(teamId);
-
+  
+  const currentUserId = 'current-user-id';
+  const isOwner = team?.owner.id === currentUserId;
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
@@ -83,7 +85,8 @@ const TeamDetailsPage: React.FC = () => {
     const commonProperties = {
       team,
       onViewProfile: handleViewMemberProfile,
-      onRefetch: refetch
+      onRefetch: refetch,
+      isOwner: isOwner
     };
 
     switch (activeTab) {
@@ -93,8 +96,9 @@ const TeamDetailsPage: React.FC = () => {
       case 'members': {
         return <TeamMembersTab {...commonProperties} />;
       }
-      /* case 'tools':
-        return <TeamToolsTab {...commonProps} />;
+      case 'tools':
+        return <TeamToolsTab {...commonProperties} />;
+        /* 
       case 'projects':
         return <TeamProjectsTab {...commonProps} />; */
       default: {
@@ -117,8 +121,6 @@ const TeamDetailsPage: React.FC = () => {
     if (!team) return null;
 
     // Check if current user is the team owner (you'll need to implement getCurrentUser)
-    const currentUserId = 'current-user-id'; // Replace with actual current user ID
-    const isOwner = team.owner.id === currentUserId;
 
     if (isOwner) {
       return (
@@ -222,7 +224,7 @@ const TeamDetailsPage: React.FC = () => {
       breadcrumbs={getBreadcrumbs()}
       headerActions={getHeaderActions()}
     >
-      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
+      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[90%] xl:px-0'>
         {/* Team Header */}
         <TeamDetailsHeader
           team={team}

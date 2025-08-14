@@ -5,7 +5,7 @@ import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { getAvailabilityConfig } from '@/app/private/talent-pool/components';
+import { getAvailabilityConfig, mapUserType } from '@/app/private/talent-pool/components';
 import { type Group } from '@/app/private/talent-pool/types';
 import { getBaseUrl } from '@/lib/utils/utilities';
 
@@ -60,15 +60,10 @@ export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
       {/* Main Header Content */}
       <div className='flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between'>
         {/* Team Info */}
-        <div className='flex flex-col items-start gap-4'>
-          {/* Team Avatar/Icon */}
-          <div
-            className={`flex h-16 w-16 items-center justify-center rounded-xl ${getTeamColorClass(team.color)}`}
-          >
-            <Icon icon='solar:users-group-rounded-bold' className='h-8 w-8' />
-          </div>
+        <div className='flex flex-col items-start gap-2'>
           <div className='flex-1'>
             <div className='mb-2 flex items-center gap-3'>
+              <Icon icon='solar:users-group-rounded-bold' className='h-8 w-8' />
               <h1 className='text-2xl font-bold text-gray-900 dark:text-gray-100'>
                 {team.groupName}
               </h1>
@@ -79,7 +74,7 @@ export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
           </div>
 
           {/* Team Details */}
-          <div>
+          <div className=''>
             {/* Owner Information */}
             <div className='mb-3 flex items-center gap-3'>
               <Avatar
@@ -93,37 +88,21 @@ export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
                 className='flex-shrink-0 dark:text-gray-100'
               />
               <div>
-                <p className='font-medium text-gray-900 dark:text-gray-100'>
-                  {team.owner.firstName} {team.owner.lastName}
-                </p>
-                <p className='text-sm text-gray-600'>{team.owner.profession}</p>
-              </div>
-              <Chip
-                size='sm'
-                color={getAvailabilityColor(team.owner.statusAviability)}
-                variant='flat'
-                className='capitalize'
-              >
-                {t(getAvailabilityConfig(team.owner.statusAviability).labelKey)}
-              </Chip>
-            </div>
-
-            {/* Team Stats */}
-            <div className='flex flex-wrap gap-4 text-sm text-gray-600'>
-              <div className='flex items-center gap-1'>
-                <Icon icon='solar:settings-linear' className='h-4 w-4' />
-                <span>{team.tools.length} tools</span>
-              </div>
-              <div className='flex items-center gap-1'>
-                <Icon icon='solar:user-plus-linear' className='h-4 w-4' />
-                <span>{team.connections.length} connections</span>
-              </div>
-              {team.owner.city && (
-                <div className='flex items-center gap-1'>
-                  <Icon icon='solar:map-point-linear' className='h-4 w-4' />
-                  <span>{team.owner.city}</span>
+                <div className='flex items-center gap-3'>
+                  <p className='font-medium text-gray-900 dark:text-gray-100'>
+                    {team.owner.firstName} {team.owner.lastName}
+                  </p>
+                  <Chip
+                    size='sm'
+                    color={getAvailabilityColor(team.owner.statusAviability)}
+                    variant='flat'
+                    className='capitalize'
+                  >
+                    {t(getAvailabilityConfig(team.owner.statusAviability).labelKey)}
+                  </Chip>
                 </div>
-              )}
+                <p className='text-sm text-gray-600'>{mapUserType(team.owner.profession, t)}</p>
+              </div>
             </div>
           </div>
         </div>

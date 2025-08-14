@@ -28,7 +28,7 @@ export interface User {
   firstName: string;
   lastName: string;
   profileImage: string | null;
-  profession: string | null;
+  profession: string;
   region: string | null;
   skills: Skill[];
   hourlyRate: number;
