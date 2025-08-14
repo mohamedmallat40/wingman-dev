@@ -614,6 +614,176 @@
   "broadcasts": {
     "title": "Broadcast Feed",
     "description": "Stay updated with the latest content from your selected topics and favorite subcasts",
+    "create": {
+      "title": "Create New Post",
+      "editTitle": "Edit Post",
+      "description": "Share your thoughts with the community",
+      "autoSave": "Auto-save drafts",
+      "advancedOptions": "Advanced Options",
+      "uploadProgress": "Uploading media...",
+      "success": {
+        "title": "Post Published",
+        "description": "Your post has been published successfully!"
+      },
+      "draft": {
+        "success": "Draft Saved",
+        "successDescription": "Your draft has been saved successfully!"
+      },
+      "tabs": {
+        "content": "Content",
+        "media": "Media",
+        "tags": "Tags",
+        "advanced": "Advanced"
+      },
+      "fields": {
+        "title": {
+          "label": "Title",
+          "placeholder": "Enter an engaging title...",
+          "description": "{count}/200 characters"
+        },
+        "content": {
+          "label": "Content",
+          "placeholder": "Share your thoughts, insights, or story...",
+          "description": "{wordCount} words • {readTime} min read"
+        },
+        "category": {
+          "label": "Category",
+          "placeholder": "Select a category"
+        },
+        "priority": {
+          "label": "Priority",
+          "placeholder": "Select priority"
+        },
+        "type": {
+          "label": "Post Type",
+          "placeholder": "Select post type"
+        },
+        "visibility": {
+          "label": "Who can see this post?",
+          "options": {
+            "public": "Public - Everyone can see",
+            "followers": "Followers only",
+            "private": "Private - Only you"
+          }
+        },
+        "tags": {
+          "label": "Add Tags",
+          "placeholder": "Enter tag and press Enter",
+          "description": "{count}/10 tags",
+          "add": "Add",
+          "currentTags": "Current Tags",
+          "popularTags": "Popular Tags"
+        },
+        "schedule": {
+          "label": "Schedule for later (optional)",
+          "placeholder": "Select date and time"
+        }
+      },
+      "media": {
+        "addImages": "Add Images",
+        "addVideo": "Add Video",
+        "addCaption": "Add caption...",
+        "addAltText": "Alt text for accessibility...",
+        "uploading": "Uploading...",
+        "maxSizeImage": "Maximum file size: 10MB",
+        "maxSizeVideo": "Maximum file size: 100MB",
+        "supportedFormats": "Supported formats: {formats}"
+      },
+      "poll": {
+        "title": "Poll Options",
+        "addOption": "Add Option",
+        "option": "Option {number}",
+        "minOptions": "Minimum 2 poll options required",
+        "maxOptions": "Maximum 6 poll options allowed"
+      },
+      "link": {
+        "url": "Link URL",
+        "urlPlaceholder": "https://example.com",
+        "preview": "Link Preview"
+      },
+      "privacy": {
+        "title": "Privacy & Visibility",
+        "allowComments": {
+          "title": "Allow Comments",
+          "description": "Let people comment on your post"
+        },
+        "allowSharing": {
+          "title": "Allow Sharing",
+          "description": "Let people share your post"
+        },
+        "contentWarning": {
+          "title": "Content Warning",
+          "description": "Mark if content might be sensitive"
+        }
+      },
+      "publishing": {
+        "title": "Publishing Options",
+        "publishNow": "Publish Now",
+        "saveDraft": "Save Draft",
+        "schedule": "Schedule for Later"
+      },
+      "preview": {
+        "title": "Preview",
+        "yourContent": "Your content will appear here...",
+        "moreItems": "+{count} more"
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "saveDraft": "Save Draft",
+        "updatePost": "Update Post",
+        "publishPost": "Publish Post",
+        "scheduling": "Scheduling...",
+        "publishing": "Publishing...",
+        "saving": "Saving..."
+      }
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "titleMinLength": "Title must be at least 10 characters",
+      "titleMaxLength": "Title cannot exceed 200 characters",
+      "contentRequired": "Content is required",
+      "contentMinLength": "Content must be at least 20 characters",
+      "contentMaxLength": "Content cannot exceed 10,000 characters",
+      "categoryRequired": "Category is required",
+      "maxTags": "Maximum 10 tags allowed",
+      "tagExists": "Tag already exists",
+      "pollMinOptions": "Poll must have at least 2 options",
+      "pollMaxOptions": "Maximum 6 poll options allowed",
+      "linkRequired": "Link URL is required",
+      "invalidUrl": "Please enter a valid URL",
+      "fileTooLarge": "File {filename} is too large. Maximum size is {maxSize}",
+      "invalidFileType": "Invalid file type for {filename}. Please select a valid {type} file",
+      "uploadFailed": "Failed to upload {type}s. Please try again",
+      "maxFilesExceeded": "Maximum {maxFiles} files allowed"
+    },
+    "success": {
+      "published": "Post published successfully!",
+      "updated": "Post updated successfully!",
+      "draftSaved": "Draft saved successfully!",
+      "scheduled": "Post scheduled successfully!",
+      "mediaUploaded": "Successfully uploaded {count} {type}(s)"
+    },
+    "errors": {
+      "publishFailed": "Failed to publish post. Please try again.",
+      "updateFailed": "Failed to update post. Please try again.",
+      "draftSaveFailed": "Failed to save draft. Please try again.",
+      "scheduleFailed": "Failed to schedule post. Please try again.",
+      "autoSaveFailed": "Auto-save failed",
+      "linkPreviewFailed": "Failed to fetch link preview",
+      "networkError": "Network error. Please check your connection.",
+      "serverError": "Server error. Please try again later.",
+      "unauthorized": "You are not authorized to perform this action.",
+      "forbidden": "This action is not allowed.",
+      "tooManyRequests": "Too many requests. Please wait before trying again.",
+      "contentTooLong": "Content is too long. Please shorten it.",
+      "invalidData": "Invalid data provided. Please check your inputs.",
+      "sessionExpired": "Your session has expired. Please log in again.",
+      "notFound": "The requested resource was not found.",
+      "badRequest": "Invalid request. Please check your data and try again.",
+      "internalError": "An unexpected error occurred. Please try again later.",
+      "timeout": "Request timed out. Please try again.",
+      "offline": "You appear to be offline. Please check your internet connection."
+    },
     "onboarding": {
       "title": "Craft Your Perfect Broadcast Feed",
       "subtitle": "Choose topics that match your interests and expertise to get personalized content recommendations",
@@ -830,6 +1000,33 @@
       "searchPosts": "Search through posts",
       "filterTopics": "Filter posts by topic",
       "sortPosts": "Change post sorting order"
+    },
+    "feed": {
+      "createPost": "Create Post",
+      "searchPlaceholder": "Search posts...",
+      "filterPlaceholder": {
+        "sort": "Select sort order",
+        "category": "Select category", 
+        "topic": "Select topic"
+      },
+      "tabs": {
+        "all": "All",
+        "following": "Following",
+        "trending": "Trending"
+      },
+      "placeholders": {
+        "searchTopics": "Search topics...",
+        "category": "Category",
+        "sort": "Sort",
+        "selectTopics": "Select topics for your post"
+      }
+    },
+    "notifications": {
+      "tabs": {
+        "activity": "Activity",
+        "live": "Live",
+        "trending": "Trending"
+      }
     }
   },
   "navigation": {

@@ -9,7 +9,8 @@ export const env = createEnv({
    * To expose them to the client, prefix them with `NEXT_PUBLIC_`.
    */
   client: {
-    NEXT_PUBLIC_API_BASE_URL: z.string().url().default('https://dev.extraexpertise.be/api')
+    NEXT_PUBLIC_API_BASE_URL: z.string().url().default('https://dev.extraexpertise.be/api'),
+    NEXT_PUBLIC_S3_BASE_URL: z.string().url().default('https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public')
   },
 
   /**
@@ -26,7 +27,8 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    NEXT_PUBLIC_S3_BASE_URL: process.env.NEXT_PUBLIC_S3_BASE_URL
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation.

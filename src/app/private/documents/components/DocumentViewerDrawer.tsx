@@ -66,21 +66,59 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
 
     if (isPDF) {
       return (
-        <iframe
-          src={previewUrl}
-          className='h-full w-full border-0'
-          title={`Preview of ${document.documentName}`}
-        />
+        <div className='h-full w-full bg-default-50'>
+          <iframe
+            src={previewUrl}
+            className='h-full w-full border-0'
+            title={`Preview of ${document.documentName}`}
+            onError={() => {
+              console.error('Failed to load PDF preview');
+            }}
+          />
+          {/* Fallback message if PDF fails to load */}
+          <div className='hidden' id={`pdf-fallback-${document.id}`}>
+            <div className='flex h-full items-center justify-center'>
+              <div className='text-center'>
+                <Icon icon='solar:file-text-linear' className='mx-auto mb-4 h-16 w-16 text-default-400' />
+                <h3 className='mb-2 text-lg font-semibold text-default-600'>PDF Preview Unavailable</h3>
+                <p className='text-default-500 mb-4'>
+                  Unable to preview this PDF file in browser.
+                </p>
+                <Button
+                  color='primary'
+                  variant='flat'
+                  startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
+                  as='a'
+                  href={downloadUrl || '#'}
+                  download={document.documentName}
+                >
+                  Download PDF
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       );
     }
 
     if (isImage) {
       return (
-        <div className='flex h-full items-center justify-center p-4'>
-          <img
+        <div className='flex h-full items-center justify-center p-4 bg-default-50'>
+          <motion.img
             src={previewUrl}
             alt={document.documentName}
-            className='max-h-full max-w-full object-contain'
+            className='max-h-full max-w-full object-contain rounded-lg shadow-lg cursor-zoom-in'
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => {
+              // Open in new tab for full-screen view
+              window.open(previewUrl, '_blank');
+            }}
+            onError={(e) => {
+              console.error('Failed to load image:', e);
+              // Fallback to download option
+            }}
           />
         </div>
       );

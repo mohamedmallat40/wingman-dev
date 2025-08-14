@@ -31,7 +31,7 @@ const BroadcastFeedSkeleton: React.FC<BroadcastFeedSkeletonProps> = ({
             <div className='flex w-full items-start gap-3'>
               {/* Avatar */}
               <Skeleton className='h-12 w-12 rounded-full' />
-              
+
               {/* Author Info */}
               <div className='min-w-0 flex-1 space-y-2'>
                 <div className='flex items-center gap-2'>
@@ -44,35 +44,33 @@ const BroadcastFeedSkeleton: React.FC<BroadcastFeedSkeletonProps> = ({
                   <Skeleton className='h-6 w-20 rounded-full' />
                 </div>
               </div>
-              
+
               {/* Action Button */}
               <Skeleton className='h-8 w-8 rounded-full' />
             </div>
           </CardHeader>
 
-          <CardBody className='pt-0 space-y-4'>
+          <CardBody className='space-y-4 pt-0'>
             {/* Title */}
             <Skeleton className='h-6 w-3/4 rounded' />
-            
+
             {/* Content */}
             <div className='space-y-2'>
               <Skeleton className='h-4 w-full rounded' />
               <Skeleton className='h-4 w-full rounded' />
               <Skeleton className='h-4 w-2/3 rounded' />
             </div>
-            
+
             {/* Media */}
-            {index % 2 === 0 && (
-              <Skeleton className='h-48 w-full rounded-lg' />
-            )}
-            
+            {index % 2 === 0 && <Skeleton className='h-48 w-full rounded-lg' />}
+
             {/* Tags */}
             <div className='flex gap-2'>
               <Skeleton className='h-6 w-16 rounded-full' />
               <Skeleton className='h-6 w-20 rounded-full' />
               <Skeleton className='h-6 w-12 rounded-full' />
             </div>
-            
+
             {/* Actions */}
             <div className='flex items-center justify-between pt-2'>
               <div className='flex gap-2'>

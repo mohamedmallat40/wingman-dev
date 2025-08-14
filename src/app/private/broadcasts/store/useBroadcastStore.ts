@@ -42,13 +42,16 @@ interface AnalyticsState {
     engagement: number;
     followers: number;
   };
-  postMetrics: Record<string, {
-    views: number;
-    likes: number;
-    comments: number;
-    shares: number;
-    engagement: number;
-  }>;
+  postMetrics: Record<
+    string,
+    {
+      views: number;
+      likes: number;
+      comments: number;
+      shares: number;
+      engagement: number;
+    }
+  >;
 }
 
 interface RealtimeState {
@@ -107,7 +110,9 @@ interface BroadcastStore {
   realtime: RealtimeState;
   setConnectionStatus: (connected: boolean) => void;
   setActiveUsers: (count: number) => void;
-  addNotification: (notification: Omit<RealtimeState['notifications'][0], 'id' | 'timestamp'>) => void;
+  addNotification: (
+    notification: Omit<RealtimeState['notifications'][0], 'id' | 'timestamp'>
+  ) => void;
   markNotificationRead: (notificationId: string) => void;
   clearNotifications: () => void;
 
@@ -173,212 +178,333 @@ export const useBroadcastStore = create<BroadcastStore>()(
     (set, get) => ({
       // Filter State & Actions
       filters: initialFilterState,
-      
-      setCategory: (category) => 
-        set((state) => ({ 
-          filters: { ...state.filters, category } 
-        }), false, 'setCategory'),
 
-      setTopic: (topicId) => 
-        set((state) => ({ 
-          filters: { ...state.filters, topicId } 
-        }), false, 'setTopic'),
+      setCategory: (category) =>
+        set(
+          (state) => ({
+            filters: { ...state.filters, category }
+          }),
+          false,
+          'setCategory'
+        ),
 
-      setSortBy: (sortBy) => 
-        set((state) => ({ 
-          filters: { ...state.filters, sortBy } 
-        }), false, 'setSortBy'),
+      setTopic: (topicId) =>
+        set(
+          (state) => ({
+            filters: { ...state.filters, topicId }
+          }),
+          false,
+          'setTopic'
+        ),
 
-      setSearchQuery: (searchQuery) => 
-        set((state) => ({ 
-          filters: { ...state.filters, searchQuery } 
-        }), false, 'setSearchQuery'),
+      setSortBy: (sortBy) =>
+        set(
+          (state) => ({
+            filters: { ...state.filters, sortBy }
+          }),
+          false,
+          'setSortBy'
+        ),
 
-      setDateRange: (dateRange) => 
-        set((state) => ({ 
-          filters: { ...state.filters, dateRange } 
-        }), false, 'setDateRange'),
+      setSearchQuery: (searchQuery) =>
+        set(
+          (state) => ({
+            filters: { ...state.filters, searchQuery }
+          }),
+          false,
+          'setSearchQuery'
+        ),
 
-      setPostTypes: (postTypes) => 
-        set((state) => ({ 
-          filters: { ...state.filters, postTypes } 
-        }), false, 'setPostTypes'),
+      setDateRange: (dateRange) =>
+        set(
+          (state) => ({
+            filters: { ...state.filters, dateRange }
+          }),
+          false,
+          'setDateRange'
+        ),
 
-      addAuthorFilter: (authorId) => 
-        set((state) => ({
-          filters: {
-            ...state.filters,
-            authors: [...state.filters.authors.filter(id => id !== authorId), authorId]
-          }
-        }), false, 'addAuthorFilter'),
+      setPostTypes: (postTypes) =>
+        set(
+          (state) => ({
+            filters: { ...state.filters, postTypes }
+          }),
+          false,
+          'setPostTypes'
+        ),
 
-      removeAuthorFilter: (authorId) => 
-        set((state) => ({
-          filters: {
-            ...state.filters,
-            authors: state.filters.authors.filter(id => id !== authorId)
-          }
-        }), false, 'removeAuthorFilter'),
+      addAuthorFilter: (authorId) =>
+        set(
+          (state) => ({
+            filters: {
+              ...state.filters,
+              authors: [...state.filters.authors.filter((id) => id !== authorId), authorId]
+            }
+          }),
+          false,
+          'addAuthorFilter'
+        ),
 
-      addTagFilter: (tag) => 
-        set((state) => ({
-          filters: {
-            ...state.filters,
-            tags: [...state.filters.tags.filter(t => t !== tag), tag]
-          }
-        }), false, 'addTagFilter'),
+      removeAuthorFilter: (authorId) =>
+        set(
+          (state) => ({
+            filters: {
+              ...state.filters,
+              authors: state.filters.authors.filter((id) => id !== authorId)
+            }
+          }),
+          false,
+          'removeAuthorFilter'
+        ),
 
-      removeTagFilter: (tag) => 
-        set((state) => ({
-          filters: {
-            ...state.filters,
-            tags: state.filters.tags.filter(t => t !== tag)
-          }
-        }), false, 'removeTagFilter'),
+      addTagFilter: (tag) =>
+        set(
+          (state) => ({
+            filters: {
+              ...state.filters,
+              tags: [...state.filters.tags.filter((t) => t !== tag), tag]
+            }
+          }),
+          false,
+          'addTagFilter'
+        ),
 
-      clearFilters: () => 
-        set(() => ({ 
-          filters: initialFilterState 
-        }), false, 'clearFilters'),
+      removeTagFilter: (tag) =>
+        set(
+          (state) => ({
+            filters: {
+              ...state.filters,
+              tags: state.filters.tags.filter((t) => t !== tag)
+            }
+          }),
+          false,
+          'removeTagFilter'
+        ),
+
+      clearFilters: () =>
+        set(
+          () => ({
+            filters: initialFilterState
+          }),
+          false,
+          'clearFilters'
+        ),
 
       // UI State & Actions
       ui: initialUIState,
 
-      toggleSidebar: () => 
-        set((state) => ({ 
-          ui: { ...state.ui, sidebarOpen: !state.ui.sidebarOpen } 
-        }), false, 'toggleSidebar'),
+      toggleSidebar: () =>
+        set(
+          (state) => ({
+            ui: { ...state.ui, sidebarOpen: !state.ui.sidebarOpen }
+          }),
+          false,
+          'toggleSidebar'
+        ),
 
-      openContentCreator: () => 
-        set((state) => ({ 
-          ui: { ...state.ui, contentCreatorOpen: true } 
-        }), false, 'openContentCreator'),
+      openContentCreator: () =>
+        set(
+          (state) => ({
+            ui: { ...state.ui, contentCreatorOpen: true }
+          }),
+          false,
+          'openContentCreator'
+        ),
 
-      closeContentCreator: () => 
-        set((state) => ({ 
-          ui: { ...state.ui, contentCreatorOpen: false } 
-        }), false, 'closeContentCreator'),
+      closeContentCreator: () =>
+        set(
+          (state) => ({
+            ui: { ...state.ui, contentCreatorOpen: false }
+          }),
+          false,
+          'closeContentCreator'
+        ),
 
-      openNotificationCenter: () => 
-        set((state) => ({ 
-          ui: { ...state.ui, notificationCenterOpen: true } 
-        }), false, 'openNotificationCenter'),
+      openNotificationCenter: () =>
+        set(
+          (state) => ({
+            ui: { ...state.ui, notificationCenterOpen: true }
+          }),
+          false,
+          'openNotificationCenter'
+        ),
 
-      closeNotificationCenter: () => 
-        set((state) => ({ 
-          ui: { ...state.ui, notificationCenterOpen: false } 
-        }), false, 'closeNotificationCenter'),
+      closeNotificationCenter: () =>
+        set(
+          (state) => ({
+            ui: { ...state.ui, notificationCenterOpen: false }
+          }),
+          false,
+          'closeNotificationCenter'
+        ),
 
-      setSelectedPost: (selectedPost) => 
-        set((state) => ({ 
-          ui: { ...state.ui, selectedPost } 
-        }), false, 'setSelectedPost'),
+      setSelectedPost: (selectedPost) =>
+        set(
+          (state) => ({
+            ui: { ...state.ui, selectedPost }
+          }),
+          false,
+          'setSelectedPost'
+        ),
 
-      setViewMode: (viewMode) => 
-        set((state) => ({ 
-          ui: { ...state.ui, viewMode } 
-        }), false, 'setViewMode'),
+      setViewMode: (viewMode) =>
+        set(
+          (state) => ({
+            ui: { ...state.ui, viewMode }
+          }),
+          false,
+          'setViewMode'
+        ),
 
-      setTheme: (theme) => 
-        set((state) => ({ 
-          ui: { ...state.ui, theme } 
-        }), false, 'setTheme'),
+      setTheme: (theme) =>
+        set(
+          (state) => ({
+            ui: { ...state.ui, theme }
+          }),
+          false,
+          'setTheme'
+        ),
 
       // Draft State & Actions
       drafts: initialDraftState,
 
-      setCurrentDraft: (currentDraft) => 
-        set((state) => ({ 
-          drafts: { ...state.drafts, currentDraft } 
-        }), false, 'setCurrentDraft'),
+      setCurrentDraft: (currentDraft) =>
+        set(
+          (state) => ({
+            drafts: { ...state.drafts, currentDraft }
+          }),
+          false,
+          'setCurrentDraft'
+        ),
 
-      saveDraft: (draft) => 
-        set((state) => {
-          const existingIndex = state.drafts.savedDrafts.findIndex(d => d.id === draft.id);
-          const savedDrafts = existingIndex >= 0 
-            ? state.drafts.savedDrafts.map((d, i) => i === existingIndex ? draft : d)
-            : [...state.drafts.savedDrafts, { ...draft, id: Date.now().toString() }];
-          
-          return { 
-            drafts: { ...state.drafts, savedDrafts } 
-          };
-        }, false, 'saveDraft'),
+      saveDraft: (draft) =>
+        set(
+          (state) => {
+            const existingIndex = state.drafts.savedDrafts.findIndex((d) => d.id === draft.id);
+            const savedDrafts =
+              existingIndex >= 0
+                ? state.drafts.savedDrafts.map((d, i) => (i === existingIndex ? draft : d))
+                : [...state.drafts.savedDrafts, { ...draft, id: Date.now().toString() }];
 
-      deleteDraft: (draftId) => 
-        set((state) => ({ 
-          drafts: { 
-            ...state.drafts, 
-            savedDrafts: state.drafts.savedDrafts.filter(d => d.id !== draftId) 
-          } 
-        }), false, 'deleteDraft'),
+            return {
+              drafts: { ...state.drafts, savedDrafts }
+            };
+          },
+          false,
+          'saveDraft'
+        ),
 
-      toggleAutoSave: () => 
-        set((state) => ({ 
-          drafts: { ...state.drafts, autoSaveEnabled: !state.drafts.autoSaveEnabled } 
-        }), false, 'toggleAutoSave'),
+      deleteDraft: (draftId) =>
+        set(
+          (state) => ({
+            drafts: {
+              ...state.drafts,
+              savedDrafts: state.drafts.savedDrafts.filter((d) => d.id !== draftId)
+            }
+          }),
+          false,
+          'deleteDraft'
+        ),
+
+      toggleAutoSave: () =>
+        set(
+          (state) => ({
+            drafts: { ...state.drafts, autoSaveEnabled: !state.drafts.autoSaveEnabled }
+          }),
+          false,
+          'toggleAutoSave'
+        ),
 
       // Analytics State & Actions
       analytics: initialAnalyticsState,
 
-      updateUserMetrics: (metrics) => 
-        set((state) => ({ 
-          analytics: { 
-            ...state.analytics, 
-            userMetrics: { ...state.analytics.userMetrics, ...metrics } 
-          } 
-        }), false, 'updateUserMetrics'),
+      updateUserMetrics: (metrics) =>
+        set(
+          (state) => ({
+            analytics: {
+              ...state.analytics,
+              userMetrics: { ...state.analytics.userMetrics, ...metrics }
+            }
+          }),
+          false,
+          'updateUserMetrics'
+        ),
 
-      updatePostMetrics: (postId, metrics) => 
-        set((state) => ({ 
-          analytics: { 
-            ...state.analytics, 
-            postMetrics: { ...state.analytics.postMetrics, [postId]: metrics } 
-          } 
-        }), false, 'updatePostMetrics'),
+      updatePostMetrics: (postId, metrics) =>
+        set(
+          (state) => ({
+            analytics: {
+              ...state.analytics,
+              postMetrics: { ...state.analytics.postMetrics, [postId]: metrics }
+            }
+          }),
+          false,
+          'updatePostMetrics'
+        ),
 
       // Realtime State & Actions
       realtime: initialRealtimeState,
 
-      setConnectionStatus: (isConnected) => 
-        set((state) => ({ 
-          realtime: { ...state.realtime, isConnected } 
-        }), false, 'setConnectionStatus'),
+      setConnectionStatus: (isConnected) =>
+        set(
+          (state) => ({
+            realtime: { ...state.realtime, isConnected }
+          }),
+          false,
+          'setConnectionStatus'
+        ),
 
-      setActiveUsers: (activeUsers) => 
-        set((state) => ({ 
-          realtime: { ...state.realtime, activeUsers } 
-        }), false, 'setActiveUsers'),
+      setActiveUsers: (activeUsers) =>
+        set(
+          (state) => ({
+            realtime: { ...state.realtime, activeUsers }
+          }),
+          false,
+          'setActiveUsers'
+        ),
 
-      addNotification: (notification) => 
-        set((state) => ({
-          realtime: {
-            ...state.realtime,
-            notifications: [
-              {
-                ...notification,
-                id: Date.now().toString(),
-                timestamp: new Date(),
-                read: false
-              },
-              ...state.realtime.notifications
-            ]
-          }
-        }), false, 'addNotification'),
+      addNotification: (notification) =>
+        set(
+          (state) => ({
+            realtime: {
+              ...state.realtime,
+              notifications: [
+                {
+                  ...notification,
+                  id: Date.now().toString(),
+                  timestamp: new Date(),
+                  read: false
+                },
+                ...state.realtime.notifications
+              ]
+            }
+          }),
+          false,
+          'addNotification'
+        ),
 
-      markNotificationRead: (notificationId) => 
-        set((state) => ({
-          realtime: {
-            ...state.realtime,
-            notifications: state.realtime.notifications.map(n =>
-              n.id === notificationId ? { ...n, read: true } : n
-            )
-          }
-        }), false, 'markNotificationRead'),
+      markNotificationRead: (notificationId) =>
+        set(
+          (state) => ({
+            realtime: {
+              ...state.realtime,
+              notifications: state.realtime.notifications.map((n) =>
+                n.id === notificationId ? { ...n, read: true } : n
+              )
+            }
+          }),
+          false,
+          'markNotificationRead'
+        ),
 
-      clearNotifications: () => 
-        set((state) => ({ 
-          realtime: { ...state.realtime, notifications: [] } 
-        }), false, 'clearNotifications'),
+      clearNotifications: () =>
+        set(
+          (state) => ({
+            realtime: { ...state.realtime, notifications: [] }
+          }),
+          false,
+          'clearNotifications'
+        ),
 
       // Preferences
       preferences: {
@@ -389,10 +515,14 @@ export const useBroadcastStore = create<BroadcastStore>()(
         defaultPrivacy: 'public'
       },
 
-      updatePreferences: (prefs) => 
-        set((state) => ({ 
-          preferences: { ...state.preferences, ...prefs } 
-        }), false, 'updatePreferences')
+      updatePreferences: (prefs) =>
+        set(
+          (state) => ({
+            preferences: { ...state.preferences, ...prefs }
+          }),
+          false,
+          'updatePreferences'
+        )
     }),
     {
       name: 'broadcast-store',
@@ -426,7 +556,7 @@ export const useActiveFiltersCount = () => {
   return useBroadcastStore((state) => {
     const filters = state.filters;
     let count = 0;
-    
+
     if (filters.category) count++;
     if (filters.topicId) count++;
     if (filters.searchQuery) count++;
@@ -434,14 +564,12 @@ export const useActiveFiltersCount = () => {
     if (filters.postTypes.length > 0) count++;
     if (filters.authors.length > 0) count++;
     if (filters.tags.length > 0) count++;
-    
+
     return count;
   });
 };
 
 // Helper selector for unread notifications count
 export const useUnreadNotificationsCount = () => {
-  return useBroadcastStore((state) => 
-    state.realtime.notifications.filter(n => !n.read).length
-  );
+  return useBroadcastStore((state) => state.realtime.notifications.filter((n) => !n.read).length);
 };

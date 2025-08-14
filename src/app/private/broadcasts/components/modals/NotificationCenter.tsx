@@ -1,24 +1,24 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Avatar,
+  Badge,
   Button,
   Card,
   CardBody,
   Chip,
+  Divider,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Badge,
-  Tabs,
   Tab,
-  Divider
+  Tabs
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface Notification {
   id: string;
@@ -124,7 +124,7 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     id: '5',
     type: 'milestone',
     title: 'Milestone reached!',
-    message: 'Congratulations! You\'ve reached 1,000 followers',
+    message: "Congratulations! You've reached 1,000 followers",
     timestamp: '2 hours ago',
     isRead: true,
     priority: 'high',
@@ -173,7 +173,11 @@ interface NotificationCenterProps {
   className?: string;
 }
 
-export default function NotificationCenter({ isOpen, onClose, className = '' }: NotificationCenterProps) {
+export default function NotificationCenter({
+  isOpen,
+  onClose,
+  className = ''
+}: NotificationCenterProps) {
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
   const [liveUpdates, setLiveUpdates] = useState<LiveUpdate[]>(MOCK_LIVE_UPDATES);
   const [trending, setTrending] = useState<TrendingItem[]>(MOCK_TRENDING);
@@ -205,34 +209,30 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
       ];
 
       const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
-      setLiveUpdates(prev => [randomUpdate, ...prev.slice(0, 9)]);
+      setLiveUpdates((prev) => [randomUpdate, ...prev.slice(0, 9)]);
     }, 10000);
 
     return () => clearInterval(interval);
   }, [isOpen]);
 
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const unreadCount = notifications.filter((n) => !n.isRead).length;
 
-  const filteredNotifications = notifications.filter(notification => {
+  const filteredNotifications = notifications.filter((notification) => {
     if (filter === 'all') return true;
     if (filter === 'unread') return !notification.isRead;
     return notification.type === filter;
   });
 
   const markAsRead = (notificationId: string) => {
-    setNotifications(prev =>
-      prev.map(notification =>
-        notification.id === notificationId
-          ? { ...notification, isRead: true }
-          : notification
+    setNotifications((prev) =>
+      prev.map((notification) =>
+        notification.id === notificationId ? { ...notification, isRead: true } : notification
       )
     );
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(notification => ({ ...notification, isRead: true }))
-    );
+    setNotifications((prev) => prev.map((notification) => ({ ...notification, isRead: true })));
   };
 
   const getNotificationIcon = (type: string) => {
@@ -301,7 +301,7 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        className='absolute inset-0 bg-black/20 backdrop-blur-sm'
         onClick={onClose}
       />
 
@@ -311,50 +311,38 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-        className="absolute right-0 top-0 h-full w-full max-w-md bg-background shadow-xl border-l border-default-200"
+        className='bg-background border-default-200 absolute top-0 right-0 h-full w-full max-w-md border-l shadow-xl'
       >
-        <Card className="h-full rounded-none border-none shadow-none">
-          <CardBody className="flex flex-col p-0">
+        <Card className='h-full rounded-none border-none shadow-none'>
+          <CardBody className='flex flex-col p-0'>
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-default-200">
-              <div className="flex items-center gap-3">
-                <div className="relative">
-                  <Icon icon="solar:bell-bold" className="h-6 w-6 text-primary" />
+            <div className='border-default-200 flex items-center justify-between border-b p-4'>
+              <div className='flex items-center gap-3'>
+                <div className='relative'>
+                  <Icon icon='solar:bell-bold' className='text-primary h-6 w-6' />
                   {unreadCount > 0 && (
                     <Badge
                       content={unreadCount > 99 ? '99+' : unreadCount}
-                      color="danger"
-                      size="sm"
-                      className="absolute -top-1 -right-1"
+                      color='danger'
+                      size='sm'
+                      className='absolute -top-1 -right-1'
                     />
                   )}
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
-                  <p className="text-sm text-foreground-500">
-                    {unreadCount} unread updates
-                  </p>
+                  <h2 className='text-foreground text-lg font-semibold'>Notifications</h2>
+                  <p className='text-foreground-500 text-sm'>{unreadCount} unread updates</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className='flex items-center gap-2'>
                 {unreadCount > 0 && (
-                  <Button
-                    size="sm"
-                    variant="flat"
-                    onPress={markAllAsRead}
-                    className="text-xs"
-                  >
+                  <Button size='sm' variant='flat' onPress={markAllAsRead} className='text-xs'>
                     Mark all read
                   </Button>
                 )}
-                <Button
-                  isIconOnly
-                  variant="light"
-                  size="sm"
-                  onPress={onClose}
-                >
-                  <Icon icon="solar:close-linear" className="h-5 w-5" />
+                <Button isIconOnly variant='light' size='sm' onPress={onClose}>
+                  <Icon icon='solar:close-linear' className='h-5 w-5' />
                 </Button>
               </div>
             </div>
@@ -363,55 +351,77 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
             <Tabs
               selectedKey={activeTab}
               onSelectionChange={(key) => setActiveTab(key as string)}
-              variant="underlined"
-              className="px-4 pt-2"
+              variant='underlined'
+              className='px-4 pt-2'
               classNames={{
-                tabList: "w-full",
-                tab: "flex-1"
+                tabList: 'w-full',
+                tab: 'flex-1'
               }}
             >
-              <Tab key="notifications" title="Activity" />
-              <Tab key="live" title="Live" />
-              <Tab key="trending" title="Trending" />
+              <Tab key='notifications' title='Activity' />
+              <Tab key='live' title='Live' />
+              <Tab key='trending' title='Trending' />
             </Tabs>
 
             {/* Content */}
-            <div className="flex-1 overflow-hidden">
+            <div className='flex-1 overflow-hidden'>
               {activeTab === 'notifications' && (
-                <div className="h-full flex flex-col">
+                <div className='flex h-full flex-col'>
                   {/* Filter */}
-                  <div className="p-4 border-b border-default-200">
+                  <div className='border-default-200 border-b p-4'>
                     <Dropdown>
                       <DropdownTrigger>
                         <Button
-                          variant="flat"
-                          size="sm"
-                          endContent={<Icon icon="solar:alt-arrow-down-linear" className="h-4 w-4" />}
+                          variant='flat'
+                          size='sm'
+                          endContent={
+                            <Icon icon='solar:alt-arrow-down-linear' className='h-4 w-4' />
+                          }
                         >
-                          {filter === 'all' ? 'All notifications' :
-                           filter === 'unread' ? 'Unread only' :
-                           filter.charAt(0).toUpperCase() + filter.slice(1)}
+                          {filter === 'all'
+                            ? 'All notifications'
+                            : filter === 'unread'
+                              ? 'Unread only'
+                              : filter.charAt(0).toUpperCase() + filter.slice(1)}
                         </Button>
                       </DropdownTrigger>
                       <DropdownMenu
                         selectedKeys={[filter]}
                         onSelectionChange={(keys) => setFilter(Array.from(keys)[0] as string)}
                         classNames={{
-                          content: "bg-background text-foreground border border-default-200"
+                          content: 'bg-background text-foreground border border-default-200'
                         }}
                       >
-                        <DropdownItem key="all" className="text-foreground hover:bg-default-100">All notifications</DropdownItem>
-                        <DropdownItem key="unread" className="text-foreground hover:bg-default-100">Unread only</DropdownItem>
-                        <DropdownItem key="like" className="text-foreground hover:bg-default-100">Likes</DropdownItem>
-                        <DropdownItem key="comment" className="text-foreground hover:bg-default-100">Comments</DropdownItem>
-                        <DropdownItem key="follow" className="text-foreground hover:bg-default-100">Follows</DropdownItem>
-                        <DropdownItem key="trending" className="text-foreground hover:bg-default-100">Trending</DropdownItem>
+                        <DropdownItem key='all' className='text-foreground hover:bg-default-100'>
+                          All notifications
+                        </DropdownItem>
+                        <DropdownItem key='unread' className='text-foreground hover:bg-default-100'>
+                          Unread only
+                        </DropdownItem>
+                        <DropdownItem key='like' className='text-foreground hover:bg-default-100'>
+                          Likes
+                        </DropdownItem>
+                        <DropdownItem
+                          key='comment'
+                          className='text-foreground hover:bg-default-100'
+                        >
+                          Comments
+                        </DropdownItem>
+                        <DropdownItem key='follow' className='text-foreground hover:bg-default-100'>
+                          Follows
+                        </DropdownItem>
+                        <DropdownItem
+                          key='trending'
+                          className='text-foreground hover:bg-default-100'
+                        >
+                          Trending
+                        </DropdownItem>
                       </DropdownMenu>
                     </Dropdown>
                   </div>
 
                   {/* Notifications List */}
-                  <div className="flex-1 overflow-y-auto">
+                  <div className='flex-1 overflow-y-auto'>
                     <AnimatePresence>
                       {filteredNotifications.map((notification, index) => (
                         <motion.div
@@ -420,14 +430,16 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -20 }}
                           transition={{ delay: index * 0.05 }}
-                          className={`border-b border-default-100 p-4 cursor-pointer transition-colors hover:bg-default-50 ${
+                          className={`border-default-100 hover:bg-default-50 cursor-pointer border-b p-4 transition-colors ${
                             !notification.isRead ? 'bg-primary/5' : ''
                           }`}
                           onClick={() => !notification.isRead && markAsRead(notification.id)}
                         >
-                          <div className="flex gap-3">
+                          <div className='flex gap-3'>
                             {/* Icon */}
-                            <div className={`flex-shrink-0 rounded-full p-2 bg-${getNotificationColor(notification.type)}/10`}>
+                            <div
+                              className={`flex-shrink-0 rounded-full p-2 bg-${getNotificationColor(notification.type)}/10`}
+                            >
                               <Icon
                                 icon={getNotificationIcon(notification.type)}
                                 className={`h-4 w-4 text-${getNotificationColor(notification.type)}`}
@@ -435,21 +447,28 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
                             </div>
 
                             {/* Content */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <h4 className={`text-sm font-medium ${!notification.isRead ? 'text-foreground' : 'text-foreground-700'}`}>
+                            <div className='min-w-0 flex-1'>
+                              <div className='flex items-start justify-between gap-2'>
+                                <div className='min-w-0 flex-1'>
+                                  <h4
+                                    className={`text-sm font-medium ${!notification.isRead ? 'text-foreground' : 'text-foreground-700'}`}
+                                  >
                                     {notification.title}
                                   </h4>
-                                  <p className="text-sm text-foreground-600 mt-1">
+                                  <p className='text-foreground-600 mt-1 text-sm'>
                                     {notification.message}
                                   </p>
-                                  <div className="flex items-center gap-2 mt-2">
-                                    <span className="text-xs text-foreground-500">
+                                  <div className='mt-2 flex items-center gap-2'>
+                                    <span className='text-foreground-500 text-xs'>
                                       {notification.timestamp}
                                     </span>
                                     {notification.priority === 'high' && (
-                                      <Chip size="sm" color="danger" variant="flat" className="h-4 text-xs">
+                                      <Chip
+                                        size='sm'
+                                        color='danger'
+                                        variant='flat'
+                                        className='h-4 text-xs'
+                                      >
                                         High priority
                                       </Chip>
                                     )}
@@ -457,37 +476,42 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
                                 </div>
 
                                 {/* Avatar or metadata */}
-                                <div className="flex-shrink-0">
+                                <div className='flex-shrink-0'>
                                   {notification.author ? (
-                                    <div className="relative">
+                                    <div className='relative'>
                                       <Avatar
                                         src={notification.author.avatar}
-                                        size="sm"
-                                        className="h-8 w-8"
+                                        size='sm'
+                                        className='h-8 w-8'
                                       />
                                       {notification.author.verified && (
-                                        <div className="absolute -bottom-0.5 -right-0.5 bg-primary rounded-full p-0.5">
-                                          <Icon icon="solar:verified-check-bold" className="h-2 w-2 text-white" />
+                                        <div className='bg-primary absolute -right-0.5 -bottom-0.5 rounded-full p-0.5'>
+                                          <Icon
+                                            icon='solar:verified-check-bold'
+                                            className='h-2 w-2 text-white'
+                                          />
                                         </div>
                                       )}
                                     </div>
-                                  ) : notification.metadata?.count && (
-                                    <Chip size="sm" variant="flat" className="text-xs">
-                                      +{notification.metadata.count}
-                                    </Chip>
+                                  ) : (
+                                    notification.metadata?.count && (
+                                      <Chip size='sm' variant='flat' className='text-xs'>
+                                        +{notification.metadata.count}
+                                      </Chip>
+                                    )
                                   )}
                                 </div>
                               </div>
 
                               {/* Action buttons */}
-                              <div className="flex items-center gap-2 mt-3">
+                              <div className='mt-3 flex items-center gap-2'>
                                 {notification.actionUrl && (
-                                  <Button size="sm" variant="flat" className="h-6 text-xs">
+                                  <Button size='sm' variant='flat' className='h-6 text-xs'>
                                     View
                                   </Button>
                                 )}
                                 {!notification.isRead && (
-                                  <div className="w-2 h-2 bg-primary rounded-full" />
+                                  <div className='bg-primary h-2 w-2 rounded-full' />
                                 )}
                               </div>
                             </div>
@@ -497,9 +521,12 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
                     </AnimatePresence>
 
                     {filteredNotifications.length === 0 && (
-                      <div className="flex flex-col items-center justify-center py-12 text-center">
-                        <Icon icon="solar:bell-off-linear" className="h-12 w-12 text-default-400 mb-3" />
-                        <p className="text-foreground-500">No notifications found</p>
+                      <div className='flex flex-col items-center justify-center py-12 text-center'>
+                        <Icon
+                          icon='solar:bell-off-linear'
+                          className='text-default-400 mb-3 h-12 w-12'
+                        />
+                        <p className='text-foreground-500'>No notifications found</p>
                       </div>
                     )}
                   </div>
@@ -507,18 +534,18 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
               )}
 
               {activeTab === 'live' && (
-                <div className="h-full overflow-y-auto">
-                  <div className="p-4 border-b border-default-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
-                      <span className="text-sm font-medium text-success">Live Updates</span>
+                <div className='h-full overflow-y-auto'>
+                  <div className='border-default-200 border-b p-4'>
+                    <div className='mb-2 flex items-center gap-2'>
+                      <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
+                      <span className='text-success text-sm font-medium'>Live Updates</span>
                     </div>
-                    <p className="text-xs text-foreground-500">
+                    <p className='text-foreground-500 text-xs'>
                       Real-time activity from your followed subcasts
                     </p>
                   </div>
 
-                  <div className="space-y-3 p-4">
+                  <div className='space-y-3 p-4'>
                     <AnimatePresence>
                       {liveUpdates.map((update, index) => (
                         <motion.div
@@ -527,20 +554,27 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
                           animate={{ opacity: 1, x: 0 }}
                           exit={{ opacity: 0, x: 20 }}
                           transition={{ delay: index * 0.1 }}
-                          className="flex items-start gap-3 p-3 rounded-lg bg-success/5 border border-success/20"
+                          className='bg-success/5 border-success/20 flex items-start gap-3 rounded-lg border p-3'
                         >
-                          <div className="flex-shrink-0 rounded-full p-1.5 bg-success/10">
+                          <div className='bg-success/10 flex-shrink-0 rounded-full p-1.5'>
                             <Icon
                               icon={getLiveUpdateIcon(update.type)}
-                              className="h-3 w-3 text-success"
+                              className='text-success h-3 w-3'
                             />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm text-foreground">{update.content}</p>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs text-foreground-500">{update.timestamp}</span>
+                          <div className='min-w-0 flex-1'>
+                            <p className='text-foreground text-sm'>{update.content}</p>
+                            <div className='mt-1 flex items-center gap-2'>
+                              <span className='text-foreground-500 text-xs'>
+                                {update.timestamp}
+                              </span>
                               {update.count && (
-                                <Chip size="sm" color="success" variant="flat" className="h-4 text-xs">
+                                <Chip
+                                  size='sm'
+                                  color='success'
+                                  variant='flat'
+                                  className='h-4 text-xs'
+                                >
                                   {update.count}
                                 </Chip>
                               )}
@@ -554,58 +588,54 @@ export default function NotificationCenter({ isOpen, onClose, className = '' }: 
               )}
 
               {activeTab === 'trending' && (
-                <div className="h-full overflow-y-auto">
-                  <div className="p-4 border-b border-default-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Icon icon="solar:fire-bold" className="h-4 w-4 text-warning" />
-                      <span className="text-sm font-medium text-foreground">Trending Now</span>
+                <div className='h-full overflow-y-auto'>
+                  <div className='border-default-200 border-b p-4'>
+                    <div className='mb-2 flex items-center gap-2'>
+                      <Icon icon='solar:fire-bold' className='text-warning h-4 w-4' />
+                      <span className='text-foreground text-sm font-medium'>Trending Now</span>
                     </div>
-                    <p className="text-xs text-foreground-500">
+                    <p className='text-foreground-500 text-xs'>
                       Popular topics and trending content
                     </p>
                   </div>
 
-                  <div className="space-y-3 p-4">
+                  <div className='space-y-3 p-4'>
                     {trending.map((item, index) => (
                       <motion.div
                         key={item.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
-                        className="flex items-center justify-between p-3 rounded-lg border border-default-200 hover:border-warning/50 hover:bg-warning/5 cursor-pointer transition-colors"
+                        className='border-default-200 hover:border-warning/50 hover:bg-warning/5 flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors'
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="text-lg font-bold text-foreground-500">
-                            #{index + 1}
-                          </div>
+                        <div className='flex items-center gap-3'>
+                          <div className='text-foreground-500 text-lg font-bold'>#{index + 1}</div>
                           <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-foreground">
+                            <div className='flex items-center gap-2'>
+                              <span className='text-foreground text-sm font-medium'>
                                 {item.name}
                               </span>
-                              <Chip size="sm" variant="flat" className="h-4 text-xs">
+                              <Chip size='sm' variant='flat' className='h-4 text-xs'>
                                 {item.type}
                               </Chip>
                             </div>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs text-foreground-500">
+                            <div className='mt-1 flex items-center gap-2'>
+                              <span className='text-foreground-500 text-xs'>
                                 {item.count} posts
                               </span>
-                              <span className="text-xs text-foreground-400">•</span>
-                              <span className="text-xs text-foreground-500">
-                                {item.category}
-                              </span>
+                              <span className='text-foreground-400 text-xs'>•</span>
+                              <span className='text-foreground-500 text-xs'>{item.category}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className='flex items-center gap-2'>
                           <Chip
-                            size="sm"
-                            color="warning"
-                            variant="flat"
-                            startContent={<Icon icon="solar:arrow-up-linear" className="h-2 w-2" />}
-                            className="h-5 text-xs"
+                            size='sm'
+                            color='warning'
+                            variant='flat'
+                            startContent={<Icon icon='solar:arrow-up-linear' className='h-2 w-2' />}
+                            className='h-5 text-xs'
                           >
                             +{item.growth}%
                           </Chip>
