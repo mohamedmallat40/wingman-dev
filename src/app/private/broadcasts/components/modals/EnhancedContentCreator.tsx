@@ -2,6 +2,8 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import type { MediaFile } from '@/components/ui/file-upload/MediaUpload';
+
 import {
   Avatar,
   Badge,
@@ -16,6 +18,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Progress,
   Select,
   SelectItem,
   Switch,
@@ -27,17 +30,17 @@ import {
 import { addToast } from '@heroui/toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Icon } from '@iconify/react';
+import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { MediaUpload, type MediaFile } from '@/components/ui/file-upload/MediaUpload';
-import MediaGrid, { type MediaItem } from '@/components/ui/media/MediaGrid';
-
-import { useCreatePost, useSaveDraft, useUploadMedia, useTopics } from '../../hooks';
-import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
+import { SkillsInput } from '@/app/private/broadcasts/components/ui/SkillsInput';
+import { MediaUpload } from '@/components/ui/file-upload/MediaUpload';
 import { getBaseUrl } from '@/lib/utils/utilities';
+
+import { useCreatePost, useSaveDraft, useTopics, useUploadMedia } from '../../hooks';
 import { useBroadcastStore } from '../../store/useBroadcastStore';
 import { type BroadcastPost } from '../../types';
 
@@ -48,9 +51,241 @@ const calculateReadTime = (content: string): number => {
   return Math.ceil(words / wordsPerMinute);
 };
 
-const extractHashtags = (content: string): string[] => {
-  const hashtags = content.match(/#[a-zA-Z0-9_]+/g) || [];
-  return hashtags.map((tag) => tag.slice(1)); // Remove # symbol
+// Image Carousel Modal Component
+interface ImageCarouselModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  files: MediaFile[];
+  currentIndex: number;
+  onIndexChange: (index: number) => void;
+}
+
+const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
+  isOpen,
+  onClose,
+  files,
+  currentIndex,
+  onIndexChange
+}) => {
+  const handlePrevious = () => {
+    onIndexChange(currentIndex > 0 ? currentIndex - 1 : files.length - 1);
+  };
+
+  const handleNext = () => {
+    onIndexChange(currentIndex < files.length - 1 ? currentIndex + 1 : 0);
+  };
+
+  const handleKeyDown = React.useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') handlePrevious();
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'Escape') onClose();
+    },
+    [currentIndex, files.length]
+  );
+
+  React.useEffect(() => {
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = 'auto';
+      };
+    }
+  }, [isOpen, handleKeyDown]);
+
+  const currentFile = files[currentIndex];
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size='5xl'
+      placement='center'
+      classNames={{
+        base: 'bg-black/90 backdrop-blur-lg',
+        backdrop: 'bg-black/80',
+        wrapper: 'items-center justify-center',
+        body: 'p-0',
+        header: 'border-none',
+        footer: 'border-none bg-black/50'
+      }}
+    >
+      <ModalContent>
+        <ModalHeader className='flex items-center justify-between p-4'>
+          <div className='text-white'>
+            <h3 className='text-lg font-semibold'>
+              {currentIndex + 1} of {files.length}
+            </h3>
+            {currentFile?.caption && <p className='text-sm text-white/70'>{currentFile.caption}</p>}
+          </div>
+          <Button
+            isIconOnly
+            variant='light'
+            onPress={onClose}
+            className='text-white hover:bg-white/10'
+          >
+            <Icon icon='solar:close-circle-linear' className='h-6 w-6' />
+          </Button>
+        </ModalHeader>
+
+        <ModalBody className='flex items-center justify-center p-4'>
+          <div className='relative flex h-full w-full items-center justify-center'>
+            {files.length > 1 && (
+              <Button
+                isIconOnly
+                variant='flat'
+                onPress={handlePrevious}
+                className='absolute left-4 z-10 bg-black/50 text-white hover:bg-black/70'
+                size='lg'
+              >
+                <Icon icon='solar:arrow-left-linear' className='h-6 w-6' />
+              </Button>
+            )}
+
+            <div className='flex max-h-full max-w-full items-center justify-center'>
+              {currentFile?.type === 'image' ? (
+                <img
+                  src={currentFile.preview}
+                  alt={currentFile.altText || 'Preview'}
+                  className='max-h-[80vh] max-w-full rounded-lg object-contain'
+                />
+              ) : (
+                <video
+                  src={currentFile?.preview}
+                  controls
+                  className='max-h-[80vh] max-w-full rounded-lg object-contain'
+                />
+              )}
+            </div>
+
+            {files.length > 1 && (
+              <Button
+                isIconOnly
+                variant='flat'
+                onPress={handleNext}
+                className='absolute right-4 z-10 bg-black/50 text-white hover:bg-black/70'
+                size='lg'
+              >
+                <Icon icon='solar:arrow-right-linear' className='h-6 w-6' />
+              </Button>
+            )}
+          </div>
+        </ModalBody>
+
+        <ModalFooter className='p-4'>
+          {files.length > 1 && (
+            <div className='flex max-w-full justify-center gap-2 overflow-x-auto'>
+              {files.map((file, index) => (
+                <button
+                  key={file.id}
+                  onClick={() => onIndexChange(index)}
+                  className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg border-2 transition-all ${
+                    index === currentIndex
+                      ? 'border-primary scale-110'
+                      : 'border-white/30 hover:border-white/60'
+                  }`}
+                >
+                  {file.type === 'image' ? (
+                    <img
+                      src={file.preview}
+                      alt='Thumbnail'
+                      className='h-full w-full object-cover'
+                    />
+                  ) : (
+                    <div className='flex h-full w-full items-center justify-center bg-black/70'>
+                      <Icon icon='solar:play-bold' className='h-4 w-4 text-white' />
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+  );
+};
+
+// Smart Media Preview Component
+interface SmartMediaPreviewProps {
+  files: MediaFile[];
+  onFilesChange: (files: MediaFile[]) => void;
+}
+
+const SmartMediaPreview: React.FC<SmartMediaPreviewProps> = ({ files, onFilesChange }) => {
+  const [carouselOpen, setCarouselOpen] = React.useState(false);
+  const [carouselIndex, setCarouselIndex] = React.useState(0);
+
+  const handleRemoveFile = (fileToRemove: MediaFile) => {
+    const updatedFiles = files.filter((file) => file.id !== fileToRemove.id);
+    onFilesChange(updatedFiles);
+  };
+
+  const handleImageClick = (index: number) => {
+    setCarouselIndex(index);
+    setCarouselOpen(true);
+  };
+
+  if (files.length === 0) return null;
+
+  return (
+    <div className='w-full'>
+      <ImageCarouselModal
+        isOpen={carouselOpen}
+        onClose={() => setCarouselOpen(false)}
+        files={files}
+        currentIndex={carouselIndex}
+        onIndexChange={setCarouselIndex}
+      />
+
+      <div className='grid grid-cols-2 gap-2'>
+        {files.map((file, index) => (
+          <div
+            key={file.id}
+            className='group relative cursor-pointer'
+            onClick={() => handleImageClick(index)}
+          >
+            <div className='bg-default-100 relative overflow-hidden rounded-lg'>
+              {file.type === 'image' ? (
+                <img
+                  src={file.preview}
+                  alt={file.altText || 'Preview'}
+                  className='h-32 w-full object-cover'
+                />
+              ) : (
+                <div className='relative h-32 w-full'>
+                  <video src={file.preview} className='h-full w-full object-cover' muted />
+                  <div className='absolute inset-0 flex items-center justify-center bg-black/30'>
+                    <Icon icon='solar:play-bold' className='h-6 w-6 text-white' />
+                  </div>
+                </div>
+              )}
+
+              {/* Hover overlay */}
+              <div className='absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/20'>
+                <div className='rounded-full bg-black/50 p-2 opacity-0 transition-opacity group-hover:opacity-100'>
+                  <Icon icon='solar:eye-bold' className='h-4 w-4 text-white' />
+                </div>
+              </div>
+            </div>
+
+            {/* Remove button */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveFile(file);
+              }}
+              className='bg-danger absolute -top-2 -right-2 flex h-6 w-6 items-center justify-center rounded-full opacity-0 transition-opacity group-hover:opacity-100'
+            >
+              <Icon icon='solar:close-circle-bold' className='h-3 w-3 text-white' />
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 // Enhanced schema with comprehensive validation
@@ -65,7 +300,7 @@ const createBroadcastSchema = z.object({
     .min(1, 'Content is required')
     .min(20, 'Content must be at least 20 characters')
     .max(10000, 'Content cannot exceed 10,000 characters'),
-  tags: z.array(z.string()).max(10, 'Maximum 10 tags allowed'),
+  skills: z.array(z.string()).max(10, 'Maximum 10 skills allowed'),
   topics: z.array(z.string()).max(3, 'Maximum 3 topics allowed').default([]),
   visibility: z.enum(['public', 'private', 'followers']).default('public'),
   allowComments: z.boolean().default(true),
@@ -87,7 +322,6 @@ interface EnhancedContentCreatorProps {
   className?: string;
 }
 
-
 const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
   isOpen,
   onClose,
@@ -101,9 +335,10 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
   const tErrors = useTranslations('ERRORS');
 
   // Persistent state for form data - declare first
-  const [persistedFormData, setPersistedFormData] = useState<Partial<BroadcastFormData> | null>(null);
+  const [persistedFormData, setPersistedFormData] = useState<Partial<BroadcastFormData> | null>(
+    null
+  );
   const [persistedMediaFiles, setPersistedMediaFiles] = useState<MediaFile[]>([]);
-  const [persistedTagInput, setPersistedTagInput] = useState('');
 
   const { preferences } = useBroadcastStore();
   const createPostMutation = useCreatePost();
@@ -111,7 +346,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
   const uploadMediaMutation = useUploadMedia();
   const { profile: currentUser, isLoading: profileLoading } = useBasicProfile();
   const { data: topicsData, isLoading: topicsLoading } = useTopics();
-  
+
   // Error translation helper
   const getErrorMessage = (error: any): { title: string; description: string } => {
     // Check if it's a network error
@@ -181,7 +416,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
             description: tErrors('networkError')
           };
         }
-        
+
         // Generic fallback
         return {
           title: tErrors('internalError'),
@@ -205,9 +440,9 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
     resolver: zodResolver(createBroadcastSchema),
     defaultValues: {
       title: initialData?.title || '',
-      content: initialData?.content || '',
-      tags: initialData?.tags || [],
-      topics: initialData?.topic ? [initialData.topic.id] : [],
+      content: initialData?.description || '',
+      skills: initialData?.skills?.map(skill => skill.id) || [],
+      topics: initialData?.topics?.map(topic => topic.id) || [],
       visibility: 'public',
       allowComments: true,
       allowSharing: true,
@@ -220,18 +455,17 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
   // Watch form fields for real-time updates
   const watchedContent = watch('content');
   const watchedTitle = watch('title');
-  const watchedTags = watch('tags');
+  const watchedSkills = watch('skills');
   const watchedTopics = watch('topics');
 
   // Component state
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
-  const [tagInput, setTagInput] = useState('');
+
   const [activeTab, setActiveTab] = useState('content');
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
   // Post type configurations
-
 
   // Get topics from API data - use topics directly
   const availableTopics = React.useMemo(() => {
@@ -247,7 +481,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
       reset({
         title: persistedFormData.title || '',
         content: persistedFormData.content || '',
-        tags: persistedFormData.tags || [],
+        skills: persistedFormData.skills || [],
         topics: persistedFormData.topics || [],
         visibility: persistedFormData.visibility || 'public',
         allowComments: persistedFormData.allowComments ?? true,
@@ -256,12 +490,11 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
         sensitive: persistedFormData.sensitive ?? false,
         scheduleDate: persistedFormData.scheduleDate
       });
-      
+
       // Restore other state
       setMediaFiles(persistedMediaFiles);
-      setTagInput(persistedTagInput);
     }
-  }, [isOpen, persistedFormData, persistedMediaFiles, persistedTagInput, reset]);
+  }, [isOpen, persistedFormData, persistedMediaFiles, reset]);
 
   // Utility functions
 
@@ -270,88 +503,32 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
     setMediaFiles(files);
   }, []);
 
-  // Tag handling functions
-  const handleAddTag = useCallback(() => {
-    const trimmedTag = tagInput.trim().toLowerCase();
-    if (!trimmedTag) return;
-
-    const currentTags = getValues('tags');
-    if (currentTags.includes(trimmedTag)) {
-      // Tag already exists - silently ignore
-      return;
-    }
-
-    if (currentTags.length >= 10) {
-      // Maximum tags reached - silently ignore
-      return;
-    }
-
-    setValue('tags', [...currentTags, trimmedTag], { shouldValidate: true });
-    setTagInput('');
-  }, [tagInput, getValues, setValue]);
-
-  const handleRemoveTag = useCallback(
-    (tagToRemove: string) => {
-      const currentTags = getValues('tags');
-      setValue(
-        'tags',
-        currentTags.filter((tag) => tag !== tagToRemove),
-        { shouldValidate: true }
-      );
-    },
-    [getValues, setValue]
-  );
-
-  const handleKeyPress = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleAddTag();
-      }
-    },
-    [handleAddTag]
-  );
-
   // Form submission handlers
   const onSubmit = async (data: BroadcastFormData) => {
     try {
-      // Prepare post data
+      // Prepare post data with only required fields
       const postData = {
-        ...data,
-        type: 'text', // Default post type
-        tags: [...data.tags, ...extractHashtags(data.content)],
-        readTime: calculateReadTime(data.content),
-        wordCount: data.content.trim().split(/\s+/).length,
-        // Handle topics - take the first topic for backward compatibility with topic field
-        topic: data.topics && data.topics.length > 0 ? {
-          id: data.topics[0],
-          name: availableTopics.find(t => t.id === data.topics[0])?.title || '',
-          icon: availableTopics.find(t => t.id === data.topics[0])?.icon || 'solar:hashtag-linear'
-        } : undefined,
-        // Store all selected topics
-        selectedTopics: data.topics || []
+        title: data.title,
+        description: data.content, // Send content as description
+        topics: data.topics || [], // Array of topic UUIDs
+        skills: data.skills || [], // Array of skill UUIDs
+        media: [] as string[] // Array of filenames from successful uploads
       };
 
-      // Add media data if present
+      // Add media filenames from uploaded files
       if (mediaFiles.length > 0) {
-        postData.media = {
-          type: mediaFiles.some((f) => f.type === 'video')
-            ? 'video'
-            : mediaFiles.length > 1
-              ? 'gallery'
-              : 'image',
-          files: mediaFiles.map((f) => f.file),
-          urls: mediaFiles.filter((f) => f.url).map((f) => f.url),
-          captions: mediaFiles.map((f) => f.caption).filter(Boolean),
-          altTexts: mediaFiles.map((f) => f.altText).filter(Boolean)
-        };
-        // Update post type based on media
-        postData.type = mediaFiles.some((f) => f.type === 'video')
-          ? 'video'
-          : mediaFiles.length > 1
-            ? 'gallery'
-            : 'image';
+        // Get filenames from successfully uploaded files
+        const uploadedFilenames = mediaFiles
+          .filter(file => file.uploaded && file.filename)
+          .map(file => file.filename!);
+        
+        console.log('Media files:', mediaFiles);
+        console.log('Uploaded filenames:', uploadedFilenames);
+        
+        postData.media = uploadedFilenames;
       }
+      
+      console.log('Final post data:', postData);
 
       await createPostMutation.mutateAsync(postData);
 
@@ -369,7 +546,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
       onClose();
     } catch (error: any) {
       const errorMessage = getErrorMessage(error);
-      
+
       try {
         addToast({
           title: errorMessage.title,
@@ -393,7 +570,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
       };
 
       await saveDraftMutation.mutateAsync(draftData);
-      
+
       try {
         addToast({
           title: t('create.draft.success'),
@@ -403,11 +580,11 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
       } catch (e) {
         // Toast notification failed but draft was saved successfully
       }
-      
+
       onSaveDraft(draftData);
     } catch (error: any) {
       const errorMessage = getErrorMessage(error);
-      
+
       try {
         addToast({
           title: tErrors('draftSaveFailed'),
@@ -425,12 +602,11 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
     const currentFormData = getValues();
     setPersistedFormData(currentFormData);
     setPersistedMediaFiles(mediaFiles);
-    setPersistedTagInput(tagInput);
 
     // Don't clean up previews or reset form - keep everything for next time
     // Only close the modal
     onClose();
-  }, [getValues, mediaFiles, tagInput, onClose]);
+  }, [getValues, mediaFiles, onClose]);
 
   // Separate function for completely clearing the form (for after publish/discard)
   const handleClearForm = useCallback(() => {
@@ -448,12 +624,10 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
 
     reset();
     setMediaFiles([]);
-    setTagInput('');
     setActiveTab('content');
     setUploadProgress(0);
     setPersistedFormData(null);
     setPersistedMediaFiles([]);
-    setPersistedTagInput('');
   }, [mediaFiles, persistedMediaFiles, reset]);
 
   // Computed values
@@ -476,12 +650,13 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
         size='5xl'
         scrollBehavior='inside'
         classNames={{
-          base: `${className} max-w-7xl w-[90vw]`,
-          backdrop: 'bg-black/50 backdrop-blur-sm',
+          base: `${className} max-w-6xl w-[95vw] rounded-[24px] shadow-[0px_16px_32px_rgba(0,0,0,0.12)]`,
+          backdrop: 'bg-black/60 backdrop-blur-md',
           wrapper: 'pointer-events-auto',
-          body: 'py-6',
-          header: 'border-b border-divider',
-          footer: 'border-t border-divider'
+          body: 'py-8 px-8',
+          header: 'border-none pb-6',
+          footer:
+            'border-none pt-6 bg-gradient-to-t from-background/95 to-transparent backdrop-blur-sm'
         }}
       >
         <ModalContent>
@@ -498,7 +673,6 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                   <p className='text-foreground-500 text-sm'>{t('description')}</p>
                 </div>
               </div>
-
             </div>
 
             {/* Progress indicator */}
@@ -520,7 +694,17 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                 <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
                   <Tabs
                     selectedKey={activeTab}
-                    onSelectionChange={(key) => setActiveTab(key as string)}
+                    onSelectionChange={(key) => {
+                      if (key === 'advanced') {
+                        addToast({
+                          title: 'Coming Soon',
+                          description: 'Advanced features are coming soon!',
+                          color: 'primary'
+                        });
+                        return;
+                      }
+                      setActiveTab(key as string);
+                    }}
                     variant='underlined'
                     classNames={{
                       tabList: 'gap-6 w-full relative rounded-none p-0 border-b border-divider',
@@ -540,201 +724,176 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                     >
                       <div className='space-y-6 py-4'>
                         {/* Title */}
-                        <Controller
-                          name='title'
-                          control={control}
-                          render={({ field, fieldState }) => (
-                            <Input
-                              {...field}
-                              placeholder='Enter an engaging title...'
-                              startContent={
-                                <Icon icon='solar:text-field-linear' className='h-4 w-4' />
-                              }
-                              isInvalid={!!fieldState.error}
-                              errorMessage={fieldState.error?.message}
-                              description={`${field.value?.length || 0}/200 characters`}
-                              classNames={{
-                                input: 'text-lg'
-                              }}
-                            />
-                          )}
-                        />
-
-                        {/* Topics Selection */}
-                        <Controller
-                          name='topics'
-                          control={control}
-                          render={({ field, fieldState }) => (
-                            <div className='space-y-3'>
-                              <div className='flex items-center justify-between'>
-                                <label className='text-foreground text-sm font-medium'>
-                                  Topics (Max 3)
-                                </label>
-                                <span className='text-foreground-500 text-xs'>
-                                  {field.value?.length || 0}/3 selected
-                                </span>
-                              </div>
-                              
-                              <Select
-                                placeholder='Select topics for your post'
-                                selectionMode='multiple'
-                                selectedKeys={new Set(field.value || [])}
-                                onSelectionChange={(keys) => {
-                                  const selectedArray = Array.from(keys) as string[];
-                                  if (selectedArray.length <= 3) {
-                                    field.onChange(selectedArray);
-                                  }
-                                }}
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.1 }}
+                        >
+                          <Controller
+                            name='title'
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <Input
+                                {...field}
+                                placeholder='Enter an engaging title that captures attention...'
+                                startContent={
+                                  <Icon
+                                    icon='solar:text-field-outline'
+                                    className='text-primary h-4 w-4'
+                                  />
+                                }
                                 isInvalid={!!fieldState.error}
                                 errorMessage={fieldState.error?.message}
-                                isLoading={topicsLoading}
-                                startContent={<Icon icon='solar:hashtag-circle-linear' className='h-4 w-4' />}
-                                renderValue={(items) => {
-                                  return (
-                                    <div className="flex flex-wrap gap-2">
-                                      {items.map((item) => {
-                                        const topic = availableTopics.find(t => t.id === item.key);
-                                        return (
-                                          <Chip
-                                            key={item.key}
-                                            variant="flat"
-                                            size="sm"
-                                            onClose={() => {
-                                              const newTopics = field.value.filter((id: string) => id !== item.key);
-                                              field.onChange(newTopics);
-                                            }}
-                                            startContent={topic?.icon ? <Icon icon={topic.icon} className="h-3 w-3" /> : <Icon icon="solar:hashtag-linear" className="h-3 w-3" />}
-                                            classNames={{
-                                              base: "hover:bg-secondary-100 dark:hover:bg-secondary-900 transition-colors",
-                                              closeButton: "text-default-500 hover:text-danger hover:bg-danger-50 dark:hover:bg-danger-900/20"
-                                            }}
-                                          >
-                                            {topic?.title || 'Loading...'}
-                                          </Chip>
-                                        );
-                                      })}
-                                    </div>
-                                  );
+                                description={`${field.value?.length || 0}/200 characters`}
+                                classNames={{
+                                  inputWrapper:
+                                    'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary group-data-[focus=true]:ring-4 group-data-[focus=true]:ring-primary/10 rounded-[16px] bg-default-100/50 dark:bg-default-50/50 p-4 transition-all duration-300 shadow-sm hover:shadow-md group-data-[focus=true]:shadow-lg',
+                                  input:
+                                    'text-foreground font-normal tracking-[0.01em] placeholder:text-default-400 text-base transition-all duration-200'
                                 }}
-                              >
-                                {availableTopics.map((topic) => (
-                                  <SelectItem
-                                    key={topic.id}
-                                    value={topic.id}
-                                    textValue={topic.title}
-                                    startContent={<Icon icon={topic.icon || 'solar:hashtag-linear'} className='h-4 w-4' />}
-                                    description={topic.description}
-                                    classNames={{
-                                      base: "hover:bg-secondary-50 dark:hover:bg-secondary-900/50 transition-colors duration-200"
-                                    }}
-                                  >
-                                    {topic.title}
-                                  </SelectItem>
-                                ))}
-                              </Select>
+                              />
+                            )}
+                          />
+                        </motion.div>
 
-                              {/* Additional info about selected topics */}
-                              {field.value && field.value.length > 0 && (
-                                <div className='text-sm text-foreground-500'>
-                                  {field.value.length} topic{field.value.length !== 1 ? 's' : ''} selected
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        />
-
-                        {/* Content */}
-                        <Controller
-                          name='content'
-                          control={control}
-                          render={({ field, fieldState }) => (
-                            <Textarea
-                              {...field}
-                              placeholder='Share your thoughts, insights, or story...'
-                              minRows={8}
-                              maxRows={20}
-                              description={`${wordCount} words • ${readTime} min read`}
-                              isInvalid={!!fieldState.error}
-                              errorMessage={fieldState.error?.message}
-                            />
-                          )}
-                        />
-
-                        {/* Tags Section */}
-                        <div className='space-y-4'>
-                          {/* Tag Input */}
-                          <div className='flex gap-2'>
-                            <Input
-                              placeholder='Enter tag and press Enter'
-                              value={tagInput}
-                              onValueChange={setTagInput}
-                              onKeyDown={handleKeyPress}
-                              startContent={<Icon icon='solar:hashtag-linear' className='h-4 w-4' />}
-                              description={`${watchedTags.length}/10 tags`}
-                            />
-                            <Button
-                              color='primary'
-                              variant='flat'
-                              onPress={handleAddTag}
-                              isDisabled={!tagInput.trim() || watchedTags.length >= 10}
-                            >
-                              Add
-                            </Button>
-                          </div>
-
-                          {/* Current Tags Display */}
-                          {watchedTags.length > 0 && (
-                            <div className='space-y-3'>
-                              <h5 className='font-medium text-sm'>Current Tags</h5>
-                              <div className='flex flex-wrap gap-2'>
-                                {watchedTags.map((tag, index) => (
-                                  <Chip
-                                    key={index}
-                                    onClose={() => handleRemoveTag(tag)}
-                                    variant='flat'
-                                    color='primary'
-                                    startContent={
-                                      <Icon icon='solar:hashtag-linear' className='h-3 w-3' />
-                                    }
-                                  >
-                                    {tag}
-                                  </Chip>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Popular Tags Suggestions */}
-                          <div className='space-y-3'>
-                            <h5 className='font-medium text-sm'>Popular Tags</h5>
-                            <div className='flex flex-wrap gap-2'>
-                              {[
-                                'javascript',
-                                'react',
-                                'nextjs',
-                                'typescript',
-                                'css',
-                                'design',
-                                'ui-ux'
-                              ].map((tag) => (
-                                <Chip
-                                  key={tag}
-                                  variant='bordered'
-                                  className='cursor-pointer'
-                                  onClick={() => {
-                                    if (!watchedTags.includes(tag) && watchedTags.length < 10) {
-                                      setValue('tags', [...watchedTags, tag], {
-                                        shouldValidate: true
-                                      });
+                        {/* Topics Selection */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.2 }}
+                        >
+                          <Controller
+                            name='topics'
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <div className='space-y-1'>
+                                <Select
+                                  placeholder='Select topics for your post'
+                                  selectionMode='multiple'
+                                  selectedKeys={new Set(field.value || [])}
+                                  onSelectionChange={(keys) => {
+                                    const selectedArray = Array.from(keys) as string[];
+                                    if (selectedArray.length <= 3) {
+                                      field.onChange(selectedArray);
                                     }
                                   }}
+                                  isInvalid={!!fieldState.error}
+                                  errorMessage={fieldState.error?.message}
+                                  isLoading={topicsLoading}
+                                  description={`${field.value?.length || 0}/3 topics`}
+                                  startContent={
+                                    <Icon icon='solar:hashtag-circle-outline' className='text-secondary h-4 w-4' />
+                                  }
+                                  renderValue={(items) => {
+                                    return (
+                                      <div className='flex flex-wrap gap-2'>
+                                        {items.map((item) => {
+                                          const topic = availableTopics.find(
+                                            (t) => t.id === item.key
+                                          );
+                                          return (
+                                            <Chip
+                                              key={item.key}
+                                              variant='flat'
+                                              size='sm'
+                                              onClose={() => {
+                                                const newTopics = field.value.filter(
+                                                  (id: string) => id !== item.key
+                                                );
+                                                field.onChange(newTopics);
+                                              }}
+                                              startContent={
+                                                topic?.icon ? (
+                                                  <Icon icon={topic.icon} className='h-3 w-3' />
+                                                ) : (
+                                                  <Icon
+                                                    icon='solar:hashtag-linear'
+                                                    className='h-3 w-3'
+                                                  />
+                                                )
+                                              }
+                                              classNames={{
+                                                base: 'hover:bg-secondary-100 dark:hover:bg-secondary-900 transition-colors',
+                                                closeButton:
+                                                  'text-default-500 hover:text-danger hover:bg-danger-50 dark:hover:bg-danger-900/20'
+                                              }}
+                                            >
+                                              {topic?.title || 'Loading...'}
+                                            </Chip>
+                                          );
+                                        })}
+                                      </div>
+                                    );
+                                  }}
                                 >
-                                  #{tag}
-                                </Chip>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
+                                  {availableTopics.map((topic) => (
+                                    <SelectItem
+                                      key={topic.id}
+                                      value={topic.id}
+                                      textValue={topic.title}
+                                      startContent={
+                                        <Icon
+                                          icon={topic.icon || 'solar:hashtag-linear'}
+                                          className='h-4 w-4'
+                                        />
+                                      }
+                                      description={topic.description}
+                                      classNames={{
+                                        base: 'hover:bg-secondary-50 dark:hover:bg-secondary-900/50 transition-colors duration-200'
+                                      }}
+                                    >
+                                      {topic.title}
+                                    </SelectItem>
+                                  ))}
+                                </Select>
+                              </div>
+                            )}
+                          />
+                        </motion.div>
+
+                        {/* Skills Section */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.3 }}
+                        >
+                          <Controller
+                            name='skills'
+                            control={control}
+                            render={({ field }) => (
+                              <SkillsInput value={field.value} onChange={field.onChange} />
+                            )}
+                          />
+                        </motion.div>
+
+                        {/* Content */}
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.4 }}
+                        >
+                          <Controller
+                            name='content'
+                            control={control}
+                            render={({ field, fieldState }) => (
+                              <Textarea
+                                {...field}
+                                placeholder='Share your thoughts, insights, stories, or creative content with the world. What would you like to express today?'
+                                minRows={10}
+                                maxRows={25}
+                                description={`${wordCount} words • ${readTime} min read`}
+                                isInvalid={!!fieldState.error}
+                                errorMessage={fieldState.error?.message}
+                                classNames={{
+                                  inputWrapper:
+                                    'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary group-data-[focus=true]:ring-4 group-data-[focus=true]:ring-primary/10 rounded-[16px] bg-default-100/50 dark:bg-default-50/50 p-4 transition-all duration-300 shadow-sm hover:shadow-md group-data-[focus=true]:shadow-lg',
+                                  input:
+                                    'text-foreground font-normal tracking-[0.01em] placeholder:text-default-400 text-base leading-relaxed transition-all duration-200 resize-none'
+                                }}
+                              />
+                            )}
+                          />
+                        </motion.div>
                       </div>
                     </Tab>
 
@@ -745,37 +904,72 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                           <Icon icon='solar:gallery-linear' className='h-4 w-4' />
                           Media
                           {mediaFiles.length > 0 && (
-                            <Badge content={mediaFiles.length} color='primary' size='sm' />
+                            <Badge content={mediaFiles.length} color='primary' size='sm'>
+                              <span></span>
+                            </Badge>
                           )}
                         </div>
                       }
                     >
-                      <div className='space-y-6 py-4'>
+                      <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className='space-y-6 py-4'
+                      >
                         {/* Media Upload Controls */}
-                        <MediaUpload
-                          files={mediaFiles}
-                          onFilesChange={handleMediaFilesChange}
-                          maxFiles={10}
-                          maxFileSize={100 * 1024 * 1024}
-                          acceptedTypes={['image/*', 'video/*', '.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mov', '.avi']}
-                          isUploading={isUploading}
-                        />
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.1 }}
+                        >
+                          <MediaUpload
+                            files={mediaFiles}
+                            onFilesChange={(files) => {
+                              if (typeof files === 'function') {
+                                setMediaFiles(files);
+                              } else {
+                                setMediaFiles(files);
+                              }
+                            }}
+                            maxFiles={10}
+                            maxFileSize={100 * 1024 * 1024}
+                            acceptedTypes={[
+                              'image/*',
+                              'video/*',
+                              '.jpg',
+                              '.jpeg',
+                              '.png',
+                              '.gif',
+                              '.mp4',
+                              '.mov',
+                              '.avi'
+                            ]}
+                            isUploading={isUploading}
+                          />
+                        </motion.div>
 
-                      </div>
+                      </motion.div>
                     </Tab>
 
                     <Tab
                       key='advanced'
                       title={
-                        <div className='flex items-center gap-2'>
+                        <div className='flex items-center gap-2 opacity-50'>
                           <Icon icon='solar:settings-linear' className='h-4 w-4' />
                           Advanced
+                          <span className='text-xs bg-default-100 text-default-500 px-2 py-0.5 rounded-full'>Soon</span>
                         </div>
                       }
                     >
                       <div className='space-y-6 py-4'>
                         {/* Visibility Settings */}
-                        <div className='space-y-4'>
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.1 }}
+                          className='space-y-4'
+                        >
                           <h4 className='font-semibold'>Privacy & Visibility</h4>
 
                           <Controller
@@ -834,10 +1028,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                                       Let people comment on your post
                                     </p>
                                   </div>
-                                  <Switch
-                                    isSelected={field.value}
-                                    onValueChange={field.onChange}
-                                  />
+                                  <Switch isSelected={field.value} onValueChange={field.onChange} />
                                 </div>
                               )}
                             />
@@ -853,10 +1044,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                                       Let people share your post
                                     </p>
                                   </div>
-                                  <Switch
-                                    isSelected={field.value}
-                                    onValueChange={field.onChange}
-                                  />
+                                  <Switch isSelected={field.value} onValueChange={field.onChange} />
                                 </div>
                               )}
                             />
@@ -881,12 +1069,23 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                               )}
                             />
                           </div>
-                        </div>
+                        </motion.div>
 
-                        <Divider />
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.9 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3, delay: 0.3 }}
+                        >
+                          <Divider />
+                        </motion.div>
 
                         {/* Schedule Publishing */}
-                        <div className='space-y-4'>
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.4, delay: 0.4 }}
+                          className='space-y-4'
+                        >
                           <h4 className='font-semibold'>Publishing Options</h4>
 
                           <Controller
@@ -911,10 +1110,9 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                               />
                             )}
                           />
-                        </div>
+                        </motion.div>
                       </div>
                     </Tab>
-
                   </Tabs>
                 </form>
               </div>
@@ -933,39 +1131,57 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                     transition={{ duration: 0.3 }}
                     className='relative'
                   >
-                    <Card className='overflow-hidden border-0 bg-background shadow-xl shadow-black/5 dark:shadow-black/20 ring-1 ring-black/5 dark:ring-white/10'>
+                    <Card className='bg-background overflow-hidden border-0 shadow-xl ring-1 shadow-black/5 ring-black/5 dark:shadow-black/20 dark:ring-white/10'>
                       <CardBody className='p-0'>
                         {/* Header */}
                         <div className='flex items-start gap-3 p-6 pb-4'>
                           {profileLoading ? (
                             <>
-                              <div className='h-12 w-12 rounded-full bg-default-200 animate-pulse' />
+                              <div className='bg-default-200 h-12 w-12 animate-pulse rounded-full' />
                               <div className='flex-1 space-y-2'>
-                                <div className='h-4 w-32 bg-default-200 rounded animate-pulse' />
-                                <div className='h-3 w-24 bg-default-200 rounded animate-pulse' />
+                                <div className='bg-default-200 h-4 w-32 animate-pulse rounded' />
+                                <div className='bg-default-200 h-3 w-24 animate-pulse rounded' />
                               </div>
                             </>
                           ) : (
                             <>
-                              <Avatar 
-                                size='md' 
-                                src={currentUser?.profileImage ? `${getBaseUrl()}/upload/${currentUser.profileImage}` : undefined}
-                                name={currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'User'}
+                              <Avatar
+                                size='md'
+                                src={
+                                  currentUser?.profileImage
+                                    ? `${getBaseUrl()}/upload/${currentUser.profileImage}`
+                                    : undefined
+                                }
+                                name={
+                                  currentUser
+                                    ? `${currentUser.firstName} ${currentUser.lastName}`
+                                    : 'User'
+                                }
                                 showFallback
-                                className='ring-2 ring-primary/20'
+                                className='ring-primary/20 ring-2'
                               />
-                              <div className='flex-1 min-w-0'>
-                                <div className='flex items-center gap-2 mb-1'>
-                                  <h4 className='font-semibold text-foreground truncate'>
-                                    {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Your Name'}
+                              <div className='min-w-0 flex-1'>
+                                <div className='mb-1 flex items-center gap-2'>
+                                  <h4 className='text-foreground truncate font-semibold'>
+                                    {currentUser
+                                      ? `${currentUser.firstName} ${currentUser.lastName}`
+                                      : 'Your Name'}
                                   </h4>
-                                  <Icon icon="solar:verified-check-bold" className="h-4 w-4 text-primary flex-shrink-0" />
+                                  <Icon
+                                    icon='solar:verified-check-bold'
+                                    className='text-primary h-4 w-4 flex-shrink-0'
+                                  />
                                 </div>
-                                <div className='flex items-center gap-1 text-xs text-foreground-500'>
-                                  <span>@{currentUser ? `${currentUser.firstName}_${currentUser.lastName}` : 'username'}</span>
+                                <div className='text-foreground-500 flex items-center gap-1 text-xs'>
+                                  <span>
+                                    @
+                                    {currentUser
+                                      ? `${currentUser.firstName}_${currentUser.lastName}`
+                                      : 'username'}
+                                  </span>
                                   <span>•</span>
                                   <span>just now</span>
-                                  <Icon icon="solar:global-linear" className="h-3 w-3 ml-1" />
+                                  <Icon icon='solar:global-linear' className='ml-1 h-3 w-3' />
                                 </div>
                               </div>
                               <Button
@@ -974,7 +1190,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                                 variant='light'
                                 className='text-foreground-400 hover:text-foreground-600'
                               >
-                                <Icon icon="solar:menu-dots-bold" className="h-4 w-4" />
+                                <Icon icon='solar:menu-dots-bold' className='h-4 w-4' />
                               </Button>
                             </>
                           )}
@@ -983,7 +1199,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                         {/* Content */}
                         <div className='px-6'>
                           {watchedTitle && (
-                            <h2 className='text-xl font-bold text-foreground mb-3 leading-tight'>
+                            <h2 className='text-foreground mb-3 text-xl leading-tight font-bold'>
                               {watchedTitle}
                             </h2>
                           )}
@@ -993,25 +1209,30 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                               {watchedContent}
                             </div>
                           ) : (
-                            <div className='text-foreground-400 italic mb-4'>
+                            <div className='text-foreground-400 mb-4 italic'>
                               Your content will appear here...
                             </div>
                           )}
 
                           {/* Topics */}
                           {watchedTopics && watchedTopics.length > 0 && (
-                            <div className='flex flex-wrap gap-2 mb-4'>
+                            <div className='mb-4 flex flex-wrap gap-2'>
                               {watchedTopics.map((topicId, index) => {
-                                const topic = availableTopics.find(t => t.id === topicId);
+                                const topic = availableTopics.find((t) => t.id === topicId);
                                 if (!topic) return null;
                                 return (
-                                  <Chip 
-                                    key={index} 
-                                    size='sm' 
-                                    variant='flat' 
+                                  <Chip
+                                    key={index}
+                                    size='sm'
+                                    variant='flat'
                                     color='primary'
                                     className='bg-primary/10 text-primary border-primary/20'
-                                    startContent={<Icon icon={topic.icon || 'solar:hashtag-linear'} className='h-3 w-3' />}
+                                    startContent={
+                                      <Icon
+                                        icon={topic.icon || 'solar:hashtag-linear'}
+                                        className='h-3 w-3'
+                                      />
+                                    }
                                   >
                                     {topic.title}
                                   </Chip>
@@ -1019,67 +1240,39 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                               })}
                             </div>
                           )}
-
-                          {/* Tags */}
-                          {watchedTags.length > 0 && (
-                            <div className='flex flex-wrap gap-1 mb-4'>
-                              {watchedTags.slice(0, 5).map((tag, index) => (
-                                <span key={index} className='text-primary hover:text-primary-600 cursor-pointer font-medium text-sm'>
-                                  #{tag}
-                                </span>
-                              ))}
-                              {watchedTags.length > 5 && (
-                                <span className='text-foreground-400 text-sm'>
-                                  +{watchedTags.length - 5} more
-                                </span>
-                              )}
-                            </div>
-                          )}
                         </div>
 
-                        {/* Media Preview */}
+                        {/* Media Preview with Smart Grid */}
                         {mediaFiles.length > 0 && (
-                          <div className='mb-4'>
-                            <MediaGrid 
-                              media={mediaFiles.map(file => ({
-                                id: file.id,
-                                type: file.type,
-                                url: file.preview,
-                                caption: file.caption,
-                                altText: file.altText,
-                                thumbnail: file.type === 'video' ? file.preview : undefined
-                              }))}
-                              showCaptions={false}
-                              interactive={true}
-                              showRemoveButton={true}
-                              onRemove={(id) => {
-                                const updatedFiles = mediaFiles.filter(file => file.id !== id);
-                                setMediaFiles(updatedFiles);
-                              }}
-                              className='rounded-none'
-                            />
+                          <div className='mb-4 px-6'>
+                            <div className='space-y-3'>
+                              <h6 className='text-foreground-600 text-sm font-medium'>
+                                Media Attachments
+                              </h6>
+                              <SmartMediaPreview files={mediaFiles} onFilesChange={setMediaFiles} />
+                            </div>
                           </div>
                         )}
 
                         {/* Engagement Bar */}
-                        <div className='px-6 py-3 border-t border-divider'>
-                          <div className='flex items-center justify-between text-foreground-500 text-sm mb-3'>
+                        <div className='border-divider border-t px-6 py-3'>
+                          <div className='text-foreground-500 mb-3 flex items-center justify-between text-sm'>
                             <div className='flex items-center gap-4'>
                               <span className='flex items-center gap-1'>
-                                <Icon icon="solar:heart-bold" className="h-4 w-4 text-danger" />
+                                <Icon icon='solar:heart-bold' className='text-danger h-4 w-4' />
                                 <span>42</span>
                               </span>
                               <span className='flex items-center gap-1'>
-                                <Icon icon="solar:chat-round-bold" className="h-4 w-4" />
+                                <Icon icon='solar:chat-round-bold' className='h-4 w-4' />
                                 <span>8</span>
                               </span>
                               <span className='flex items-center gap-1'>
-                                <Icon icon="solar:share-bold" className="h-4 w-4" />
+                                <Icon icon='solar:share-bold' className='h-4 w-4' />
                                 <span>3</span>
                               </span>
                             </div>
                             <div className='flex items-center gap-1'>
-                              <Icon icon="solar:eye-linear" className="h-4 w-4" />
+                              <Icon icon='solar:eye-linear' className='h-4 w-4' />
                               <span>1.2k views</span>
                             </div>
                           </div>
@@ -1089,7 +1282,9 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                               <Button
                                 size='sm'
                                 variant='light'
-                                startContent={<Icon icon="solar:heart-linear" className="h-4 w-4" />}
+                                startContent={
+                                  <Icon icon='solar:heart-linear' className='h-4 w-4' />
+                                }
                                 className='text-foreground-500 hover:text-danger hover:bg-danger/10'
                               >
                                 Like
@@ -1097,7 +1292,9 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                               <Button
                                 size='sm'
                                 variant='light'
-                                startContent={<Icon icon="solar:chat-round-linear" className="h-4 w-4" />}
+                                startContent={
+                                  <Icon icon='solar:chat-round-linear' className='h-4 w-4' />
+                                }
                                 className='text-foreground-500 hover:text-primary hover:bg-primary/10'
                               >
                                 Comment
@@ -1105,13 +1302,15 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                               <Button
                                 size='sm'
                                 variant='light'
-                                startContent={<Icon icon="solar:share-linear" className="h-4 w-4" />}
+                                startContent={
+                                  <Icon icon='solar:share-linear' className='h-4 w-4' />
+                                }
                                 className='text-foreground-500 hover:text-success hover:bg-success/10'
                               >
                                 Share
                               </Button>
                             </div>
-                            <div className='flex items-center gap-2 text-xs text-foreground-400'>
+                            <div className='text-foreground-400 flex items-center gap-2 text-xs'>
                               <span>{wordCount} words</span>
                               <span>•</span>
                               <span>{readTime} min read</span>
@@ -1122,7 +1321,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                     </Card>
 
                     {/* Floating indicator */}
-                    <div className='absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full font-medium shadow-lg'>
+                    <div className='bg-primary text-primary-foreground absolute -top-2 -right-2 rounded-full px-2 py-1 text-xs font-medium shadow-lg'>
                       Preview
                     </div>
                   </motion.div>
@@ -1132,8 +1331,18 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
           </ModalBody>
 
           <ModalFooter className='pt-4'>
-            <div className='flex w-full items-center justify-between'>
-              <div className='flex gap-2'>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className='flex w-full items-center justify-between'
+            >
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.7 }}
+                className='flex gap-2'
+              >
                 <Button
                   variant='flat'
                   onPress={handleSaveDraft}
@@ -1141,6 +1350,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                   startContent={
                     !isSavingDraft && <Icon icon='solar:diskette-linear' className='h-4 w-4' />
                   }
+                  className='transition-transform duration-200 hover:scale-105'
                 >
                   {tCommon('save')} Draft
                 </Button>
@@ -1152,15 +1362,27 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                       handleClearForm();
                       onClose();
                     }}
-                    startContent={<Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />}
+                    startContent={
+                      <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
+                    }
+                    className='transition-transform duration-200 hover:scale-105'
                   >
                     Discard
                   </Button>
                 )}
-              </div>
+              </motion.div>
 
-              <div className='flex gap-2'>
-                <Button variant='light' onPress={handleClose}>
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.8 }}
+                className='flex gap-2'
+              >
+                <Button
+                  variant='light'
+                  onPress={handleClose}
+                  className='transition-transform duration-200 hover:scale-105'
+                >
                   {tCommon('cancel')}
                 </Button>
                 <Button
@@ -1171,11 +1393,12 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
                   startContent={
                     !isPublishing && <Icon icon='solar:send-square-linear' className='h-4 w-4' />
                   }
+                  className='transition-all duration-300 hover:scale-105 hover:shadow-lg'
                 >
                   {initialData ? 'Update Post' : 'Publish Post'}
                 </Button>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </ModalFooter>
         </ModalContent>
       </Modal>

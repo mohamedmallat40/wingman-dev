@@ -179,12 +179,15 @@ export default function BroadcastsPage() {
                   Trending
                 </h3>
                 <div className='space-y-2'>
-                  {['React 19', 'AI First', 'Design Systems', 'Remote Work'].map((topic, index) => (
-                    <div key={topic} className='flex items-center justify-between'>
-                      <span className='text-foreground-600 text-sm'>{topic}</span>
-                      <span className='text-success text-xs'>
-                        +{(Math.random() * 50 + 10).toFixed(0)}%
-                      </span>
+                  {[
+                    { topic: 'React 19', growth: '+42%' },
+                    { topic: 'AI First', growth: '+28%' },
+                    { topic: 'Design Systems', growth: '+35%' },
+                    { topic: 'Remote Work', growth: '+18%' }
+                  ].map((item, index) => (
+                    <div key={item.topic} className='flex items-center justify-between'>
+                      <span className='text-foreground-600 text-sm'>{item.topic}</span>
+                      <span className='text-success text-xs'>{item.growth}</span>
                     </div>
                   ))}
                 </div>

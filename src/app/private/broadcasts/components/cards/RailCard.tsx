@@ -43,12 +43,7 @@ export function RailCard({ topic, isSelected, onToggle, width, height, gap }: Ra
         />
         <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent' />
         <div className='absolute right-0 bottom-0 left-0 p-3'>
-          <h3 className='mb-1 text-sm font-semibold text-white'>{topic.name}</h3>
-          {topic.featured && (
-            <div className='absolute top-2 right-2'>
-              <div className='bg-secondary h-2 w-2 rounded-full shadow-sm ring-1 ring-white/50' />
-            </div>
-          )}
+          <h3 className='mb-1 text-sm font-semibold text-white'>{topic.title}</h3>
         </div>
         {isSelected && (
           <div className='bg-primary absolute top-2 left-2 flex h-6 w-6 items-center justify-center rounded-full shadow-lg ring-2 ring-white'>

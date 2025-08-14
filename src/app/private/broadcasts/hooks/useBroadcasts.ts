@@ -54,7 +54,8 @@ export const useBroadcastFeed = (params: Omit<FeedParams, 'page'> = {}) => {
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 15, // 15 minutes
-    refetchOnWindowFocus: false
+    refetchOnWindowFocus: false,
+    retry: false
   });
 };
 

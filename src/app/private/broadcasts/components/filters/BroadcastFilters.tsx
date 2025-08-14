@@ -66,14 +66,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
     { key: 'popular', label: 'Most Popular', icon: 'solar:heart-linear' }
   ];
 
-  const postTypes: { key: BroadcastPost['type']; label: string; icon: string }[] = [
-    { key: 'article', label: 'Articles', icon: 'solar:document-text-linear' },
-    { key: 'video', label: 'Videos', icon: 'solar:videocamera-linear' },
-    { key: 'image', label: 'Images', icon: 'solar:camera-linear' },
-    { key: 'poll', label: 'Polls', icon: 'solar:chart-2-linear' },
-    { key: 'quote', label: 'Quotes', icon: 'solar:quote-up-linear' },
-    { key: 'link', label: 'Links', icon: 'solar:link-linear' }
-  ];
+  // Post types removed as they don't exist in the new API structure
 
   const handleSearchSubmit = () => {
     setSearchQuery(localSearchQuery);
@@ -153,25 +146,29 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
 
         <Divider />
 
-        {/* Post Types */}
+        {/* Content Types */}
         <div className='space-y-2'>
-          <label className='text-sm font-medium'>Post Types</label>
+          <label className='text-sm font-medium'>Content Types</label>
           <CheckboxGroup
-            value={filters.postTypes}
-            onValueChange={(types) => setPostTypes(types as BroadcastPost['type'][])}
+            value={[]}
+            onValueChange={() => {}}
             orientation='vertical'
             classNames={{
               wrapper: 'gap-2'
             }}
           >
-            {postTypes.map((type) => (
-              <Checkbox key={type.key} value={type.key}>
-                <div className='flex items-center gap-2'>
-                  <Icon icon={type.icon} className='h-4 w-4' />
-                  <span className='text-sm'>{type.label}</span>
-                </div>
-              </Checkbox>
-            ))}
+            <Checkbox value='with-media'>
+              <div className='flex items-center gap-2'>
+                <Icon icon='solar:gallery-linear' className='h-4 w-4' />
+                <span className='text-sm'>Posts with Media</span>
+              </div>
+            </Checkbox>
+            <Checkbox value='text-only'>
+              <div className='flex items-center gap-2'>
+                <Icon icon='solar:document-text-linear' className='h-4 w-4' />
+                <span className='text-sm'>Text Only</span>
+              </div>
+            </Checkbox>
           </CheckboxGroup>
         </div>
 

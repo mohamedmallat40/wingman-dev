@@ -5,18 +5,11 @@ import { type BroadcastPost, type Comment, type PostInteraction } from '../types
 
 // ===== TYPES =====
 export interface CreatePostData {
-  type: BroadcastPost['type'];
   title: string;
-  content: string;
-  category: string;
-  tags?: string[];
-  priority?: 'low' | 'normal' | 'high';
-  topicId?: string;
-  media?: {
-    type: 'video' | 'image' | 'gallery';
-    files?: File[];
-    urls?: string[];
-  };
+  description: string;
+  topics: string[]; // Array of topic UUIDs
+  skills: string[]; // Array of skill UUIDs  
+  media: string[]; // Array of filenames from successful uploads
 }
 
 export interface UpdatePostData {
@@ -29,9 +22,7 @@ export interface UpdatePostData {
 export interface FeedParams {
   page?: number;
   limit?: number;
-  topicId?: string;
-  sortBy?: 'newest' | 'trending' | 'popular';
-  category?: string;
+  topics?: string[]; // Array of topic IDs for filtering
 }
 
 export interface SearchParams {
@@ -58,22 +49,58 @@ export interface CommentData {
 // ===== POSTS API =====
 
 /**
- * Get broadcast feed with pagination and filters
+ * Get broadcast feed with pagination and topic filters
  */
 export const getBroadcastFeed = async (params: FeedParams = {}) => {
-  const { page = 1, limit = 10, topicId, sortBy = 'newest', category } = params;
+  const { page = 1, limit = 10, topics } = params;
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
-    limit: limit.toString(),
-    sortBy
+    limit: limit.toString()
   });
 
-  if (topicId) queryParams.append('topicId', topicId);
-  if (category) queryParams.append('category', category);
+  // Add multiple topics as separate query parameters
+  if (topics && topics.length > 0) {
+    topics.forEach(topicId => {
+      queryParams.append('topics', topicId);
+    });
+  }
 
   const response = await wingManApi.get(`${API_ROUTES.broadcasts.feed}?${queryParams}`);
-  return response.data;
+  
+  // Handle different response structures
+  const responseData = response.data;
+  
+  // If response is directly an array, wrap it in pagination structure
+  if (Array.isArray(responseData)) {
+    return {
+      data: responseData,
+      currentPage: page,
+      hasNextPage: responseData.length === limit, // Assume more pages if we got full limit
+      totalPages: Math.ceil((responseData.length + (page - 1) * limit) / limit),
+      totalItems: responseData.length + (page - 1) * limit
+    };
+  }
+  
+  // If response has data property, use it
+  if (responseData.data && Array.isArray(responseData.data)) {
+    return {
+      data: responseData.data,
+      currentPage: responseData.currentPage || page,
+      hasNextPage: responseData.hasNextPage || responseData.data.length === limit,
+      totalPages: responseData.totalPages || Math.ceil((responseData.data.length + (page - 1) * limit) / limit),
+      totalItems: responseData.totalItems || responseData.data.length + (page - 1) * limit
+    };
+  }
+  
+  // Fallback: return empty structure
+  return {
+    data: [],
+    currentPage: page,
+    hasNextPage: false,
+    totalPages: 1,
+    totalItems: 0
+  };
 };
 
 /**
@@ -96,46 +123,7 @@ export const getPostById = async (postId: string) => {
  * Create a new broadcast post
  */
 export const createPost = async (postData: CreatePostData) => {
-  // If there are files to upload, use FormData
-  if (postData.media?.files && postData.media.files.length > 0) {
-    const formData = new FormData();
-
-    // Add basic post data
-    formData.append('type', postData.type);
-    formData.append('title', postData.title);
-    formData.append('content', postData.content);
-    formData.append('category', postData.category);
-
-    if (postData.tags) {
-      formData.append('tags', JSON.stringify(postData.tags));
-    }
-
-    if (postData.priority) {
-      formData.append('priority', postData.priority);
-    }
-
-    if (postData.topicId) {
-      formData.append('topicId', postData.topicId);
-    }
-
-
-    // Add media files
-    postData.media.files.forEach((file, index) => {
-      formData.append(`media_${index}`, file);
-    });
-
-    formData.append('mediaType', postData.media.type);
-
-    const response = await wingManApi.post(API_ROUTES.broadcasts.create, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
-
-    return response.data;
-  }
-
-  // For posts without file uploads
+  // Send as JSON with only the required fields
   const response = await wingManApi.post(API_ROUTES.broadcasts.create, postData);
   return response.data;
 };

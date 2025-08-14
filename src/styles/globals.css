@@ -1,0 +1,144 @@
+@import 'tailwindcss';
+@config "../../tailwind.config.ts";
+
+@layer base {
+}
+
+@keyframes ping-slow {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+  75% {
+    transform: translateY(-5px) rotate(-0.5deg);
+  }
+}
+
+.animate-ping-slow {
+  animation: ping-slow 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-ping-slow-delay {
+  animation: ping-slow 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+  animation-delay: 1.25s;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Professional Spacing System for Wingman Application */
+
+/* Container Spacing Classes */
+.container-spacing {
+  @apply px-4 sm:px-6 lg:px-8;
+}
+
+.container-spacing-wide {
+  @apply px-6 sm:px-8 lg:px-12 xl:px-16;
+}
+
+.container-spacing-tight {
+  @apply px-2 sm:px-4 lg:px-6;
+}
+
+/* Content Spacing Classes */
+.content-spacing {
+  @apply py-6 sm:py-8 lg:py-10;
+}
+
+.content-spacing-large {
+  @apply py-8 sm:py-12 lg:py-16;
+}
+
+.content-spacing-small {
+  @apply py-4 sm:py-6 lg:py-8;
+}
+
+/* Section Spacing Classes */
+.section-spacing {
+  @apply mb-6 lg:mb-8;
+}
+
+.section-spacing-large {
+  @apply mb-8 lg:mb-12;
+}
+
+.section-spacing-small {
+  @apply mb-4 lg:mb-6;
+}
+
+/* Card Spacing Classes */
+.card-spacing {
+  @apply p-4 sm:p-6;
+}
+
+.card-spacing-large {
+  @apply p-6 sm:p-8;
+}
+
+.card-spacing-small {
+  @apply p-3 sm:p-4;
+}
+
+/* Professional Layout Classes */
+.layout-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.layout-container-wide {
+  @apply max-w-none mx-auto px-4 sm:px-6 lg:px-8 xl:px-12;
+}
+
+.layout-container-narrow {
+  @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Component Spacing Classes */
+.component-spacing {
+  @apply space-y-4 sm:space-y-6;
+}
+
+.component-spacing-large {
+  @apply space-y-6 sm:space-y-8;
+}
+
+.component-spacing-small {
+  @apply space-y-2 sm:space-y-4;
+}
+
+/* Responsive container utilities for consistent mobile/tablet spacing */
+.responsive-container {
+  @apply w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 mx-auto;
+}
+
+.responsive-section-padding {
+  @apply px-2 sm:px-4 xl:px-6;
+}
