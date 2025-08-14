@@ -6,13 +6,13 @@ import { Autocomplete, AutocompleteItem, Avatar, Button, Chip } from '@heroui/re
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 
-import { countries } from '../../data/countries';
 import { groupCountriesByContinent } from '../../utils/countryUtils';
 
 interface CountryFilterProps {
   selectedCountries: string[];
   onSelectionChange: (countries: string[]) => void;
   className?: string;
+  countries?: Country[];
 }
 
 type CountryItem = {
@@ -26,14 +26,14 @@ type CountryItem = {
 export default function CountryFilter({
   selectedCountries,
   onSelectionChange,
-  className
-}: CountryFilterProps) {
+  className,
+  countries
+}: Readonly<CountryFilterProps>) {
   const t = useTranslations();
   const [inputValue, setInputValue] = useState('');
 
-  const groupedCountries = useMemo(() => groupCountriesByContinent(countries), []);
+  const groupedCountries = useMemo(() => groupCountriesByContinent(countries ?? []), [countries]);
 
-  // Create flattened items for the autocomplete
   const items = useMemo((): CountryItem[] => {
     const flatItems: CountryItem[] = [];
 
@@ -67,7 +67,17 @@ export default function CountryFilter({
 
     return flatItems;
   }, [groupedCountries, selectedCountries]);
+  const filteredItems = useMemo(() => {
+    if (!inputValue.trim()) return items;
+    const lower = inputValue.toLowerCase();
 
+    return items.filter(
+      (item) =>
+        item.name.toLowerCase().includes(lower) ||
+        item.code.toLowerCase().includes(lower) ||
+        item.continent.toLowerCase().includes(lower)
+    );
+  }, [items, inputValue]);
   const handleSelection = (key: React.Key | null) => {
     if (!key) return;
 
@@ -114,7 +124,7 @@ export default function CountryFilter({
           }}
           endContent={<Icon className='text-default-400' icon='lucide:search' width={16} />}
           inputValue={inputValue}
-          items={items}
+          items={filteredItems}
           label=''
           placeholder={t('talentPool.filters.country.placeholder')}
           size='sm'

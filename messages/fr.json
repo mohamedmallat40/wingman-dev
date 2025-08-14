@@ -217,7 +217,8 @@
       "button": "Rechercher",
       "placeholder": "Rechercher par nom, compétences ou expertise...",
       "tooltip": "Rechercher maintenant (Entrée)",
-      "noResults": "Aucun résultat trouvé"
+      "noResults": "Aucun résultat trouvé",
+      "reset": "Réinitialiser"
     },
     "filters": {
       "button": "Filtres",
@@ -246,7 +247,7 @@
     "profession": {
       "freelancer": "Freelancer",
       "interim": "Intérimaire",
-      "consultant": "Consultant",
+      "Contractor": "Contractor",
       "studentEntrepreneur": "Étudiant entrepreneur"
     },
     "experience": {
@@ -322,7 +323,8 @@
     },
     "paymentTypes": {
       "hourly": "/heure",
-      "daily": "/jour"
+      "daily": "/jour",
+      "project": "/projet"
     },
     "emptyStates": {
       "freelancers": {

@@ -66,22 +66,18 @@ const TalentPoolPage: React.FC = () => {
   );
 
   const handleConnect = useCallback((userId: string) => {
-    console.log('Connect with user:', userId);
     // In real app: call connection API
   }, []);
 
   const handleViewTeam = useCallback((teamId: string) => {
-    console.log('Navigate to team:', teamId);
     // In real app: router.push(`/team/${teamId}`);
   }, []);
 
   const handleJoinTeam = useCallback((teamId: string) => {
-    console.log('Join team:', teamId);
     // In real app: call join team API
   }, []);
 
   const handleCreateTeam = useCallback(() => {
-    console.log('Create new team');
     // In real app: open create team modal or navigate to create team page
   }, []);
 
@@ -106,7 +102,6 @@ const TalentPoolPage: React.FC = () => {
 
       try {
         const result = await inviteUserToPlatform(data);
-        console.log('Invitation sent successfully:', result);
       } catch (error) {
         console.error('Failed to send invitation:', error);
         throw error; // Re-throw to let the modal handle the error display

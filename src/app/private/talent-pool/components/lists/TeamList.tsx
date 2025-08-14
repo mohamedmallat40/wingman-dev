@@ -64,8 +64,8 @@ const TeamList: React.FC<TeamListProps> = ({ filters, onViewTeam, onJoinTeam, on
       if (filters?.skills?.length) {
         params.skills = filters.skills.join(',');
       }
-      if (filters?.availability) {
-        params.availability = filters.availability;
+      if (filters?.statusAviability) {
+        params.statusAviability = filters.statusAviability;
       }
       if (filters?.profession) {
         params.profession = filters.profession;

@@ -4,11 +4,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { getName } from 'i18n-iso-countries';
+import { useLocale, useTranslations } from 'next-intl';
 
 import wingManApi from '@/lib/axios';
 
-import { getCountryNameFromCode } from '../../data/countries';
 import { type TalentPoolFilters, type User, type UserResponse } from '../../types';
 import { TalentCard } from '../cards';
 import { TalentGroupModal, TalentNoteModal, TalentTagsModal } from '../modals';
@@ -28,6 +28,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
   onCountChange
 }) => {
   const t = useTranslations();
+  const locale = useLocale();
   const [agencies, setAgencies] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -58,60 +59,58 @@ const AgencyList: React.FC<AgencyListProps> = ({
       }
       setError(null);
 
-      const params: Record<string, string> = {
-        categories: 'All',
-        kind: 'AGENCY',
-        page: page.toString(),
-        limit: itemsPerPage.toString()
-      };
+      const parameters = new URLSearchParams();
+      parameters.append('categories', 'All');
+      parameters.append('kind', 'AGENCY');
+      parameters.append('page', page.toString());
+      parameters.append('limit', itemsPerPage.toString());
 
       // Add filters to params
       if (filters?.search) {
-        params.search = filters.search;
+        parameters.append('search', filters.search);
       }
       if (filters?.name) {
-        params.name = filters.name;
+        parameters.append('name', filters.name);
       }
       if (filters?.region) {
-        params.region = filters.region;
+        parameters.append('region', filters.region);
       }
       if (filters?.skills?.length) {
-        params.skills = filters.skills.join(',');
+        for (const skill of filters.skills) {
+          parameters.append('skills', skill);
+        }
       }
-      if (filters?.availability) {
-        params.availability = filters.availability;
+      if (filters?.statusAviability) {
+        parameters.append('statusAviability', filters.statusAviability);
       }
       if (filters?.profession) {
-        params.profession = filters.profession;
+        parameters.append('profession', filters.profession);
       }
       if (filters?.experienceLevel?.length) {
-        params.experienceLevel = filters.experienceLevel.join(',');
+        for (const level of filters.experienceLevel) {
+          parameters.append('experienceLevel', level);
+        }
       }
       if (filters?.country?.length) {
-        // Convert country codes to lowercase names and add as separate parameters
-        filters.country.forEach((countryCode, index) => {
-          const countryName = getCountryNameFromCode(countryCode);
-          if (index === 0) {
-            params.country = countryName;
-          } else {
-            params[`country${index + 1}`] = countryName;
-          }
-        });
+        for (const country of filters.country) {
+          const countryName = getName(country, locale);
+          parameters.append('country', countryName);
+        }
       }
       if (filters?.workType) {
-        params.workType = filters.workType;
+        parameters.append('workType', filters.workType);
       }
       if (filters?.minRate) {
-        params.minRate = filters.minRate.toString();
+        parameters.append('minRate', filters.minRate.toString());
       }
       if (filters?.maxRate) {
-        params.maxRate = filters.maxRate.toString();
+        parameters.append('maxRate', filters.maxRate.toString());
       }
       if (filters?.minRating) {
-        params.minRating = filters.minRating.toString();
+        parameters.append('minRating', filters.minRating.toString());
       }
 
-      const response = await wingManApi.get('/network/all-users', { params });
+      const response = await wingManApi.get('/network/all-users', { params: parameters });
       const data = response.data as UserResponse;
 
       if (append) {
@@ -129,6 +128,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
       setCurrentPage(data.meta.currentPage);
       setHasNextPage(data.meta.currentPage < data.meta.totalPages);
     } catch (err) {
+      console.error('Error fetching agencies:', err);
       setError(err instanceof Error ? err.message : 'Failed to fetch agencies');
     } finally {
       if (!append) {
@@ -162,6 +162,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
         const entry = entries[0];
         if (!entry) return;
         if (entry.isIntersecting && hasNextPage && !isLoadingMore && !isLoading) {
+          console.log('Loading more agencies...');
           loadMore();
         }
       },
@@ -171,7 +172,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
       }
     );
 
-    const sentinel = document.getElementById('agency-sentinel');
+    const sentinel = document.querySelector('#agency-sentinel');
     if (sentinel) {
       observer.observe(sentinel);
     }
@@ -193,11 +194,13 @@ const AgencyList: React.FC<AgencyListProps> = ({
   };
 
   const handleViewProfile = (userId: string) => {
+    console.log('View profile:', userId);
     onViewProfile?.(userId);
   };
 
   const handleConnect = async (userId: string) => {
     try {
+      console.log('Connecting to agency:', userId);
       onConnect?.(userId);
 
       // Update local state to reflect connection
@@ -205,7 +208,7 @@ const AgencyList: React.FC<AgencyListProps> = ({
         prev.map((user) => (user.id === userId ? { ...user, isConnected: true } : user))
       );
     } catch (err) {
-      // Handle connection error silently
+      console.error('Error connecting to agency:', err);
     }
   };
 
