@@ -7,7 +7,6 @@ import { type BroadcastPost } from '../types';
 interface FilterState {
   category: string | null;
   topicId: string | null;
-  sortBy: 'newest' | 'trending' | 'popular';
   searchQuery: string;
   dateRange: {
     from: Date | null;
@@ -73,7 +72,6 @@ interface BroadcastStore {
   filters: FilterState;
   setCategory: (category: string | null) => void;
   setTopic: (topicId: string | null) => void;
-  setSortBy: (sortBy: FilterState['sortBy']) => void;
   setSearchQuery: (query: string) => void;
   setDateRange: (range: FilterState['dateRange']) => void;
   setPostTypes: (types: BroadcastPost['type'][]) => void;
@@ -131,7 +129,6 @@ interface BroadcastStore {
 const initialFilterState: FilterState = {
   category: null,
   topicId: null,
-  sortBy: 'newest',
   searchQuery: '',
   dateRange: null,
   postTypes: [],
@@ -197,14 +194,6 @@ export const useBroadcastStore = create<BroadcastStore>()(
           'setTopic'
         ),
 
-      setSortBy: (sortBy) =>
-        set(
-          (state) => ({
-            filters: { ...state.filters, sortBy }
-          }),
-          false,
-          'setSortBy'
-        ),
 
       setSearchQuery: (searchQuery) =>
         set(
@@ -545,11 +534,6 @@ export const useBroadcastStore = create<BroadcastStore>()(
 
 // ===== SELECTORS =====
 export const useBroadcastFilters = () => useBroadcastStore((state) => state.filters);
-export const useBroadcastUI = () => useBroadcastStore((state) => state.ui);
-export const useBroadcastDrafts = () => useBroadcastStore((state) => state.drafts);
-export const useBroadcastAnalytics = () => useBroadcastStore((state) => state.analytics);
-export const useBroadcastRealtime = () => useBroadcastStore((state) => state.realtime);
-export const useBroadcastPreferences = () => useBroadcastStore((state) => state.preferences);
 
 // Helper selector to get active filters count
 export const useActiveFiltersCount = () => {

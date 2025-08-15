@@ -1,0 +1,55 @@
+{
+  "broadcasts": {
+    "create": {
+      "preview": {
+        "title": "Live Preview",
+        "noContent": "Your content will appear here as you type..."
+      },
+      "fields": {
+        "topics": {
+          "title": "Topics",
+          "label": "Select Topics",
+          "placeholder": "Choose relevant topics...",
+          "selected": "Selected topics"
+        },
+        "skills": {
+          "title": "Skills",
+          "label": "Select Skills", 
+          "placeholder": "Add relevant skills...",
+          "selected": "Selected skills"
+        }
+      },
+      "media": {
+        "title": "Media",
+        "preview": "Preview",
+        "previous": "Previous",
+        "next": "Next",
+        "remove": "Remove",
+        "supportedFormats": "Supported formats",
+        "tips": {
+          "title": "Media Tips",
+          "quality": "Use high-quality images and videos",
+          "relevant": "Ensure media is relevant to your content",
+          "alt": "Add alt text for accessibility"
+        }
+      },
+      "tags": {
+        "recommendations": {
+          "title": "Recommendations",
+          "relevant": "Choose topics and skills relevant to your content",
+          "mix": "Mix specific and general topics for better reach",
+          "specific": "Be specific with skills to attract the right audience"
+        }
+      },
+      "tips": {
+        "title": "Writing Tips",
+        "engaging": "Start with an engaging hook",
+        "keywords": "Use relevant keywords naturally",
+        "structure": "Structure your content with clear paragraphs"
+      }
+    }
+  },
+  "common": {
+    "remove": "Remove"
+  }
+}

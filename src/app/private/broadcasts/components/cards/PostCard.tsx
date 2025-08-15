@@ -2,10 +2,20 @@
 
 import React, { useState } from 'react';
 
-import { Avatar, Button, Card, CardBody, CardHeader, Chip, Divider, Tooltip } from '@heroui/react';
+import { 
+  Avatar, 
+  Button, 
+  Card, 
+  CardBody, 
+  CardHeader, 
+  Chip, 
+  Divider, 
+  Tooltip
+} from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+
+import { getImageUrl } from '@/lib/utils/utilities';
 
 import { type BroadcastPost } from '../../types';
 
@@ -21,12 +31,6 @@ const formatTimeAgo = (timestamp: string): string => {
   return `${Math.floor(diffInSeconds / 86400)}d ago`;
 };
 
-const formatEngagementCount = (count: number): string => {
-  if (count < 1000) return count.toString();
-  if (count < 1000000) return `${(count / 1000).toFixed(1)}K`;
-  return `${(count / 1000000).toFixed(1)}M`;
-};
-
 interface PostCardProps {
   post: BroadcastPost;
   onLike: (postId: string) => void;
@@ -38,7 +42,7 @@ interface PostCardProps {
   className?: string;
 }
 
-const PostCard: React.FC<PostCardProps> = ({
+const PostCard: React.FC<PostCardProps> = React.memo(({
   post,
   onLike,
   onBookmark,
@@ -56,41 +60,68 @@ const PostCard: React.FC<PostCardProps> = ({
     return null;
   }
 
-  const safeDescription = post.description || '';
-  const safeTitle = post.title || 'Untitled Post';
-  const safeOwner = post.owner || { firstName: 'Unknown', lastName: 'User', profileImage: null, userName: null, isMailVerified: false };
-  const safeTopics = post.topics || [];
-  const safeSkills = post.skills || [];
-  const safeMedia = post.media || [];
-  const safeCreatedAt = post.createdAt || new Date().toISOString();
+  const {
+    safeDescription,
+    safeTitle,
+    safeOwner,
+    safeTopics,
+    safeSkills,
+    safeMedia,
+    safeCreatedAt,
+    shouldTruncate,
+    displayContent,
+    postIcon,
+    postTypeColor
+  } = React.useMemo(() => {
+    const safeDescription = post.description || '';
+    const safeTitle = post.title || 'Untitled Post';
+    const safeOwner = post.owner || { 
+      firstName: 'Unknown', 
+      lastName: 'User', 
+      profileImage: null, 
+      userName: null, 
+      isMailVerified: false 
+    };
+    const safeTopics = post.topics || [];
+    const safeSkills = post.skills || [];
+    const safeMedia = post.media || [];
+    const safeCreatedAt = post.createdAt || new Date().toISOString();
 
-  const shouldTruncate = safeDescription.length > 280;
-  const displayContent =
-    isExpanded || !shouldTruncate ? safeDescription : `${safeDescription.substring(0, 280)}...`;
+    const shouldTruncate = safeDescription.length > 280;
+    const displayContent = isExpanded || !shouldTruncate 
+      ? safeDescription 
+      : `${safeDescription.substring(0, 280)}...`;
 
-  const getPostIcon = () => {
-    // Determine icon based on media content or default to broadcast
-    if (safeMedia.length > 0) {
-      return 'solar:gallery-linear';
-    }
-    return 'solar:broadcast-linear';
-  };
+    const postIcon = safeMedia.length > 0 ? 'solar:gallery-linear' : 'solar:broadcast-linear';
+    const postTypeColor = 'primary';
 
-  const getPostTypeColor = () => {
-    // Default color for broadcast posts
-    return 'primary';
-  };
+    return {
+      safeDescription,
+      safeTitle,
+      safeOwner,
+      safeTopics,
+      safeSkills,
+      safeMedia,
+      safeCreatedAt,
+      shouldTruncate,
+      displayContent,
+      postIcon,
+      postTypeColor
+    };
+  }, [post, isExpanded]);
 
   return (
     <Card
       className={`border-divider/50 shadow-sm transition-all duration-200 hover:shadow-md ${className}`}
+      role="article"
+      aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
     >
       <CardHeader className='pb-3'>
         <div className='flex w-full items-start gap-3'>
           {/* Author Avatar */}
           <div className='relative'>
             <Avatar
-              src={safeOwner.profileImage || undefined}
+              src={safeOwner.profileImage ? getImageUrl(safeOwner.profileImage) : undefined}
               name={`${safeOwner.firstName} ${safeOwner.lastName}`}
               size='md'
               className='ring-primary/20 ring-offset-background ring-2 ring-offset-2'
@@ -112,15 +143,21 @@ const PostCard: React.FC<PostCardProps> = ({
                 <span className='text-foreground-500'>@{safeOwner.userName}</span>
               )}
               <span className='text-foreground-400'>·</span>
-              <time className='text-foreground-500 text-sm'>{formatTimeAgo(safeCreatedAt)}</time>
+              <time 
+                className='text-foreground-500 text-sm'
+                dateTime={safeCreatedAt}
+                title={new Date(safeCreatedAt).toLocaleString()}
+              >
+                {formatTimeAgo(safeCreatedAt)}
+              </time>
             </div>
 
             <div className='mt-1 flex flex-wrap items-center gap-2'>
               <Chip
                 size='sm'
-                color={getPostTypeColor() as any}
+                color={postTypeColor as any}
                 variant='flat'
-                startContent={<Icon icon={getPostIcon()} className='h-3 w-3' />}
+                startContent={<Icon icon={postIcon} className='h-3 w-3' />}
               >
                 Broadcast
               </Chip>
@@ -176,7 +213,12 @@ const PostCard: React.FC<PostCardProps> = ({
       <CardBody className='pt-0'>
         {/* Post Title */}
         {safeTitle && (
-          <h2 className='text-foreground mb-3 text-lg leading-tight font-bold'>{safeTitle}</h2>
+          <h2 
+            className='text-foreground mb-3 text-lg leading-tight font-bold'
+            id={`post-title-${post.id}`}
+          >
+            {safeTitle}
+          </h2>
         )}
 
         {/* Post Content */}
@@ -301,10 +343,12 @@ const PostCard: React.FC<PostCardProps> = ({
                 <Icon
                   icon='solar:heart-linear'
                   className='h-4 w-4'
+                  aria-hidden="true"
                 />
               }
               onPress={() => onLike(post.id)}
               className='h-auto min-w-0 px-3 py-2'
+              aria-label={`Like post by ${safeOwner.firstName} ${safeOwner.lastName}`}
             >
               Like
             </Button>
@@ -312,9 +356,10 @@ const PostCard: React.FC<PostCardProps> = ({
             <Button
               size='sm'
               variant='light'
-              startContent={<Icon icon='solar:chat-round-linear' className='h-4 w-4' />}
+              startContent={<Icon icon='solar:chat-round-linear' className='h-4 w-4' aria-hidden="true" />}
               onPress={() => onComment(post.id)}
               className='h-auto min-w-0 px-3 py-2'
+              aria-label={`Comment on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
             >
               Comment
             </Button>
@@ -322,9 +367,10 @@ const PostCard: React.FC<PostCardProps> = ({
             <Button
               size='sm'
               variant='light'
-              startContent={<Icon icon='solar:share-linear' className='h-4 w-4' />}
+              startContent={<Icon icon='solar:share-linear' className='h-4 w-4' aria-hidden="true" />}
               onPress={() => onShare(post.id)}
               className='h-auto min-w-0 px-3 py-2'
+              aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
             >
               Share
             </Button>
@@ -337,9 +383,20 @@ const PostCard: React.FC<PostCardProps> = ({
             </span>
           </div>
         </div>
+
       </CardBody>
     </Card>
   );
-};
+}, (prevProps, nextProps) => {
+  // Custom comparison for memo optimization
+  return (
+    prevProps.post.id === nextProps.post.id &&
+    prevProps.isLoading === nextProps.isLoading &&
+    prevProps.className === nextProps.className &&
+    // Check if post content has changed
+    JSON.stringify(prevProps.post) === JSON.stringify(nextProps.post)
+  );
+});
+
 
 export default PostCard;

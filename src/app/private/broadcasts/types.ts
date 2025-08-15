@@ -7,6 +7,9 @@ export interface Topic {
   icon: string;
   color: string;
   background: string | null;
+  followerCount: number;
+  broadcastCount: number;
+  isFollowed: boolean;
 }
 
 // Skill interface matching API response

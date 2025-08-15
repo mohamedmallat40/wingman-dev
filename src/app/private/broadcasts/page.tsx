@@ -6,6 +6,7 @@ import type { CreatePostData } from './services/broadcast.service';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
@@ -38,6 +39,7 @@ export default function BroadcastsPage() {
 
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [sidebarView, setSidebarView] = useState<'topics' | 'filters'>('topics');
 
   const handleTopicToggle = (topicId: string) => {
     // Handle topic toggle logic here
@@ -83,14 +85,19 @@ export default function BroadcastsPage() {
         pageDescription={t('description')}
         headerActions={
           <div className='flex items-center gap-2'>
-            {/* Filter Toggle */}
+            {/* View Toggle */}
             <Button
               variant='flat'
               size='sm'
-              startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
-              onPress={() => setShowFilters(!showFilters)}
+              startContent={
+                <Icon
+                  icon={sidebarView === 'topics' ? 'solar:filter-linear' : 'solar:satellite-linear'}
+                  className='h-4 w-4'
+                />
+              }
+              onPress={() => setSidebarView(sidebarView === 'topics' ? 'filters' : 'topics')}
             >
-              {t('feed.filterPlaceholder.sort')}
+              {sidebarView === 'topics' ? 'Filters' : 'Topics'}
             </Button>
 
             {/* Create Post Button */}
@@ -109,16 +116,33 @@ export default function BroadcastsPage() {
         <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
           <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
             <div className='sticky top-4 space-y-4 overflow-visible'>
-              <SubcastSidebar
-                onSubcastToggle={handleTopicToggle}
-                onSubcastSelect={handleTopicSelect}
-                selectedSubcast={activeTopic}
-              />
-
-              {/* Filters Panel */}
-              {showFilters && (
-                <BroadcastFilters isOpen={showFilters} onClose={() => setShowFilters(false)} />
-              )}
+              <AnimatePresence mode='wait'>
+                {sidebarView === 'topics' ? (
+                  <motion.div
+                    key='topics'
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <SubcastSidebar
+                      onSubcastToggle={handleTopicToggle}
+                      onSubcastSelect={handleTopicSelect}
+                      selectedSubcast={activeTopic}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key='filters'
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <BroadcastFilters isOpen={true} onClose={() => setSidebarView('topics')} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 

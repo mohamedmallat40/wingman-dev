@@ -18,10 +18,22 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
+import { parseDate, CalendarDate } from '@internationalized/date';
 
 import { useTopics } from '../../hooks';
 import { useActiveFiltersCount, useBroadcastStore } from '../../store/useBroadcastStore';
 import { type BroadcastPost } from '../../types';
+
+// Helper functions for date conversion
+const dateToCalendarDate = (date: Date | null | undefined): CalendarDate | null => {
+  if (!date) return null;
+  return parseDate(date.toISOString().split('T')[0]);
+};
+
+const calendarDateToDate = (calendarDate: CalendarDate | null): Date | null => {
+  if (!calendarDate) return null;
+  return new Date(calendarDate.year, calendarDate.month - 1, calendarDate.day);
+};
 
 interface BroadcastFiltersProps {
   isOpen: boolean;
@@ -35,7 +47,6 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
     filters,
     setCategory,
     setTopic,
-    setSortBy,
     setSearchQuery,
     setDateRange,
     setPostTypes,
@@ -60,11 +71,6 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
     'Productivity'
   ];
 
-  const sortOptions = [
-    { key: 'newest', label: 'Newest First', icon: 'solar:sort-horizontal-linear' },
-    { key: 'trending', label: 'Trending', icon: 'solar:fire-linear' },
-    { key: 'popular', label: 'Most Popular', icon: 'solar:heart-linear' }
-  ];
 
   // Post types removed as they don't exist in the new API structure
 
@@ -97,8 +103,14 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
             </Chip>
           )}
         </div>
-        <Button isIconOnly variant='light' size='sm' onPress={onClose}>
-          <Icon icon='solar:close-linear' className='h-4 w-4' />
+        <Button 
+          variant='light' 
+          size='sm' 
+          onPress={onClose}
+          startContent={<Icon icon='solar:arrow-left-linear' className='h-4 w-4' />}
+          className='text-foreground-600 hover:text-primary'
+        >
+          Topics
         </Button>
       </CardHeader>
 
@@ -120,29 +132,6 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
           </div>
         </div>
 
-        <Divider />
-
-        {/* Sort By */}
-        <div className='space-y-2'>
-          <label className='text-sm font-medium'>Sort By</label>
-          <Select
-            selectedKeys={[filters.sortBy]}
-            onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0] as typeof filters.sortBy;
-              setSortBy(selected);
-            }}
-            placeholder='Select sort order'
-          >
-            {sortOptions.map((option) => (
-              <SelectItem
-                key={option.key}
-                startContent={<Icon icon={option.icon} className='h-4 w-4' />}
-              >
-                {option.label}
-              </SelectItem>
-            ))}
-          </Select>
-        </div>
 
         <Divider />
 
@@ -203,9 +192,9 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
               setTopic(selected || null);
             }}
             placeholder='Select topic'
-            isLoading={!topics || (!Array.isArray(topics) && !topics?.data)}
+            isLoading={!topics}
           >
-            {(Array.isArray(topics) ? topics : topics?.data)?.map((topic: any) => (
+            {topics?.map((topic: any) => (
               <SelectItem
                 key={topic.id}
                 startContent={<Icon icon={topic.icon} className='h-4 w-4' />}
@@ -224,21 +213,21 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
           <div className='grid grid-cols-2 gap-2'>
             <DatePicker
               label='From'
-              value={filters.dateRange?.from}
+              value={dateToCalendarDate(filters.dateRange?.from || null)}
               onChange={(date) =>
                 setDateRange({
-                  from: date,
+                  from: calendarDateToDate(date),
                   to: filters.dateRange?.to || null
                 })
               }
             />
             <DatePicker
               label='To'
-              value={filters.dateRange?.to}
+              value={dateToCalendarDate(filters.dateRange?.to || null)}
               onChange={(date) =>
                 setDateRange({
                   from: filters.dateRange?.from || null,
-                  to: date
+                  to: calendarDateToDate(date)
                 })
               }
             />
@@ -258,8 +247,13 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
           >
             Clear All
           </Button>
-          <Button color='primary' onPress={onClose} fullWidth>
-            Apply
+          <Button 
+            color='primary' 
+            onPress={onClose} 
+            fullWidth
+            startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
+          >
+            Back to Topics
           </Button>
         </div>
       </CardBody>
