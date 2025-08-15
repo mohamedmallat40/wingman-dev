@@ -1,7 +1,4 @@
 import { useMutation } from '@tanstack/react-query';
-import { useTranslations } from 'next-intl';
-
-// import { toast } from '@heroui/toast'; // Commented out for now
 
 import { saveDraft } from '../services/broadcast.service';
 
@@ -17,7 +14,6 @@ interface DraftData {
 }
 
 export const useSaveDraft = () => {
-  const t = useTranslations('broadcasts');
 
   return useMutation({
     mutationFn: (draftData: DraftData) => saveDraft(draftData),

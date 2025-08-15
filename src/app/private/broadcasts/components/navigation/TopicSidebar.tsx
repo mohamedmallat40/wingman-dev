@@ -15,12 +15,13 @@ import {
   Select,
   SelectItem,
   Tab,
-  Tabs
+  Tabs,
+  Tooltip
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { useTopics } from '../../hooks';
+import { useTopics, useFollowTopic, useUnfollowTopic } from '../../hooks';
 
 interface Subcast {
   id: string;
@@ -276,7 +277,7 @@ const TRENDING_TOPICS: TrendingTopic[] = [
   { id: '5', name: 'Remote Sales', postCount: 121, growth: 19.8, category: 'Sales' }
 ];
 
-interface SubcastSidebarProps {
+interface TopicSidebarProps {
   selectedSubcasts?: string[];
   onSubcastToggle?: (subcastId: string) => void;
   onSubcastSelect?: (subcastId: string | null) => void;
@@ -284,20 +285,25 @@ interface SubcastSidebarProps {
   className?: string;
 }
 
-export default function SubcastSidebar({
+export default function TopicSidebar({
   selectedSubcasts = [],
   onSubcastToggle,
   onSubcastSelect,
   selectedSubcast,
   className = ''
-}: SubcastSidebarProps) {
+}: TopicSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [sortBy, setSortBy] = useState('popularity');
   const [activeTab, setActiveTab] = useState('all');
   // Fetch topics from API
   const { data: topicsData, isLoading: topicsLoading, error: topicsError } = useTopics();
   const [subcasts, setSubcasts] = useState<Subcast[]>([]);
+  
+  // Follow/unfollow mutations
+  const followMutation = useFollowTopic();
+  const unfollowMutation = useUnfollowTopic();
+  
+  // Track which topic is currently being processed
+  const [loadingTopicId, setLoadingTopicId] = useState<string | null>(null);
 
   // Update subcasts when API data comes in
   useEffect(() => {
@@ -308,39 +314,21 @@ export default function SubcastSidebar({
         name: topic.title, // API uses 'title' not 'name'
         description: topic.description,
         icon: topic.icon,
-        followerCount: topic.followers_count || 0, // Will be added later
-        postCount: topic.broadcasts_count || 0, // Will be added later
-        isFollowing: false, // Will be determined by user's subscriptions
+        followerCount: topic.followerCount || 0,
+        postCount: topic.broadcastCount || 0,
+        isFollowing: topic.isFollowed || false,
         category: 'tech', // Default category since not provided
-        color: topic.background || topic.background_color || '#3B82F6', // Use background or fallback
+        color: topic.color || '#3B82F6',
         isVerified: true, // Default to verified
         trending: false, // Default to not trending
         tags: [], // Default empty tags
         key: topic.key // Store the key field if needed
       }));
       setSubcasts(transformedTopics);
-    } else if (topicsData?.data && Array.isArray(topicsData.data)) {
-      // Handle case where response is wrapped in a data object
-      const transformedTopics: Subcast[] = topicsData.data.map((topic: any) => ({
-        id: topic.id,
-        name: topic.title,
-        description: topic.description,
-        icon: topic.icon,
-        followerCount: topic.followers_count || 0,
-        postCount: topic.broadcasts_count || 0,
-        isFollowing: false,
-        category: 'tech',
-        color: topic.background || topic.background_color || '#3B82F6',
-        isVerified: true,
-        trending: false,
-        tags: [],
-        key: topic.key
-      }));
-      setSubcasts(transformedTopics);
     }
   }, [topicsData]);
 
-  // Filter and sort subcasts
+  // Filter subcasts
   const filteredSubcasts = useMemo(() => {
     let filtered = subcasts.filter(
       (subcast) =>
@@ -348,11 +336,6 @@ export default function SubcastSidebar({
         subcast.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         subcast.tags?.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
     );
-
-    // Filter by category
-    if (selectedCategory !== 'all') {
-      filtered = filtered.filter((subcast) => subcast.category === selectedCategory);
-    }
 
     // Filter by tab
     switch (activeTab) {
@@ -367,46 +350,40 @@ export default function SubcastSidebar({
         break;
     }
 
-    // Sort subcasts
-    switch (sortBy) {
-      case 'popularity':
-        filtered.sort((a, b) => b.followerCount - a.followerCount);
-        break;
-      case 'activity':
-        filtered.sort(
-          (a, b) => (b.engagement?.activeUsers || 0) - (a.engagement?.activeUsers || 0)
-        );
-        break;
-      case 'growth':
-        filtered.sort(
-          (a, b) => (b.engagement?.weeklyGrowth || 0) - (a.engagement?.weeklyGrowth || 0)
-        );
-        break;
-      case 'alphabetical':
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      default:
-        break;
-    }
-
     return filtered;
-  }, [subcasts, searchQuery, selectedCategory, sortBy, activeTab]);
+  }, [subcasts, searchQuery, activeTab]);
 
   const handleFollowToggle = (subcastId: string) => {
-    setSubcasts((prevSubcasts) =>
-      prevSubcasts.map((subcast) => {
-        if (subcast.id === subcastId) {
-          return {
-            ...subcast,
-            isFollowing: !subcast.isFollowing,
-            followerCount: subcast.isFollowing
-              ? subcast.followerCount - 1
-              : subcast.followerCount + 1
-          };
+    // Find the current subcast to determine if we should follow or unfollow
+    const subcast = subcasts.find(s => s.id === subcastId);
+    if (!subcast) return;
+
+    // Set loading state for this specific topic
+    setLoadingTopicId(subcastId);
+
+    if (subcast.isFollowing) {
+      // Unfollow the topic
+      unfollowMutation.mutate(subcastId, {
+        onSuccess: () => {
+          setLoadingTopicId(null);
+        },
+        onError: (error) => {
+          console.error('Failed to unfollow topic:', error);
+          setLoadingTopicId(null);
         }
-        return subcast;
-      })
-    );
+      });
+    } else {
+      // Follow the topic
+      followMutation.mutate(subcastId, {
+        onSuccess: () => {
+          setLoadingTopicId(null);
+        },
+        onError: (error) => {
+          console.error('Failed to follow topic:', error);
+          setLoadingTopicId(null);
+        }
+      });
+    }
 
     onSubcastToggle?.(subcastId);
   };
@@ -421,12 +398,7 @@ export default function SubcastSidebar({
     return count.toString();
   };
 
-  const getCategoryLabel = (category: string): string => {
-    return category.charAt(0).toUpperCase() + category.slice(1);
-  };
-
   const followingCount = subcasts.filter((s) => s.isFollowing).length;
-  const categories = ['all', ...Array.from(new Set(subcasts.map((s) => s.category)))];
 
   // Show skeleton loading state
   if (topicsLoading) {
@@ -558,8 +530,8 @@ export default function SubcastSidebar({
             <Tab key='trending' title='Trending' />
           </Tabs>
 
-          {/* Search and Filters */}
-          <div className='mb-4 space-y-3'>
+          {/* Search */}
+          <div className='mb-4'>
             <Input
               placeholder='Search topics...'
               value={searchQuery}
@@ -580,53 +552,6 @@ export default function SubcastSidebar({
                   'bg-default-100 dark:bg-default-50 border-default-300 hover:border-primary focus-within:border-primary'
               }}
             />
-
-            <div className='flex gap-2'>
-              <Select
-                placeholder='Category'
-                selectedKeys={[selectedCategory]}
-                onSelectionChange={(keys) => setSelectedCategory(Array.from(keys)[0] as string)}
-                size='sm'
-                className='flex-1'
-                classNames={{
-                  trigger: 'text-foreground',
-                  value: 'text-foreground',
-                  popoverContent: 'text-foreground bg-background'
-                }}
-              >
-                {categories.map((category) => (
-                  <SelectItem key={category} value={category} className='text-foreground'>
-                    {category === 'all' ? 'All Categories' : getCategoryLabel(category)}
-                  </SelectItem>
-                ))}
-              </Select>
-
-              <Select
-                placeholder='Sort'
-                selectedKeys={[sortBy]}
-                onSelectionChange={(keys) => setSortBy(Array.from(keys)[0] as string)}
-                size='sm'
-                className='flex-1'
-                classNames={{
-                  trigger: 'text-foreground',
-                  value: 'text-foreground',
-                  popoverContent: 'text-foreground bg-background'
-                }}
-              >
-                <SelectItem key='popularity' className='text-foreground'>
-                  Popular
-                </SelectItem>
-                <SelectItem key='activity' className='text-foreground'>
-                  Active
-                </SelectItem>
-                <SelectItem key='growth' className='text-foreground'>
-                  Growing
-                </SelectItem>
-                <SelectItem key='alphabetical' className='text-foreground'>
-                  A-Z
-                </SelectItem>
-              </Select>
-            </div>
           </div>
 
           {/* Trending Topics Section */}
@@ -695,16 +620,26 @@ export default function SubcastSidebar({
                                   ? 'bg-primary/30'
                                   : subcast.isFollowing
                                     ? 'bg-primary/20'
-                                    : `bg-${subcast.color}/10`
+                                    : 'bg-opacity-10'
                               }`}
+                              style={{
+                                backgroundColor: selectedSubcast === subcast.id || subcast.isFollowing 
+                                  ? undefined 
+                                  : `${subcast.color}1A`
+                              }}
                             >
                               <Icon
                                 icon={subcast.icon}
                                 className={`h-4 w-4 ${
                                   selectedSubcast === subcast.id || subcast.isFollowing
                                     ? 'text-primary'
-                                    : `text-${subcast.color}`
+                                    : 'text-current'
                                 }`}
+                                style={{
+                                  color: selectedSubcast === subcast.id || subcast.isFollowing 
+                                    ? undefined 
+                                    : subcast.color
+                                }}
                               />
                             </div>
 
@@ -739,25 +674,41 @@ export default function SubcastSidebar({
                                     className='text-primary h-3 w-3 flex-shrink-0'
                                   />
                                 )}
-                                <Button
-                                  size='sm'
-                                  variant={subcast.isFollowing ? 'solid' : 'flat'}
-                                  color={subcast.isFollowing ? 'success' : 'default'}
-                                  className={`h-6 min-w-16 px-2 text-xs transition-colors ${
-                                    subcast.isFollowing
-                                      ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                                      : 'bg-default-100 text-default-600 hover:bg-emerald-50 hover:text-emerald-600'
-                                  }`}
-                                  onPress={(e) => {
-                                    e?.stopPropagation?.();
-                                    handleFollowToggle(subcast.id);
-                                  }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                  }}
+                                <Tooltip
+                                  content={subcast.isFollowing ? 'Unfollow' : 'Follow'}
+                                  placement="top"
+                                  delay={500}
+                                  closeDelay={0}
+                                  className="text-xs"
                                 >
-                                  {subcast.isFollowing ? 'Following' : 'Follow'}
-                                </Button>
+                                  <Button
+                                    isIconOnly
+                                    size='sm'
+                                    variant={subcast.isFollowing ? 'solid' : 'flat'}
+                                    color={subcast.isFollowing ? 'success' : 'primary'}
+                                    className={`h-7 w-7 min-w-unit-7 transition-all duration-200 ${
+                                      subcast.isFollowing
+                                        ? 'bg-success/20 text-success hover:bg-success/30 border border-success/30'
+                                        : 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30'
+                                    }`}
+                                    isLoading={loadingTopicId === subcast.id}
+                                    isDisabled={loadingTopicId === subcast.id}
+                                    onPress={(e) => {
+                                      e?.stopPropagation?.();
+                                      handleFollowToggle(subcast.id);
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    {!loadingTopicId || loadingTopicId !== subcast.id ? (
+                                      <Icon
+                                        icon={subcast.isFollowing ? 'solar:check-circle-bold' : 'solar:add-circle-linear'}
+                                        className='h-4 w-4'
+                                      />
+                                    ) : null}
+                                  </Button>
+                                </Tooltip>
                               </div>
                             </div>
 
@@ -766,7 +717,7 @@ export default function SubcastSidebar({
                             </p>
 
                             {/* Simplified Stats */}
-                            <div className='flex items-center justify-between'>
+                            <div className='flex items-center gap-3'>
                               <div className='flex items-center gap-1'>
                                 <Icon
                                   icon='solar:users-group-rounded-linear'
@@ -776,15 +727,15 @@ export default function SubcastSidebar({
                                   {formatCount(subcast.followerCount)}
                                 </span>
                               </div>
-
-                              <Chip
-                                size='sm'
-                                variant='flat'
-                                color={subcast.color as any}
-                                className='h-4 px-1.5 text-xs'
-                              >
-                                {getCategoryLabel(subcast.category)}
-                              </Chip>
+                              <div className='flex items-center gap-1'>
+                                <Icon
+                                  icon='solar:document-text-linear'
+                                  className='text-foreground-400 h-3 w-3'
+                                />
+                                <span className='text-foreground-500 text-xs font-medium'>
+                                  {formatCount(subcast.postCount)}
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -812,28 +763,6 @@ export default function SubcastSidebar({
             )}
           </div>
 
-          {/* Footer Actions */}
-          <div className='border-default-200 mt-4 space-y-2 border-t pt-4'>
-            <Button
-              variant='flat'
-              size='sm'
-              fullWidth
-              startContent={<Icon icon='solar:compass-linear' className='h-4 w-4' />}
-              className='text-foreground-600 hover:bg-emerald-50 hover:text-emerald-600'
-            >
-              Discover Topics
-            </Button>
-
-            <Button
-              variant='light'
-              size='sm'
-              fullWidth
-              startContent={<Icon icon='solar:settings-linear' className='h-4 w-4' />}
-              className='text-foreground-500 hover:text-primary'
-            >
-              Manage Topics
-            </Button>
-          </div>
         </CardBody>
       </Card>
     </div>

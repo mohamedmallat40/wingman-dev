@@ -7,6 +7,9 @@ export interface Topic {
   icon: string;
   color: string;
   background: string | null;
+  followerCount: number;
+  broadcastCount: number;
+  isFollowed: boolean;
 }
 
 // Skill interface matching API response
@@ -76,7 +79,8 @@ export interface BroadcastPost {
   topics: Topic[];
   skills: Skill[];
   owner: BroadcastOwner;
-  media?: string[]; // Array of filenames
+  attachments?: string[]; // Array of filenames (images, videos, files)
+  media?: string[]; // Array of filenames (legacy field)
 }
 
 export interface Comment {

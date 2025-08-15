@@ -1,49 +1,19 @@
 import { API_ROUTES } from '@/lib/api-routes';
 import wingManApi from '@/lib/axios';
 
-import { type BroadcastPost, type Comment, type PostInteraction } from '../types';
-
 // ===== TYPES =====
 export interface CreatePostData {
   title: string;
   description: string;
   topics: string[]; // Array of topic UUIDs
-  skills: string[]; // Array of skill UUIDs  
-  media: string[]; // Array of filenames from successful uploads
-}
-
-export interface UpdatePostData {
-  title?: string;
-  content?: string;
-  tags?: string[];
-  priority?: 'low' | 'normal' | 'high';
+  skills: string[]; // Array of skill UUIDs
+  attachments: string[]; // Array of filenames from successful uploads
 }
 
 export interface FeedParams {
   page?: number;
   limit?: number;
   topics?: string[]; // Array of topic IDs for filtering
-}
-
-export interface SearchParams {
-  query: string;
-  page?: number;
-  limit?: number;
-  filters?: {
-    type?: BroadcastPost['type'][];
-    category?: string[];
-    dateRange?: {
-      from: string;
-      to: string;
-    };
-    author?: string[];
-    tags?: string[];
-  };
-}
-
-export interface CommentData {
-  content: string;
-  parentId?: string; // for replies
 }
 
 // ===== POSTS API =====
@@ -61,16 +31,16 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
 
   // Add multiple topics as separate query parameters
   if (topics && topics.length > 0) {
-    topics.forEach(topicId => {
+    topics.forEach((topicId) => {
       queryParams.append('topics', topicId);
     });
   }
 
   const response = await wingManApi.get(`${API_ROUTES.broadcasts.feed}?${queryParams}`);
-  
+
   // Handle different response structures
   const responseData = response.data;
-  
+
   // If response is directly an array, wrap it in pagination structure
   if (Array.isArray(responseData)) {
     return {
@@ -81,18 +51,20 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
       totalItems: responseData.length + (page - 1) * limit
     };
   }
-  
+
   // If response has data property, use it
   if (responseData.data && Array.isArray(responseData.data)) {
     return {
       data: responseData.data,
       currentPage: responseData.currentPage || page,
       hasNextPage: responseData.hasNextPage || responseData.data.length === limit,
-      totalPages: responseData.totalPages || Math.ceil((responseData.data.length + (page - 1) * limit) / limit),
+      totalPages:
+        responseData.totalPages ||
+        Math.ceil((responseData.data.length + (page - 1) * limit) / limit),
       totalItems: responseData.totalItems || responseData.data.length + (page - 1) * limit
     };
   }
-  
+
   // Fallback: return empty structure
   return {
     data: [],
@@ -101,22 +73,6 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
     totalPages: 1,
     totalItems: 0
   };
-};
-
-/**
- * Get trending posts
- */
-export const getTrendingPosts = async (limit = 10) => {
-  const response = await wingManApi.get(`${API_ROUTES.broadcasts.trending}?limit=${limit}`);
-  return response.data;
-};
-
-/**
- * Get a specific post by ID
- */
-export const getPostById = async (postId: string) => {
-  const response = await wingManApi.get(`${API_ROUTES.broadcasts.posts}/${postId}`);
-  return response.data;
 };
 
 /**
@@ -129,10 +85,10 @@ export const createPost = async (postData: CreatePostData) => {
 };
 
 /**
- * Update a broadcast post
+ * Update an existing broadcast post
  */
-export const updatePost = async (postId: string, updateData: UpdatePostData) => {
-  const response = await wingManApi.put(`${API_ROUTES.broadcasts.posts}/${postId}`, updateData);
+export const updatePost = async (postId: string, postData: CreatePostData) => {
+  const response = await wingManApi.patch(`/broadcast/${postId}`, postData);
   return response.data;
 };
 
@@ -140,15 +96,7 @@ export const updatePost = async (postId: string, updateData: UpdatePostData) => 
  * Delete a broadcast post
  */
 export const deletePost = async (postId: string) => {
-  const response = await wingManApi.delete(`${API_ROUTES.broadcasts.posts}/${postId}`);
-  return response.data;
-};
-
-/**
- * Search posts
- */
-export const searchPosts = async (searchParams: SearchParams) => {
-  const response = await wingManApi.post(API_ROUTES.broadcasts.search, searchParams);
+  const response = await wingManApi.delete(`/broadcast/${postId}`);
   return response.data;
 };
 
@@ -171,71 +119,10 @@ export const togglePostBookmark = async (postId: string) => {
 };
 
 /**
- * Share a post
- */
-export const sharePost = async (
-  postId: string,
-  shareData?: { message?: string; platform?: string }
-) => {
-  const response = await wingManApi.post(
-    `${API_ROUTES.broadcasts.share}/${postId}/share`,
-    shareData
-  );
-  return response.data;
-};
-
-/**
  * Track post view
  */
 export const trackPostView = async (postId: string) => {
   const response = await wingManApi.post(`${API_ROUTES.broadcasts.posts}/${postId}/view`);
-  return response.data;
-};
-
-// ===== COMMENTS API =====
-
-/**
- * Get comments for a post
- */
-export const getPostComments = async (postId: string, page = 1, limit = 20) => {
-  const response = await wingManApi.get(
-    `${API_ROUTES.broadcasts.comment}/${postId}/comments?page=${page}&limit=${limit}`
-  );
-  return response.data;
-};
-
-/**
- * Add a comment to a post
- */
-export const addComment = async (postId: string, commentData: CommentData) => {
-  const response = await wingManApi.post(
-    `${API_ROUTES.broadcasts.comment}/${postId}/comments`,
-    commentData
-  );
-  return response.data;
-};
-
-/**
- * Update a comment
- */
-export const updateComment = async (commentId: string, content: string) => {
-  const response = await wingManApi.put(`/comments/${commentId}`, { content });
-  return response.data;
-};
-
-/**
- * Delete a comment
- */
-export const deleteComment = async (commentId: string) => {
-  const response = await wingManApi.delete(`/comments/${commentId}`);
-  return response.data;
-};
-
-/**
- * Vote on a comment (upvote/downvote)
- */
-export const voteComment = async (commentId: string, voteType: 'up' | 'down') => {
-  const response = await wingManApi.post(`/comments/${commentId}/vote`, { type: voteType });
   return response.data;
 };
 
@@ -250,44 +137,18 @@ export const getTopics = async () => {
 };
 
 /**
- * Get topic details
+ * Follow a topic
  */
-export const getTopicById = async (topicId: string) => {
-  const response = await wingManApi.get(`${API_ROUTES.broadcasts.topics}/${topicId}`);
+export const followTopic = async (topicId: string) => {
+  const response = await wingManApi.post(`/broadcast/topics/${topicId}/follow`);
   return response.data;
 };
 
 /**
- * Subscribe to a topic
+ * Unfollow a topic
  */
-export const subscribeToTopic = async (topicId: string) => {
-  const response = await wingManApi.post(`${API_ROUTES.broadcasts.topics}/${topicId}/subscribe`);
-  return response.data;
-};
-
-/**
- * Unsubscribe from a topic
- */
-export const unsubscribeFromTopic = async (topicId: string) => {
-  const response = await wingManApi.delete(`${API_ROUTES.broadcasts.topics}/${topicId}/subscribe`);
-  return response.data;
-};
-
-// ===== ANALYTICS API =====
-
-/**
- * Get user's broadcast analytics
- */
-export const getUserAnalytics = async (timeRange = '30d') => {
-  const response = await wingManApi.get(`/broadcasts/analytics?range=${timeRange}`);
-  return response.data;
-};
-
-/**
- * Get post analytics
- */
-export const getPostAnalytics = async (postId: string) => {
-  const response = await wingManApi.get(`${API_ROUTES.broadcasts.posts}/${postId}/analytics`);
+export const unfollowTopic = async (topicId: string) => {
+  const response = await wingManApi.delete(`/broadcast/topics/${topicId}/follow`);
   return response.data;
 };
 
@@ -304,20 +165,4 @@ export const saveDraft = async (draftData: Partial<CreatePostData> & { id?: stri
     const response = await wingManApi.post('/broadcasts/drafts', draftData);
     return response.data;
   }
-};
-
-/**
- * Get user's drafts
- */
-export const getDrafts = async () => {
-  const response = await wingManApi.get('/broadcasts/drafts');
-  return response.data;
-};
-
-/**
- * Delete a draft
- */
-export const deleteDraft = async (draftId: string) => {
-  const response = await wingManApi.delete(`/broadcasts/drafts/${draftId}`);
-  return response.data;
 };

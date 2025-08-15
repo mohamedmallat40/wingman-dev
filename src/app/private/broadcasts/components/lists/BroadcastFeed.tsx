@@ -8,17 +8,18 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { useBookmarkPost, useBroadcastFeed, useLikePost, useTrackPostView } from '../../hooks';
-import { useRealtimeBroadcasts } from '../../hooks/useRealtime';
 import { useBroadcastFilters, useBroadcastStore } from '../../store/useBroadcastStore';
+import { BroadcastPost } from '../../types';
 import PostCard from '../cards/PostCard';
 import BroadcastFeedSkeleton from '../states/BroadcastFeedSkeleton';
 
 interface BroadcastFeedProps {
   selectedTopic?: string | null;
+  onEditPost?: (post: BroadcastPost) => void;
   className?: string;
 }
 
-const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className = '' }) => {
+const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost, className = '' }) => {
   const t = useTranslations('broadcasts');
   const filters = useBroadcastFilters();
   const { setSelectedPost } = useBroadcastStore();
@@ -29,7 +30,6 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
   const trackView = useTrackPostView();
 
   // Real-time connection
-  const { isConnected, activeUsers } = useRealtimeBroadcasts();
 
   // Feed query parameters
   const feedParams = useMemo(
@@ -61,22 +61,22 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
     return feedData.pages.flatMap((page: any) => page?.data || []);
   }, [feedData]);
 
-  const handlePostLike = (postId: string) => {
+  const handlePostLike = React.useCallback((postId: string) => {
     likePost.mutate(postId);
-  };
+  }, [likePost]);
 
-  const handlePostBookmark = (postId: string) => {
+  const handlePostBookmark = React.useCallback((postId: string) => {
     bookmarkPost.mutate(postId);
-  };
+  }, [bookmarkPost]);
 
-  const handlePostView = (postId: string) => {
+  const handlePostView = React.useCallback((postId: string) => {
     trackView.mutate(postId);
-  };
+  }, [trackView]);
 
-  const handlePostClick = (postId: string) => {
+  const handlePostClick = React.useCallback((postId: string) => {
     setSelectedPost(postId);
     handlePostView(postId);
-  };
+  }, [setSelectedPost, handlePostView]);
 
   if (isLoading) {
     return <BroadcastFeedSkeleton />;
@@ -125,37 +125,19 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
   }
 
   return (
-    <div className={`space-y-6 ${className}`}>
-      {/* Feed Header */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <div className='flex items-center gap-2'>
-            <h2 className='text-foreground text-2xl font-bold'>Your Broadcast Feed</h2>
-            {isConnected && (
-              <div className='flex items-center gap-1'>
-                <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
-                <span className='text-success text-sm'>Live</span>
-              </div>
-            )}
-          </div>
-          <p className='text-foreground-500'>
-            Latest updates and content from the community
-            {activeUsers > 0 && ` • ${activeUsers} users active`}
-          </p>
+    <div className={className}>
+      {/* Topic Filter Indicator */}
+      {(selectedTopic || filters.topicId) && (
+        <div className='mb-6 flex justify-start'>
+          <Chip
+            color='primary'
+            variant='flat'
+            startContent={<Icon icon='solar:bookmark-linear' className='h-3 w-3' />}
+          >
+            Filtered by topic
+          </Chip>
         </div>
-
-        <div className='flex items-center gap-2'>
-          {(selectedTopic || filters.topicId) && (
-            <Chip
-              color='primary'
-              variant='flat'
-              startContent={<Icon icon='solar:bookmark-linear' className='h-3 w-3' />}
-            >
-              Filtered by topic
-            </Chip>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* Posts Feed */}
       <div className='space-y-6'>
@@ -180,6 +162,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
                 onComment={() => handlePostClick(post.id)}
                 onShare={() => {/* Share functionality would be implemented here */}}
                 onClick={() => handlePostClick(post.id)}
+                onEdit={onEditPost}
                 isLoading={likePost.isPending || bookmarkPost.isPending}
               />
             </motion.div>

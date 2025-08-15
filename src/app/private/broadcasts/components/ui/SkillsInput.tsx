@@ -5,7 +5,7 @@ import { useState, useMemo } from 'react';
 import { useSkills } from '@/app/private/skills/hooks/useSkills';
 import { useCreateSkill } from '@/app/private/skills/hooks/useCreateSkill';
 import { type Skill } from '@/app/private/skills/types';
-import { Button, Input, Chip } from '@heroui/react';
+import { Autocomplete, AutocompleteItem, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 
 interface SkillsInputProps {
@@ -18,103 +18,136 @@ export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => 
   const { data: skills, isLoading } = useSkills();
   const createSkill = useCreateSkill();
 
-  const filteredSkills = useMemo(() => {
+  const availableSkills = useMemo(() => {
     if (!skills) return [];
-    return skills.filter((skill) =>
+    return skills;
+  }, [skills]);
+
+  const filteredSkills = useMemo(() => {
+    if (!inputValue) return availableSkills;
+    return availableSkills.filter(skill =>
       skill.key.toLowerCase().includes(inputValue.toLowerCase())
     );
-  }, [skills, inputValue]);
+  }, [availableSkills, inputValue]);
 
-  const handleSelectSkill = (skillId: string) => {
-    if (!value.includes(skillId)) {
-      onChange([...value, skillId]);
+  const selectedSkills = useMemo(() => {
+    return availableSkills.filter(skill => value.includes(skill.id));
+  }, [availableSkills, value]);
+
+  const handleSelectionChange = (key: string | null) => {
+    if (!key || value.includes(key)) return;
+    if (value.length < 10) {
+      onChange([...value, key]);
     }
     setInputValue('');
   };
 
-  const handleCreateSkill = async () => {
-    if (inputValue.trim() === '') return;
+  const handleInputChange = (value: string) => {
+    setInputValue(value);
+  };
 
-    const existingSkill = skills?.find(
-      (skill) => skill.key.toLowerCase() === inputValue.toLowerCase()
-    );
+  const handleKeyDown = async (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      e.preventDefault();
+      
+      // Check if skill already exists
+      const existingSkill = availableSkills.find(
+        skill => skill.key.toLowerCase() === inputValue.toLowerCase()
+      );
 
-    if (existingSkill) {
-      handleSelectSkill(existingSkill.id);
-      return;
-    }
+      if (existingSkill) {
+        handleSelectionChange(existingSkill.id);
+        return;
+      }
 
-    try {
-      const newSkill = await createSkill.mutateAsync({ key: inputValue });
-      handleSelectSkill(newSkill.id);
-    } catch (error) {
-      console.error('Error creating skill:', error);
+      // Create new skill
+      if (value.length < 10) {
+        try {
+          const newSkill = await createSkill.mutateAsync({ key: inputValue.trim() });
+          onChange([...value, newSkill.id]);
+          setInputValue('');
+        } catch (error) {
+          console.error('Error creating skill:', error);
+        }
+      }
     }
   };
 
   const handleRemoveSkill = (skillId: string) => {
-    onChange(value.filter((id) => id !== skillId));
+    onChange(value.filter(id => id !== skillId));
   };
 
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <div className="flex gap-2">
-          <Input
-            placeholder="Enter skill and press Enter"
-            value={inputValue}
-            onValueChange={setInputValue}
-            onKeyDown={(e) => e.key === 'Enter' && handleCreateSkill()}
-            startContent={<Icon icon="solar:tag-outline" className="text-success h-4 w-4" />}
-          />
-          <Button
-            color="primary"
-            variant="flat"
-            onPress={handleCreateSkill}
-            isDisabled={!inputValue.trim()}
-          >
-            Add
-          </Button>
-        </div>
-        <span className="text-xs text-default-500">{value.length}/10 skills</span>
+        <Autocomplete
+          placeholder="Search skills or type to create new..."
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
+          onSelectionChange={handleSelectionChange}
+          onKeyDown={handleKeyDown}
+          isLoading={isLoading}
+          description={`${value.length}/10 skills`}
+          startContent={
+            <Icon icon="solar:tag-circle-outline" className="text-success h-4 w-4" />
+          }
+          classNames={{
+            base: 'w-full',
+            listboxWrapper: 'max-h-64'
+          }}
+        >
+          {filteredSkills.map((skill) => (
+            <AutocompleteItem
+              key={skill.id}
+              textValue={skill.key}
+              startContent={
+                <Icon icon="solar:tag-linear" className="h-4 w-4" />
+              }
+              classNames={{
+                base: 'hover:bg-success-50 dark:hover:bg-success-900/50 transition-colors duration-200'
+              }}
+            >
+              {skill.key}
+            </AutocompleteItem>
+          ))}
+          {inputValue && filteredSkills.length === 0 && (
+            <AutocompleteItem
+              key="create-new"
+              textValue={`Create "${inputValue}"`}
+              startContent={
+                <Icon icon="solar:add-circle-linear" className="h-4 w-4 text-success" />
+              }
+              classNames={{
+                base: 'text-success hover:bg-success-50 dark:hover:bg-success-900/50'
+              }}
+            >
+              Create "{inputValue}"
+            </AutocompleteItem>
+          )}
+        </Autocomplete>
       </div>
 
-      {isLoading && <div>Loading skills...</div>}
-
-      {inputValue && filteredSkills.length > 0 && (
-        <div className="space-y-2">
-          <h5 className="font-medium text-sm">Suggestions</h5>
-          <div className="flex flex-wrap gap-2">
-            {filteredSkills.map((skill) => (
-              <Chip
-                key={skill.id}
-                variant="bordered"
-                className="cursor-pointer"
-                onClick={() => handleSelectSkill(skill.id)}
-              >
-                {skill.key}
-              </Chip>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {value.length > 0 && (
+      {/* Selected Skills */}
+      {selectedSkills.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {value.map((skillId) => {
-            const skill = skills?.find((s) => s.id === skillId);
-            return (
-              <Chip
-                key={skillId}
-                onClose={() => handleRemoveSkill(skillId)}
-                variant="flat"
-                color="primary"
-                startContent={<Icon icon="solar:tag-linear" className="h-3 w-3" />}
-              >
-                {skill ? skill.key : 'Loading...'}
-              </Chip>
-            );
-          })}
+          {selectedSkills.map((skill) => (
+            <Chip
+              key={skill.id}
+              variant="flat"
+              color="success"
+              size="sm"
+              onClose={() => handleRemoveSkill(skill.id)}
+              startContent={
+                <Icon icon="solar:tag-linear" className="h-3 w-3" />
+              }
+              classNames={{
+                base: 'hover:bg-success-100 dark:hover:bg-success-900 transition-colors',
+                closeButton: 'text-default-500 hover:text-danger hover:bg-danger-50 dark:hover:bg-danger-900/20'
+              }}
+            >
+              {skill.key}
+            </Chip>
+          ))}
         </div>
       )}
     </div>
