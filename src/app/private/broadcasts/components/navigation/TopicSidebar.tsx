@@ -276,7 +276,7 @@ const TRENDING_TOPICS: TrendingTopic[] = [
   { id: '5', name: 'Remote Sales', postCount: 121, growth: 19.8, category: 'Sales' }
 ];
 
-interface SubcastSidebarProps {
+interface TopicSidebarProps {
   selectedSubcasts?: string[];
   onSubcastToggle?: (subcastId: string) => void;
   onSubcastSelect?: (subcastId: string | null) => void;
@@ -284,13 +284,13 @@ interface SubcastSidebarProps {
   className?: string;
 }
 
-export default function SubcastSidebar({
+export default function TopicSidebar({
   selectedSubcasts = [],
   onSubcastToggle,
   onSubcastSelect,
   selectedSubcast,
   className = ''
-}: SubcastSidebarProps) {
+}: TopicSidebarProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   // Fetch topics from API

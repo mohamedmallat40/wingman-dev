@@ -6,8 +6,8 @@ export interface CreatePostData {
   title: string;
   description: string;
   topics: string[]; // Array of topic UUIDs
-  skills: string[]; // Array of skill UUIDs  
-  media: string[]; // Array of filenames from successful uploads
+  skills: string[]; // Array of skill UUIDs
+  attachments: string[]; // Array of filenames from successful uploads
 }
 
 export interface FeedParams {
@@ -31,16 +31,16 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
 
   // Add multiple topics as separate query parameters
   if (topics && topics.length > 0) {
-    topics.forEach(topicId => {
+    topics.forEach((topicId) => {
       queryParams.append('topics', topicId);
     });
   }
 
   const response = await wingManApi.get(`${API_ROUTES.broadcasts.feed}?${queryParams}`);
-  
+
   // Handle different response structures
   const responseData = response.data;
-  
+
   // If response is directly an array, wrap it in pagination structure
   if (Array.isArray(responseData)) {
     return {
@@ -51,18 +51,20 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
       totalItems: responseData.length + (page - 1) * limit
     };
   }
-  
+
   // If response has data property, use it
   if (responseData.data && Array.isArray(responseData.data)) {
     return {
       data: responseData.data,
       currentPage: responseData.currentPage || page,
       hasNextPage: responseData.hasNextPage || responseData.data.length === limit,
-      totalPages: responseData.totalPages || Math.ceil((responseData.data.length + (page - 1) * limit) / limit),
+      totalPages:
+        responseData.totalPages ||
+        Math.ceil((responseData.data.length + (page - 1) * limit) / limit),
       totalItems: responseData.totalItems || responseData.data.length + (page - 1) * limit
     };
   }
-  
+
   // Fallback: return empty structure
   return {
     data: [],

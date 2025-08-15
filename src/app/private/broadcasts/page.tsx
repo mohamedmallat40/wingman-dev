@@ -13,10 +13,10 @@ import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import { BroadcastFilters } from './components/filters';
 import BroadcastFeed from './components/lists/BroadcastFeed';
-import EnhancedContentCreator from './components/modals/EnhancedContentCreator';
+import ContentCreator from './components/modals/ContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
-import SubcastSidebar from './components/navigation/SubcastSidebar';
+import TopicSidebar from './components/navigation/TopicSidebar';
 import { useCreatePost } from './hooks';
 import { useBroadcastStore, useUnreadNotificationsCount } from './store/useBroadcastStore';
 
@@ -125,7 +125,7 @@ export default function BroadcastsPage() {
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                   >
-                    <SubcastSidebar
+                    <TopicSidebar
                       onSubcastToggle={handleTopicToggle}
                       onSubcastSelect={handleTopicSelect}
                       selectedSubcast={activeTopic}
@@ -249,7 +249,7 @@ export default function BroadcastsPage() {
         onClose={() => closeNotificationCenter()}
       />
 
-      <EnhancedContentCreator
+      <ContentCreator
         isOpen={ui.contentCreatorOpen}
         onClose={() => closeContentCreator()}
         onPublish={handlePublishPost}

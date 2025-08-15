@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { MediaFile } from '@/components/ui/file-upload/MediaUpload';
-import type { BroadcastFormData, EnhancedContentCreatorProps } from './content-creator/types';
+import type { BroadcastFormData, ContentCreatorProps } from './content-creator/types';
 
 import {
   Badge,
@@ -24,7 +24,6 @@ import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
 import { useCreatePost, useSaveDraft, useTopics } from '../../hooks';
-import { useBroadcastStore } from '../../store/useBroadcastStore';
 import { type BroadcastPost } from '../../types';
 import { AdvancedTab } from './content-creator/AdvancedTab';
 // Import extracted components and utilities
@@ -35,7 +34,7 @@ import { PreviewSection } from './content-creator/PreviewSection';
 import { createBroadcastSchema } from './content-creator/types';
 import { calculateReadTime, getErrorMessage } from './content-creator/utils';
 
-const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
+const ContentCreator: React.FC<ContentCreatorProps> = ({
   isOpen,
   onClose,
   onPublish,
@@ -53,7 +52,6 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
   );
   const [persistedMediaFiles, setPersistedMediaFiles] = useState<MediaFile[]>([]);
 
-  const { preferences } = useBroadcastStore();
   const createPostMutation = useCreatePost();
   const saveDraftMutation = useSaveDraft();
   const { profile: currentUser, isLoading: profileLoading } = useBasicProfile();
@@ -64,12 +62,9 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
     control,
     handleSubmit,
     watch,
-    setValue,
     getValues,
     formState: { errors, isValid, isDirty },
-    reset,
-    clearErrors,
-    setError
+    reset
   } = useForm<BroadcastFormData>({
     resolver: zodResolver(createBroadcastSchema),
     defaultValues: {
@@ -135,7 +130,7 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
         description: data.content, // Send content as description
         topics: data.topics || [], // Array of topic UUIDs
         skills: data.skills || [], // Array of skill UUIDs
-        media: [] as string[] // Array of filenames from successful uploads
+        attachments: [] as string[] // Array of filenames from successful uploads
       };
 
       // Add media filenames from uploaded files
@@ -145,13 +140,8 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
           .filter((file) => file.uploaded && file.filename)
           .map((file) => file.filename!);
 
-        console.log('Media files:', mediaFiles);
-        console.log('Uploaded filenames:', uploadedFilenames);
-
-        postData.media = uploadedFilenames;
+        postData.attachments = uploadedFilenames;
       }
-
-      console.log('Final post data:', postData);
 
       await createPostMutation.mutateAsync(postData);
 
@@ -435,4 +425,4 @@ const EnhancedContentCreator: React.FC<EnhancedContentCreatorProps> = ({
   );
 };
 
-export default EnhancedContentCreator;
+export default ContentCreator;

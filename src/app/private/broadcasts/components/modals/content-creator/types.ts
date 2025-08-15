@@ -27,7 +27,7 @@ export const createBroadcastSchema = z.object({
 
 export type BroadcastFormData = z.infer<typeof createBroadcastSchema>;
 
-export interface EnhancedContentCreatorProps {
+export interface ContentCreatorProps {
   isOpen: boolean;
   onClose: () => void;
   onPublish: (post: Partial<BroadcastPost>) => void;
@@ -35,6 +35,9 @@ export interface EnhancedContentCreatorProps {
   initialData?: Partial<BroadcastPost>;
   className?: string;
 }
+
+// Keep the old name as alias for backward compatibility
+export type EnhancedContentCreatorProps = ContentCreatorProps;
 
 export interface ContentTabProps {
   control: any;
