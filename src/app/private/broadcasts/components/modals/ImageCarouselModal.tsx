@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 import type { MediaFile } from '@/components/ui/file-upload/MediaUpload';
 
@@ -28,6 +29,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
   currentIndex,
   onIndexChange
 }) => {
+  const t = useTranslations('broadcasts');
 
   const handlePrevious = () => {
     onIndexChange(currentIndex > 0 ? currentIndex - 1 : files.length - 1);
@@ -111,7 +113,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
               onPress={handlePrevious}
               isDisabled={files.length <= 1}
               className='text-white hover:bg-white/10'
-              aria-label="Previous"
+              aria-label={t('modals.imageCarousel.previous')}
             >
               <Icon icon='solar:chevron-left-linear' className='h-5 w-5' />
             </Button>
@@ -123,7 +125,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
               onPress={handleNext}
               isDisabled={files.length <= 1}
               className='text-white hover:bg-white/10'
-              aria-label="Next"
+              aria-label={t('modals.imageCarousel.next')}
             >
               <Icon icon='solar:chevron-right-linear' className='h-5 w-5' />
             </Button>
@@ -134,7 +136,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
               color='default'
               onPress={onClose}
               className='text-white hover:bg-white/10'
-              aria-label="Close"
+              aria-label={t('modals.imageCarousel.close')}
             >
               <Icon icon='solar:close-linear' className='h-5 w-5' />
             </Button>
@@ -168,7 +170,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
                   color='default'
                   onPress={handlePrevious}
                   className='absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white backdrop-blur-sm hover:bg-black/70'
-                  aria-label="Previous"
+                  aria-label={t('modals.imageCarousel.previous')}
                 >
                   <Icon icon='solar:chevron-left-linear' className='h-6 w-6' />
                 </Button>
@@ -179,7 +181,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
                   color='default'
                   onPress={handleNext}
                   className='absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white backdrop-blur-sm hover:bg-black/70'
-                  aria-label="Next"
+                  aria-label={t('modals.imageCarousel.next')}
                 >
                   <Icon icon='solar:chevron-right-linear' className='h-6 w-6' />
                 </Button>

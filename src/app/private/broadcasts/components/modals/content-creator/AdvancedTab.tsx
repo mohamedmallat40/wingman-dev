@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Controller } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
@@ -9,6 +10,7 @@ import { Select, SelectItem, Switch, Divider, Input } from '@heroui/react';
 import type { AdvancedTabProps } from './types';
 
 export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
+  const t = useTranslations('broadcasts');
   return (
     <div className="space-y-6 py-4">
       {/* Visibility Settings */}
@@ -18,7 +20,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
         transition={{ duration: 0.4, delay: 0.1 }}
         className="space-y-4"
       >
-        <h4 className="font-semibold">Privacy & Visibility</h4>
+        <h4 className="font-semibold">{t('forms.advanced.privacyVisibility')}</h4>
 
         <Controller
           name="visibility"
@@ -26,7 +28,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
           render={({ field }) => (
             <Select
               {...field}
-              placeholder="Who can see this post?"
+              placeholder={t('placeholders.whoCanSee')}
               selectedKeys={[field.value]}
               onSelectionChange={(keys) => {
                 const selected = Array.from(keys)[0] as string;
@@ -39,7 +41,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
                   <Icon icon="solar:global-linear" className="h-4 w-4" />
                 }
               >
-                Public - Everyone can see
+{t('forms.advanced.visibility.public')}
               </SelectItem>
               <SelectItem
                 key="followers"
@@ -50,7 +52,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
                   />
                 }
               >
-                Followers only
+{t('forms.advanced.visibility.followers')}
               </SelectItem>
               <SelectItem
                 key="private"
@@ -58,7 +60,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
                   <Icon icon="solar:lock-linear" className="h-4 w-4" />
                 }
               >
-                Private - Only you
+{t('forms.advanced.visibility.private')}
               </SelectItem>
             </Select>
           )}
@@ -71,9 +73,9 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
             render={({ field }) => (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Allow Comments</p>
+                  <p className="font-medium">{t('forms.advanced.allowComments')}</p>
                   <p className="text-foreground-500 text-sm">
-                    Let people comment on your post
+{t('forms.advanced.descriptions.allowComments')}
                   </p>
                 </div>
                 <Switch isSelected={field.value} onValueChange={field.onChange} />
@@ -87,9 +89,9 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
             render={({ field }) => (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Allow Sharing</p>
+                  <p className="font-medium">{t('forms.advanced.allowSharing')}</p>
                   <p className="text-foreground-500 text-sm">
-                    Let people share your post
+{t('forms.advanced.descriptions.allowSharing')}
                   </p>
                 </div>
                 <Switch isSelected={field.value} onValueChange={field.onChange} />
@@ -103,9 +105,9 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
             render={({ field }) => (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">Content Warning</p>
+                  <p className="font-medium">{t('forms.advanced.contentWarning')}</p>
                   <p className="text-foreground-500 text-sm">
-                    Mark if content might be sensitive
+{t('forms.advanced.descriptions.contentWarning')}
                   </p>
                 </div>
                 <Switch
@@ -133,7 +135,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
         transition={{ duration: 0.4, delay: 0.4 }}
         className="space-y-4"
       >
-        <h4 className="font-semibold">Publishing Options</h4>
+        <h4 className="font-semibold">{t('forms.advanced.publishingOptions')}</h4>
 
         <Controller
           name="scheduleDate"
@@ -142,7 +144,7 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
             <Input
               {...field}
               type="datetime-local"
-              placeholder="Schedule for later (optional)"
+              placeholder={t('placeholders.scheduleLater')}
               startContent={
                 <Icon icon="solar:calendar-linear" className="h-4 w-4" />
               }

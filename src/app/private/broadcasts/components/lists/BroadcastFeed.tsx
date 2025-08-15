@@ -6,6 +6,7 @@ import { Button, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 import { useBookmarkPost, useBroadcastFeed, useLikePost, useTrackPostView } from '../../hooks';
 import { useBroadcastFilters, useBroadcastStore } from '../../store/useBroadcastStore';
@@ -21,6 +22,7 @@ interface BroadcastFeedProps {
 
 const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost, className = '' }) => {
   const t = useTranslations('broadcasts');
+  const router = useRouter();
   const filters = useBroadcastFilters();
   const { setSelectedPost } = useBroadcastStore();
 
@@ -76,7 +78,8 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
   const handlePostClick = React.useCallback((postId: string) => {
     setSelectedPost(postId);
     handlePostView(postId);
-  }, [setSelectedPost, handlePostView]);
+    router.push(`/private/broadcasts/${postId}`);
+  }, [setSelectedPost, handlePostView, router]);
 
   if (isLoading) {
     return <BroadcastFeedSkeleton />;
@@ -88,16 +91,16 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
         <div className='bg-danger/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full'>
           <Icon icon='solar:danger-circle-linear' className='text-danger h-8 w-8' />
         </div>
-        <h3 className='text-foreground mb-2 text-xl font-semibold'>Unable to load feed</h3>
+        <h3 className='text-foreground mb-2 text-xl font-semibold'>{t('feed.error.title')}</h3>
         <p className='text-foreground-500 mb-6 max-w-md leading-relaxed'>
-          Something went wrong while loading your broadcast feed. Please try again.
+          {t('feed.error.description')}
         </p>
         <Button
           color='primary'
           startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
           onPress={() => window.location.reload()}
         >
-          Retry
+          {t('feed.retry')}
         </Button>
       </div>
     );
@@ -109,16 +112,16 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
         <div className='bg-primary/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full'>
           <Icon icon='solar:satellite-linear' className='text-primary h-8 w-8' />
         </div>
-        <h3 className='text-foreground mb-2 text-xl font-semibold'>Your feed is empty</h3>
+        <h3 className='text-foreground mb-2 text-xl font-semibold'>{t('feed.emptyFeed.title')}</h3>
         <p className='text-foreground-500 mb-6 max-w-md leading-relaxed'>
-          No posts match your current filters. Try adjusting your filters or check back later!
+          {t('feed.emptyFeed.description')}
         </p>
         <Button
           color='primary'
           startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
           onPress={() => window.location.reload()}
         >
-          Refresh Feed
+          {t('feed.refreshFeed')}
         </Button>
       </div>
     );
@@ -126,19 +129,6 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
 
   return (
     <div className={className}>
-      {/* Topic Filter Indicator */}
-      {(selectedTopic || filters.topicId) && (
-        <div className='mb-6 flex justify-start'>
-          <Chip
-            color='primary'
-            variant='flat'
-            startContent={<Icon icon='solar:bookmark-linear' className='h-3 w-3' />}
-          >
-            Filtered by topic
-          </Chip>
-        </div>
-      )}
-
       {/* Posts Feed */}
       <div className='space-y-6'>
         <AnimatePresence mode='popLayout'>
@@ -184,7 +174,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
             }
             className='min-w-48'
           >
-            {isFetchingNextPage ? 'Loading...' : 'Load More Posts'}
+            {isFetchingNextPage ? t('feed.loading') : t('feed.loadMore')}
           </Button>
         </div>
       )}
@@ -192,7 +182,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
       {!hasNextPage && posts.length > 0 && (
         <div className='flex justify-center py-8'>
           <p className='text-foreground-500 text-sm'>
-            🎉 You've reached the end! Check back later for more content.
+            {t('feed.noMorePosts')}
           </p>
         </div>
       )}

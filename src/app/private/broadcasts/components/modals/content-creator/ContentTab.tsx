@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Controller } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { Icon } from '@iconify/react';
@@ -18,6 +19,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
   wordCount,
   readTime
 }) => {
+  const t = useTranslations('broadcasts');
   return (
     <div className="space-y-6 py-4">
       {/* Title */}
@@ -32,7 +34,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
           render={({ field, fieldState }) => (
             <Input
               {...field}
-              placeholder="Enter an engaging title that captures attention..."
+              placeholder={t('placeholders.engagingTitle')}
               startContent={
                 <Icon
                   icon="solar:text-field-outline"
@@ -65,7 +67,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
           render={({ field, fieldState }) => (
             <div className="space-y-1">
               <Select
-                placeholder="Select topics for your post"
+                placeholder={t('placeholders.selectTopics')}
                 selectionMode="multiple"
                 selectedKeys={new Set(field.value || [])}
                 onSelectionChange={(keys) => {
@@ -118,7 +120,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
                                 'text-default-500 hover:text-danger hover:bg-danger-50 dark:hover:bg-danger-900/20'
                             }}
                           >
-                            {topic?.title || 'Loading...'}
+{topic?.title || t('fallbacks.loading')}
                           </Chip>
                         );
                       })}
@@ -178,7 +180,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
           render={({ field, fieldState }) => (
             <Textarea
               {...field}
-              placeholder="Share your thoughts, insights, stories, or creative content with the world. What would you like to express today?"
+              placeholder={t('placeholders.shareThoughts')}
               minRows={10}
               maxRows={25}
               description={`${wordCount} words • ${readTime} min read`}

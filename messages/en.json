@@ -205,7 +205,7 @@
     "description": "Discover and connect with top freelancers, agencies, and teams",
     "tabs": {
       "freelancers": "Freelancers",
-      "agencies": "Agencies", 
+      "agencies": "Agencies",
       "teams": "Teams",
       "descriptions": {
         "freelancers": "Individual professionals",
@@ -225,7 +225,7 @@
       "active": "Active:",
       "clearAll": "Clear All",
       "resetAll": "Reset All",
-      "cancel": "Cancel", 
+      "cancel": "Cancel",
       "apply": "Apply Filters",
       "advanced": {
         "title": "Advanced Filters",
@@ -234,7 +234,7 @@
       "categories": {
         "location": "Location",
         "profession": "Profession Type",
-        "availability": "Availability", 
+        "availability": "Availability",
         "experience": "Experience Level"
       },
       "country": {
@@ -253,7 +253,7 @@
     "experience": {
       "junior": "Junior",
       "midLevel": "Mid-Level",
-      "senior": "Senior", 
+      "senior": "Senior",
       "lead": "Lead",
       "descriptions": {
         "junior": "0-2 years of experience",
@@ -295,13 +295,13 @@
       "fullTime": "Full-Time",
       "partTime": "Part-Time",
       "available": "Available",
-      "availableForProjects": "Available for Projects", 
+      "availableForProjects": "Available for Projects",
       "partTimeAvailable": "Part-time Available",
       "notAvailable": "Not available"
     },
     "workType": {
       "remote": "remote",
-      "onLocation": "on location", 
+      "onLocation": "on location",
       "hybrid": "hybrid",
       "unknown": "unknown"
     },
@@ -332,7 +332,7 @@
         "description": "We couldn't find any freelancers matching your criteria. Try adjusting your filters or search query."
       },
       "agencies": {
-        "title": "No agencies found", 
+        "title": "No agencies found",
         "description": "We couldn't find any agencies matching your criteria. Try adjusting your filters or search query."
       },
       "teams": {
@@ -381,7 +381,7 @@
         "description": "We couldn't load the agencies. Please try again."
       },
       "teams": {
-        "title": "Something went wrong", 
+        "title": "Something went wrong",
         "description": "We couldn't load the teams. Please try again."
       },
       "tryAgain": "Try Again"
@@ -429,7 +429,7 @@
       "downloadCV": "Download CV",
       "website": "Website",
       "linkedin": "LinkedIn",
-      "linkedinProfile": "LinkedIn Profile", 
+      "linkedinProfile": "LinkedIn Profile",
       "profileCover": "Profile cover",
       "workWithUser": "Interested in working with {name}?",
       "connectionPending": "Connection Pending",
@@ -495,7 +495,7 @@
     },
     "types": {
       "proposal": "Proposal",
-      "contract": "Contract", 
+      "contract": "Contract",
       "invoice": "Invoice",
       "spreadsheet": "Spreadsheet",
       "template": "Template"
@@ -519,7 +519,7 @@
       "file": {
         "label": "File",
         "dropTitle": "Drop your file here",
-        "uploadTitle": "Upload your document", 
+        "uploadTitle": "Upload your document",
         "description": "Drag and drop your file or click to browse",
         "chooseFile": "Choose File",
         "supported": "Supported: PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
@@ -545,7 +545,7 @@
         "placeholder": "Select document type",
         "options": {
           "invoice": "Invoice",
-          "quote": "Quote", 
+          "quote": "Quote",
           "contract": "Contract"
         }
       },
@@ -565,21 +565,15 @@
       },
       "fileSize": {
         "bytes": "Bytes",
-        "kb": "KB", 
+        "kb": "KB",
         "mb": "MB",
         "gb": "GB"
       }
     },
-    "status": {
-      "awaitingSignature": "Awaiting Signature",
-      "underReview": "Under Review",
-      "sentToClient": "Sent to Client",
-      "inProgress": "In Progress"
-    },
     "actions": {
       "view": "View Document",
       "edit": "Edit",
-      "download": "Download", 
+      "download": "Download",
       "duplicate": "Duplicate",
       "delete": "Delete"
     },
@@ -595,7 +589,7 @@
       "legal": "Legal",
       "marketing": "Marketing",
       "hr": "Human Resources",
-      "technical": "Technical", 
+      "technical": "Technical",
       "design": "Design",
       "project": "Project",
       "client": "Client",
@@ -616,6 +610,64 @@
   "broadcasts": {
     "title": "Broadcast Feed",
     "description": "Stay updated with the latest content from your selected topics and favorite subcasts",
+    "feed": {
+      "createPost": "Create Post",
+      "loadMore": "Load More Posts",
+      "loading": "Loading...",
+      "loadingPost": "Loading post...",
+      "noMorePosts": "🎉 You've reached the end! Check back later for more content.",
+      "retry": "Retry",
+      "refreshFeed": "Refresh Feed",
+      "filteredBy": "Filtered by topic",
+      "emptyFeed": {
+        "title": "Your feed is empty",
+        "description": "No posts match your current filters. Try adjusting your filters or check back later!"
+      },
+      "error": {
+        "title": "Unable to load feed",
+        "description": "Something went wrong while loading your broadcast feed. Please try again."
+      }
+    },
+    "post": {
+      "actions": {
+        "like": "Like",
+        "unlike": "Unlike",
+        "comment": "Comment",
+        "share": "Share",
+        "bookmark": "Bookmark",
+        "unbookmark": "Remove bookmark",
+        "edit": "Edit",
+        "delete": "Delete",
+        "viewPost": "View post",
+        "sharePost": "Share Post",
+        "copyLink": "Copy link"
+      },
+      "menu": {
+        "moreOptions": "More options",
+        "reportPost": "Report post",
+        "hidePost": "Hide post",
+        "notInterested": "Not interested"
+      },
+      "stats": {
+        "likes": "{count, plural, =0 {No likes} one {# like} other {# likes}}",
+        "comments": "{count, plural, =0 {No comments} one {# comment} other {# comments}}",
+        "shares": "{count, plural, =0 {No shares} one {# share} other {# shares}}",
+        "views": "{count, plural, =0 {No views} one {# view} other {# views}}"
+      },
+      "time": {
+        "now": "now",
+        "minutesAgo": "{minutes, plural, one {# minute ago} other {# minutes ago}}",
+        "hoursAgo": "{hours, plural, one {# hour ago} other {# hours ago}}",
+        "daysAgo": "{days, plural, one {# day ago} other {# days ago}}",
+        "weeksAgo": "{weeks, plural, one {# week ago} other {# weeks ago}}"
+      },
+      "delete": {
+        "title": "Delete Post",
+        "description": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
+        "confirm": "Delete",
+        "cancel": "Cancel"
+      }
+    },
     "create": {
       "title": "Create New Post",
       "editTitle": "Edit Post",
@@ -623,412 +675,325 @@
       "autoSave": "Auto-save drafts",
       "advancedOptions": "Advanced Options",
       "uploadProgress": "Uploading media...",
-      "success": {
-        "title": "Post Published",
-        "description": "Your post has been published successfully!"
-      },
-      "draft": {
-        "success": "Draft Saved",
-        "successDescription": "Your draft has been saved successfully!"
-      },
       "tabs": {
         "content": "Content",
         "media": "Media",
-        "tags": "Tags",
-        "advanced": "Advanced"
+        "advanced": "Advanced",
+        "preview": "Preview"
       },
       "fields": {
         "title": {
           "label": "Title",
-          "placeholder": "Enter an engaging title...",
-          "description": "{count}/200 characters"
+          "placeholder": "What's on your mind?",
+          "required": "Title is required"
         },
         "content": {
           "label": "Content",
-          "placeholder": "Share your thoughts, insights, or story...",
-          "description": "{wordCount} words • {readTime} min read"
+          "placeholder": "Share your thoughts, insights, or updates...",
+          "required": "Content is required"
         },
-        "category": {
-          "label": "Category",
-          "placeholder": "Select a category"
+        "topics": {
+          "title": "Topics",
+          "label": "Select Topics",
+          "placeholder": "Choose relevant topics...",
+          "selected": "Selected topics",
+          "noTopics": "No topics selected"
         },
-        "priority": {
-          "label": "Priority",
-          "placeholder": "Select priority"
-        },
-        "type": {
-          "label": "Post Type",
-          "placeholder": "Select post type"
-        },
-        "visibility": {
-          "label": "Who can see this post?",
-          "options": {
-            "public": "Public - Everyone can see",
-            "followers": "Followers only",
-            "private": "Private - Only you"
-          }
-        },
-        "tags": {
-          "label": "Add Tags",
-          "placeholder": "Enter tag and press Enter",
-          "description": "{count}/10 tags",
-          "add": "Add",
-          "currentTags": "Current Tags",
-          "popularTags": "Popular Tags"
-        },
-        "schedule": {
-          "label": "Schedule for later (optional)",
-          "placeholder": "Select date and time"
+        "skills": {
+          "title": "Skills",
+          "label": "Select Skills",
+          "placeholder": "Add relevant skills...",
+          "selected": "Selected skills",
+          "noSkills": "No skills selected"
         }
       },
       "media": {
-        "addImages": "Add Images",
-        "addVideo": "Add Video",
-        "addCaption": "Add caption...",
-        "addAltText": "Alt text for accessibility...",
-        "uploading": "Uploading...",
-        "maxSizeImage": "Maximum file size: 10MB",
-        "maxSizeVideo": "Maximum file size: 100MB",
-        "supportedFormats": "Supported formats: {formats}"
-      },
-      "poll": {
-        "title": "Poll Options",
-        "addOption": "Add Option",
-        "option": "Option {number}",
-        "minOptions": "Minimum 2 poll options required",
-        "maxOptions": "Maximum 6 poll options allowed"
-      },
-      "link": {
-        "url": "Link URL",
-        "urlPlaceholder": "https://example.com",
-        "preview": "Link Preview"
-      },
-      "privacy": {
-        "title": "Privacy & Visibility",
-        "allowComments": {
-          "title": "Allow Comments",
-          "description": "Let people comment on your post"
-        },
-        "allowSharing": {
-          "title": "Allow Sharing",
-          "description": "Let people share your post"
-        },
-        "contentWarning": {
-          "title": "Content Warning",
-          "description": "Mark if content might be sensitive"
+        "title": "Media",
+        "upload": "Upload Media",
+        "dragDrop": "Drag & drop files here, or click to select",
+        "supportedFormats": "Supported formats: JPG, PNG, GIF, MP4, MOV",
+        "maxSize": "Maximum file size: 10MB",
+        "preview": "Preview",
+        "previous": "Previous",
+        "next": "Next",
+        "remove": "Remove",
+        "noMedia": "No media files uploaded",
+        "tips": {
+          "title": "Media Tips",
+          "quality": "Use high-quality images and videos",
+          "relevant": "Ensure media is relevant to your content",
+          "alt": "Add alt text for accessibility"
         }
       },
-      "publishing": {
-        "title": "Publishing Options",
-        "publishNow": "Publish Now",
-        "saveDraft": "Save Draft",
-        "schedule": "Schedule for Later"
-      },
       "preview": {
-        "title": "Preview",
-        "yourContent": "Your content will appear here...",
-        "moreItems": "+{count} more"
+        "title": "Live Preview",
+        "noContent": "Your content will appear here as you type...",
+        "howItLooks": "How your post will look"
       },
       "actions": {
-        "cancel": "Cancel",
+        "publish": "Publish",
+        "update": "Update",
         "saveDraft": "Save Draft",
-        "updatePost": "Update Post",
-        "publishPost": "Publish Post",
-        "scheduling": "Scheduling...",
+        "cancel": "Cancel",
         "publishing": "Publishing...",
+        "updating": "Updating...",
         "saving": "Saving..."
+      },
+      "success": {
+        "title": "Post Published",
+        "description": "Your post has been published successfully!",
+        "updateTitle": "Post Updated",
+        "updateDescription": "Your post has been successfully updated."
+      },
+      "draft": {
+        "success": "Draft Saved",
+        "successDescription": "Your draft has been saved successfully!",
+        "autoSaved": "Auto-saved"
+      },
+      "tips": {
+        "title": "Writing Tips",
+        "engaging": "Start with an engaging hook",
+        "keywords": "Use relevant keywords naturally",
+        "structure": "Structure your content with clear paragraphs"
+      },
+      "validation": {
+        "titleRequired": "Title is required",
+        "contentRequired": "Content is required",
+        "titleMinLength": "Title must be at least 3 characters",
+        "contentMinLength": "Content must be at least 10 characters"
       }
     },
-    "validation": {
-      "titleRequired": "Title is required",
-      "titleMinLength": "Title must be at least 10 characters",
-      "titleMaxLength": "Title cannot exceed 200 characters",
-      "contentRequired": "Content is required",
-      "contentMinLength": "Content must be at least 20 characters",
-      "contentMaxLength": "Content cannot exceed 10,000 characters",
-      "categoryRequired": "Category is required",
-      "maxTags": "Maximum 10 tags allowed",
-      "tagExists": "Tag already exists",
-      "pollMinOptions": "Poll must have at least 2 options",
-      "pollMaxOptions": "Maximum 6 poll options allowed",
-      "linkRequired": "Link URL is required",
-      "invalidUrl": "Please enter a valid URL",
-      "fileTooLarge": "File {filename} is too large. Maximum size is {maxSize}",
-      "invalidFileType": "Invalid file type for {filename}. Please select a valid {type} file",
-      "uploadFailed": "Failed to upload {type}s. Please try again",
-      "maxFilesExceeded": "Maximum {maxFiles} files allowed"
-    },
-    "success": {
-      "published": "Post published successfully!",
-      "updated": "Post updated successfully!",
-      "draftSaved": "Draft saved successfully!",
-      "scheduled": "Post scheduled successfully!",
-      "mediaUploaded": "Successfully uploaded {count} {type}(s)"
-    },
-    "errors": {
-      "publishFailed": "Failed to publish post. Please try again.",
-      "updateFailed": "Failed to update post. Please try again.",
-      "draftSaveFailed": "Failed to save draft. Please try again.",
-      "scheduleFailed": "Failed to schedule post. Please try again.",
-      "autoSaveFailed": "Auto-save failed",
-      "linkPreviewFailed": "Failed to fetch link preview",
-      "networkError": "Network error. Please check your connection.",
-      "serverError": "Server error. Please try again later.",
-      "unauthorized": "You are not authorized to perform this action.",
-      "forbidden": "This action is not allowed.",
-      "tooManyRequests": "Too many requests. Please wait before trying again.",
-      "contentTooLong": "Content is too long. Please shorten it.",
-      "invalidData": "Invalid data provided. Please check your inputs.",
-      "sessionExpired": "Your session has expired. Please log in again.",
-      "notFound": "The requested resource was not found.",
-      "badRequest": "Invalid request. Please check your data and try again.",
-      "internalError": "An unexpected error occurred. Please try again later.",
-      "timeout": "Request timed out. Please try again.",
-      "offline": "You appear to be offline. Please check your internet connection."
-    },
-    "onboarding": {
-      "title": "Craft Your Perfect Broadcast Feed",
-      "subtitle": "Choose topics that match your interests and expertise to get personalized content recommendations",
-      "selectTopics": "Select at least {minSelect} topics to get started with your personalized feed",
-      "selectedCount": "{selected} of {max} selected (minimum {min} required)",
-      "shuffleButton": "Pick 5 for Me",
-      "shuffleTooltip": "Let us select 5 popular topics for you",
-      "clearButton": "Clear All",
-      "confirmButton": "Create My Feed",
-      "noTopicsSelected": "No topics selected yet. Choose topics that interest you!",
-      "moreTopics": "+{count} more selected",
-      "searchPlaceholder": "Search for topics...",
-      "searchTooltip": "Search through available topics",
-      "filterBy": "Filter by category",
-      "allTopics": "All Categories",
-      "featured": "Featured Topics",
-      "showMore": "Show More Options",
-      "showLess": "Show Fewer Options"
-    },
-    "categories": {
+    "topics": {
       "all": "All",
-      "ai": "AI & Agents",
-      "development": "Dev & Cloud",
-      "cloud": "Cloud",
-      "devops": "DevOps",
-      "data": "Data",
-      "design": "Design",
-      "product": "Product",
-      "marketing": "Marketing Growth",
-      "sales": "Sales Playbook",
-      "freelance": "Freelance Ops",
-      "business": "Business",
-      "tech": "Technology",
-      "lifestyle": "Lifestyle",
-      "education": "Education"
-    },
-    "actions": {
-      "resetTopics": "Reset Topic Selection",
-      "refreshFeed": "Refresh Feed",
-      "viewPost": "View Full Post",
-      "readMore": "Read More",
-      "readLess": "Read Less",
-      "share": "Share Post",
-      "bookmark": "Save for Later",
-      "bookmarked": "Saved",
-      "like": "Like",
-      "liked": "Liked",
-      "comment": "Add Comment",
-      "reply": "Reply",
-      "savePost": "Save Post",
-      "reportPost": "Report Content"
-    },
-    "feed": {
-      "title": "Your Broadcast Feed",
-      "subtitle": "Latest updates from your selected topics and followed subcasts",
-      "filterBy": "Filter by topic",
-      "sortBy": "Sort by",
-      "allPosts": "All Posts",
-      "recentPosts": "Recent",
-      "popularPosts": "Popular",
-      "bookmarkedPosts": "Saved Posts",
-      "noPostsFound": "No posts found",
-      "noPostsFoundDescription": "Try adjusting your filters, selecting different topics, or following more subcasts",
-      "loadMore": "Load More Posts",
-      "loading": "Loading posts...",
-      "refreshing": "Refreshing your feed...",
-      "newPostsAvailable": "{count} new {count, plural, one {post} other {posts}} available",
-      "showNewPosts": "Show New Posts"
-    },
-    "post": {
-      "publishedOn": "Published on {date}",
-      "readTime": "{minutes} min read",
-      "author": "By {author}",
-      "tags": "Topics",
-      "relatedPosts": "You might also like",
-      "types": {
-        "article": "Article",
-        "video": "Video",
-        "image": "Image",
-        "poll": "Poll",
-        "quote": "Quote"
-      },
-      "engagement": {
-        "likes": "{count, plural, =0 {No likes} one {# like} other {# likes}}",
-        "comments": "{count, plural, =0 {No comments} one {# comment} other {# comments}}",
-        "shares": "{count, plural, =0 {No shares} one {# share} other {# shares}}",
-        "bookmarks": "{count, plural, =0 {Not saved} one {# save} other {# saves}}"
-      },
-      "actions": {
-        "share": "Share this post",
-        "copyLink": "Copy post link",
-        "reportPost": "Report inappropriate content",
-        "hidePost": "Hide this post"
-      }
-    },
-    "sidebar": {
-      "title": "Subcasts",
-      "subtitle": "Follow specialized content channels for focused updates",
-      "searchPlaceholder": "Search for subcasts...",
-      "popularSubcasts": "Popular Subcasts",
-      "followedSubcasts": "Following",
-      "recommendedSubcasts": "Recommended for You",
-      "allSubcasts": "All Posts",
+      "following": "Following",
+      "trending": "Trending",
+      "searchPlaceholder": "Search topics...",
+      "noTopicsFound": "No topics found",
       "follow": "Follow",
-      "following": "Following {count}",
       "unfollow": "Unfollow",
       "followers": "{count, plural, =0 {No followers} one {# follower} other {# followers}}",
       "posts": "{count, plural, =0 {No posts} one {# post} other {# posts}}",
-      "newPosts": "{count} new {count, plural, one {post} other {posts}}",
-      "lastPost": "Last post {time} ago",
-      "noSubcasts": "No subcasts found",
-      "noFollowedSubcasts": "You're not following any subcasts yet. Discover channels that match your interests!",
-      "exploreSubcasts": "Discover More",
-      "createSubcast": "Create New Subcast",
-      "manageSubcasts": "Manage My Subcasts"
-    },
-    "subcast": {
-      "about": "About",
-      "description": "Description",
-      "moderators": "Moderators",
-      "rules": "Rules",
-      "recentActivity": "Recent Activity",
-      "topContributors": "Top Contributors",
-      "stats": {
-        "followers": "Followers",
-        "posts": "Posts",
-        "comments": "Comments",
-        "created": "Created"
+      "feedHeader": {
+        "clearFilter": "Clear Filter",
+        "showingPostsFrom": "Showing posts from {topic} only",
+        "topicLabel": "Topic"
       }
     },
-    "comments": {
-      "title": "Discussion",
-      "subtitle": "{count, plural, =0 {No comments yet} one {# comment} other {# comments}}",
-      "noComments": "No comments yet",
-      "beFirstToComment": "Be the first to start the discussion",
-      "writeComment": "Share your thoughts...",
-      "postComment": "Post Comment",
-      "cancel": "Cancel",
-      "edit": "Edit Comment",
-      "delete": "Delete Comment",
-      "reply": "Reply",
-      "showReplies": "Show {count, plural, one {# reply} other {# replies}}",
-      "hideReplies": "Hide replies",
-      "loadMoreComments": "Load more comments",
+    "filters": {
+      "title": "Filters",
+      "apply": "Apply Filters",
+      "clear": "Clear All",
       "sortBy": "Sort by",
-      "newest": "Newest First",
-      "oldest": "Oldest First",
-      "popular": "Most Popular"
+      "dateRange": "Date Range",
+      "postType": "Post Type",
+      "labels": {
+        "search": "Search",
+        "contentTypes": "Content Types",
+        "category": "Category",
+        "topic": "Topic"
+      },
+      "options": {
+        "postsWithMedia": "Posts with Media",
+        "textOnly": "Text Only"
+      }
+    },
+    "sidebar": {
+      "quickActions": "Quick Actions",
+      "savedPosts": "Saved Posts",
+      "following": "Following",
+      "trending": "Trending",
+      "activeNow": "Active Now",
+      "usersActive": "{count, plural, one {# user active} other {# users active}} in the last hour"
     },
     "notifications": {
-      "newPost": "New post in {subcast}",
-      "newComment": "{author} commented on your post",
-      "newReply": "{author} replied to your comment",
-      "postLiked": "{author} liked your post",
-      "commentLiked": "{author} liked your comment",
-      "newFollower": "{author} started following {subcast}",
-      "mentionedInPost": "{author} mentioned you in a post",
-      "mentionedInComment": "{author} mentioned you in a comment"
-    },
-    "loading": {
-      "title": "Loading your broadcast feed...",
-      "subtitle": "Preparing personalized content based on your interests",
-      "posts": "Loading posts...",
-      "comments": "Loading discussion...",
-      "subcasts": "Loading subcasts...",
-      "loadingMore": "Loading more posts...",
-      "refreshing": "Refreshing content..."
-    },
-    "empty": {
-      "title": "Your feed is empty",
-      "subtitle": "Select some topics or follow subcasts to see relevant content here",
-      "posts": {
-        "title": "No posts to show",
-        "subtitle": "Try selecting different topics, following more subcasts, or adjusting your filters"
+      "title": "Notifications",
+      "activity": "Activity",
+      "live": "Live",
+      "trending": "Trending",
+      "markAllRead": "Mark all as read",
+      "filter": {
+        "all": "All notifications",
+        "unread": "Unread only",
+        "likes": "Likes",
+        "comments": "Comments",
+        "follows": "Follows",
+        "mentions": "Mentions"
       },
-      "subcasts": {
-        "title": "No subcasts match your search",
-        "subtitle": "Try different keywords or browse all available subcasts"
+      "types": {
+        "like": "liked your post",
+        "comment": "commented on your post",
+        "follow": "started following you",
+        "mention": "mentioned you in a post",
+        "milestone": "Milestone reached!"
       },
-      "comments": {
-        "title": "No discussion yet",
-        "subtitle": "Be the first to share your thoughts on this post"
+      "empty": {
+        "title": "No notifications",
+        "description": "You're all caught up! Check back later for new activity."
       }
     },
-    "error": {
-      "title": "Something went wrong",
-      "subtitle": "We couldn't load your broadcast feed. Please check your connection and try again.",
-      "retry": "Try Again",
-      "posts": {
-        "title": "Unable to load posts",
-        "subtitle": "There was a problem loading your feed content"
+    "navigation": {
+      "home": "Home",
+      "broadcasts": "Broadcasts",
+      "backToFeed": "Back to Feed"
+    },
+    "postDetail": {
+      "title": "Post Detail",
+      "notFound": {
+        "title": "Post Not Found",
+        "description": "The post you're looking for doesn't exist or may have been removed."
       },
-      "comments": {
-        "title": "Comments unavailable", 
-        "subtitle": "We couldn't load the discussion for this post"
-      },
-      "subcasts": {
-        "title": "Subcasts unavailable",
-        "subtitle": "We couldn't load the available subcasts right now"
-      }
+      "postedOn": "Posted {date}",
+      "relatedActions": "Related Actions"
+    },
+    "imageModal": {
+      "previous": "Previous",
+      "next": "Next",
+      "close": "Close",
+      "viewImage": "View image"
+    },
+    "tooltips": {
+      "editPost": "Edit post",
+      "deletePost": "Delete post",
+      "bookmark": "Bookmark",
+      "unbookmark": "Remove bookmark",
+      "like": "Like this post",
+      "unlike": "Unlike this post",
+      "comment": "Comment on this post",
+      "share": "Share this post",
+      "moreOptions": "More options"
     },
     "accessibility": {
-      "openPost": "Open full post content",
-      "likePost": "Like this post", 
-      "bookmarkPost": "Save this post for later",
-      "sharePost": "Share this post with others",
-      "commentOnPost": "Add a comment to this post",
-      "followSubcast": "Follow this subcast for updates",
-      "unfollowSubcast": "Stop following this subcast",
-      "viewProfile": "View user profile and details",
-      "closeModal": "Close dialog window",
-      "openMenu": "Open options menu",
-      "closeMenu": "Close options menu",
-      "searchPosts": "Search through posts",
-      "filterTopics": "Filter posts by topic",
-      "sortPosts": "Change post sorting order"
+      "close": "Close",
+      "previous": "Previous",
+      "next": "Next",
+      "previousAttachment": "Previous attachment",
+      "nextAttachment": "Next attachment",
+      "navigationKeys": "Use ← → keys"
     },
-    "feed": {
-      "createPost": "Create Post",
-      "searchPlaceholder": "Search posts...",
-      "filterPlaceholder": {
-        "sort": "Select sort order",
-        "category": "Select category", 
-        "topic": "Select topic"
-      },
-      "tabs": {
-        "all": "All",
-        "following": "Following",
-        "trending": "Trending"
-      },
-      "placeholders": {
-        "searchTopics": "Search topics...",
-        "category": "Category",
-        "sort": "Sort",
-        "selectTopics": "Select topics for your post"
+    "placeholders": {
+      "searchSkills": "Search skills or type to create new...",
+      "engagingTitle": "Enter an engaging title that captures attention...",
+      "selectTopics": "Select topics for your post", 
+      "shareThoughts": "Share your thoughts, insights, stories, or creative content with the world. What would you like to express today?",
+      "whoCanSee": "Who can see this post?",
+      "scheduleLater": "Schedule for later (optional)",
+      "searchPosts": "Search posts...",
+      "selectCategory": "Select category",
+      "selectTopic": "Select topic"
+    },
+    "fallbacks": {
+      "untitledPost": "Untitled Post",
+      "untitledTopic": "Untitled Topic", 
+      "unknownUser": "Unknown User",
+      "unknownSkill": "Unknown Skill",
+      "preview": "Preview"
+    },
+    "modals": {
+      "notifications": {
+        "title": "Notifications",
+        "tabs": {
+          "activity": "Activity",
+          "live": "Live",
+          "trending": "Trending"
+        },
+        "filters": {
+          "allNotifications": "All notifications",
+          "unreadOnly": "Unread only", 
+          "likes": "Likes",
+          "comments": "Comments",
+          "follows": "Follows",
+          "mentions": "Mentions"
+        },
+        "empty": "No notifications found",
+        "liveUpdates": "Live Updates",
+        "trendingNow": "Trending Now"
       }
     },
-    "notifications": {
-      "tabs": {
-        "activity": "Activity",
-        "live": "Live",
-        "trending": "Trending"
+    "forms": {
+      "advanced": {
+        "privacyVisibility": "Privacy & Visibility",
+        "allowComments": "Allow Comments",
+        "allowSharing": "Allow Sharing", 
+        "contentWarning": "Content Warning",
+        "publishingOptions": "Publishing Options"
       }
+    },
+    "content": {
+      "expandText": {
+        "showMore": "Show more",
+        "showLess": "Show less"
+      }
+    },
+    "errors": {
+      "loadTopics": "Failed to load topics",
+      "tryAgainLater": "Please try again later"
+    },
+    "topics": {
+      "followingCount": "Following {count}",
+      "hotTopics": "Hot Topics",
+      "postCount": "{count, plural, one {# post} other {# posts}}",
+      "noTopicsAvailable": "No topics available",
+      "noTopicsMatch": "No topics match your filters",
+      "topicsWillAppear": "Topics will appear here once they're available"
+    },
+    "page": {
+      "filters": "Filters",
+      "topics": "Topics",
+      "loadingPost": "Loading post...",
+      "postNotFound": "Post Not Found",
+      "postNotFoundDescription": "The requested post could not be found",
+      "loadingPostTitle": "Loading Post...",
+      "loadingPostDescription": "Loading broadcast post details"
+    },
+    "breadcrumbs": {
+      "topic": "Topic",
+      "postDetail": "Post Detail"
+    },
+    "filters": {
+      "dateRange": {
+        "from": "From",
+        "to": "To"
+      },
+      "categories": {
+        "technology": "Technology",
+        "design": "Design",
+        "business": "Business",
+        "marketing": "Marketing",
+        "development": "Development",
+        "aiMl": "AI & ML",
+        "startup": "Startup",
+        "career": "Career",
+        "remoteWork": "Remote Work",
+        "productivity": "Productivity"
+      }
+    },
+    "modals": {
+      "notifications": {
+        "title": "Notifications",
+        "noNotifications": "No notifications found",
+        "liveUpdates": "Live Updates",
+        "trendingNow": "Trending Now"
+      },
+      "imageCarousel": {
+        "previous": "Previous",
+        "next": "Next",
+        "close": "Close"
+      }
+    },
+    "common": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "create": "Create",
+      "edit": "Edit",
+      "delete": "Delete",
+      "close": "Close",
+      "back": "Back",
+      "retry": "Retry",
+      "loading": "Loading...",
+      "error": "Error",
+      "success": "Success",
+      "confirm": "Confirm",
+      "remove": "Remove"
     }
   },
   "navigation": {

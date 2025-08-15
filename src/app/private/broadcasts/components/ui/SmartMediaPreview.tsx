@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 import type { MediaFile } from '@/components/ui/file-upload/MediaUpload';
 
@@ -14,6 +15,7 @@ interface SmartMediaPreviewProps {
 }
 
 export const SmartMediaPreview: React.FC<SmartMediaPreviewProps> = ({ files, onFilesChange }) => {
+  const t = useTranslations('broadcasts');
   const [carouselOpen, setCarouselOpen] = React.useState(false);
   const [carouselIndex, setCarouselIndex] = React.useState(0);
 
@@ -50,7 +52,7 @@ export const SmartMediaPreview: React.FC<SmartMediaPreviewProps> = ({ files, onF
               {file.type === 'image' ? (
                 <img
                   src={file.preview}
-                  alt={file.altText || 'Preview'}
+                  alt={file.altText || t('fallbacks.preview')}
                   className='h-32 w-full object-cover'
                 />
               ) : (

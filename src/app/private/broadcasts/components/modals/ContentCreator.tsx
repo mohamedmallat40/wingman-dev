@@ -248,8 +248,8 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
 
         try {
           addToast({
-            title: 'Post Updated',
-            description: 'Your post has been successfully updated.',
+            title: t('create.success.updateTitle'),
+            description: t('create.success.updateDescription'),
             color: 'success'
           });
         } catch (e) {
@@ -273,8 +273,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
           // Toast notification failed but post was published successfully
         }
         
-        // For create mode, call onPublish for parent component handling
-        onPublish(postData);
+        // For create mode, don't call onPublish to avoid duplicate API calls
         handleClearForm();
         onClose();
       }
@@ -402,7 +401,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                 </div>
                 <div>
                   <h2 className='text-foreground text-xl font-semibold'>
-                    {initialData ? 'Edit Post' : 'Create New Post'}
+                    {initialData ? t('create.editTitle') : t('create.title')}
                   </h2>
                   <p className='text-foreground-500 text-sm'>{t('description')}</p>
                 </div>
@@ -415,7 +414,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                 value={uploadProgress}
                 color='primary'
                 size='sm'
-                label='Uploading media...'
+                label={t('create.uploadProgress')}
                 showValueLabel
               />
             )}
@@ -431,8 +430,8 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                     onSelectionChange={(key) => {
                       if (key === 'advanced') {
                         addToast({
-                          title: 'Coming Soon',
-                          description: 'Advanced features are coming soon!',
+                          title: t('create.advancedOptions'),
+                          description: t('create.advancedOptions'),
                           color: 'primary'
                         });
                         return;

@@ -76,6 +76,14 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
 };
 
 /**
+ * Get a single broadcast post by ID
+ */
+export const getPostById = async (postId: string) => {
+  const response = await wingManApi.get(`/broadcast/${postId}`);
+  return response.data;
+};
+
+/**
  * Create a new broadcast post
  */
 export const createPost = async (postData: CreatePostData) => {
