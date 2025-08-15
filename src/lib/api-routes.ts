@@ -19,7 +19,10 @@ export const API_ROUTES = {
     languages: '/languages',
     languagesByUser: '/languages/byUser/',
     reviews: '/public-reviews/',
-    skills: '/skills',
+    skills: {
+      getAll: '/skills',
+      create: '/skills',
+    },
     address: '/address'
   },
   documents: {
@@ -33,16 +36,17 @@ export const API_ROUTES = {
     myNetwork: '/network/my-network'
   },
   upload: {
-    single: '/upload'
+    single: '/upload',
+    public: '/upload/public'
   },
   broadcasts: {
     posts: '/broadcasts/posts',
-    create: '/broadcasts/posts',
+    create: '/broadcast',
     like: '/broadcasts/posts',
     bookmark: '/broadcasts/posts',
     comment: '/broadcasts/posts',
     share: '/broadcasts/posts',
-    feed: '/broadcasts/feed',
+    feed: '/broadcast',
     trending: '/broadcasts/trending',
     search: '/broadcasts/search',
     topics: '/broadcast/topics'

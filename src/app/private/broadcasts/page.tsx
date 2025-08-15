@@ -12,7 +12,7 @@ import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import { BroadcastFilters } from './components/filters';
 import BroadcastFeed from './components/lists/BroadcastFeed';
-import ContentCreator from './components/modals/ContentCreator';
+import EnhancedContentCreator from './components/modals/EnhancedContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
 import SubcastSidebar from './components/navigation/SubcastSidebar';
@@ -40,7 +40,7 @@ export default function BroadcastsPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const handleTopicToggle = (topicId: string) => {
-    console.log('Toggle topic:', topicId);
+    // Handle topic toggle logic here
   };
 
   const handleTopicSelect = (topicId: string | null) => {
@@ -57,12 +57,12 @@ export default function BroadcastsPage() {
       await createPost.mutateAsync(postData);
       closeContentCreator();
     } catch (error) {
-      console.error('Failed to publish post:', error);
+      // Post publish error is handled by the mutation's onError
     }
   };
 
   const handleSaveDraft = (draftData: any) => {
-    console.log('Saved draft:', draftData);
+    // Handle draft saving logic here
   };
 
   return (
@@ -90,7 +90,7 @@ export default function BroadcastsPage() {
               startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
               onPress={() => setShowFilters(!showFilters)}
             >
-              Filters
+              {t('feed.filterPlaceholder.sort')}
             </Button>
 
             {/* Create Post Button */}
@@ -101,7 +101,7 @@ export default function BroadcastsPage() {
               onPress={handleCreatePost}
               isLoading={createPost.isPending}
             >
-              Create Post
+              {t('feed.createPost')}
             </Button>
           </div>
         }
@@ -143,7 +143,7 @@ export default function BroadcastsPage() {
                     onPress={handleCreatePost}
                     className='justify-start border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100'
                   >
-                    Create Post
+                    {t('feed.createPost')}
                   </Button>
                   <Button
                     variant='flat'
@@ -179,12 +179,15 @@ export default function BroadcastsPage() {
                   Trending
                 </h3>
                 <div className='space-y-2'>
-                  {['React 19', 'AI First', 'Design Systems', 'Remote Work'].map((topic, index) => (
-                    <div key={topic} className='flex items-center justify-between'>
-                      <span className='text-foreground-600 text-sm'>{topic}</span>
-                      <span className='text-success text-xs'>
-                        +{(Math.random() * 50 + 10).toFixed(0)}%
-                      </span>
+                  {[
+                    { topic: 'React 19', growth: '+42%' },
+                    { topic: 'AI First', growth: '+28%' },
+                    { topic: 'Design Systems', growth: '+35%' },
+                    { topic: 'Remote Work', growth: '+18%' }
+                  ].map((item, index) => (
+                    <div key={item.topic} className='flex items-center justify-between'>
+                      <span className='text-foreground-600 text-sm'>{item.topic}</span>
+                      <span className='text-success text-xs'>{item.growth}</span>
                     </div>
                   ))}
                 </div>
@@ -222,7 +225,7 @@ export default function BroadcastsPage() {
         onClose={() => closeNotificationCenter()}
       />
 
-      <ContentCreator
+      <EnhancedContentCreator
         isOpen={ui.contentCreatorOpen}
         onClose={() => closeContentCreator()}
         onPublish={handlePublishPost}

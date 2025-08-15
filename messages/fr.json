@@ -604,6 +604,176 @@
   "broadcasts": {
     "title": "Flux de Diffusion",
     "description": "Restez informé avec le dernier contenu de vos sujets sélectionnés et subcasts favoris",
+    "create": {
+      "title": "Créer un Nouveau Post",
+      "editTitle": "Modifier le Post",
+      "description": "Partagez vos pensées avec la communauté",
+      "autoSave": "Sauvegarde automatique des brouillons",
+      "advancedOptions": "Options Avancées",
+      "uploadProgress": "Téléchargement des médias...",
+      "success": {
+        "title": "Post Publié",
+        "description": "Votre post a été publié avec succès!"
+      },
+      "draft": {
+        "success": "Brouillon Sauvegardé",
+        "successDescription": "Votre brouillon a été sauvegardé avec succès!"
+      },
+      "tabs": {
+        "content": "Contenu",
+        "media": "Médias",
+        "tags": "Tags",
+        "advanced": "Avancé"
+      },
+      "fields": {
+        "title": {
+          "label": "Titre",
+          "placeholder": "Entrez un titre engageant...",
+          "description": "{count}/200 caractères"
+        },
+        "content": {
+          "label": "Contenu",
+          "placeholder": "Partagez vos pensées, idées ou histoire...",
+          "description": "{wordCount} mots • {readTime} min de lecture"
+        },
+        "category": {
+          "label": "Catégorie",
+          "placeholder": "Sélectionnez une catégorie"
+        },
+        "priority": {
+          "label": "Priorité",
+          "placeholder": "Sélectionnez la priorité"
+        },
+        "type": {
+          "label": "Type de Post",
+          "placeholder": "Sélectionnez le type de post"
+        },
+        "visibility": {
+          "label": "Qui peut voir ce post ?",
+          "options": {
+            "public": "Public - Tout le monde peut voir",
+            "followers": "Abonnés seulement",
+            "private": "Privé - Seulement vous"
+          }
+        },
+        "tags": {
+          "label": "Ajouter des Tags",
+          "placeholder": "Entrez un tag et appuyez sur Entrée",
+          "description": "{count}/10 tags",
+          "add": "Ajouter",
+          "currentTags": "Tags Actuels",
+          "popularTags": "Tags Populaires"
+        },
+        "schedule": {
+          "label": "Programmer pour plus tard (optionnel)",
+          "placeholder": "Sélectionnez la date et l'heure"
+        }
+      },
+      "media": {
+        "addImages": "Ajouter des Images",
+        "addVideo": "Ajouter une Vidéo",
+        "addCaption": "Ajouter une légende...",
+        "addAltText": "Texte alternatif pour l'accessibilité...",
+        "uploading": "Téléchargement...",
+        "maxSizeImage": "Taille maximale du fichier : 10MB",
+        "maxSizeVideo": "Taille maximale du fichier : 100MB",
+        "supportedFormats": "Formats supportés : {formats}"
+      },
+      "poll": {
+        "title": "Options du Sondage",
+        "addOption": "Ajouter une Option",
+        "option": "Option {number}",
+        "minOptions": "Minimum 2 options de sondage requises",
+        "maxOptions": "Maximum 6 options de sondage autorisées"
+      },
+      "link": {
+        "url": "URL du Lien",
+        "urlPlaceholder": "https://exemple.com",
+        "preview": "Aperçu du Lien"
+      },
+      "privacy": {
+        "title": "Confidentialité et Visibilité",
+        "allowComments": {
+          "title": "Autoriser les Commentaires",
+          "description": "Permettre aux gens de commenter votre post"
+        },
+        "allowSharing": {
+          "title": "Autoriser le Partage",
+          "description": "Permettre aux gens de partager votre post"
+        },
+        "contentWarning": {
+          "title": "Avertissement de Contenu",
+          "description": "Marquer si le contenu peut être sensible"
+        }
+      },
+      "publishing": {
+        "title": "Options de Publication",
+        "publishNow": "Publier Maintenant",
+        "saveDraft": "Sauvegarder le Brouillon",
+        "schedule": "Programmer pour Plus Tard"
+      },
+      "preview": {
+        "title": "Aperçu",
+        "yourContent": "Votre contenu apparaîtra ici...",
+        "moreItems": "+{count} de plus"
+      },
+      "actions": {
+        "cancel": "Annuler",
+        "saveDraft": "Sauvegarder le Brouillon",
+        "updatePost": "Mettre à Jour le Post",
+        "publishPost": "Publier le Post",
+        "scheduling": "Programmation...",
+        "publishing": "Publication...",
+        "saving": "Sauvegarde..."
+      }
+    },
+    "validation": {
+      "titleRequired": "Le titre est requis",
+      "titleMinLength": "Le titre doit contenir au moins 10 caractères",
+      "titleMaxLength": "Le titre ne peut pas dépasser 200 caractères",
+      "contentRequired": "Le contenu est requis",
+      "contentMinLength": "Le contenu doit contenir au moins 20 caractères",
+      "contentMaxLength": "Le contenu ne peut pas dépasser 10 000 caractères",
+      "categoryRequired": "La catégorie est requise",
+      "maxTags": "Maximum 10 tags autorisés",
+      "tagExists": "Le tag existe déjà",
+      "pollMinOptions": "Le sondage doit avoir au moins 2 options",
+      "pollMaxOptions": "Maximum 6 options de sondage autorisées",
+      "linkRequired": "L'URL du lien est requise",
+      "invalidUrl": "Veuillez entrer une URL valide",
+      "fileTooLarge": "Le fichier {filename} est trop volumineux. La taille maximale est {maxSize}",
+      "invalidFileType": "Type de fichier invalide pour {filename}. Veuillez sélectionner un fichier {type} valide",
+      "uploadFailed": "Échec du téléchargement des {type}s. Veuillez réessayer",
+      "maxFilesExceeded": "Maximum {maxFiles} fichiers autorisés"
+    },
+    "success": {
+      "published": "Post publié avec succès !",
+      "updated": "Post mis à jour avec succès !",
+      "draftSaved": "Brouillon sauvegardé avec succès !",
+      "scheduled": "Post programmé avec succès !",
+      "mediaUploaded": "Téléchargement réussi de {count} {type}(s)"
+    },
+    "errors": {
+      "publishFailed": "Échec de la publication du post. Veuillez réessayer.",
+      "updateFailed": "Échec de la mise à jour du post. Veuillez réessayer.",
+      "draftSaveFailed": "Échec de la sauvegarde du brouillon. Veuillez réessayer.",
+      "scheduleFailed": "Échec de la programmation du post. Veuillez réessayer.",
+      "autoSaveFailed": "Échec de la sauvegarde automatique",
+      "linkPreviewFailed": "Échec de la récupération de l'aperçu du lien",
+      "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
+      "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
+      "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
+      "forbidden": "Cette action n'est pas autorisée.",
+      "tooManyRequests": "Trop de requêtes. Veuillez attendre avant de réessayer.",
+      "contentTooLong": "Le contenu est trop long. Veuillez le raccourcir.",
+      "invalidData": "Données invalides fournies. Veuillez vérifier vos entrées.",
+      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "notFound": "La ressource demandée n'a pas été trouvée.",
+      "badRequest": "Requête invalide. Veuillez vérifier vos données et réessayer.",
+      "internalError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
+      "timeout": "Délai d'attente de la requête dépassé. Veuillez réessayer.",
+      "offline": "Vous semblez être hors ligne. Veuillez vérifier votre connexion internet."
+    },
     "onboarding": {
       "title": "Créez Votre Flux de Diffusion Parfait",
       "subtitle": "Choisissez des sujets qui correspondent à vos intérêts et expertise pour obtenir des recommandations de contenu personnalisées",
@@ -820,6 +990,33 @@
       "searchPosts": "Rechercher parmi les articles",
       "filterTopics": "Filtrer les articles par sujet",
       "sortPosts": "Changer l'ordre de tri des articles"
+    },
+    "feed": {
+      "createPost": "Créer un Post",
+      "searchPlaceholder": "Rechercher des posts...",
+      "filterPlaceholder": {
+        "sort": "Sélectionnez l'ordre de tri",
+        "category": "Sélectionnez une catégorie", 
+        "topic": "Sélectionnez un sujet"
+      },
+      "tabs": {
+        "all": "Tout",
+        "following": "Suivi",
+        "trending": "Tendances"
+      },
+      "placeholders": {
+        "searchTopics": "Rechercher des sujets...",
+        "category": "Catégorie",
+        "sort": "Tri",
+        "selectTopics": "Sélectionnez des sujets pour votre post"
+      }
+    },
+    "notifications": {
+      "tabs": {
+        "activity": "Activité",
+        "live": "En direct",
+        "trending": "Tendances"
+      }
     }
   },
   "navigation": {

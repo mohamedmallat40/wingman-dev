@@ -81,8 +81,8 @@ const FloatingSuccessManager: React.FC<FloatingSuccessManagerProps> = ({ classNa
     <>
       {/* Floating Button */}
       <motion.div
-        className={`fixed top-24 right-6 z-50 ${className}`}
-        initial={{ scale: 0, opacity: 0, x: 100, y: -50 }}
+        className={`fixed top-24 left-6 z-50 ${className}`}
+        initial={{ scale: 0, opacity: 0, x: -100, y: -50 }}
         animate={{ scale: 1, opacity: 1, x: 0, y: 0 }}
         transition={{ delay: 1.5, duration: 0.8, type: "spring", bounce: 0.4 }}
       >
@@ -150,7 +150,7 @@ const FloatingSuccessManager: React.FC<FloatingSuccessManagerProps> = ({ classNa
                 animate={{ opacity: 1, x: 0, y: 0 }}
                 exit={{ opacity: 0, x: 20, y: 10 }}
                 transition={{ delay: 1.5, duration: 0.5, ease: "easeOut" }}
-                className="absolute right-24 top-0 z-10"
+                className="absolute left-24 top-0 z-10"
               >
                 <div className="bg-gradient-to-r from-primary-50 via-background/95 to-secondary-50 backdrop-blur-xl rounded-2xl px-8 py-5 min-w-[500px] w-[500px] border border-primary/20 shadow-2xl ring-1 ring-primary/10">
                   
@@ -208,9 +208,9 @@ const FloatingSuccessManager: React.FC<FloatingSuccessManagerProps> = ({ classNa
                     </div>
                   </div>
                   
-                  {/* Speech bubble arrow - positioned on the right */}
-                  <div className="absolute left-full top-6 -ml-1">
-                    <div className="w-0 h-0 border-l-8 border-l-primary-50 border-t-4 border-t-transparent border-b-4 border-b-transparent drop-shadow-sm" />
+                  {/* Speech bubble arrow - positioned on the left */}
+                  <div className="absolute right-full top-6 -mr-1">
+                    <div className="w-0 h-0 border-r-8 border-r-primary-50 border-t-4 border-t-transparent border-b-4 border-b-transparent drop-shadow-sm" />
                   </div>
                 </div>
               </motion.div>

@@ -604,6 +604,176 @@
   "broadcasts": {
     "title": "Broadcast Feed",
     "description": "Blijf op de hoogte met de laatste content van jouw geselecteerde onderwerpen en favoriete subcasts",
+    "create": {
+      "title": "Nieuwe Post Maken",
+      "editTitle": "Post Bewerken",
+      "description": "Deel je gedachten met de gemeenschap",
+      "autoSave": "Automatisch concepten opslaan",
+      "advancedOptions": "Geavanceerde Opties",
+      "uploadProgress": "Media uploaden...",
+      "success": {
+        "title": "Post Gepubliceerd",
+        "description": "Je post is succesvol gepubliceerd!"
+      },
+      "draft": {
+        "success": "Concept Opgeslagen",
+        "successDescription": "Je concept is succesvol opgeslagen!"
+      },
+      "tabs": {
+        "content": "Inhoud",
+        "media": "Media",
+        "tags": "Tags",
+        "advanced": "Geavanceerd"
+      },
+      "fields": {
+        "title": {
+          "label": "Titel",
+          "placeholder": "Voer een boeiende titel in...",
+          "description": "{count}/200 karakters"
+        },
+        "content": {
+          "label": "Inhoud",
+          "placeholder": "Deel je gedachten, inzichten of verhaal...",
+          "description": "{wordCount} woorden • {readTime} min lezen"
+        },
+        "category": {
+          "label": "Categorie",
+          "placeholder": "Selecteer een categorie"
+        },
+        "priority": {
+          "label": "Prioriteit",
+          "placeholder": "Selecteer prioriteit"
+        },
+        "type": {
+          "label": "Post Type",
+          "placeholder": "Selecteer post type"
+        },
+        "visibility": {
+          "label": "Wie kan deze post zien?",
+          "options": {
+            "public": "Openbaar - Iedereen kan zien",
+            "followers": "Alleen volgers",
+            "private": "Privé - Alleen jij"
+          }
+        },
+        "tags": {
+          "label": "Tags Toevoegen",
+          "placeholder": "Voer tag in en druk op Enter",
+          "description": "{count}/10 tags",
+          "add": "Toevoegen",
+          "currentTags": "Huidige Tags",
+          "popularTags": "Populaire Tags"
+        },
+        "schedule": {
+          "label": "Inplannen voor later (optioneel)",
+          "placeholder": "Selecteer datum en tijd"
+        }
+      },
+      "media": {
+        "addImages": "Afbeeldingen Toevoegen",
+        "addVideo": "Video Toevoegen",
+        "addCaption": "Bijschrift toevoegen...",
+        "addAltText": "Alt-tekst voor toegankelijkheid...",
+        "uploading": "Uploaden...",
+        "maxSizeImage": "Maximale bestandsgrootte: 10MB",
+        "maxSizeVideo": "Maximale bestandsgrootte: 100MB",
+        "supportedFormats": "Ondersteunde formaten: {formats}"
+      },
+      "poll": {
+        "title": "Poll Opties",
+        "addOption": "Optie Toevoegen",
+        "option": "Optie {number}",
+        "minOptions": "Minimaal 2 poll opties vereist",
+        "maxOptions": "Maximaal 6 poll opties toegestaan"
+      },
+      "link": {
+        "url": "Link URL",
+        "urlPlaceholder": "https://voorbeeld.com",
+        "preview": "Link Voorbeeld"
+      },
+      "privacy": {
+        "title": "Privacy & Zichtbaarheid",
+        "allowComments": {
+          "title": "Reacties Toestaan",
+          "description": "Laat mensen reageren op je post"
+        },
+        "allowSharing": {
+          "title": "Delen Toestaan",
+          "description": "Laat mensen je post delen"
+        },
+        "contentWarning": {
+          "title": "Inhoudswaarschuwing",
+          "description": "Markeer als inhoud gevoelig kan zijn"
+        }
+      },
+      "publishing": {
+        "title": "Publicatie Opties",
+        "publishNow": "Nu Publiceren",
+        "saveDraft": "Concept Opslaan",
+        "schedule": "Inplannen voor Later"
+      },
+      "preview": {
+        "title": "Voorbeeld",
+        "yourContent": "Je inhoud verschijnt hier...",
+        "moreItems": "+{count} meer"
+      },
+      "actions": {
+        "cancel": "Annuleren",
+        "saveDraft": "Concept Opslaan",
+        "updatePost": "Post Bijwerken",
+        "publishPost": "Post Publiceren",
+        "scheduling": "Inplannen...",
+        "publishing": "Publiceren...",
+        "saving": "Opslaan..."
+      }
+    },
+    "validation": {
+      "titleRequired": "Titel is verplicht",
+      "titleMinLength": "Titel moet minstens 10 karakters bevatten",
+      "titleMaxLength": "Titel kan niet meer dan 200 karakters bevatten",
+      "contentRequired": "Inhoud is verplicht",
+      "contentMinLength": "Inhoud moet minstens 20 karakters bevatten",
+      "contentMaxLength": "Inhoud kan niet meer dan 10.000 karakters bevatten",
+      "categoryRequired": "Categorie is verplicht",
+      "maxTags": "Maximaal 10 tags toegestaan",
+      "tagExists": "Tag bestaat al",
+      "pollMinOptions": "Poll moet minstens 2 opties hebben",
+      "pollMaxOptions": "Maximaal 6 poll opties toegestaan",
+      "linkRequired": "Link URL is verplicht",
+      "invalidUrl": "Voer een geldige URL in",
+      "fileTooLarge": "Bestand {filename} is te groot. Maximale grootte is {maxSize}",
+      "invalidFileType": "Ongeldig bestandstype voor {filename}. Selecteer een geldig {type} bestand",
+      "uploadFailed": "Uploaden van {type}s mislukt. Probeer opnieuw",
+      "maxFilesExceeded": "Maximaal {maxFiles} bestanden toegestaan"
+    },
+    "success": {
+      "published": "Post succesvol gepubliceerd!",
+      "updated": "Post succesvol bijgewerkt!",
+      "draftSaved": "Concept succesvol opgeslagen!",
+      "scheduled": "Post succesvol ingepland!",
+      "mediaUploaded": "Succesvol {count} {type}(s) geüpload"
+    },
+    "errors": {
+      "publishFailed": "Post publiceren mislukt. Probeer opnieuw.",
+      "updateFailed": "Post bijwerken mislukt. Probeer opnieuw.",
+      "draftSaveFailed": "Concept opslaan mislukt. Probeer opnieuw.",
+      "scheduleFailed": "Post inplannen mislukt. Probeer opnieuw.",
+      "autoSaveFailed": "Automatisch opslaan mislukt",
+      "linkPreviewFailed": "Link voorbeeld ophalen mislukt",
+      "networkError": "Netwerkfout. Controleer je verbinding.",
+      "serverError": "Serverfout. Probeer later opnieuw.",
+      "unauthorized": "Je bent niet geautoriseerd voor deze actie.",
+      "forbidden": "Deze actie is niet toegestaan.",
+      "tooManyRequests": "Te veel verzoeken. Wacht even voor je opnieuw probeert.",
+      "contentTooLong": "Inhoud is te lang. Maak het korter.",
+      "invalidData": "Ongeldige gegevens verstrekt. Controleer je invoer.",
+      "sessionExpired": "Je sessie is verlopen. Log opnieuw in.",
+      "notFound": "De gevraagde bron werd niet gevonden.",
+      "badRequest": "Ongeldig verzoek. Controleer je gegevens en probeer opnieuw.",
+      "internalError": "Er is een onverwachte fout opgetreden. Probeer later opnieuw.",
+      "timeout": "Verzoek verlopen. Probeer opnieuw.",
+      "offline": "Je lijkt offline te zijn. Controleer je internetverbinding."
+    },
     "onboarding": {
       "title": "Maak Je Perfecte Broadcast Feed",
       "subtitle": "Kies onderwerpen die passen bij jouw interesses en expertise om gepersonaliseerde content aanbevelingen te krijgen",
@@ -820,6 +990,33 @@
       "searchPosts": "Zoeken door artikelen",
       "filterTopics": "Artikelen filteren op onderwerp",
       "sortPosts": "Sorteervolgorde van artikelen wijzigen"
+    },
+    "feed": {
+      "createPost": "Post Aanmaken",
+      "searchPlaceholder": "Zoek posts...",
+      "filterPlaceholder": {
+        "sort": "Selecteer sorteervolgorde",
+        "category": "Selecteer categorie", 
+        "topic": "Selecteer onderwerp"
+      },
+      "tabs": {
+        "all": "Alles",
+        "following": "Volgend",
+        "trending": "Trending"
+      },
+      "placeholders": {
+        "searchTopics": "Zoek onderwerpen...",
+        "category": "Categorie",
+        "sort": "Sorteren",
+        "selectTopics": "Selecteer onderwerpen voor je post"
+      }
+    },
+    "notifications": {
+      "tabs": {
+        "activity": "Activiteit",
+        "live": "Live",
+        "trending": "Trending"
+      }
     }
   },
   "navigation": {

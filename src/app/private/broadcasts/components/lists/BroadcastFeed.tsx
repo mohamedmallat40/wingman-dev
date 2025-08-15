@@ -33,12 +33,16 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
 
   // Feed query parameters
   const feedParams = useMemo(
-    () => ({
-      topicId: selectedTopic || filters.topicId || undefined,
-      sortBy: filters.sortBy,
-      category: filters.category || undefined
-    }),
-    [selectedTopic, filters.topicId, filters.sortBy, filters.category]
+    () => {
+      const topics = [];
+      if (selectedTopic) topics.push(selectedTopic);
+      if (filters.topicId) topics.push(filters.topicId);
+      
+      return {
+        topics: topics.length > 0 ? topics : undefined
+      };
+    },
+    [selectedTopic, filters.topicId]
   );
 
   // Fetch feed with infinite scroll
@@ -54,7 +58,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
   // Flatten posts from all pages
   const posts = useMemo(() => {
     if (!feedData?.pages) return [];
-    return feedData.pages.flatMap((page) => page.data || []);
+    return feedData.pages.flatMap((page: any) => page?.data || []);
   }, [feedData]);
 
   const handlePostLike = (postId: string) => {
@@ -150,15 +154,6 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
               Filtered by topic
             </Chip>
           )}
-          {filters.category && (
-            <Chip
-              color='secondary'
-              variant='flat'
-              startContent={<Icon icon='solar:category-linear' className='h-3 w-3' />}
-            >
-              {filters.category}
-            </Chip>
-          )}
         </div>
       </div>
 
@@ -183,7 +178,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
                 onLike={() => handlePostLike(post.id)}
                 onBookmark={() => handlePostBookmark(post.id)}
                 onComment={() => handlePostClick(post.id)}
-                onShare={() => console.log('Share:', post.id)}
+                onShare={() => {/* Share functionality would be implemented here */}}
                 onClick={() => handlePostClick(post.id)}
                 isLoading={likePost.isPending || bookmarkPost.isPending}
               />
