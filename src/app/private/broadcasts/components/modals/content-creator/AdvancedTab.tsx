@@ -124,7 +124,6 @@ export const AdvancedTab: React.FC<AdvancedTabProps> = ({ control }) => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, delay: 0.3 }}
       >
-        <Divider />
       </motion.div>
 
       {/* Schedule Publishing */}

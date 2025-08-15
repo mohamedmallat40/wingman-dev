@@ -84,6 +84,22 @@ export const createPost = async (postData: CreatePostData) => {
   return response.data;
 };
 
+/**
+ * Update an existing broadcast post
+ */
+export const updatePost = async (postId: string, postData: CreatePostData) => {
+  const response = await wingManApi.patch(`/broadcast/${postId}`, postData);
+  return response.data;
+};
+
+/**
+ * Delete a broadcast post
+ */
+export const deletePost = async (postId: string) => {
+  const response = await wingManApi.delete(`/broadcast/${postId}`);
+  return response.data;
+};
+
 // ===== ENGAGEMENT API =====
 
 /**
@@ -117,6 +133,22 @@ export const trackPostView = async (postId: string) => {
  */
 export const getTopics = async () => {
   const response = await wingManApi.get(API_ROUTES.broadcasts.topics);
+  return response.data;
+};
+
+/**
+ * Follow a topic
+ */
+export const followTopic = async (topicId: string) => {
+  const response = await wingManApi.post(`/broadcast/topics/${topicId}/follow`);
+  return response.data;
+};
+
+/**
+ * Unfollow a topic
+ */
+export const unfollowTopic = async (topicId: string) => {
+  const response = await wingManApi.delete(`/broadcast/topics/${topicId}/follow`);
   return response.data;
 };
 

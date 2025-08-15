@@ -9,15 +9,17 @@ import { useTranslations } from 'next-intl';
 
 import { useBookmarkPost, useBroadcastFeed, useLikePost, useTrackPostView } from '../../hooks';
 import { useBroadcastFilters, useBroadcastStore } from '../../store/useBroadcastStore';
+import { BroadcastPost } from '../../types';
 import PostCard from '../cards/PostCard';
 import BroadcastFeedSkeleton from '../states/BroadcastFeedSkeleton';
 
 interface BroadcastFeedProps {
   selectedTopic?: string | null;
+  onEditPost?: (post: BroadcastPost) => void;
   className?: string;
 }
 
-const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className = '' }) => {
+const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost, className = '' }) => {
   const t = useTranslations('broadcasts');
   const filters = useBroadcastFilters();
   const { setSelectedPost } = useBroadcastStore();
@@ -160,6 +162,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
                 onComment={() => handlePostClick(post.id)}
                 onShare={() => {/* Share functionality would be implemented here */}}
                 onClick={() => handlePostClick(post.id)}
+                onEdit={onEditPost}
                 isLoading={likePost.isPending || bookmarkPost.isPending}
               />
             </motion.div>

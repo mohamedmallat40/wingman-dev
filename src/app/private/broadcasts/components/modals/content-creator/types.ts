@@ -83,6 +83,8 @@ export interface FooterActionsProps {
   isValid: boolean;
   isUploading: boolean;
   isDirty: boolean;
+  hasFormChanges?: boolean;
   persistedFormData: any;
   initialData?: Partial<BroadcastPost>;
+  isEditMode?: boolean;
 }

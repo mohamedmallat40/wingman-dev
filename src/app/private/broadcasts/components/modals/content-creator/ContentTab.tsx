@@ -44,7 +44,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
               description={`${field.value?.length || 0}/200 characters`}
               classNames={{
                 inputWrapper:
-                  'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary group-data-[focus=true]:ring-4 group-data-[focus=true]:ring-primary/10 rounded-[16px] bg-default-100/50 dark:bg-default-50/50 p-4 transition-all duration-300 shadow-sm hover:shadow-md group-data-[focus=true]:shadow-lg',
+                  'border-0 data-[hover=true]:border-0 group-data-[focus=true]:border-0 group-data-[focus=true]:ring-4 group-data-[focus=true]:ring-primary/10 rounded-md bg-default-100/50 dark:bg-default-50/50 p-4 transition-all duration-300 shadow-sm hover:shadow-md group-data-[focus=true]:shadow-lg',
                 input:
                   'text-foreground font-normal tracking-[0.01em] placeholder:text-default-400 text-base transition-all duration-200'
               }}
@@ -186,7 +186,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
               errorMessage={fieldState.error?.message}
               classNames={{
                 inputWrapper:
-                  'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary group-data-[focus=true]:ring-4 group-data-[focus=true]:ring-primary/10 rounded-[16px] bg-default-100/50 dark:bg-default-50/50 p-4 transition-all duration-300 shadow-sm hover:shadow-md group-data-[focus=true]:shadow-lg',
+                  'border-0 data-[hover=true]:border-0 group-data-[focus=true]:border-0 group-data-[focus=true]:ring-4 group-data-[focus=true]:ring-primary/10 rounded-md bg-default-100/50 dark:bg-default-50/50 p-4 transition-all duration-300 shadow-sm hover:shadow-md group-data-[focus=true]:shadow-lg',
                 input:
                   'text-foreground font-normal tracking-[0.01em] placeholder:text-default-400 text-base leading-relaxed transition-all duration-200 resize-none'
               }}

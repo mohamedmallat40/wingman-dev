@@ -18,6 +18,10 @@ import { useTranslations } from 'next-intl';
 import { getImageUrl } from '@/lib/utils/utilities';
 
 import { type BroadcastPost } from '../../types';
+import { PostAttachmentModal } from '../modals/PostAttachmentModal';
+import { DeleteConfirmationModal } from '../modals/DeleteConfirmationModal';
+import { useDeletePost } from '../../hooks/useBroadcasts';
+import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 
 // Utility functions
 const formatTimeAgo = (timestamp: string): string => {
@@ -31,6 +35,35 @@ const formatTimeAgo = (timestamp: string): string => {
   return `${Math.floor(diffInSeconds / 86400)}d ago`;
 };
 
+const getFileType = (filename: string): 'image' | 'video' | 'file' => {
+  const extension = filename.toLowerCase().split('.').pop() || '';
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
+  const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
+  
+  if (imageExtensions.includes(extension)) return 'image';
+  if (videoExtensions.includes(extension)) return 'video';
+  return 'file';
+};
+
+const getFileIcon = (filename: string): string => {
+  const extension = filename.toLowerCase().split('.').pop() || '';
+  const iconMap: Record<string, string> = {
+    pdf: 'solar:file-text-linear',
+    doc: 'solar:file-text-linear',
+    docx: 'solar:file-text-linear',
+    xls: 'solar:file-text-linear',
+    xlsx: 'solar:file-text-linear',
+    ppt: 'solar:file-text-linear',
+    pptx: 'solar:file-text-linear',
+    zip: 'solar:archive-linear',
+    rar: 'solar:archive-linear',
+    '7z': 'solar:archive-linear',
+    txt: 'solar:document-linear',
+  };
+  
+  return iconMap[extension] || 'solar:file-linear';
+};
+
 interface PostCardProps {
   post: BroadcastPost;
   onLike: (postId: string) => void;
@@ -38,6 +71,7 @@ interface PostCardProps {
   onComment: (postId: string) => void;
   onShare: (postId: string) => void;
   onClick?: (postId: string) => void;
+  onEdit?: (post: BroadcastPost) => void;
   isLoading?: boolean;
   className?: string;
 }
@@ -49,11 +83,19 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
   onComment,
   onShare,
   onClick,
+  onEdit,
   isLoading = false,
   className = ''
 }) => {
   const t = useTranslations('broadcasts');
   const [isExpanded, setIsExpanded] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalIndex, setModalIndex] = useState(0);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  
+  // Get current user profile
+  const { profile: currentUser } = useBasicProfile();
+  const deletePost = useDeletePost();
 
   // Safety checks for post data
   if (!post || !post.id) {
@@ -66,7 +108,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
     safeOwner,
     safeTopics,
     safeSkills,
-    safeMedia,
+    safeAttachments,
     safeCreatedAt,
     shouldTruncate,
     displayContent,
@@ -84,7 +126,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
     };
     const safeTopics = post.topics || [];
     const safeSkills = post.skills || [];
-    const safeMedia = post.media || [];
+    const safeAttachments = post.attachments || post.media || [];
     const safeCreatedAt = post.createdAt || new Date().toISOString();
 
     const shouldTruncate = safeDescription.length > 280;
@@ -92,7 +134,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
       ? safeDescription 
       : `${safeDescription.substring(0, 280)}...`;
 
-    const postIcon = safeMedia.length > 0 ? 'solar:gallery-linear' : 'solar:broadcast-linear';
+    const postIcon = safeAttachments.length > 0 ? 'solar:gallery-linear' : 'solar:broadcast-linear';
     const postTypeColor = 'primary';
 
     return {
@@ -101,7 +143,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
       safeOwner,
       safeTopics,
       safeSkills,
-      safeMedia,
+      safeAttachments,
       safeCreatedAt,
       shouldTruncate,
       displayContent,
@@ -110,8 +152,66 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
     };
   }, [post, isExpanded]);
 
+  // Handle image click to open modal
+  const handleImageClick = (imageIndex: number) => {
+    setModalIndex(imageIndex);
+    setModalOpen(true);
+  };
+
+  // Get only images for the modal
+  const imageAttachments = React.useMemo(() => 
+    safeAttachments.filter(file => getFileType(file) === 'image'),
+    [safeAttachments]
+  );
+
+  // Check if current user owns this post
+  const isOwnPost = React.useMemo(() => {
+    return currentUser?.id === safeOwner.id;
+  }, [currentUser?.id, safeOwner.id]);
+
+  // Handle delete post
+  const handleDeletePost = React.useCallback(() => {
+    setDeleteModalOpen(true);
+  }, []);
+
+  // Handle delete confirmation
+  const handleConfirmDelete = React.useCallback(() => {
+    deletePost.mutate(post.id, {
+      onSuccess: () => {
+        setDeleteModalOpen(false);
+      },
+      onError: () => {
+        setDeleteModalOpen(false);
+      }
+    });
+  }, [deletePost, post.id]);
+
+  // Handle edit post
+  const handleEditPost = React.useCallback(() => {
+    onEdit?.(post);
+  }, [onEdit, post]);
+
   return (
-    <Card
+    <>
+      <PostAttachmentModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        attachments={imageAttachments}
+        currentIndex={modalIndex}
+        onIndexChange={setModalIndex}
+        postTitle={safeTitle}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
+        isLoading={deletePost.isPending}
+        title="Delete Post"
+        description={`Are you sure you want to delete "${safeTitle}"? This action cannot be undone.`}
+      />
+      
+      <Card
       className={`border-divider/50 shadow-sm transition-all duration-200 hover:shadow-md ${className}`}
       role="article"
       aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
@@ -191,21 +291,58 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
 
           {/* Quick Actions */}
           <div className='flex items-center gap-1'>
-            <Tooltip content='Bookmark'>
-              <Button
-                isIconOnly
-                size='sm'
-                variant='light'
-                color='default'
-                onPress={() => onBookmark(post.id)}
-                className='min-w-unit-8 h-unit-8'
-              >
-                <Icon
-                  icon='solar:bookmark-linear'
-                  className='h-4 w-4'
-                />
-              </Button>
-            </Tooltip>
+            {isOwnPost ? (
+              // Edit/Delete actions for own posts
+              <>
+                <Tooltip content='Edit post'>
+                  <Button
+                    isIconOnly
+                    size='sm'
+                    variant='light'
+                    color='primary'
+                    onPress={handleEditPost}
+                    className='min-w-unit-8 h-unit-8'
+                  >
+                    <Icon
+                      icon='solar:pen-linear'
+                      className='h-4 w-4'
+                    />
+                  </Button>
+                </Tooltip>
+                <Tooltip content='Delete post'>
+                  <Button
+                    isIconOnly
+                    size='sm'
+                    variant='light'
+                    color='danger'
+                    onPress={handleDeletePost}
+                    className='min-w-unit-8 h-unit-8'
+                  >
+                    <Icon
+                      icon='solar:trash-bin-minimalistic-linear'
+                      className='h-4 w-4'
+                    />
+                  </Button>
+                </Tooltip>
+              </>
+            ) : (
+              // Bookmark action for other posts
+              <Tooltip content='Bookmark'>
+                <Button
+                  isIconOnly
+                  size='sm'
+                  variant='light'
+                  color='default'
+                  onPress={() => onBookmark(post.id)}
+                  className='min-w-unit-8 h-unit-8'
+                >
+                  <Icon
+                    icon='solar:bookmark-linear'
+                    className='h-4 w-4'
+                  />
+                </Button>
+              </Tooltip>
+            )}
           </div>
         </div>
       </CardHeader>
@@ -236,72 +373,161 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
           )}
         </div>
 
-        {/* Media Content */}
-        {safeMedia.length > 0 && (
+        {/* Attachments Content */}
+        {safeAttachments.length > 0 && (
           <div className='mb-4 overflow-hidden rounded-lg'>
-            {safeMedia.length === 1 && (
-              <div className='relative w-full'>
-                <img
-                  src={`${process.env.NEXT_PUBLIC_S3_BASE_URL}/${safeMedia[0]}`}
-                  alt={safeTitle}
-                  className='w-full rounded-lg object-cover'
-                  style={{
-                    aspectRatio: 'auto',
-                    maxHeight: '400px',
-                    height: 'auto'
-                  }}
-                  loading='lazy'
-                  onError={(e) => {
-                    // Hide broken images
-                    const img = e.target as HTMLImageElement;
-                    img.style.display = 'none';
-                  }}
-                  onLoad={(e) => {
-                    const img = e.target as HTMLImageElement;
-                    const aspectRatio = img.naturalWidth / img.naturalHeight;
-                    
-                    // Apply smart aspect ratio constraints
-                    if (aspectRatio > 2.5) {
-                      // Very wide images - limit height
-                      img.style.aspectRatio = '2.5';
-                      img.style.objectFit = 'cover';
-                    } else if (aspectRatio < 0.5) {
-                      // Very tall images - limit height
-                      img.style.aspectRatio = '0.6';
-                      img.style.objectFit = 'cover';
-                    } else {
-                      // Normal aspect ratios - show full image
-                      img.style.aspectRatio = `${aspectRatio}`;
-                      img.style.objectFit = 'contain';
-                    }
-                  }}
-                />
-              </div>
-            )}
-            {safeMedia.length > 1 && (
-              <div className='grid grid-cols-2 gap-2'>
-                {safeMedia.slice(0, 4).map((filename, index) => (
-                  <div key={index} className='relative aspect-square'>
-                    <img
-                      src={`${process.env.NEXT_PUBLIC_S3_BASE_URL}/${filename}`}
-                      alt={`${safeTitle} - Image ${index + 1}`}
-                      className='w-full h-full rounded-lg object-cover'
-                      loading='lazy'
-                      onError={(e) => {
-                        // Hide broken images
-                        const img = e.target as HTMLImageElement;
-                        img.parentElement?.remove();
-                      }}
-                    />
-                    {index === 3 && safeMedia.length > 4 && (
-                      <div className='absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg'>
-                        <span className='text-white font-semibold'>+{safeMedia.length - 4}</span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
+            {(() => {
+              const images = safeAttachments.filter(file => getFileType(file) === 'image');
+              const videos = safeAttachments.filter(file => getFileType(file) === 'video');
+              const files = safeAttachments.filter(file => getFileType(file) === 'file');
+
+              return (
+                <div className='space-y-3'>
+                  {/* Images */}
+                  {images.length > 0 && (
+                    <div>
+                      {images.length === 1 && (
+                        <div 
+                          className='relative w-full cursor-pointer group'
+                          onClick={() => handleImageClick(0)}
+                        >
+                          <img
+                            src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${images[0]}`}
+                            alt={safeTitle}
+                            className='w-full rounded-lg object-cover transition-transform group-hover:scale-[1.02]'
+                            style={{
+                              aspectRatio: 'auto',
+                              maxHeight: '400px',
+                              height: 'auto'
+                            }}
+                            loading='lazy'
+                            onError={(e) => {
+                              const img = e.target as HTMLImageElement;
+                              img.style.display = 'none';
+                            }}
+                            onLoad={(e) => {
+                              const img = e.target as HTMLImageElement;
+                              const aspectRatio = img.naturalWidth / img.naturalHeight;
+                              
+                              if (aspectRatio > 2.5) {
+                                img.style.aspectRatio = '2.5';
+                                img.style.objectFit = 'cover';
+                              } else if (aspectRatio < 0.5) {
+                                img.style.aspectRatio = '0.6';
+                                img.style.objectFit = 'cover';
+                              } else {
+                                img.style.aspectRatio = `${aspectRatio}`;
+                                img.style.objectFit = 'contain';
+                              }
+                            }}
+                          />
+                          {/* Hover overlay */}
+                          <div className='absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/10 rounded-lg'>
+                            <div className='rounded-full bg-black/50 p-2 opacity-0 transition-opacity group-hover:opacity-100'>
+                              <Icon icon='solar:eye-bold' className='h-4 w-4 text-white' />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {images.length > 1 && (
+                        <div className='grid grid-cols-2 gap-2'>
+                          {images.slice(0, 4).map((filename, index) => (
+                            <div 
+                              key={index} 
+                              className='relative aspect-square cursor-pointer group'
+                              onClick={() => handleImageClick(index)}
+                            >
+                              <img
+                                src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
+                                alt={`${safeTitle} - Image ${index + 1}`}
+                                className='w-full h-full rounded-lg object-cover transition-transform group-hover:scale-[1.02]'
+                                loading='lazy'
+                                onError={(e) => {
+                                  const img = e.target as HTMLImageElement;
+                                  img.parentElement?.remove();
+                                }}
+                              />
+                              {/* Hover overlay */}
+                              <div className='absolute inset-0 flex items-center justify-center bg-black/0 transition-colors group-hover:bg-black/20 rounded-lg'>
+                                <div className='rounded-full bg-black/50 p-2 opacity-0 transition-opacity group-hover:opacity-100'>
+                                  <Icon icon='solar:eye-bold' className='h-3 w-3 text-white' />
+                                </div>
+                              </div>
+                              {index === 3 && images.length > 4 && (
+                                <div className='absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg'>
+                                  <span className='text-white font-semibold'>+{images.length - 4}</span>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Videos */}
+                  {videos.length > 0 && (
+                    <div className='space-y-2'>
+                      {videos.map((filename, index) => (
+                        <div key={index} className='relative w-full'>
+                          <video
+                            src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
+                            className='w-full rounded-lg'
+                            controls
+                            preload='metadata'
+                            style={{
+                              maxHeight: '400px',
+                              height: 'auto'
+                            }}
+                            onError={(e) => {
+                              const video = e.target as HTMLVideoElement;
+                              video.style.display = 'none';
+                            }}
+                          >
+                            Your browser does not support the video tag.
+                          </video>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Files */}
+                  {files.length > 0 && (
+                    <div className='space-y-2'>
+                      {files.map((filename, index) => (
+                        <div key={index} className='flex items-center p-3 bg-default-100 rounded-lg'>
+                          <Icon
+                            icon={getFileIcon(filename)}
+                            className='h-6 w-6 text-default-500 mr-3'
+                          />
+                          <div className='flex-1 min-w-0'>
+                            <p className='text-sm font-medium text-foreground truncate'>
+                              {filename.split('/').pop()}
+                            </p>
+                            <p className='text-xs text-foreground-500'>
+                              {filename.toLowerCase().split('.').pop()?.toUpperCase()} file
+                            </p>
+                          </div>
+                          <Button
+                            as='a'
+                            href={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
+                            target='_blank'
+                            rel='noopener noreferrer'
+                            download
+                            size='sm'
+                            variant='flat'
+                            color='primary'
+                            className='ml-3'
+                          >
+                            <Icon icon='solar:download-linear' className='h-4 w-4' />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         )}
 
@@ -386,6 +612,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
 
       </CardBody>
     </Card>
+    </>
   );
 }, (prevProps, nextProps) => {
   // Custom comparison for memo optimization

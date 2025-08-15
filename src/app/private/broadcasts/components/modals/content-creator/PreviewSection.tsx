@@ -35,16 +35,16 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
         transition={{ duration: 0.3 }}
         className="relative"
       >
-        <Card className="bg-background overflow-hidden border-0 shadow-xl ring-1 shadow-black/5 ring-black/5 dark:shadow-black/20 dark:ring-white/10">
+        <Card className="bg-background overflow-hidden border-0 shadow-xl">
           <CardBody className="p-0">
             {/* Header */}
             <div className="flex items-start gap-3 p-6 pb-4">
               {profileLoading ? (
                 <>
-                  <div className="bg-default-200 h-12 w-12 animate-pulse rounded-full" />
+                  <div className="bg-default-200 h-12 w-12 animate-pulse rounded-lg" />
                   <div className="flex-1 space-y-2">
-                    <div className="bg-default-200 h-4 w-32 animate-pulse rounded" />
-                    <div className="bg-default-200 h-3 w-24 animate-pulse rounded" />
+                    <div className="bg-default-200 h-4 w-32 animate-pulse rounded-sm" />
+                    <div className="bg-default-200 h-3 w-24 animate-pulse rounded-sm" />
                   </div>
                 </>
               ) : (
@@ -130,7 +130,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                         size="sm"
                         variant="flat"
                         color="primary"
-                        className="bg-primary/10 text-primary border-primary/20"
+                        className="bg-primary/10 text-primary border-0"
                         startContent={
                           <Icon
                             icon={topic.icon || 'solar:hashtag-linear'}
@@ -159,7 +159,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
             )}
 
             {/* Engagement Bar */}
-            <div className="border-divider border-t px-6 py-3">
+            <div className="px-6 py-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
                   <Button
@@ -204,7 +204,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
         </Card>
 
         {/* Floating indicator */}
-        <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 rounded-full px-2 py-1 text-xs font-medium shadow-lg">
+        <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 rounded-md px-2 py-1 text-xs font-medium shadow-lg">
           Preview
         </div>
       </motion.div>

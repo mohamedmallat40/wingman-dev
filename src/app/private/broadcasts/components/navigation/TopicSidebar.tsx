@@ -15,12 +15,13 @@ import {
   Select,
   SelectItem,
   Tab,
-  Tabs
+  Tabs,
+  Tooltip
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { useTopics } from '../../hooks';
+import { useTopics, useFollowTopic, useUnfollowTopic } from '../../hooks';
 
 interface Subcast {
   id: string;
@@ -296,6 +297,13 @@ export default function TopicSidebar({
   // Fetch topics from API
   const { data: topicsData, isLoading: topicsLoading, error: topicsError } = useTopics();
   const [subcasts, setSubcasts] = useState<Subcast[]>([]);
+  
+  // Follow/unfollow mutations
+  const followMutation = useFollowTopic();
+  const unfollowMutation = useUnfollowTopic();
+  
+  // Track which topic is currently being processed
+  const [loadingTopicId, setLoadingTopicId] = useState<string | null>(null);
 
   // Update subcasts when API data comes in
   useEffect(() => {
@@ -346,20 +354,36 @@ export default function TopicSidebar({
   }, [subcasts, searchQuery, activeTab]);
 
   const handleFollowToggle = (subcastId: string) => {
-    setSubcasts((prevSubcasts) =>
-      prevSubcasts.map((subcast) => {
-        if (subcast.id === subcastId) {
-          return {
-            ...subcast,
-            isFollowing: !subcast.isFollowing,
-            followerCount: subcast.isFollowing
-              ? subcast.followerCount - 1
-              : subcast.followerCount + 1
-          };
+    // Find the current subcast to determine if we should follow or unfollow
+    const subcast = subcasts.find(s => s.id === subcastId);
+    if (!subcast) return;
+
+    // Set loading state for this specific topic
+    setLoadingTopicId(subcastId);
+
+    if (subcast.isFollowing) {
+      // Unfollow the topic
+      unfollowMutation.mutate(subcastId, {
+        onSuccess: () => {
+          setLoadingTopicId(null);
+        },
+        onError: (error) => {
+          console.error('Failed to unfollow topic:', error);
+          setLoadingTopicId(null);
         }
-        return subcast;
-      })
-    );
+      });
+    } else {
+      // Follow the topic
+      followMutation.mutate(subcastId, {
+        onSuccess: () => {
+          setLoadingTopicId(null);
+        },
+        onError: (error) => {
+          console.error('Failed to follow topic:', error);
+          setLoadingTopicId(null);
+        }
+      });
+    }
 
     onSubcastToggle?.(subcastId);
   };
@@ -650,25 +674,41 @@ export default function TopicSidebar({
                                     className='text-primary h-3 w-3 flex-shrink-0'
                                   />
                                 )}
-                                <Button
-                                  size='sm'
-                                  variant={subcast.isFollowing ? 'solid' : 'flat'}
-                                  color={subcast.isFollowing ? 'success' : 'default'}
-                                  className={`h-6 min-w-16 px-2 text-xs transition-colors ${
-                                    subcast.isFollowing
-                                      ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
-                                      : 'bg-default-100 text-default-600 hover:bg-emerald-50 hover:text-emerald-600'
-                                  }`}
-                                  onPress={(e) => {
-                                    e?.stopPropagation?.();
-                                    handleFollowToggle(subcast.id);
-                                  }}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                  }}
+                                <Tooltip
+                                  content={subcast.isFollowing ? 'Unfollow' : 'Follow'}
+                                  placement="top"
+                                  delay={500}
+                                  closeDelay={0}
+                                  className="text-xs"
                                 >
-                                  {subcast.isFollowing ? 'Following' : 'Follow'}
-                                </Button>
+                                  <Button
+                                    isIconOnly
+                                    size='sm'
+                                    variant={subcast.isFollowing ? 'solid' : 'flat'}
+                                    color={subcast.isFollowing ? 'success' : 'primary'}
+                                    className={`h-7 w-7 min-w-unit-7 transition-all duration-200 ${
+                                      subcast.isFollowing
+                                        ? 'bg-success/20 text-success hover:bg-success/30 border border-success/30'
+                                        : 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30'
+                                    }`}
+                                    isLoading={loadingTopicId === subcast.id}
+                                    isDisabled={loadingTopicId === subcast.id}
+                                    onPress={(e) => {
+                                      e?.stopPropagation?.();
+                                      handleFollowToggle(subcast.id);
+                                    }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                    }}
+                                  >
+                                    {!loadingTopicId || loadingTopicId !== subcast.id ? (
+                                      <Icon
+                                        icon={subcast.isFollowing ? 'solar:check-circle-bold' : 'solar:add-circle-linear'}
+                                        className='h-4 w-4'
+                                      />
+                                    ) : null}
+                                  </Button>
+                                </Tooltip>
                               </div>
                             </div>
 

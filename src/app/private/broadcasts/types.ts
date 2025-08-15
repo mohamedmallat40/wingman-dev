@@ -79,7 +79,8 @@ export interface BroadcastPost {
   topics: Topic[];
   skills: Skill[];
   owner: BroadcastOwner;
-  media?: string[]; // Array of filenames
+  attachments?: string[]; // Array of filenames (images, videos, files)
+  media?: string[]; // Array of filenames (legacy field)
 }
 
 export interface Comment {

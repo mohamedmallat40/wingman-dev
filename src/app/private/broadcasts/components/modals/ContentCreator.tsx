@@ -23,8 +23,9 @@ import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
-import { useCreatePost, useSaveDraft, useTopics } from '../../hooks';
+import { useCreatePost, useUpdatePost, useSaveDraft, useTopics } from '../../hooks';
 import { type BroadcastPost } from '../../types';
+import { type CreatePostData } from '../../services/broadcast.service';
 import { AdvancedTab } from './content-creator/AdvancedTab';
 // Import extracted components and utilities
 import { ContentTab } from './content-creator/ContentTab';
@@ -53,6 +54,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   const [persistedMediaFiles, setPersistedMediaFiles] = useState<MediaFile[]>([]);
 
   const createPostMutation = useCreatePost();
+  const updatePostMutation = useUpdatePost();
   const saveDraftMutation = useSaveDraft();
   const { profile: currentUser, isLoading: profileLoading } = useBasicProfile();
   const { data: topicsData, isLoading: topicsLoading } = useTopics();
@@ -86,6 +88,12 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   const watchedTitle = watch('title');
   const watchedSkills = watch('skills');
   const watchedTopics = watch('topics');
+  const watchedVisibility = watch('visibility');
+  const watchedAllowComments = watch('allowComments');
+  const watchedAllowSharing = watch('allowSharing');
+  const watchedContentWarning = watch('contentWarning');
+  const watchedSensitive = watch('sensitive');
+  const watchedScheduleDate = watch('scheduleDate');
 
   // Component state
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
@@ -93,39 +101,127 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
 
+  // Determine if we're in edit mode
+  const isEditMode = Boolean(initialData?.id);
+
+  // Check if form has meaningful changes from initial data
+  const hasFormChanges = React.useMemo(() => {
+    if (!isEditMode) return isDirty; // For create mode, use standard isDirty
+    
+    if (!initialData) return false;
+    
+    // Compare current form values with initial data
+    const currentTitle = watchedTitle || '';
+    const currentContent = watchedContent || '';
+    const currentSkills = watchedSkills || [];
+    const currentTopics = watchedTopics || [];
+    
+    const initialTitle = initialData.title || '';
+    const initialContent = initialData.description || '';
+    const initialSkills = initialData.skills?.map(skill => skill.id) || [];
+    const initialTopics = initialData.topics?.map(topic => topic.id) || [];
+    
+    // Compare text fields
+    if (currentTitle !== initialTitle) return true;
+    if (currentContent !== initialContent) return true;
+    
+    // Compare arrays (skills and topics)
+    if (currentSkills.length !== initialSkills.length) return true;
+    if (currentTopics.length !== initialTopics.length) return true;
+    
+    if (!currentSkills.every(skill => initialSkills.includes(skill))) return true;
+    if (!currentTopics.every(topic => initialTopics.includes(topic))) return true;
+    
+    // Compare media files
+    const currentAttachmentCount = mediaFiles.length;
+    const initialAttachmentCount = initialData.attachments?.length || 0;
+    if (currentAttachmentCount !== initialAttachmentCount) return true;
+    
+    // If media files exist, compare filenames
+    if (mediaFiles.length > 0 && initialData.attachments) {
+      const currentFilenames = mediaFiles
+        .filter(file => file.uploaded && file.filename)
+        .map(file => file.filename!)
+        .sort();
+      const initialFilenames = [...initialData.attachments].sort();
+      
+      if (currentFilenames.length !== initialFilenames.length) return true;
+      if (!currentFilenames.every((filename, index) => filename === initialFilenames[index])) {
+        return true;
+      }
+    }
+    
+    return false;
+  }, [isEditMode, isDirty, initialData, watchedTitle, watchedContent, watchedSkills, watchedTopics, mediaFiles]);
+
   // Get topics from API data - use topics directly
   const availableTopics = React.useMemo(() => {
     if (!topicsData) return [];
     return Array.isArray(topicsData) ? topicsData : [];
   }, [topicsData]);
 
-  // Restore persisted state when modal opens
+  // Initialize form with initial data (for edit mode) or persisted data
   useEffect(() => {
-    if (isOpen && persistedFormData) {
-      // Reset form with persisted data
-      reset({
-        title: persistedFormData.title || '',
-        content: persistedFormData.content || '',
-        skills: persistedFormData.skills || [],
-        topics: persistedFormData.topics || [],
-        visibility: persistedFormData.visibility || 'public',
-        allowComments: persistedFormData.allowComments ?? true,
-        allowSharing: persistedFormData.allowSharing ?? true,
-        contentWarning: persistedFormData.contentWarning ?? false,
-        sensitive: persistedFormData.sensitive ?? false,
-        scheduleDate: persistedFormData.scheduleDate
-      });
+    if (isOpen) {
+      if (initialData) {
+        // Edit mode - initialize with post data
+        reset({
+          title: initialData.title || '',
+          content: initialData.description || '',
+          skills: initialData.skills?.map((skill) => skill.id) || [],
+          topics: initialData.topics?.map((topic) => topic.id) || [],
+          visibility: 'public',
+          allowComments: true,
+          allowSharing: true,
+          contentWarning: false,
+          sensitive: false
+        });
 
-      // Restore other state
-      setMediaFiles(persistedMediaFiles);
+        // Convert attachments to MediaFile objects for editing
+        if (initialData.attachments && initialData.attachments.length > 0) {
+          const editMediaFiles: MediaFile[] = initialData.attachments.map((filename, index) => ({
+            id: `edit-${index}`,
+            type: filename.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp|svg)$/) ? 'image' : 'video',
+            file: new File([], filename.split('/').pop() || filename), // Create dummy file object
+            name: filename.split('/').pop() || filename,
+            url: `https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`,
+            preview: `https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`,
+            size: 0,
+            uploadProgress: 100,
+            uploaded: true, // Mark as uploaded since these are existing files
+            filename: filename, // Store the actual filename for API calls
+            altText: initialData.title || ''
+          }));
+          setMediaFiles(editMediaFiles);
+        } else {
+          setMediaFiles([]);
+        }
+      } else if (persistedFormData) {
+        // Create mode - restore persisted data
+        reset({
+          title: persistedFormData.title || '',
+          content: persistedFormData.content || '',
+          skills: persistedFormData.skills || [],
+          topics: persistedFormData.topics || [],
+          visibility: persistedFormData.visibility || 'public',
+          allowComments: persistedFormData.allowComments ?? true,
+          allowSharing: persistedFormData.allowSharing ?? true,
+          contentWarning: persistedFormData.contentWarning ?? false,
+          sensitive: persistedFormData.sensitive ?? false,
+          scheduleDate: persistedFormData.scheduleDate
+        });
+
+        // Restore other state
+        setMediaFiles(persistedMediaFiles);
+      }
     }
-  }, [isOpen, persistedFormData, persistedMediaFiles, reset]);
+  }, [isOpen, initialData, persistedFormData, persistedMediaFiles, reset]);
 
   // Form submission handlers
   const onSubmit = async (data: BroadcastFormData) => {
     try {
-      // Prepare post data with only required fields
-      const postData = {
+      // Prepare complete post data for API
+      const postData: CreatePostData = {
         title: data.title,
         description: data.content, // Send content as description
         topics: data.topics || [], // Array of topic UUIDs
@@ -133,9 +229,9 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         attachments: [] as string[] // Array of filenames from successful uploads
       };
 
-      // Add media filenames from uploaded files
+      // Add media filenames from uploaded files (includes both new uploads and existing files)
       if (mediaFiles.length > 0) {
-        // Get filenames from successfully uploaded files
+        // Get filenames from successfully uploaded files and existing attachments
         const uploadedFilenames = mediaFiles
           .filter((file) => file.uploaded && file.filename)
           .map((file) => file.filename!);
@@ -143,20 +239,45 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         postData.attachments = uploadedFilenames;
       }
 
-      await createPostMutation.mutateAsync(postData);
-
-      try {
-        addToast({
-          title: t('create.success.title'),
-          description: t('create.success.description'),
-          color: 'success'
+      if (isEditMode && initialData?.id) {
+        // Update existing post
+        await updatePostMutation.mutateAsync({ 
+          postId: initialData.id, 
+          postData 
         });
-      } catch (e) {
-        // Toast notification failed but post was published successfully
+
+        try {
+          addToast({
+            title: 'Post Updated',
+            description: 'Your post has been successfully updated.',
+            color: 'success'
+          });
+        } catch (e) {
+          // Toast notification failed but post was updated successfully
+        }
+        
+        // For edit mode, don't call onPublish to avoid duplicate API calls
+        handleClearForm();
+        onClose();
+      } else {
+        // Create new post
+        await createPostMutation.mutateAsync(postData);
+
+        try {
+          addToast({
+            title: t('create.success.title'),
+            description: t('create.success.description'),
+            color: 'success'
+          });
+        } catch (e) {
+          // Toast notification failed but post was published successfully
+        }
+        
+        // For create mode, call onPublish for parent component handling
+        onPublish(postData);
+        handleClearForm();
+        onClose();
       }
-      onPublish(postData);
-      handleClearForm();
-      onClose();
     } catch (error: any) {
       const errorMessage = getErrorMessage(error, tErrors);
 
@@ -252,7 +373,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     return watchedContent ? calculateReadTime(watchedContent) : 0;
   }, [watchedContent]);
 
-  const isPublishing = createPostMutation.isPending;
+  const isPublishing = isEditMode ? updatePostMutation.isPending : createPostMutation.isPending;
   const isSavingDraft = saveDraftMutation.isPending;
 
   return (
@@ -267,16 +388,16 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
           backdrop: 'bg-black/60 backdrop-blur-md',
           wrapper: 'pointer-events-auto',
           body: 'py-8 px-8',
-          header: 'border-none pb-6',
+          header: 'border-none pb-6 rounded-t-[24px]',
           footer:
-            'border-none pt-6 bg-gradient-to-t from-background/95 to-transparent backdrop-blur-sm'
+            'border-none pt-6 bg-gradient-to-t from-background/95 to-transparent backdrop-blur-sm rounded-b-[24px]'
         }}
       >
-        <ModalContent>
+        <ModalContent className="rounded-[24px] overflow-hidden">
           <ModalHeader className='flex flex-col gap-2 pb-4'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
-                <div className='bg-primary/10 flex h-12 w-12 items-center justify-center rounded-full'>
+                <div className='bg-primary/10 flex h-12 w-12 items-center justify-center rounded-lg'>
                   <Icon icon='solar:pen-new-square-linear' className='text-primary h-6 w-6' />
                 </div>
                 <div>
@@ -320,7 +441,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                     }}
                     variant='underlined'
                     classNames={{
-                      tabList: 'gap-6 w-full relative rounded-none p-0 border-b border-divider',
+                      tabList: 'gap-6 w-full relative rounded-none p-0',
                       cursor: 'w-full bg-primary',
                       tab: 'max-w-fit px-0 h-12',
                       tabContent: 'group-data-[selected=true]:text-primary'
@@ -373,7 +494,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                         <div className='flex items-center gap-2 opacity-50'>
                           <Icon icon='solar:settings-linear' className='h-4 w-4' />
                           Advanced
-                          <span className='bg-default-100 text-default-500 rounded-full px-2 py-0.5 text-xs'>
+                          <span className='bg-default-100 text-default-500 rounded-md px-2 py-0.5 text-xs'>
                             Soon
                           </span>
                         </div>
@@ -415,8 +536,10 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
               isValid={isValid}
               isUploading={isUploading}
               isDirty={isDirty}
+              hasFormChanges={hasFormChanges}
               persistedFormData={persistedFormData}
               initialData={initialData}
+              isEditMode={isEditMode}
             />
           </ModalFooter>
         </ModalContent>

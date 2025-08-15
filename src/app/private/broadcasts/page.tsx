@@ -17,8 +17,9 @@ import ContentCreator from './components/modals/ContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
 import TopicSidebar from './components/navigation/TopicSidebar';
-import { useCreatePost } from './hooks';
+import { useCreatePost, useUpdatePost } from './hooks';
 import { useBroadcastStore, useUnreadNotificationsCount } from './store/useBroadcastStore';
+import { BroadcastPost } from './types';
 
 export default function BroadcastsPage() {
   const t = useTranslations('broadcasts');
@@ -36,10 +37,12 @@ export default function BroadcastsPage() {
 
   const unreadCount = useUnreadNotificationsCount();
   const createPost = useCreatePost();
+  const updatePost = useUpdatePost();
 
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [sidebarView, setSidebarView] = useState<'topics' | 'filters'>('topics');
+  const [editingPost, setEditingPost] = useState<BroadcastPost | null>(null);
 
   const handleTopicToggle = (topicId: string) => {
     // Handle topic toggle logic here
@@ -56,8 +59,15 @@ export default function BroadcastsPage() {
 
   const handlePublishPost = async (postData: CreatePostData) => {
     try {
-      await createPost.mutateAsync(postData);
+      if (editingPost) {
+        // Update existing post
+        await updatePost.mutateAsync({ postId: editingPost.id, postData });
+      } else {
+        // Create new post
+        await createPost.mutateAsync(postData);
+      }
       closeContentCreator();
+      setEditingPost(null);
     } catch (error) {
       // Post publish error is handled by the mutation's onError
     }
@@ -65,6 +75,11 @@ export default function BroadcastsPage() {
 
   const handleSaveDraft = (draftData: any) => {
     // Handle draft saving logic here
+  };
+
+  const handleEditPost = (post: BroadcastPost) => {
+    setEditingPost(post);
+    openContentCreator();
   };
 
   return (
@@ -148,7 +163,7 @@ export default function BroadcastsPage() {
 
           <div className='min-w-0 flex-1'>
             <div className='py-6'>
-              <BroadcastFeed selectedTopic={activeTopic} />
+              <BroadcastFeed selectedTopic={activeTopic} onEditPost={handleEditPost} />
             </div>
           </div>
 
@@ -251,9 +266,13 @@ export default function BroadcastsPage() {
 
       <ContentCreator
         isOpen={ui.contentCreatorOpen}
-        onClose={() => closeContentCreator()}
+        onClose={() => {
+          closeContentCreator();
+          setEditingPost(null);
+        }}
         onPublish={handlePublishPost}
         onSaveDraft={handleSaveDraft}
+        initialData={editingPost || undefined}
       />
     </>
   );
