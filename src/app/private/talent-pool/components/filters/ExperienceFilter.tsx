@@ -6,7 +6,7 @@ import { Chip, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 
-interface ExperienceLevelFilterProps {
+interface ExperienceLevelFilterProperties {
   selectedLevels: string[];
   onSelectionChange: (levels: string[]) => void;
   className?: string;
@@ -16,7 +16,7 @@ export default function ExperienceLevelFilter({
   selectedLevels,
   onSelectionChange,
   className = ''
-}: ExperienceLevelFilterProps) {
+}: ExperienceLevelFilterProperties) {
   const t = useTranslations();
 
   const experienceLevels = [
@@ -75,7 +75,9 @@ export default function ExperienceLevelFilter({
                 color={isSelected ? level.color : 'default'}
                 startContent={<Icon icon={level.icon} className='h-3.5 w-3.5' />}
                 className='cursor-pointer transition-all duration-200 hover:scale-105'
-                onClick={() => handleLevelToggle(level.key)}
+                onClick={() => {
+                  handleLevelToggle(level.key);
+                }}
                 size='sm'
               >
                 {level.label}

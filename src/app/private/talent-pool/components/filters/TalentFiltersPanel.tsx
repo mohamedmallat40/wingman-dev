@@ -7,16 +7,24 @@ import type { Country } from '../../data/countries';
 import { Button, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import countries from 'i18n-iso-countries';
+import enLocale from 'i18n-iso-countries/langs/en.json';
+import frLocale from 'i18n-iso-countries/langs/fr.json';
+import nlLocale from 'i18n-iso-countries/langs/nl.json';
+import { useLocale, useTranslations } from 'next-intl';
+import Image from 'next/image';
 
-import { countries } from '../../data/countries';
 import { type TalentPoolFilters, type TalentType } from '../../types';
 import AvailabilityFilter from './AvailabilityFilter';
 import CountryFilter from './CountryFilter';
 import ExperienceFilter from './ExperienceFilter';
 import ProfessionFilter from './ProfessionFilter';
 
-interface SearchAndFiltersProps {
+countries.registerLocale(enLocale);
+countries.registerLocale(frLocale);
+countries.registerLocale(nlLocale);
+
+interface SearchAndFiltersProperties {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   filters: TalentPoolFilters;
@@ -28,7 +36,7 @@ interface SearchAndFiltersProps {
   children?: React.ReactNode;
 }
 
-const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
+const SearchAndFilters: React.FC<SearchAndFiltersProperties> = ({
   searchQuery,
   onSearchChange,
   filters,
@@ -39,6 +47,8 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
   children
 }) => {
   const t = useTranslations();
+  const locale = useLocale() as 'en' | 'fr' | 'nl';
+
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(true);
 
   // Sync showAdvancedFilters with showFiltersPanel
@@ -72,15 +82,15 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
   };
 
   const handleAvailabilityChange = (
-    availability: 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | null
+    statusAviability: 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | null
   ) => {
-    onFiltersChange({ ...filters, availability: availability || undefined });
+    onFiltersChange({ ...filters, statusAviability: statusAviability ?? 'OPEN_FOR_PROJECT' });
   };
 
   const handleCountriesChange = (selectedCountries: string[]) => {
     onFiltersChange({
       ...filters,
-      country: selectedCountries.length > 0 ? selectedCountries : undefined
+      country: selectedCountries.length > 0 ? selectedCountries : []
     });
   };
 
@@ -115,6 +125,73 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
     }).length;
   };
 
+  const getFallbackCountries = (locale: 'en' | 'fr' | 'nl') => {
+    const countries = {
+      en: [
+        { code: 'US', name: 'United States' },
+        { code: 'GB', name: 'United Kingdom' },
+        { code: 'CA', name: 'Canada' },
+        { code: 'DE', name: 'Germany' },
+        { code: 'FR', name: 'France' },
+        { code: 'NL', name: 'Netherlands' },
+        { code: 'ES', name: 'Spain' },
+        { code: 'IT', name: 'Italy' },
+        { code: 'AU', name: 'Australia' },
+        { code: 'JP', name: 'Japan' }
+      ],
+      fr: [
+        { code: 'US', name: 'États-Unis' },
+        { code: 'GB', name: 'Royaume-Uni' },
+        { code: 'CA', name: 'Canada' },
+        { code: 'DE', name: 'Allemagne' },
+        { code: 'FR', name: 'France' },
+        { code: 'NL', name: 'Pays-Bas' },
+        { code: 'ES', name: 'Espagne' },
+        { code: 'IT', name: 'Italie' },
+        { code: 'AU', name: 'Australie' },
+        { code: 'JP', name: 'Japon' }
+      ],
+      nl: [
+        { code: 'US', name: 'Verenigde Staten' },
+        { code: 'GB', name: 'Verenigd Koninkrijk' },
+        { code: 'CA', name: 'Canada' },
+        { code: 'DE', name: 'Duitsland' },
+        { code: 'FR', name: 'Frankrijk' },
+        { code: 'NL', name: 'Nederland' },
+        { code: 'ES', name: 'Spanje' },
+        { code: 'IT', name: 'Italië' },
+        { code: 'AU', name: 'Australië' },
+        { code: 'JP', name: 'Japan' }
+      ]
+    };
+
+    return countries[locale].map((country) => ({
+      ...country,
+      flag: `https://flagcdn.com/w40/${country.code.toLowerCase()}.png`
+    }));
+  };
+  const getCountryList = (locale: 'en' | 'fr' | 'nl') => {
+    try {
+      const names = countries.getNames(locale, { select: 'official' });
+
+      if (!names || Object.keys(names).length === 0) {
+        console.warn('No countries loaded from i18n, using fallback');
+        return getFallbackCountries(locale);
+      }
+
+      return Object.entries(names)
+        .map(([code, name]) => ({
+          code,
+          name,
+          flag: `https://flagcdn.com/w40/${code.toLowerCase()}.png`
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    } catch (error) {
+      console.error('Error loading countries:', error);
+      return getFallbackCountries(locale);
+    }
+  };
+
   return (
     <div className='space-y-6'>
       {/* Active Filters - Only visible when there are active filters */}
@@ -142,20 +219,22 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                 }}
                 startContent={<Icon icon='solar:magnifer-linear' className='h-3 w-3' />}
               >
-                "{filters.search || filters.name}"
+                &quot;{filters.search ?? filters.name}&quot;
               </Chip>
             )}
 
-            {filters.availability && (
+            {filters.statusAviability && (
               <Chip
                 size='sm'
                 variant='flat'
-                color={filters.availability === 'OPEN_FOR_PROJECT' ? 'success' : 'warning'}
-                onClose={() => removeFilter('availability')}
+                color={filters.statusAviability === 'OPEN_FOR_PROJECT' ? 'success' : 'warning'}
+                onClose={() => {
+                  removeFilter('statusAviability');
+                }}
                 startContent={
                   <Icon
                     icon={
-                      filters.availability === 'OPEN_FOR_PROJECT'
+                      filters.statusAviability === 'OPEN_FOR_PROJECT'
                         ? 'solar:briefcase-bold'
                         : 'solar:clock-circle-bold'
                     }
@@ -163,7 +242,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                   />
                 }
               >
-                {filters.availability === 'OPEN_FOR_PROJECT' ? 'Full-Time' : 'Part-Time'}
+                {filters.statusAviability === 'OPEN_FOR_PROJECT' ? 'Full-Time' : 'Part-Time'}
               </Chip>
             )}
 
@@ -172,7 +251,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                 size='sm'
                 variant='flat'
                 color='warning'
-                onClose={() => removeFilter('skills')}
+                onClose={() => {
+                  removeFilter('skills');
+                }}
                 startContent={<Icon icon='solar:verified-check-linear' className='h-3 w-3' />}
               >
                 {filters.skills.length} skill{filters.skills.length === 1 ? '' : 's'}
@@ -182,7 +263,8 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
             {filters.country && filters.country.length > 0 && (
               <>
                 {filters.country.slice(0, 3).map((countryCode: string) => {
-                  const country = countries.find((c: Country) => c.code === countryCode);
+                  const countryList = getCountryList(locale);
+                  const country = countryList.find((c: Country) => c.code === countryCode);
                   return (
                     <Chip
                       key={countryCode}
@@ -202,13 +284,13 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                           src={`https://flagcdn.com/16x12/${countryCode.toLowerCase()}.png`}
                           alt={`${country?.name} flag`}
                           className='h-3 w-4 rounded-sm'
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
+                          onError={(event) => {
+                            event.currentTarget.style.display = 'none';
                           }}
                         />
                       }
                     >
-                      {country?.name || countryCode}
+                      {country?.name}
                     </Chip>
                   );
                 })}
@@ -217,7 +299,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                     size='sm'
                     variant='flat'
                     color='secondary'
-                    onClose={() => removeFilter('country')}
+                    onClose={() => {
+                      removeFilter('country');
+                    }}
                     startContent={<Icon icon='solar:global-linear' className='h-3 w-3' />}
                   >
                     +{filters.country.length - 3} more
@@ -231,7 +315,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                 size='sm'
                 variant='flat'
                 color='warning'
-                onClose={() => removeFilter('profession')}
+                onClose={() => {
+                  removeFilter('profession');
+                }}
                 startContent={<Icon icon='solar:case-minimalistic-linear' className='h-3 w-3' />}
               >
                 {filters.profession === 'FULL_TIME_FREELANCER'
@@ -239,7 +325,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                   : filters.profession === 'PART_TIME_FREELANCER'
                     ? 'Interim'
                     : filters.profession === 'CONTRACTOR'
-                      ? 'Consultant'
+                      ? 'Contractor'
                       : 'Student entrepreneur'}
               </Chip>
             )}
@@ -249,7 +335,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                 size='sm'
                 variant='flat'
                 color='secondary'
-                onClose={() => removeFilter('experienceLevel')}
+                onClose={() => {
+                  removeFilter('experienceLevel');
+                }}
                 startContent={<Icon icon='solar:medal-ribbons-star-linear' className='h-3 w-3' />}
               >
                 {filters.experienceLevel.length} experience level
@@ -265,7 +353,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                 startContent={
                   <Icon icon='solar:trash-bin-minimalistic-linear' className='h-3 w-3' />
                 }
-                onClick={handleClearAllFilters}
+                onPress={handleClearAllFilters}
                 className='hover:bg-danger/15 ml-2 rounded-full transition-all duration-150 hover:shadow-sm'
               >
                 {t('talentPool.filters.clearAll')}
@@ -286,7 +374,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
             exit={{ opacity: 0, scaleY: 0, transformOrigin: 'top' }}
             transition={{
               duration: 0.25,
-              ease: [0.4, 0.0, 0.2, 1],
+              ease: [0.4, 0, 0.2, 1],
               opacity: { duration: 0.15 }
             }}
           >
@@ -328,7 +416,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                           isIconOnly
                           size='sm'
                           variant='light'
-                          onClick={() => {
+                          onPress={() => {
                             setShowAdvancedFilters(false);
                             onToggleFiltersPanel?.();
                           }}
@@ -340,7 +428,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                     </div>
 
                     {/* Filter Grid */}
-                    <div className='mb-8 space-y-8'>
+                    <div className='mb-3 space-y-8'>
                       {/* Top Row - Country and Profession */}
                       <div className='grid grid-cols-1 gap-8 md:grid-cols-2'>
                         {/* Country Filter */}
@@ -360,8 +448,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                             </span>
                           </div>
                           <CountryFilter
-                            selectedCountries={filters.country || []}
+                            selectedCountries={filters.country ?? []}
                             onSelectionChange={handleCountriesChange}
+                            countries={getCountryList(locale)}
                             className='w-full'
                           />
                         </motion.div>
@@ -409,12 +498,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                             </span>
                           </div>
                           <AvailabilityFilter
-                            selectedAvailability={
-                              filters.availability as
-                                | 'OPEN_FOR_PROJECT'
-                                | 'OPEN_FOR_PART_TIME'
-                                | null
-                            }
+                            selectedAvailability={filters.statusAviability}
                             onSelectionChange={handleAvailabilityChange}
                             className='w-full'
                           />
@@ -446,13 +530,13 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                     </div>
 
                     {/* Action Buttons */}
-                    <div className='border-divider/50 flex items-center justify-between border-t pt-4'>
+                    {/* <div className='border-divider/50 flex items-center justify-between border-t pt-4'>
                       <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                         <Button
                           variant='light'
                           color='danger'
                           startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-                          onClick={handleClearAllFilters}
+                          onPress={handleClearAllFilters}
                           className='hover:bg-danger/10 transition-all duration-150 hover:shadow-sm'
                         >
                           {t('talentPool.filters.resetAll')}
@@ -463,7 +547,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                           <Button
                             variant='bordered'
-                            onClick={() => {
+                            onPress={() => {
                               setShowAdvancedFilters(false);
                               onToggleFiltersPanel?.();
                             }}
@@ -489,7 +573,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProps> = ({
                           </Button>
                         </motion.div>
                       </div>
-                    </div>
+                    </div> */}
                   </div>
                 </motion.div>
               )}
