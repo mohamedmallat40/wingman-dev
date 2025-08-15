@@ -7,21 +7,33 @@ import {
   Card,
   CardBody,
   CardHeader,
+  Checkbox,
+  CheckboxGroup,
+  Chip,
+  DatePicker,
+  Divider,
   Input,
   Select,
-  SelectItem,
-  Chip,
-  Divider,
-  DatePicker,
-  Checkbox,
-  CheckboxGroup
+  SelectItem
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
+import { parseDate, CalendarDate } from '@internationalized/date';
 
-import { type BroadcastPost } from '../../types';
-import { useBroadcastStore, useActiveFiltersCount } from '../../store/useBroadcastStore';
 import { useTopics } from '../../hooks';
+import { useActiveFiltersCount, useBroadcastStore } from '../../store/useBroadcastStore';
+import { type BroadcastPost } from '../../types';
+
+// Helper functions for date conversion
+const dateToCalendarDate = (date: Date | null | undefined): CalendarDate | null => {
+  if (!date) return null;
+  return parseDate(date.toISOString().split('T')[0]);
+};
+
+const calendarDateToDate = (calendarDate: CalendarDate | null): Date | null => {
+  if (!calendarDate) return null;
+  return new Date(calendarDate.year, calendarDate.month - 1, calendarDate.day);
+};
 
 interface BroadcastFiltersProps {
   isOpen: boolean;
@@ -29,26 +41,21 @@ interface BroadcastFiltersProps {
   className?: string;
 }
 
-const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
-  isOpen,
-  onClose,
-  className = ''
-}) => {
+const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, className = '' }) => {
   const t = useTranslations('broadcasts');
   const {
     filters,
     setCategory,
     setTopic,
-    setSortBy,
     setSearchQuery,
     setDateRange,
     setPostTypes,
     clearFilters
   } = useBroadcastStore();
-  
+
   const { data: topics } = useTopics();
   const activeFiltersCount = useActiveFiltersCount();
-  
+
   const [localSearchQuery, setLocalSearchQuery] = useState(filters.searchQuery);
 
   const categories = [
@@ -64,20 +71,8 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
     'Productivity'
   ];
 
-  const sortOptions = [
-    { key: 'newest', label: 'Newest First', icon: 'solar:sort-horizontal-linear' },
-    { key: 'trending', label: 'Trending', icon: 'solar:fire-linear' },
-    { key: 'popular', label: 'Most Popular', icon: 'solar:heart-linear' }
-  ];
 
-  const postTypes: { key: BroadcastPost['type']; label: string; icon: string }[] = [
-    { key: 'article', label: 'Articles', icon: 'solar:document-text-linear' },
-    { key: 'video', label: 'Videos', icon: 'solar:videocamera-linear' },
-    { key: 'image', label: 'Images', icon: 'solar:camera-linear' },
-    { key: 'poll', label: 'Polls', icon: 'solar:chart-2-linear' },
-    { key: 'quote', label: 'Quotes', icon: 'solar:quote-up-linear' },
-    { key: 'link', label: 'Links', icon: 'solar:link-linear' }
-  ];
+  // Post types removed as they don't exist in the new API structure
 
   const handleSearchSubmit = () => {
     setSearchQuery(localSearchQuery);
@@ -108,13 +103,14 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
             </Chip>
           )}
         </div>
-        <Button
-          isIconOnly
-          variant='light'
-          size='sm'
+        <Button 
+          variant='light' 
+          size='sm' 
           onPress={onClose}
+          startContent={<Icon icon='solar:arrow-left-linear' className='h-4 w-4' />}
+          className='text-foreground-600 hover:text-primary'
         >
-          <Icon icon='solar:close-linear' className='h-4 w-4' />
+          Topics
         </Button>
       </CardHeader>
 
@@ -130,62 +126,38 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
               onKeyDown={handleKeyPress}
               startContent={<Icon icon='solar:magnifer-linear' className='h-4 w-4' />}
             />
-            <Button
-              color='primary'
-              variant='flat'
-              onPress={handleSearchSubmit}
-              isIconOnly
-            >
+            <Button color='primary' variant='flat' onPress={handleSearchSubmit} isIconOnly>
               <Icon icon='solar:arrow-right-linear' className='h-4 w-4' />
             </Button>
           </div>
         </div>
 
-        <Divider />
-
-        {/* Sort By */}
-        <div className='space-y-2'>
-          <label className='text-sm font-medium'>Sort By</label>
-          <Select
-            selectedKeys={[filters.sortBy]}
-            onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0] as typeof filters.sortBy;
-              setSortBy(selected);
-            }}
-            placeholder='Select sort order'
-          >
-            {sortOptions.map((option) => (
-              <SelectItem
-                key={option.key}
-                startContent={<Icon icon={option.icon} className='h-4 w-4' />}
-              >
-                {option.label}
-              </SelectItem>
-            ))}
-          </Select>
-        </div>
 
         <Divider />
 
-        {/* Post Types */}
+        {/* Content Types */}
         <div className='space-y-2'>
-          <label className='text-sm font-medium'>Post Types</label>
+          <label className='text-sm font-medium'>Content Types</label>
           <CheckboxGroup
-            value={filters.postTypes}
-            onValueChange={(types) => setPostTypes(types as BroadcastPost['type'][])}
+            value={[]}
+            onValueChange={() => {}}
             orientation='vertical'
             classNames={{
               wrapper: 'gap-2'
             }}
           >
-            {postTypes.map((type) => (
-              <Checkbox key={type.key} value={type.key}>
-                <div className='flex items-center gap-2'>
-                  <Icon icon={type.icon} className='h-4 w-4' />
-                  <span className='text-sm'>{type.label}</span>
-                </div>
-              </Checkbox>
-            ))}
+            <Checkbox value='with-media'>
+              <div className='flex items-center gap-2'>
+                <Icon icon='solar:gallery-linear' className='h-4 w-4' />
+                <span className='text-sm'>Posts with Media</span>
+              </div>
+            </Checkbox>
+            <Checkbox value='text-only'>
+              <div className='flex items-center gap-2'>
+                <Icon icon='solar:document-text-linear' className='h-4 w-4' />
+                <span className='text-sm'>Text Only</span>
+              </div>
+            </Checkbox>
           </CheckboxGroup>
         </div>
 
@@ -203,9 +175,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
             placeholder='Select category'
           >
             {categories.map((category) => (
-              <SelectItem key={category}>
-                {category}
-              </SelectItem>
+              <SelectItem key={category}>{category}</SelectItem>
             ))}
           </Select>
         </div>
@@ -222,16 +192,16 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
               setTopic(selected || null);
             }}
             placeholder='Select topic'
-            isLoading={!topics || (!Array.isArray(topics) && !topics?.data)}
+            isLoading={!topics}
           >
-            {((Array.isArray(topics) ? topics : topics?.data)?.map((topic: any) => (
+            {topics?.map((topic: any) => (
               <SelectItem
                 key={topic.id}
                 startContent={<Icon icon={topic.icon} className='h-4 w-4' />}
               >
                 {topic.title || topic.name}
               </SelectItem>
-            )) || [])}
+            )) || []}
           </Select>
         </div>
 
@@ -243,21 +213,21 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
           <div className='grid grid-cols-2 gap-2'>
             <DatePicker
               label='From'
-              value={filters.dateRange?.from}
-              onChange={(date) => 
+              value={dateToCalendarDate(filters.dateRange?.from || null)}
+              onChange={(date) =>
                 setDateRange({
-                  from: date,
+                  from: calendarDateToDate(date),
                   to: filters.dateRange?.to || null
                 })
               }
             />
             <DatePicker
               label='To'
-              value={filters.dateRange?.to}
-              onChange={(date) => 
+              value={dateToCalendarDate(filters.dateRange?.to || null)}
+              onChange={(date) =>
                 setDateRange({
                   from: filters.dateRange?.from || null,
-                  to: date
+                  to: calendarDateToDate(date)
                 })
               }
             />
@@ -277,12 +247,13 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({
           >
             Clear All
           </Button>
-          <Button
-            color='primary'
-            onPress={onClose}
+          <Button 
+            color='primary' 
+            onPress={onClose} 
             fullWidth
+            startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
           >
-            Apply
+            Back to Topics
           </Button>
         </div>
       </CardBody>

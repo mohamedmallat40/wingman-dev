@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface LiveActivity {
   id: string;
@@ -62,7 +62,10 @@ const MOCK_ACTIVITIES: LiveActivity[] = [
   }
 ];
 
-export default function LiveActivityBar({ onNotificationClick, className = '' }: LiveActivityBarProps) {
+export default function LiveActivityBar({
+  onNotificationClick,
+  className = ''
+}: LiveActivityBarProps) {
   const [activities, setActivities] = useState<LiveActivity[]>(MOCK_ACTIVITIES);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -103,8 +106,8 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
       ];
 
       const randomActivity = newActivities[Math.floor(Math.random() * newActivities.length)];
-      
-      setActivities(prev => [randomActivity, ...prev.slice(0, 4)]);
+
+      setActivities((prev) => [randomActivity, ...prev.slice(0, 4)]);
     }, 15000);
 
     return () => clearInterval(interval);
@@ -147,44 +150,52 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: -100, opacity: 0 }}
-      className={`fixed top-20 left-1/2 transform -translate-x-1/2 z-50 px-4 ${className}`}
+      className={`fixed top-20 left-1/2 z-50 -translate-x-1/2 transform px-4 ${className}`}
     >
-      <div className="bg-black/20 dark:bg-black/10 backdrop-blur-2xl border-0 rounded-full shadow-2xl px-6 py-3 max-w-lg mx-auto ring-1 ring-black/20 dark:ring-white/10 before:absolute before:inset-0 before:rounded-full before:bg-gradient-to-r before:from-primary/20 before:to-secondary/20 before:opacity-50 relative before:-z-10">
-        <div className="flex items-center gap-4">
+      <div className='before:from-primary/20 before:to-secondary/20 relative mx-auto max-w-lg rounded-full border-0 bg-black/20 px-6 py-3 shadow-2xl ring-1 ring-black/20 backdrop-blur-2xl before:absolute before:inset-0 before:-z-10 before:rounded-full before:bg-gradient-to-r before:opacity-50 dark:bg-black/10 dark:ring-white/10'>
+        <div className='flex items-center gap-4'>
           {/* Live indicator */}
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <div className={`w-2 h-2 rounded-full bg-gradient-to-r from-${getActivityColor(currentActivity.priority)} to-${getActivityColor(currentActivity.priority)}/70 animate-pulse shadow-lg shadow-${getActivityColor(currentActivity.priority)}/50`} />
-              <div className={`absolute inset-0 w-2 h-2 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-ping opacity-60`} />
-              <div className={`absolute inset-0 w-3 h-3 rounded-full bg-${getActivityColor(currentActivity.priority)}/20 animate-ping opacity-40 -translate-x-0.5 -translate-y-0.5`} />
+          <div className='flex items-center gap-2'>
+            <div className='relative'>
+              <div
+                className={`h-2 w-2 rounded-full bg-gradient-to-r from-${getActivityColor(currentActivity.priority)} to-${getActivityColor(currentActivity.priority)}/70 animate-pulse shadow-lg shadow-${getActivityColor(currentActivity.priority)}/50`}
+              />
+              <div
+                className={`absolute inset-0 h-2 w-2 rounded-full bg-${getActivityColor(currentActivity.priority)} animate-ping opacity-60`}
+              />
+              <div
+                className={`absolute inset-0 h-3 w-3 rounded-full bg-${getActivityColor(currentActivity.priority)}/20 -translate-x-0.5 -translate-y-0.5 animate-ping opacity-40`}
+              />
             </div>
-            <span className="text-xs font-medium text-foreground-800 dark:text-white/80 tracking-wide drop-shadow-sm">LIVE</span>
+            <span className='text-foreground-800 text-xs font-medium tracking-wide drop-shadow-sm dark:text-white/80'>
+              LIVE
+            </span>
           </div>
 
           {/* Activity content */}
-          <div className="flex-1 min-w-0">
-            <AnimatePresence mode="wait">
+          <div className='min-w-0 flex-1'>
+            <AnimatePresence mode='wait'>
               <motion.div
                 key={currentActivity.id}
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 transition={{ duration: 0.3 }}
-                className="flex items-center gap-3"
+                className='flex items-center gap-3'
               >
                 <Icon
                   icon={getActivityIcon(currentActivity.type)}
                   className={`h-4 w-4 text-${getActivityColor(currentActivity.priority)} flex-shrink-0 drop-shadow-sm`}
                 />
-                <span className="text-sm text-foreground-800 dark:text-white/80 truncate drop-shadow-sm">
+                <span className='text-foreground-800 truncate text-sm drop-shadow-sm dark:text-white/80'>
                   {currentActivity.message}
                 </span>
                 {currentActivity.count && (
                   <Chip
-                    size="sm"
+                    size='sm'
                     color={getActivityColor(currentActivity.priority)}
-                    variant="flat"
-                    className="h-5 text-xs"
+                    variant='flat'
+                    className='h-5 text-xs'
                   >
                     {currentActivity.count}
                   </Chip>
@@ -194,15 +205,15 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
           </div>
 
           {/* Minimal controls */}
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             {/* Activity navigation dots */}
             {activities.length > 1 && (
-              <div className="flex items-center gap-1">
+              <div className='flex items-center gap-1'>
                 {activities.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
-                    className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                    className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${
                       index === currentIndex
                         ? `bg-${getActivityColor(currentActivity.priority)}`
                         : 'bg-default-300 hover:bg-default-400'
@@ -215,16 +226,15 @@ export default function LiveActivityBar({ onNotificationClick, className = '' }:
             {/* Close button */}
             <Button
               isIconOnly
-              size="sm"
-              variant="light"
-              className="h-6 w-6 opacity-60 hover:opacity-100 transition-opacity"
+              size='sm'
+              variant='light'
+              className='h-6 w-6 opacity-60 transition-opacity hover:opacity-100'
               onPress={() => setIsVisible(false)}
             >
-              <Icon icon="solar:close-circle-linear" className="h-3 w-3" />
+              <Icon icon='solar:close-circle-linear' className='h-3 w-3' />
             </Button>
           </div>
         </div>
-
       </div>
     </motion.div>
   );

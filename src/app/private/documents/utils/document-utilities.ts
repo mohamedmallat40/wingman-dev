@@ -3,6 +3,7 @@
 // ============================================================================
 
 import type { DocumentFilters, IDocument } from '../types';
+import { getBaseUrl } from '@/lib/utils/utilities';
 
 /**
  * Format file size in human readable format
@@ -220,21 +221,23 @@ export const getActiveFiltersCount = (filters: DocumentFilters): number => {
 };
 
 /**
- * Generate document preview URL
+ * Generate document preview URL - same as profile images
  */
 export const getDocumentPreviewUrl = (document: IDocument): string => {
-  // This would typically generate a URL for document preview
-  // For now, return a placeholder
-  return `/api/documents/${document.id}/preview`;
+  if (!document.fileName) return '';
+  
+  // Use the same pattern as profile images: ${getBaseUrl()}/upload/${fileName}
+  return `${getBaseUrl()}/upload/${document.fileName}`;
 };
 
 /**
- * Generate document download URL
+ * Generate document download URL - same as profile images
  */
 export const getDocumentDownloadUrl = (document: IDocument): string => {
-  // This would typically generate a URL for document download
-  // For now, return a placeholder
-  return `/api/documents/${document.id}/download`;
+  if (!document.fileName) return '';
+  
+  // Use the same pattern as profile images: ${getBaseUrl()}/upload/${fileName}
+  return `${getBaseUrl()}/upload/${document.fileName}`;
 };
 
 /**

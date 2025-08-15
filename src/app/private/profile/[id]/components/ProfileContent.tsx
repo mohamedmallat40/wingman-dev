@@ -187,27 +187,23 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const fullName = `${user.firstName} ${user.lastName}`;
 
   const handleEditAbout = () => {
-    console.log('Opening about me modal');
     setIsAboutMeModalOpen(true);
   };
 
   const handleAboutMeSuccess = (updatedAboutMe: string) => {
     // Update the local user state with the new about me
     setLocalUser((previous) => ({ ...previous, aboutMe: updatedAboutMe }));
-    console.log('About me updated successfully:', updatedAboutMe);
     // Optionally call a prop function here to refresh the parent component's data
   };
 
   // Skills handlers
   const handleEditSkills = () => {
-    console.log('Opening skills modal');
     setIsSkillsModalOpen(true);
   };
 
   const handleSkillsSuccess = () => {
     // Refresh skills data here - you might want to refetch from your API
     // or update the local state accordingly
-    console.log('Skills operation successful - refresh data');
     // You can call a prop function here to refresh the parent component's data
   };
 
@@ -230,7 +226,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   const handleEditLanguage = (language: ILanguage) => {
-    console.log('Editing language:', language);
     setEditingLanguage({ item: language, isOpen: true });
   };
 
@@ -271,7 +266,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const handleLanguageSuccess = () => {
     // Refresh language data here - you might want to refetch from your API
     // or update the local state accordingly
-    console.log('Language operation successful - refresh data');
     // You can call a prop function here to refresh the parent component's data
   };
 
@@ -381,13 +375,11 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
     const confirmed = confirm('Are you sure you want to delete this social account?');
     if (confirmed) {
       setLocalSocialAccounts((previous) => previous.filter((account) => account.id !== accountId));
-      console.log('Social account deleted:', accountId);
     }
   };
 
   // Experience handlers
   const handleAddExperience = () => {
-    console.log('Adding new experience');
     setEditingExperience({
       item: {
         company: '',
@@ -401,7 +393,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   const handleEditExperience = (experience: Experience) => {
-    console.log('Editing experience:', experience);
     setEditingExperience({ item: experience, isOpen: true });
   };
 
@@ -443,7 +434,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const handleExperienceSuccess = () => {
     // Refresh experience data here - you might want to refetch from your API
     // or update the local state accordingly
-    console.log('Experience operation successful - refresh data');
     // You can call a prop function here to refresh the parent component's data
   };
 
@@ -459,12 +449,10 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const handleEducationSuccess = () => {
     // Refresh education data here - you might want to refetch from your API
     // or update the local state accordingly
-    console.log('Education operation successful - refresh data');
     // You can call a prop function here to refresh the parent component's data
   };
   const addToast = (message: string, type: 'success' | 'error') => {
     // Implement your toast notification logic here
-    console.log(`${type.toUpperCase()}: ${message}`);
   };
   const handleDeleteEducation = (education: IEducation) => {
     setEducationToDelete({ education, isOpen: true });
@@ -548,7 +536,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   const handleProjectSuccess = () => {
-    console.log('Project operation successful - refresh data');
     // Refresh projects data here
   };
 
@@ -598,7 +585,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   const handleServiceSuccess = () => {
-    console.log('Service operation successful - refresh data');
     // Refresh services data here
   };
 
@@ -635,7 +621,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   const handleTestimonialSuccess = () => {
-    console.log('Testimonial operation successful - refresh data');
     // Refresh testimonials data here
   };
 

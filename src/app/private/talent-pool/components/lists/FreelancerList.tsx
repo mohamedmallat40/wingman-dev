@@ -1,21 +1,23 @@
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Skeleton, Spinner } from '@heroui/react';
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { getName } from 'i18n-iso-countries';
+import { useLocale, useTranslations } from 'next-intl';
 
 import wingManApi from '@/lib/axios';
 
-import { getCountryNameFromCode } from '../../data/countries';
 import { type TalentPoolFilters, type User, type UserResponse } from '../../types';
+import { searchUtilities } from '../../utils/search-utilities';
 import { TalentCard } from '../cards';
 import { TalentGroupModal, TalentNoteModal, TalentTagsModal } from '../modals';
 import { TalentEmptyState, TalentErrorState, TalentLoadingSkeleton } from '../states';
 
-interface FreelancerListProps {
+interface FreelancerListProperties {
   filters?: TalentPoolFilters;
+  searchQuery?: string;
   onViewProfile?: (userId: string) => void;
   onConnect?: (userId: string) => void;
   onCountChange?: (count: number) => void;
@@ -107,13 +109,15 @@ const LoadingSkeleton: React.FC = () => (
   </div>
 );
 
-const FreelancerList: React.FC<FreelancerListProps> = ({
+const FreelancerList: React.FC<FreelancerListProperties> = ({
   filters,
+  searchQuery,
   onViewProfile,
   onConnect,
   onCountChange
 }) => {
   const t = useTranslations();
+  const locale = useLocale();
   const [freelancers, setFreelancers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -132,7 +136,7 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
 
   const itemsPerPage = 12; // 3x4 grid layout for enhanced cards
 
-  const fetchFreelancers = async (page: number = 1, append: boolean = false) => {
+  const fetchFreelancers = async (page = 1, append = false) => {
     try {
       if (append) {
         setIsLoadingMore(true);
@@ -144,65 +148,60 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       }
       setError(null);
 
-      const params: Record<string, string> = {
-        categories: 'All',
-        kind: 'FREELANCER',
-        page: page.toString(),
-        limit: itemsPerPage.toString()
-      };
+      const parameters = new URLSearchParams();
+      parameters.append('categories', 'All');
+      parameters.append('kind', 'FREELANCER');
+      parameters.append('page', page.toString());
+      parameters.append('limit', itemsPerPage.toString());
 
       // Add filters to params
       if (filters?.search) {
-        params.search = filters.search;
+        parameters.append('search', filters.search);
       }
       if (filters?.name) {
-        params.name = filters.name;
-      }
-      if (filters?.region) {
-        params.region = filters.region;
+        parameters.append('name', filters.name);
       }
       if (filters?.skills?.length) {
-        params.skills = filters.skills.join(',');
+        for (const skill of filters.skills) {
+          parameters.append('skills', skill);
+        }
       }
-      if (filters?.availability) {
-        params.availability = filters.availability;
+      if (filters?.statusAviability) {
+        parameters.append('statusAviability', filters.statusAviability);
       }
       if (filters?.profession) {
-        params.profession = filters.profession;
+        parameters.append('profession', filters.profession);
       }
       if (filters?.experienceLevel?.length) {
-        params.experienceLevel = filters.experienceLevel.join(',');
+        for (const level of filters.experienceLevel) {
+          parameters.append('experienceLevel', level);
+        }
       }
       if (filters?.country?.length) {
-        // Convert country codes to lowercase names and add as separate parameters
-        filters.country.forEach((countryCode, index) => {
-          const countryName = getCountryNameFromCode(countryCode);
-          if (index === 0) {
-            params.country = countryName;
-          } else {
-            params[`country${index + 1}`] = countryName;
-          }
-        });
+        for (const country of filters.country) {
+          const countryName = getName(country, locale);
+          parameters.append('country', countryName);
+        }
       }
       if (filters?.workType) {
-        params.workType = filters.workType;
+        parameters.append('workType', filters.workType);
       }
       if (filters?.minRate) {
-        params.minRate = filters.minRate.toString();
+        parameters.append('minRate', filters.minRate.toString());
       }
       if (filters?.maxRate) {
-        params.maxRate = filters.maxRate.toString();
+        parameters.append('maxRate', filters.maxRate.toString());
       }
       if (filters?.minRating) {
-        params.minRating = filters.minRating.toString();
+        parameters.append('minRating', filters.minRating.toString());
       }
 
-      const response = await wingManApi.get('/network/all-users', { params });
+      const response = await wingManApi.get('/network/all-users', { params: parameters });
       const data = response.data as UserResponse;
 
       if (append) {
         setPreviousCount(freelancers.length);
-        setFreelancers((prev) => [...prev, ...data.items]);
+        setFreelancers((previous) => [...previous, ...data.items]);
         setIsInitialLoad(false);
       } else {
         setPreviousCount(0);
@@ -214,9 +213,9 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       setTotalItems(data.meta.totalItems);
       setCurrentPage(data.meta.currentPage);
       setHasNextPage(data.meta.currentPage < data.meta.totalPages);
-    } catch (err) {
-      console.error('Error fetching freelancers:', err);
-      setError(err instanceof Error ? err.message : 'Failed to fetch freelancers');
+    } catch (error_) {
+      console.error('Error fetching freelancers:', error_);
+      setError(error_ instanceof Error ? error_.message : 'Failed to fetch freelancers');
     } finally {
       if (!append) {
         setIsLoading(false);
@@ -248,14 +247,6 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       (entries) => {
         const entry = entries[0];
         if (!entry) return;
-        console.log(
-          'Freelancer sentinel intersecting:',
-          entry.isIntersecting,
-          'hasNextPage:',
-          hasNextPage,
-          'isLoadingMore:',
-          isLoadingMore
-        );
         if (entry.isIntersecting && hasNextPage && !isLoadingMore && !isLoading) {
           console.log('Loading more freelancers...');
           loadMore();
@@ -267,7 +258,7 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       }
     );
 
-    const sentinel = document.getElementById('freelancer-sentinel');
+    const sentinel = document.querySelector('#freelancer-sentinel');
     if (sentinel) {
       observer.observe(sentinel);
     }
@@ -278,6 +269,15 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       }
     };
   }, [loadMore, hasNextPage, isLoadingMore, isLoading]);
+
+  const searchFilteredFreelancers = useMemo(() => {
+    return searchUtilities.searchFreelancers(freelancers, searchQuery || '') as User[];
+  }, [freelancers, searchQuery]);
+
+  const filteredFreelancers = useMemo(() => {
+    let result = searchFilteredFreelancers;
+    return result;
+  }, [searchFilteredFreelancers]);
 
   const handleRetry = () => {
     fetchFreelancers(1);
@@ -300,11 +300,11 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       onConnect?.(userId);
 
       // Update local state to reflect connection
-      setFreelancers((prev) =>
-        prev.map((user) => (user.id === userId ? { ...user, isConnected: true } : user))
+      setFreelancers((previous) =>
+        previous.map((user) => (user.id === userId ? { ...user, isConnected: true } : user))
       );
-    } catch (err) {
-      console.error('Error connecting to user:', err);
+    } catch (error_) {
+      console.error('Error connecting to user:', error_);
     }
   };
 
@@ -379,7 +379,7 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
     return <TalentLoadingSkeleton />;
   }
 
-  if (freelancers.length === 0) {
+  if (filteredFreelancers.length === 0) {
     return (
       <TalentEmptyState
         icon='solar:user-search-linear'
@@ -394,7 +394,7 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
     <div className='space-y-6'>
       {/* Freelancers Grid */}
       <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-        {freelancers.map((freelancer, index) => (
+        {filteredFreelancers.map((freelancer, index) => (
           <motion.div
             key={`freelancer-${freelancer.id}-${index}`}
             initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
@@ -441,21 +441,27 @@ const FreelancerList: React.FC<FreelancerListProps> = ({
       {/* Modals */}
       <TalentNoteModal
         isOpen={noteModalOpen}
-        onClose={() => setNoteModalOpen(false)}
+        onClose={() => {
+          setNoteModalOpen(false);
+        }}
         user={selectedUser}
         onSaveNote={handleSaveNote}
       />
 
       <TalentGroupModal
         isOpen={groupModalOpen}
-        onClose={() => setGroupModalOpen(false)}
+        onClose={() => {
+          setGroupModalOpen(false);
+        }}
         user={selectedUser}
         onAddToGroups={handleAddToGroups}
       />
 
       <TalentTagsModal
         isOpen={tagsModalOpen}
-        onClose={() => setTagsModalOpen(false)}
+        onClose={() => {
+          setTagsModalOpen(false);
+        }}
         user={selectedUser}
         onAssignTags={handleAssignUserTags}
       />

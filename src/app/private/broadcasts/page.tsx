@@ -6,6 +6,7 @@ import type { CreatePostData } from './services/broadcast.service';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
@@ -15,9 +16,10 @@ import BroadcastFeed from './components/lists/BroadcastFeed';
 import ContentCreator from './components/modals/ContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
-import SubcastSidebar from './components/navigation/SubcastSidebar';
-import { useCreatePost } from './hooks';
+import TopicSidebar from './components/navigation/TopicSidebar';
+import { useCreatePost, useUpdatePost } from './hooks';
 import { useBroadcastStore, useUnreadNotificationsCount } from './store/useBroadcastStore';
+import { BroadcastPost } from './types';
 
 export default function BroadcastsPage() {
   const t = useTranslations('broadcasts');
@@ -35,12 +37,15 @@ export default function BroadcastsPage() {
 
   const unreadCount = useUnreadNotificationsCount();
   const createPost = useCreatePost();
+  const updatePost = useUpdatePost();
 
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [sidebarView, setSidebarView] = useState<'topics' | 'filters'>('topics');
+  const [editingPost, setEditingPost] = useState<BroadcastPost | null>(null);
 
   const handleTopicToggle = (topicId: string) => {
-    console.log('Toggle topic:', topicId);
+    // Handle topic toggle logic here
   };
 
   const handleTopicSelect = (topicId: string | null) => {
@@ -54,15 +59,27 @@ export default function BroadcastsPage() {
 
   const handlePublishPost = async (postData: CreatePostData) => {
     try {
-      await createPost.mutateAsync(postData);
+      if (editingPost) {
+        // Update existing post
+        await updatePost.mutateAsync({ postId: editingPost.id, postData });
+      } else {
+        // Create new post
+        await createPost.mutateAsync(postData);
+      }
       closeContentCreator();
+      setEditingPost(null);
     } catch (error) {
-      console.error('Failed to publish post:', error);
+      // Post publish error is handled by the mutation's onError
     }
   };
 
   const handleSaveDraft = (draftData: any) => {
-    console.log('Saved draft:', draftData);
+    // Handle draft saving logic here
+  };
+
+  const handleEditPost = (post: BroadcastPost) => {
+    setEditingPost(post);
+    openContentCreator();
   };
 
   return (
@@ -83,14 +100,19 @@ export default function BroadcastsPage() {
         pageDescription={t('description')}
         headerActions={
           <div className='flex items-center gap-2'>
-            {/* Filter Toggle */}
+            {/* View Toggle */}
             <Button
               variant='flat'
               size='sm'
-              startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
-              onPress={() => setShowFilters(!showFilters)}
+              startContent={
+                <Icon
+                  icon={sidebarView === 'topics' ? 'solar:filter-linear' : 'solar:satellite-linear'}
+                  className='h-4 w-4'
+                />
+              }
+              onPress={() => setSidebarView(sidebarView === 'topics' ? 'filters' : 'topics')}
             >
-              Filters
+              {sidebarView === 'topics' ? 'Filters' : 'Topics'}
             </Button>
 
             {/* Create Post Button */}
@@ -101,7 +123,7 @@ export default function BroadcastsPage() {
               onPress={handleCreatePost}
               isLoading={createPost.isPending}
             >
-              Create Post
+              {t('feed.createPost')}
             </Button>
           </div>
         }
@@ -109,22 +131,39 @@ export default function BroadcastsPage() {
         <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
           <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
             <div className='sticky top-4 space-y-4 overflow-visible'>
-              <SubcastSidebar
-                onSubcastToggle={handleTopicToggle}
-                onSubcastSelect={handleTopicSelect}
-                selectedSubcast={activeTopic}
-              />
-
-              {/* Filters Panel */}
-              {showFilters && (
-                <BroadcastFilters isOpen={showFilters} onClose={() => setShowFilters(false)} />
-              )}
+              <AnimatePresence mode='wait'>
+                {sidebarView === 'topics' ? (
+                  <motion.div
+                    key='topics'
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <TopicSidebar
+                      onSubcastToggle={handleTopicToggle}
+                      onSubcastSelect={handleTopicSelect}
+                      selectedSubcast={activeTopic}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key='filters'
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <BroadcastFilters isOpen={true} onClose={() => setSidebarView('topics')} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
           <div className='min-w-0 flex-1'>
             <div className='py-6'>
-              <BroadcastFeed selectedTopic={activeTopic} />
+              <BroadcastFeed selectedTopic={activeTopic} onEditPost={handleEditPost} />
             </div>
           </div>
 
@@ -143,7 +182,7 @@ export default function BroadcastsPage() {
                     onPress={handleCreatePost}
                     className='justify-start border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100'
                   >
-                    Create Post
+                    {t('feed.createPost')}
                   </Button>
                   <Button
                     variant='flat'
@@ -179,12 +218,15 @@ export default function BroadcastsPage() {
                   Trending
                 </h3>
                 <div className='space-y-2'>
-                  {['React 19', 'AI First', 'Design Systems', 'Remote Work'].map((topic, index) => (
-                    <div key={topic} className='flex items-center justify-between'>
-                      <span className='text-foreground-600 text-sm'>{topic}</span>
-                      <span className='text-success text-xs'>
-                        +{(Math.random() * 50 + 10).toFixed(0)}%
-                      </span>
+                  {[
+                    { topic: 'React 19', growth: '+42%' },
+                    { topic: 'AI First', growth: '+28%' },
+                    { topic: 'Design Systems', growth: '+35%' },
+                    { topic: 'Remote Work', growth: '+18%' }
+                  ].map((item, index) => (
+                    <div key={item.topic} className='flex items-center justify-between'>
+                      <span className='text-foreground-600 text-sm'>{item.topic}</span>
+                      <span className='text-success text-xs'>{item.growth}</span>
                     </div>
                   ))}
                 </div>
@@ -224,9 +266,13 @@ export default function BroadcastsPage() {
 
       <ContentCreator
         isOpen={ui.contentCreatorOpen}
-        onClose={() => closeContentCreator()}
+        onClose={() => {
+          closeContentCreator();
+          setEditingPost(null);
+        }}
         onPublish={handlePublishPost}
         onSaveDraft={handleSaveDraft}
+        initialData={editingPost || undefined}
       />
     </>
   );

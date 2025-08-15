@@ -1,64 +1,87 @@
-export interface BroadcastPost {
+// Topic interface matching API response
+export interface Topic {
   id: string;
-  type: 'article' | 'video' | 'image' | 'poll' | 'quote' | 'gallery' | 'link';
   title: string;
-  content: string;
-  author: {
-    name: string;
-    avatar: string;
-    verified: boolean;
-    handle: string;
-  };
-  timestamp: string;
-  tags: string[];
-  engagement: {
-    likes: number;
-    comments: number;
-    shares: number;
-    bookmarks: number;
-    views: number;
-  };
-  media?: {
-    type: 'video' | 'image' | 'gallery' | 'link';
-    url: string | string[];
-    thumbnail?: string;
-    duration?: string;
-    aspectRatio?: 'landscape' | 'portrait' | 'square';
-    isShort?: boolean;
-  };
-  isLiked?: boolean;
-  isBookmarked?: boolean;
-  category: string;
-  topic?: {
-    id: string;
-    name: string;
-    icon: string;
-  };
-  priority?: 'low' | 'normal' | 'high';
-  readTime?: number;
-  isTrending?: boolean;
-  shareUrl?: string;
-  poll?: {
-    question: string;
-    options: {
-      id: string;
-      text: string;
-      votes: number;
-      percentage: number;
-    }[];
-    totalVotes: number;
-    userVoted?: string;
-    endsAt?: string;
-  };
-  link?: {
-    url: string;
-    title: string;
-    description: string;
-    image: string;
-    domain: string;
-  };
+  description: string;
+  key: string | null;
+  icon: string;
+  color: string;
+  background: string | null;
+  followerCount: number;
+  broadcastCount: number;
+  isFollowed: boolean;
 }
 
+// Skill interface matching API response
+export interface Skill {
+  id: string;
+  key: string;
+  type: string | null;
+}
+
+// Owner/User interface matching API response
+export interface BroadcastOwner {
+  id: string;
+  email: string;
+  kind: 'COMPANY' | 'FREELANCER' | 'AGENCY';
+  isMailVerified: boolean;
+  userName: string | null;
+  firstName: string;
+  lastName: string;
+  resume: string | null;
+  aboutMe: string | null;
+  profileImage: string | null;
+  profileCover: string | null;
+  statusAviability: string;
+  phoneNumber: string;
+  contactLink: string | null;
+  birthDate: string | null;
+  lastUpdatedDateStatus: string | null;
+  hourlyRate: number;
+  linkedinProfile: string | null;
+  category: string | null;
+  profileWebsite: string | null;
+  dailyRate: number;
+  experienceYears: number;
+  extraInfo: string | null;
+  workType: string;
+  stepper: boolean;
+  profession: string | null;
+  city: string | null;
+  amount: number | null;
+  currency: string | null;
+  shouldBeVisible: boolean | null;
+  paymentType: string | null;
+  region: string | null;
+  workingTime: string;
+  cid: string;
+  isCompleted: boolean;
+  addedBy: string | null;
+  isDeleted: boolean;
+  dateDeleted: string | null;
+  registrationType: string | null;
+  acceptChatWarning: boolean;
+  SignedCommissionAgreement: boolean;
+  language: string;
+  completedSteps: string[];
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// Main BroadcastPost interface matching API response
+export interface BroadcastPost {
+  id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  topics: Topic[];
+  skills: Skill[];
+  owner: BroadcastOwner;
+  attachments?: string[]; // Array of filenames (images, videos, files)
+  media?: string[]; // Array of filenames (legacy field)
+}
 
 export interface Comment {
   id: string;

@@ -1,0 +1,55 @@
+{
+  "broadcasts": {
+    "create": {
+      "preview": {
+        "title": "Aperçu en direct",
+        "noContent": "Votre contenu apparaîtra ici au fur et à mesure que vous tapez..."
+      },
+      "fields": {
+        "topics": {
+          "title": "Sujets",
+          "label": "Sélectionner les sujets",
+          "placeholder": "Choisissez des sujets pertinents...",
+          "selected": "Sujets sélectionnés"
+        },
+        "skills": {
+          "title": "Compétences",
+          "label": "Sélectionner les compétences", 
+          "placeholder": "Ajoutez des compétences pertinentes...",
+          "selected": "Compétences sélectionnées"
+        }
+      },
+      "media": {
+        "title": "Médias",
+        "preview": "Aperçu",
+        "previous": "Précédent",
+        "next": "Suivant",
+        "remove": "Supprimer",
+        "supportedFormats": "Formats supportés",
+        "tips": {
+          "title": "Conseils média",
+          "quality": "Utilisez des images et vidéos de haute qualité",
+          "relevant": "Assurez-vous que les médias sont pertinents pour votre contenu",
+          "alt": "Ajoutez du texte alternatif pour l'accessibilité"
+        }
+      },
+      "tags": {
+        "recommendations": {
+          "title": "Recommandations",
+          "relevant": "Choisissez des sujets et compétences pertinents pour votre contenu",
+          "mix": "Mélangez des sujets spécifiques et généraux pour une meilleure portée",
+          "specific": "Soyez spécifique avec les compétences pour attirer le bon public"
+        }
+      },
+      "tips": {
+        "title": "Conseils de rédaction",
+        "engaging": "Commencez par une accroche engageante",
+        "keywords": "Utilisez des mots-clés pertinents naturellement",
+        "structure": "Structurez votre contenu avec des paragraphes clairs"
+      }
+    }
+  },
+  "common": {
+    "remove": "Supprimer"
+  }
+}
