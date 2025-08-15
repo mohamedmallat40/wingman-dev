@@ -14,7 +14,7 @@ export interface WorkTypeConfig {
 }
 
 // Availability status configuration
-export const getAvailabilityConfig = (status: AvailabilityStatus | string): AvailabilityConfig => {
+export const getAvailabilityConfig = (status: AvailabilityStatus): AvailabilityConfig => {
   switch (status) {
     case 'OPEN_FOR_PROJECT': {
       return {
@@ -48,7 +48,7 @@ export const getAvailabilityConfig = (status: AvailabilityStatus | string): Avai
 };
 
 // Work type configuration
-export const getWorkTypeConfig = (workType: WorkType | string): WorkTypeConfig => {
+export const getWorkTypeConfig = (workType: WorkType): WorkTypeConfig => {
   switch (workType) {
     case 'REMOTE': {
       return {
@@ -84,19 +84,21 @@ export const getWorkTypeConfig = (workType: WorkType | string): WorkTypeConfig =
 // Format rate with currency and period
 export const formatRate = (
   amount: number,
-  currency: Currency | string,
-  paymentType: PaymentType | string,
+  currency: Currency,
+  paymentType: PaymentType,
   t?: (key: string) => string
 ): string => {
   const currencySymbol = currency === 'EUR' ? '€' : '$';
-  const period =
-    paymentType === 'HOURLY_BASED'
-      ? t
-        ? t('talentPool.paymentTypes.hourly')
-        : '/hour'
-      : t
-        ? t('talentPool.paymentTypes.daily')
-        : '/day';
+  let period;
+
+  if (paymentType === 'HOURLY_BASED') {
+    period = t ? t('talentPool.paymentTypes.hourly') : '/hour';
+  } else if (paymentType === 'DAILY_BASED') {
+    period = t ? t('talentPool.paymentTypes.daily') : '/day';
+  } else {
+    period = t ? t('talentPool.paymentTypes.project') : '/project';
+  }
+
   const rateAmount = amount || 0;
   return `${currencySymbol}${rateAmount}${period}`;
 };

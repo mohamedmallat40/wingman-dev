@@ -66,22 +66,21 @@ const TalentPoolPage: React.FC = () => {
   );
 
   const handleConnect = useCallback((userId: string) => {
-    console.log('Connect with user:', userId);
     // In real app: call connection API
   }, []);
 
-  const handleViewTeam = useCallback((teamId: string) => {
-    console.log('Navigate to team:', teamId);
-    // In real app: router.push(`/team/${teamId}`);
-  }, []);
+  const handleViewTeam = useCallback(
+    (teamId: string) => {
+      router.push(`/private/teams/${teamId}`);
+    },
+    [router]
+  );
 
   const handleJoinTeam = useCallback((teamId: string) => {
-    console.log('Join team:', teamId);
     // In real app: call join team API
   }, []);
 
   const handleCreateTeam = useCallback(() => {
-    console.log('Create new team');
     // In real app: open create team modal or navigate to create team page
   }, []);
 
@@ -106,7 +105,6 @@ const TalentPoolPage: React.FC = () => {
 
       try {
         const result = await inviteUserToPlatform(data);
-        console.log('Invitation sent successfully:', result);
       } catch (error) {
         console.error('Failed to send invitation:', error);
         throw error; // Re-throw to let the modal handle the error display
@@ -140,6 +138,7 @@ const TalentPoolPage: React.FC = () => {
   const renderActiveTabContent = () => {
     const commonProps = {
       filters,
+      searchQuery,
       onViewProfile: handleViewProfile,
       onConnect: handleConnect
     };
@@ -155,6 +154,7 @@ const TalentPoolPage: React.FC = () => {
         return (
           <TeamListContainer
             filters={filters}
+            searchQuery={searchQuery}
             onViewTeam={handleViewTeam}
             onJoinTeam={handleJoinTeam}
             onCountChange={handleTeamCountChange}
@@ -214,7 +214,7 @@ const TalentPoolPage: React.FC = () => {
         </div>
       }
     >
-      <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
+      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
         {/* Enhanced Tabs Navigation with Integrated Search */}
         <div className='space-y-6'>
           <TalentPoolTabs

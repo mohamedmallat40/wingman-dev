@@ -14,8 +14,8 @@ export type UserKind =
   | 'PART_TIME_FREELANCER'
   | 'STUDENT';
 export type WorkType = 'REMOTE' | 'ON_LOCATION' | 'HYBRID';
-export type PaymentType = 'HOURLY_BASED' | 'DAILY_BASED';
-export type AvailabilityStatus = 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | 'BUSY';
+export type PaymentType = 'HOURLY_BASED' | 'DAILY_BASED' | 'PROJECT';
+export type AvailabilityStatus = 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | 'NOT_AVAILABLE';
 export type Currency = 'EUR' | 'USD';
 
 export interface User {
@@ -25,7 +25,7 @@ export interface User {
   firstName: string;
   lastName: string;
   profileImage: string | null;
-  profession: string | null;
+  profession: string;
   region: string | null;
   skills: Skill[];
   hourlyRate: number;
@@ -54,7 +54,7 @@ export interface Tool {
 
 export interface Connection {
   id: string;
-  // Add other connection fields as needed
+  target: User;
 }
 
 export interface Group {
@@ -91,7 +91,7 @@ export interface TalentPoolFilters {
   search?: string;
   name?: string;
   skills?: string[];
-  availability?: string;
+  statusAviability?: 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | 'NOT_AVAILABLE';
   minRate?: number;
   maxRate?: number;
   workType?: WorkType;
@@ -102,7 +102,7 @@ export interface TalentPoolFilters {
   profession?: 'FULL_TIME_FREELANCER' | 'PART_TIME_FREELANCER' | 'CONTRACTOR' | 'STUDENT';
 }
 
-export interface TalentCardProps {
+export interface TalentCardProperties {
   user: User;
   onViewProfile?: (userId: string) => void;
   onConnect?: (userId: string) => void;
@@ -111,7 +111,7 @@ export interface TalentCardProps {
   onAssignTags?: (userId: string) => void;
 }
 
-export interface TeamCardProps {
+export interface TeamCardProperties {
   group: Group;
   onViewTeam?: (groupId: string) => void;
   onJoinTeam?: (groupId: string) => void;

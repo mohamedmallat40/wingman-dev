@@ -39,7 +39,7 @@ export default function ProfessionFilter({
     },
     {
       key: 'CONTRACTOR' as const,
-      label: t('talentPool.profession.consultant'),
+      label: t('talentPool.profession.Contractor'),
       icon: 'solar:case-linear'
     },
     {

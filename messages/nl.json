@@ -217,7 +217,8 @@
       "button": "Zoeken",
       "placeholder": "Zoek op naam, vaardigheden of expertise...",
       "tooltip": "Nu zoeken (Enter)",
-      "noResults": "Geen resultaten gevonden"
+      "noResults": "Geen resultaten gevonden",
+      "reset": "Resetten"
     },
     "filters": {
       "button": "Filters",
@@ -246,7 +247,7 @@
     "profession": {
       "freelancer": "Freelancer",
       "interim": "Interim",
-      "consultant": "Consultant",
+      "Contractor": "Contractor",
       "studentEntrepreneur": "Student ondernemer"
     },
     "experience": {
@@ -322,7 +323,8 @@
     },
     "paymentTypes": {
       "hourly": "/uur",
-      "daily": "/dag"
+      "daily": "/dag",
+      "project": "/project"
     },
     "emptyStates": {
       "freelancers": {

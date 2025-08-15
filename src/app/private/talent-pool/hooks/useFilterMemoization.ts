@@ -20,8 +20,8 @@ export const useFilterMemoization = (filters: TalentPoolFilters) => {
     if (filters.search || filters.name) {
       activeFilters.push(`Search: "${filters.search || filters.name}"`);
     }
-    if (filters.availability) {
-      activeFilters.push(`Availability: ${filters.availability}`);
+    if (filters.statusAviability) {
+      activeFilters.push(`statusAviability: ${filters.statusAviability}`);
     }
     if (filters.country?.length) {
       activeFilters.push(`Countries: ${filters.country.length} selected`);

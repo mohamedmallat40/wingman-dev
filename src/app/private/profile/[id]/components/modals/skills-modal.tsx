@@ -84,15 +84,12 @@ const SkillsModal: React.FC<SkillsModalProperties> = ({
   };
 
   const handleAddSkill = () => {
-    console.log('Adding skill:', selectedSkillKey);
     if (!selectedSkillKey) return;
 
     const availableSkill = availableSkills.find((skill) => skill.id === selectedSkillKey);
-    console.log('Available skill:', availableSkill);
     if (!availableSkill) return;
 
     const exists = selectedSkills.some((skill) => skill.key === availableSkill.key);
-    console.log('Skill exists:', exists);
     if (exists) {
       addToast('Skill already added', 'error');
       return;
@@ -146,10 +143,6 @@ const SkillsModal: React.FC<SkillsModalProperties> = ({
           return availableSkill?.id;
         })
         .filter(Boolean); // This removes undefined values
-
-      console.log('Selected skills:', selectedSkills);
-      console.log('Available skills:', availableSkills);
-      console.log('Skill IDs to patch:', skillIds);
 
       // Update user skills by patching the skills array
       await wingManApi.patch('/users/me', {
