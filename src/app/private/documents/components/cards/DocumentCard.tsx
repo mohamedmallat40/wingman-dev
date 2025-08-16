@@ -273,9 +273,9 @@ export default function DocumentCard({
             <div className='flex flex-1 items-start gap-4'>
               {getDocumentIcon(document.type?.name || '')}
 
-              <div className='min-w-0 flex-1'>
-                <div className='mb-2 flex items-center gap-2'>
-                  <h3 className='text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 min-w-0 flex-1 truncate text-base font-semibold transition-colors'>
+              <div className='min-w-0 flex-1 overflow-hidden'>
+                <div className='mb-2 flex items-center gap-2 min-w-0'>
+                  <h3 className='text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 min-w-0 truncate text-base font-semibold transition-colors leading-tight break-all'>
                     {document.documentName}
                   </h3>
                   {document.sharedWith.length > 0 && (
