@@ -359,7 +359,7 @@ export default function DocumentCard({
                 onPress={() => setShowShareModal(true)}
                 className='min-w-0 transition-transform hover:scale-105'
               >
-                <Icon icon='solar:share-linear' className='h-4 w-4' />
+                <Icon icon='solar:share-outline' className='h-4 w-4' />
               </Button>
 
               <Dropdown>
@@ -370,20 +370,20 @@ export default function DocumentCard({
                     variant='light'
                     className='hover:bg-default-100 dark:hover:bg-default-800 transition-transform hover:scale-110'
                   >
-                    <Icon icon='solar:menu-dots-bold' className='text-default-500 h-4 w-4' />
+                    <Icon icon='solar:menu-dots-outline' className='text-default-500 h-4 w-4' />
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu className='min-w-[160px]'>
                   <DropdownItem
                     key='view'
-                    startContent={<Icon icon='solar:eye-linear' className='h-4 w-4' />}
+                    startContent={<Icon icon='solar:eye-outline' className='h-4 w-4' />}
                     onPress={() => onView?.(document)}
                   >
                     {t('actions.view')}
                   </DropdownItem>
                   <DropdownItem
                     key='open-new-window'
-                    startContent={<Icon icon='solar:window-frame-linear' className='h-4 w-4' />}
+                    startContent={<Icon icon='solar:window-frame-outline' className='h-4 w-4' />}
                     onPress={() => {
                       window.open(`${getBaseUrl()}/upload/${document.fileName}`, '_blank', 'noopener,noreferrer');
                     }}
@@ -392,7 +392,7 @@ export default function DocumentCard({
                   </DropdownItem>
                   <DropdownItem
                     key='edit'
-                    startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
+                    startContent={<Icon icon='solar:pen-outline' className='h-4 w-4' />}
                     onPress={() => onEdit?.(document)}
                   >
                     {t('actions.edit')}
@@ -402,7 +402,7 @@ export default function DocumentCard({
                     className='text-danger'
                     color='danger'
                     startContent={
-                      <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
+                      <Icon icon='solar:trash-bin-minimalistic-outline' className='h-4 w-4' />
                     }
                     onPress={handleDelete}
                   >
