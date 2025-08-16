@@ -330,13 +330,13 @@ export default function DocumentCard({
                 </div>
 
                 {/* Status */}
-                <div className='flex items-center gap-1.5'>
+                <div className='flex items-center gap-1.5 overflow-hidden'>
                   <span className='text-default-500 flex-shrink-0 text-xs'>Status:</span>
                   <Chip
                     size='sm'
                     variant='flat'
                     color={getStatusColor(document.status?.name || '')}
-                    className='h-5 text-xs'
+                    className='h-5 text-xs max-w-[120px] truncate'
                   >
                     {getTranslatedStatus(document.status?.name || '', t)}
                   </Chip>
