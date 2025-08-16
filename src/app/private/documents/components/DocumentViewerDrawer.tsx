@@ -79,7 +79,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
           <div className='hidden' id={`pdf-fallback-${document?.id}`}>
             <div className='flex h-full items-center justify-center'>
               <div className='text-center'>
-                <Icon icon='solar:file-text-linear' className='mx-auto mb-4 h-16 w-16 text-default-400' />
+                <Icon icon='solar:file-text-outline' className='mx-auto mb-4 h-16 w-16 text-default-400' />
                 <h3 className='mb-2 text-lg font-semibold text-default-600'>PDF Preview Unavailable</h3>
                 <p className='text-default-500 mb-4'>
                   Unable to preview this PDF file in browser.
@@ -170,7 +170,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                 <div className='flex items-center gap-3'>
                   <div className='rounded-lg bg-primary/10 p-2'>
                     <Icon
-                      icon='solar:document-text-bold'
+                      icon='solar:document-text-outline'
                       className='h-5 w-5 text-primary-600'
                     />
                   </div>
