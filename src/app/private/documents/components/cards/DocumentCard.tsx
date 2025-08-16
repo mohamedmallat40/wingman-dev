@@ -293,13 +293,13 @@ export default function DocumentCard({
                   )}
                 </div>
 
-                <div className='text-default-500 mb-3 flex items-center gap-3 text-sm'>
-                  <div className='flex items-center gap-1'>
-                    <Icon icon='solar:calendar-linear' className='h-3.5 w-3.5' />
-                    <span>{formatDate(document.createdAt)}</span>
+                <div className='text-default-500 mb-3 flex items-center gap-3 text-sm overflow-hidden'>
+                  <div className='flex items-center gap-1 flex-shrink-0'>
+                    <Icon icon='solar:calendar-outline' className='h-3.5 w-3.5' />
+                    <span className='whitespace-nowrap'>{formatDate(document.createdAt)}</span>
                   </div>
-                  <div className='bg-default-300 h-1 w-1 rounded-full' />
-                  <span>{getTranslatedType(document.type?.name || '', t)}</span>
+                  <div className='bg-default-300 h-1 w-1 rounded-full flex-shrink-0' />
+                  <span className='truncate'>{getTranslatedType(document.type?.name || '', t)}</span>
                 </div>
 
                 {/* Tags */}
