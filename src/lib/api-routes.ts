@@ -39,6 +39,9 @@ export const API_ROUTES = {
     single: '/upload',
     public: '/upload/public'
   },
+  invitations: {
+    platform: '/invitations/platform'
+  },
   broadcasts: {
     posts: '/broadcasts/posts',
     create: '/broadcast',

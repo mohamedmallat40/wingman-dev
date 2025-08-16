@@ -59,6 +59,11 @@ export interface IUserProfile {
   tags: string[];
   savedMissions: string[];
   notificationSettings: NotificationSetting[];
+  department?: string;
+  company?: string;
+  isOnline?: boolean;
+  avatar?: string;
+  role?: 'FREELANCER' | 'COMPANY' | 'ADMIN' | 'AGENCY';
 }
 
 export interface IEducation {

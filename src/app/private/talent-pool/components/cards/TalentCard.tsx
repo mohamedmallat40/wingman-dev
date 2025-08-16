@@ -20,7 +20,7 @@ import { useTranslations } from 'next-intl';
 
 import { getImageUrl } from '@/lib/utils/utilities';
 
-import { type Skill, type TalentCardProps } from '../../types';
+import { type Skill, type TalentCardProperties } from '../../types';
 import { getCountryFlag, getCountryName } from '../../utils/country-flags';
 import {
   formatRate,
@@ -33,7 +33,7 @@ import {
   truncateText
 } from '../../utils/talent-utilities';
 
-const TalentCard: React.FC<TalentCardProps> = ({
+const TalentCard: React.FC<TalentCardProperties> = ({
   user,
   onViewProfile,
   onConnect,
@@ -64,7 +64,7 @@ const TalentCard: React.FC<TalentCardProps> = ({
   } = user;
 
   const availabilityConfig = getAvailabilityConfig(statusAviability);
-  const workTypeConfig = getWorkTypeConfig(workType || '');
+  const workTypeConfig = getWorkTypeConfig(workType || 'REMOTE');
   const displaySkills = skills.slice(0, 4);
   const hasMoreSkills = skills.length > 4;
   const rate = formatRate(amount || 0, currency || 'EUR', paymentType || 'DAILY_BASED', t);

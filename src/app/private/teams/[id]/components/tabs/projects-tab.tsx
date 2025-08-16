@@ -94,11 +94,11 @@ export const TeamProjectsTab: React.FC<TeamProjectsTabProperties> = ({
   };
 
   const getStatusConfig = (status: any) => {
-    return PROJECT_STATUS_CONFIG[status];
+    return PROJECT_STATUS_CONFIG[status as keyof typeof PROJECT_STATUS_CONFIG];
   };
 
   const getPriorityConfig = (priority: any) => {
-    return PROJECT_PRIORITY_CONFIG[priority];
+    return PROJECT_PRIORITY_CONFIG[priority as keyof typeof PROJECT_PRIORITY_CONFIG];
   };
 
   const formatDate = (dateString: string) => {
@@ -335,7 +335,7 @@ export const TeamProjectsTab: React.FC<TeamProjectsTabProperties> = ({
               <div className='mb-1 flex items-center justify-center gap-2'>
                 <Icon icon='solar:play-circle-bold' className='text-primary h-4 w-4' />
                 <span className='text-foreground text-lg font-bold'>
-                  {mockProjects.filter((p) => p.status === ProjectStatus.IN_PROGRESS).length}
+                  {mockProjects.filter((p) => p.status === 'IN_PROGRESS').length}
                 </span>
               </div>
               <p className='text-default-600 text-xs'>In Progress</p>
@@ -345,7 +345,7 @@ export const TeamProjectsTab: React.FC<TeamProjectsTabProperties> = ({
               <div className='mb-1 flex items-center justify-center gap-2'>
                 <Icon icon='solar:check-circle-bold' className='text-success h-4 w-4' />
                 <span className='text-foreground text-lg font-bold'>
-                  {mockProjects.filter((p) => p.status === ProjectStatus.COMPLETED).length}
+                  {mockProjects.filter((p) => p.status === 'COMPLETED').length}
                 </span>
               </div>
               <p className='text-default-600 text-xs'>Completed</p>
@@ -355,7 +355,7 @@ export const TeamProjectsTab: React.FC<TeamProjectsTabProperties> = ({
               <div className='mb-1 flex items-center justify-center gap-2'>
                 <Icon icon='solar:clock-circle-bold' className='text-warning h-4 w-4' />
                 <span className='text-foreground text-lg font-bold'>
-                  {mockProjects.filter((p) => p.status === ProjectStatus.PLANNING).length}
+                  {mockProjects.filter((p) => p.status === 'PLANNING').length}
                 </span>
               </div>
               <p className='text-default-600 text-xs'>Planning</p>

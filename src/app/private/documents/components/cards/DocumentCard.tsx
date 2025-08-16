@@ -276,7 +276,7 @@ export default function DocumentCard({
         >
           <div className='mb-4 flex items-start justify-between'>
             <div className='flex flex-1 items-start gap-4'>
-              {getDocumentIcon(document.type?.name)}
+              {getDocumentIcon(document.type?.name || '')}
 
               <div className='min-w-0 flex-1'>
                 <div className='mb-2 flex items-center gap-2'>
@@ -304,7 +304,7 @@ export default function DocumentCard({
                     <span>{formatDate(document.createdAt)}</span>
                   </div>
                   <div className='bg-default-300 h-1 w-1 rounded-full' />
-                  <span>{getTranslatedType(document.type?.name, t)}</span>
+                  <span>{getTranslatedType(document.type?.name || '', t)}</span>
                 </div>
 
                 {/* Tags */}
@@ -340,10 +340,10 @@ export default function DocumentCard({
                   <Chip
                     size='sm'
                     variant='flat'
-                    color={getStatusColor(document.status?.name)}
+                    color={getStatusColor(document.status?.name || '')}
                     className='h-5 text-xs'
                   >
-                    {getTranslatedStatus(document.status?.name, t)}
+                    {getTranslatedStatus(document.status?.name || '', t)}
                   </Chip>
                 </div>
               </div>

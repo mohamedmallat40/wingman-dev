@@ -115,9 +115,9 @@ export function LoginModal({
           });
 
           const parameters = new URLSearchParams({
-            oauth_email: result.user.email || '',
-            oauth_firstName: result.user.firstName || '',
-            oauth_lastName: result.user.lastName || '',
+            oauth_email: result.user?.email || '',
+            oauth_firstName: result.user?.firstName || '',
+            oauth_lastName: result.user?.lastName || '',
             oauth_token: result.token || '',
             chat_token: result.chatToken || '',
             is_oauth: 'true'

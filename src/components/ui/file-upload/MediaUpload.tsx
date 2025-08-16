@@ -7,8 +7,90 @@ import { Icon } from '@iconify/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { uploadFilesSequentially, validateFile } from '@/app/private/broadcasts/utils/upload-utils';
+import { API_ROUTES } from '@/lib/api-routes';
+import wingManApi from '@/lib/axios';
 import { env } from '@/env';
+
+// Inline utility functions
+const validateFile = (
+  file: File,
+  type?: 'image' | 'video'
+): { isValid: boolean; error?: string } => {
+  const maxSize = type === 'video' ? 100 * 1024 * 1024 : 10 * 1024 * 1024;
+  if (file.size > maxSize) {
+    return {
+      isValid: false,
+      error: `File ${file.name} is too large. Maximum size is ${type === 'video' ? '100MB' : '10MB'}`
+    };
+  }
+
+  if (type) {
+    const validTypes =
+      type === 'video'
+        ? ['video/mp4', 'video/webm', 'video/mov', 'video/avi', 'video/quicktime']
+        : ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+
+    if (!validTypes.includes(file.type)) {
+      return {
+        isValid: false,
+        error: `Invalid file type for ${file.name}. Please select a valid ${type} file.`
+      };
+    }
+  }
+
+  return { isValid: true };
+};
+
+const uploadFilesSequentially = async (
+  files: File[],
+  onProgress?: (fileId: string, progress: number) => void,
+  onComplete?: (fileId: string, result: any) => void,
+  onError?: (fileId: string, error: string) => void
+): Promise<any[]> => {
+  const results: any[] = [];
+
+  for (const file of files) {
+    const fileId = `${Date.now()}-${Math.random()}`;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await wingManApi.post(API_ROUTES.upload.public, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          if (progressEvent.total && onProgress) {
+            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            onProgress(fileId, progress);
+          }
+        }
+      });
+
+      const result = {
+        ...response.data,
+        id: fileId
+      };
+
+      results.push(result);
+
+      if (onComplete) {
+        onComplete(fileId, result);
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Upload failed';
+
+      if (onError) {
+        onError(fileId, errorMessage);
+      }
+
+      throw new Error(`Failed to upload ${file.name}: ${errorMessage}`);
+    }
+  }
+
+  return results;
+};
 
 // Enhanced MediaFile interface
 export interface MediaFile {
@@ -166,6 +248,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
         // Upload files one by one and track them by index
         for (let i = 0; i < newFiles.length; i++) {
           const file = newFiles[i];
+          if (!file?.file) continue;
           const fileId = file.id;
           
           setCurrentUploadingFile(file.file.name);
@@ -223,7 +306,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
               }
             );
           } catch (error) {
-            console.error(`Upload failed for file ${file.file.name}:`, error);
+            console.error(`Upload failed for file ${file?.file?.name}:`, error);
             // Error already handled in the error callback above
           }
         }

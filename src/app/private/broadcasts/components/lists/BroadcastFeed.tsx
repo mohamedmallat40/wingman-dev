@@ -6,20 +6,23 @@ import { Button, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import { useRouter } from 'next/navigation';
 
 import { useBookmarkPost, useBroadcastFeed, useLikePost, useTrackPostView } from '../../hooks';
-import { useRealtimeBroadcasts } from '../../hooks/useRealtime';
 import { useBroadcastFilters, useBroadcastStore } from '../../store/useBroadcastStore';
+import { BroadcastPost } from '../../types';
 import PostCard from '../cards/PostCard';
 import BroadcastFeedSkeleton from '../states/BroadcastFeedSkeleton';
 
 interface BroadcastFeedProps {
   selectedTopic?: string | null;
+  onEditPost?: (post: BroadcastPost) => void;
   className?: string;
 }
 
-const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className = '' }) => {
+const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost, className = '' }) => {
   const t = useTranslations('broadcasts');
+  const router = useRouter();
   const filters = useBroadcastFilters();
   const { setSelectedPost } = useBroadcastStore();
 
@@ -29,7 +32,6 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
   const trackView = useTrackPostView();
 
   // Real-time connection
-  const { isConnected, activeUsers } = useRealtimeBroadcasts();
 
   // Feed query parameters
   const feedParams = useMemo(
@@ -61,22 +63,23 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
     return feedData.pages.flatMap((page: any) => page?.data || []);
   }, [feedData]);
 
-  const handlePostLike = (postId: string) => {
+  const handlePostLike = React.useCallback((postId: string) => {
     likePost.mutate(postId);
-  };
+  }, [likePost]);
 
-  const handlePostBookmark = (postId: string) => {
+  const handlePostBookmark = React.useCallback((postId: string) => {
     bookmarkPost.mutate(postId);
-  };
+  }, [bookmarkPost]);
 
-  const handlePostView = (postId: string) => {
+  const handlePostView = React.useCallback((postId: string) => {
     trackView.mutate(postId);
-  };
+  }, [trackView]);
 
-  const handlePostClick = (postId: string) => {
+  const handlePostClick = React.useCallback((postId: string) => {
     setSelectedPost(postId);
     handlePostView(postId);
-  };
+    router.push(`/private/broadcasts/${postId}`);
+  }, [setSelectedPost, handlePostView, router]);
 
   if (isLoading) {
     return <BroadcastFeedSkeleton />;
@@ -88,16 +91,16 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
         <div className='bg-danger/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full'>
           <Icon icon='solar:danger-circle-linear' className='text-danger h-8 w-8' />
         </div>
-        <h3 className='text-foreground mb-2 text-xl font-semibold'>Unable to load feed</h3>
+        <h3 className='text-foreground mb-2 text-xl font-semibold'>{t('feed.error.title')}</h3>
         <p className='text-foreground-500 mb-6 max-w-md leading-relaxed'>
-          Something went wrong while loading your broadcast feed. Please try again.
+          {t('feed.error.description')}
         </p>
         <Button
           color='primary'
           startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
           onPress={() => window.location.reload()}
         >
-          Retry
+          {t('feed.retry')}
         </Button>
       </div>
     );
@@ -109,54 +112,23 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
         <div className='bg-primary/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full'>
           <Icon icon='solar:satellite-linear' className='text-primary h-8 w-8' />
         </div>
-        <h3 className='text-foreground mb-2 text-xl font-semibold'>Your feed is empty</h3>
+        <h3 className='text-foreground mb-2 text-xl font-semibold'>{t('feed.emptyFeed.title')}</h3>
         <p className='text-foreground-500 mb-6 max-w-md leading-relaxed'>
-          No posts match your current filters. Try adjusting your filters or check back later!
+          {t('feed.emptyFeed.description')}
         </p>
         <Button
           color='primary'
           startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
           onPress={() => window.location.reload()}
         >
-          Refresh Feed
+          {t('feed.refreshFeed')}
         </Button>
       </div>
     );
   }
 
   return (
-    <div className={`space-y-6 ${className}`}>
-      {/* Feed Header */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <div className='flex items-center gap-2'>
-            <h2 className='text-foreground text-2xl font-bold'>Your Broadcast Feed</h2>
-            {isConnected && (
-              <div className='flex items-center gap-1'>
-                <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
-                <span className='text-success text-sm'>Live</span>
-              </div>
-            )}
-          </div>
-          <p className='text-foreground-500'>
-            Latest updates and content from the community
-            {activeUsers > 0 && ` • ${activeUsers} users active`}
-          </p>
-        </div>
-
-        <div className='flex items-center gap-2'>
-          {(selectedTopic || filters.topicId) && (
-            <Chip
-              color='primary'
-              variant='flat'
-              startContent={<Icon icon='solar:bookmark-linear' className='h-3 w-3' />}
-            >
-              Filtered by topic
-            </Chip>
-          )}
-        </div>
-      </div>
-
+    <div className={className}>
       {/* Posts Feed */}
       <div className='space-y-6'>
         <AnimatePresence mode='popLayout'>
@@ -180,6 +152,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
                 onComment={() => handlePostClick(post.id)}
                 onShare={() => {/* Share functionality would be implemented here */}}
                 onClick={() => handlePostClick(post.id)}
+                onEdit={onEditPost}
                 isLoading={likePost.isPending || bookmarkPost.isPending}
               />
             </motion.div>
@@ -201,7 +174,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
             }
             className='min-w-48'
           >
-            {isFetchingNextPage ? 'Loading...' : 'Load More Posts'}
+            {isFetchingNextPage ? t('feed.loading') : t('feed.loadMore')}
           </Button>
         </div>
       )}
@@ -209,7 +182,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, className 
       {!hasNextPage && posts.length > 0 && (
         <div className='flex justify-center py-8'>
           <p className='text-foreground-500 text-sm'>
-            🎉 You've reached the end! Check back later for more content.
+            {t('feed.noMorePosts')}
           </p>
         </div>
       )}

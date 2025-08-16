@@ -1,23 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 
-import type { CreatePostData } from './services/broadcast.service';
+import type { CreatePostData } from './types';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import { BroadcastFilters } from './components/filters';
+import { TopicFeedHeader } from './components/headers/TopicFeedHeader';
 import BroadcastFeed from './components/lists/BroadcastFeed';
-import EnhancedContentCreator from './components/modals/EnhancedContentCreator';
+import ContentCreator from './components/modals/ContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
-import SubcastSidebar from './components/navigation/SubcastSidebar';
-import { useCreatePost } from './hooks';
+import TopicSidebar from './components/navigation/TopicSidebar';
+import { useCreatePost, useUpdatePost, useFollowTopic, useUnfollowTopic, useTopics } from './hooks';
 import { useBroadcastStore, useUnreadNotificationsCount } from './store/useBroadcastStore';
+import { BroadcastPost } from './types';
 
 export default function BroadcastsPage() {
   const t = useTranslations('broadcasts');
@@ -35,9 +38,21 @@ export default function BroadcastsPage() {
 
   const unreadCount = useUnreadNotificationsCount();
   const createPost = useCreatePost();
+  const updatePost = useUpdatePost();
+  const followTopic = useFollowTopic();
+  const unfollowTopic = useUnfollowTopic();
+  const { data: topics } = useTopics();
 
   const [activeTopic, setActiveTopic] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [sidebarView, setSidebarView] = useState<'topics' | 'filters'>('topics');
+  const [editingPost, setEditingPost] = useState<BroadcastPost | null>(null);
+
+  // Get the selected topic object
+  const selectedTopicObject = useMemo(() => {
+    if (!activeTopic || !topics) return null;
+    return topics.find((topic: any) => topic.id === activeTopic) || null;
+  }, [activeTopic, topics]);
 
   const handleTopicToggle = (topicId: string) => {
     // Handle topic toggle logic here
@@ -52,17 +67,47 @@ export default function BroadcastsPage() {
     openContentCreator();
   };
 
-  const handlePublishPost = async (postData: CreatePostData) => {
-    try {
-      await createPost.mutateAsync(postData);
-      closeContentCreator();
-    } catch (error) {
-      // Post publish error is handled by the mutation's onError
+  // Note: onPublish is no longer needed as ContentCreator handles the API calls internally
+  // const handlePublishPost = async (postData: CreatePostData) => {
+  //   try {
+  //     if (editingPost) {
+  //       // Update existing post
+  //       await updatePost.mutateAsync({ postId: editingPost.id, postData });
+  //     } else {
+  //       // Create new post
+  //       await createPost.mutateAsync(postData);
+  //     }
+  //     closeContentCreator();
+  //     setEditingPost(null);
+  //   } catch (error) {
+  //     // Post publish error is handled by the mutation's onError
+  //   }
+  // };
+
+  const handleSaveDraft = (draftData: Partial<BroadcastPost>) => {
+    // Handle draft saving logic here
+  };
+
+  const handleEditPost = (post: BroadcastPost) => {
+    setEditingPost(post);
+    openContentCreator();
+  };
+
+  const handleTopicFollow = () => {
+    if (selectedTopicObject) {
+      followTopic.mutate(selectedTopicObject.id);
     }
   };
 
-  const handleSaveDraft = (draftData: any) => {
-    // Handle draft saving logic here
+  const handleTopicUnfollow = () => {
+    if (selectedTopicObject) {
+      unfollowTopic.mutate(selectedTopicObject.id);
+    }
+  };
+
+  const handleClearTopicFilter = () => {
+    setActiveTopic(null);
+    setTopic(null);
   };
 
   return (
@@ -70,27 +115,32 @@ export default function BroadcastsPage() {
       {/* Live Activity Bar */}
       <LiveActivityBar
         onNotificationClick={() => openNotificationCenter()}
-        unreadCount={unreadCount}
       />
 
       <DashboardLayout
-        pageTitle={t('title')}
-        pageIcon='solar:satellite-linear'
+        pageTitle={selectedTopicObject ? selectedTopicObject.title : t('title')}
+        pageIcon={selectedTopicObject ? selectedTopicObject.icon : 'solar:satellite-linear'}
         breadcrumbs={[
           { label: tNav('home'), href: '/private/dashboard', icon: 'solar:home-linear' },
-          { label: tNav('broadcasts'), icon: 'solar:satellite-linear' }
+          { label: tNav('broadcasts'), href: '/private/broadcasts', icon: 'solar:satellite-linear' },
+          ...(selectedTopicObject ? [{ label: selectedTopicObject.title, icon: selectedTopicObject.icon }] : [])
         ]}
-        pageDescription={t('description')}
+        pageDescription={selectedTopicObject ? selectedTopicObject.description : t('description')}
         headerActions={
           <div className='flex items-center gap-2'>
-            {/* Filter Toggle */}
+            {/* View Toggle */}
             <Button
               variant='flat'
               size='sm'
-              startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
-              onPress={() => setShowFilters(!showFilters)}
+              startContent={
+                <Icon
+                  icon={sidebarView === 'topics' ? 'solar:filter-linear' : 'solar:satellite-linear'}
+                  className='h-4 w-4'
+                />
+              }
+              onPress={() => setSidebarView(sidebarView === 'topics' ? 'filters' : 'topics')}
             >
-              {t('feed.filterPlaceholder.sort')}
+{sidebarView === 'topics' ? t('page.filters') : t('page.topics')}
             </Button>
 
             {/* Create Post Button */}
@@ -109,29 +159,57 @@ export default function BroadcastsPage() {
         <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
           <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
             <div className='sticky top-4 space-y-4 overflow-visible'>
-              <SubcastSidebar
-                onSubcastToggle={handleTopicToggle}
-                onSubcastSelect={handleTopicSelect}
-                selectedSubcast={activeTopic}
-              />
-
-              {/* Filters Panel */}
-              {showFilters && (
-                <BroadcastFilters isOpen={showFilters} onClose={() => setShowFilters(false)} />
-              )}
+              <AnimatePresence mode='wait'>
+                {sidebarView === 'topics' ? (
+                  <motion.div
+                    key='topics'
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <TopicSidebar
+                      onSubcastToggle={handleTopicToggle}
+                      onSubcastSelect={handleTopicSelect}
+                      selectedSubcast={activeTopic}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key='filters'
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <BroadcastFilters isOpen={true} onClose={() => setSidebarView('topics')} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </div>
 
           <div className='min-w-0 flex-1'>
-            <div className='py-6'>
-              <BroadcastFeed selectedTopic={activeTopic} />
+            <div className='py-6 space-y-6'>
+              {/* Topic Feed Header */}
+              {selectedTopicObject && (
+                <TopicFeedHeader
+                  topic={selectedTopicObject}
+                  onFollow={handleTopicFollow}
+                  onUnfollow={handleTopicUnfollow}
+                  onClearFilter={handleClearTopicFilter}
+                  isLoading={followTopic.isPending || unfollowTopic.isPending}
+                />
+              )}
+              
+              <BroadcastFeed selectedTopic={activeTopic} onEditPost={handleEditPost} />
             </div>
           </div>
 
           <div className='hidden w-64 flex-shrink-0 xl:block'>
             <div className='sticky top-4 space-y-4'>
               <div className='bg-content1 border-default-200 rounded-lg border p-4'>
-                <h3 className='text-foreground mb-3 text-sm font-semibold'>Quick Actions</h3>
+                <h3 className='text-foreground mb-3 text-sm font-semibold'>{t('sidebar.quickActions')}</h3>
                 <div className='space-y-3'>
                   <Button
                     variant='flat'
@@ -154,7 +232,7 @@ export default function BroadcastsPage() {
                     }
                     className='justify-start border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                   >
-                    Saved Posts
+                    {t('sidebar.savedPosts')}
                   </Button>
                   <Button
                     variant='flat'
@@ -168,7 +246,7 @@ export default function BroadcastsPage() {
                     }
                     className='justify-start border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100'
                   >
-                    Following
+                    {t('sidebar.following')}
                   </Button>
                 </div>
               </div>
@@ -176,7 +254,7 @@ export default function BroadcastsPage() {
               <div className='bg-content1 border-default-200 rounded-lg border p-4'>
                 <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
                   <Icon icon='solar:fire-linear' className='text-warning h-4 w-4' />
-                  Trending
+                  {t('sidebar.trending')}
                 </h3>
                 <div className='space-y-2'>
                   {[
@@ -196,7 +274,7 @@ export default function BroadcastsPage() {
               <div className='bg-content1 border-default-200 rounded-lg border p-4'>
                 <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
                   <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
-                  Active Now
+                  {t('sidebar.activeNow')}
                 </h3>
                 <div className='flex -space-x-2'>
                   {[1, 2, 3, 4, 5].map((i) => (
@@ -213,7 +291,7 @@ export default function BroadcastsPage() {
                     <span className='text-xs font-medium'>+12</span>
                   </div>
                 </div>
-                <p className='text-foreground-500 mt-2 text-xs'>17 users active in the last hour</p>
+                <p className='text-foreground-500 mt-2 text-xs'>{t('sidebar.usersActive', { count: 17 })}</p>
               </div>
             </div>
           </div>
@@ -225,11 +303,14 @@ export default function BroadcastsPage() {
         onClose={() => closeNotificationCenter()}
       />
 
-      <EnhancedContentCreator
+      <ContentCreator
         isOpen={ui.contentCreatorOpen}
-        onClose={() => closeContentCreator()}
-        onPublish={handlePublishPost}
+        onClose={() => {
+          closeContentCreator();
+          setEditingPost(null);
+        }}
         onSaveDraft={handleSaveDraft}
+        initialData={editingPost || undefined}
       />
     </>
   );

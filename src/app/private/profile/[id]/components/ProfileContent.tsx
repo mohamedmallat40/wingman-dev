@@ -20,7 +20,7 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { type IReview, type IService } from '@root/modules/profile/types';
-import ISO6391, { getName } from 'iso-639-1';
+import ISO6391 from 'iso-639-1';
 import { useTranslations } from 'next-intl';
 
 import ConfirmDeleteModal from '@/app/private/components/confirm-delete';
@@ -35,6 +35,7 @@ import wingManApi from '@/lib/axios';
 import { getImageUrl } from '@/lib/utils/utilities';
 
 import {
+  type Certification,
   type Education,
   type Experience,
   type Language,
@@ -126,7 +127,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   }>({ experience: null, isOpen: false });
 
   const [languageToDelete, setLanguageToDelete] = useState<{
-    language: ILanguage | null;
+    language: Language | null;
     isOpen: boolean;
   }>({ language: null, isOpen: false });
   const [editingProject, setEditingProject] = useState<{
@@ -167,7 +168,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
   // Local state for forms
   const [localUser, setLocalUser] = useState(user);
-  const [localCertifications, setLocalCertifications] = useState([]);
+  const [localCertifications, setLocalCertifications] = useState<Certification[]>([]);
   const [localSocialAccounts, setLocalSocialAccounts] = useState<SocialAccount[]>(
     user.socialAccounts || []
   );
@@ -218,18 +219,18 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
     setEditingLanguage({
       item: {
         id: '',
-        key: undefined,
+        key: '',
         level: 'BEGINNER'
       },
       isOpen: true
     });
   };
 
-  const handleEditLanguage = (language: ILanguage) => {
+  const handleEditLanguage = (language: Language) => {
     setEditingLanguage({ item: language, isOpen: true });
   };
 
-  const handleDeleteLanguage = (language: ILanguage) => {
+  const handleDeleteLanguage = (language: Language) => {
     setLanguageToDelete({ language, isOpen: true });
   };
 
@@ -280,7 +281,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
     return code;
   };
 
-  const getLevelDisplay = (level: ILanguage['level']): string => {
+  const getLevelDisplay = (level: Language['level']): string => {
     const levelMap = {
       NATIVE: 'Native',
       PROFESSIONAL: 'Professional',
@@ -291,7 +292,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   };
 
   // Helper function to get level color
-  const getLevelColor = (level: ILanguage['level']): string => {
+  const getLevelColor = (level: Language['level']): string => {
     const colorMap = {
       NATIVE: 'success',
       PROFESSIONAL: 'primary',

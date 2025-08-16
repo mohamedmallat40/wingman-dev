@@ -23,7 +23,7 @@ export const formatFileSize = (bytes: number): string => {
  */
 export const getFileIcon = (file: File | { name: string; type?: string }): string => {
   const fileName = file.name.toLowerCase();
-  const fileType = 'type' in file ? file.type?.toLowerCase() : '';
+  const fileType = ('type' in file ? file.type?.toLowerCase() : '') || '';
 
   // PDF files
   if (fileName.endsWith('.pdf') || fileType.includes('pdf')) {
@@ -192,11 +192,15 @@ export const sortDocuments = (
         break;
       }
       case 'type': {
-        comparison = a.type.name.localeCompare(b.type.name);
+        const aType = a.type?.name || '';
+        const bType = b.type?.name || '';
+        comparison = aType.localeCompare(bType);
         break;
       }
       case 'status': {
-        comparison = a.status.name.localeCompare(b.status.name);
+        const aStatus = a.status?.name || '';
+        const bStatus = b.status?.name || '';
+        comparison = aStatus.localeCompare(bStatus);
         break;
       }
       default: {

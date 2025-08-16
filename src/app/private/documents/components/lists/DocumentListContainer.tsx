@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { IDocument, ViewMode } from '../../types';
+import type { IDocument, ViewMode, DocumentEmptyStateProps } from '../../types';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -87,7 +87,7 @@ const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
 
   // Empty state
   if (documents.length === 0) {
-    return <DocumentEmptyState onUpload={onUpload} />;
+    return <DocumentEmptyState onAction={onUpload} />;
   }
 
   // Document list

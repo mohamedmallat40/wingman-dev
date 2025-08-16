@@ -29,6 +29,7 @@ import {
   type IUserProfile,
   type Skill
 } from 'modules/profile/types';
+import { type Language } from '../types';
 
 import { FileUpload } from '@/components/ui/file-upload';
 
@@ -56,7 +57,7 @@ interface ReviewData {
   skills: Skill[];
   experience: IExperience[];
   education: IEducation[];
-  languages: ILanguage[];
+  languages: Language[];
   portfolio: string[];
   certifications: Array<{
     id: string;
@@ -167,7 +168,14 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       languages: data.languages.map((lang, index) => ({
         id: `lang_${index}`,
         key: lang.name,
-        level: lang.level.toUpperCase() as 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE'
+        name: lang.name,
+        code: lang.name.toLowerCase().substring(0, 2),
+        level: lang.level.toUpperCase() as 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE',
+        isNative: lang.level.toUpperCase() === 'NATIVE',
+        canRead: true,
+        canWrite: true,
+        canSpeak: true,
+        canUnderstand: true
       })),
       portfolio: data.projects.map((project) => project.url).filter(Boolean) as string[],
       certifications: data.certifications.map((cert, index) => ({
@@ -328,7 +336,18 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
 
   const handleLanguageAdd = () => {
     if (!reviewData) return;
-    const newLang: ILanguage = { id: `lang_${Date.now()}`, key: '', level: 'BEGINNER' };
+    const newLang: Language = { 
+      id: `lang_${Date.now()}`, 
+      key: '', 
+      name: '',
+      code: '',
+      level: 'BEGINNER',
+      isNative: false,
+      canRead: true,
+      canWrite: true,
+      canSpeak: true,
+      canUnderstand: true
+    };
     setReviewData({
       ...reviewData,
       languages: [...reviewData.languages, newLang]
@@ -342,7 +361,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
     setReviewData({ ...reviewData, languages: newLanguages });
   };
 
-  const handleLanguageUpdate = (index: number, data: ILanguage) => {
+  const handleLanguageUpdate = (index: number, data: Language) => {
     if (!reviewData) return;
     const newLanguages = [...reviewData.languages];
     newLanguages[index] = data;
@@ -630,7 +649,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
 
         <div className='flex min-h-0 flex-1 flex-col'>
           <Tabs
-            value={activeTab}
+            selectedKey={activeTab}
             onSelectionChange={(key) => setActiveTab(key as string)}
             variant='underlined'
             classNames={{
@@ -647,7 +666,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
                   <div className='flex items-center space-x-3'>
                     <Icon icon={section.icon} className='h-4 w-4' />
                     <span>{section.title}</span>
-                    <Badge content={section.badge} color='primary' size='sm' variant='flat' />
+                    <Badge color='primary' size='sm' variant='flat'>{section.badge}</Badge>
                   </div>
                 }
               >

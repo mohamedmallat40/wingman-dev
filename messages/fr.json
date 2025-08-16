@@ -429,7 +429,7 @@
       "downloadCV": "Télécharger le CV",
       "website": "Site web",
       "linkedin": "LinkedIn",
-      "linkedinProfile": "Profil LinkedIn", 
+      "linkedinProfile": "Profil LinkedIn",
       "profileCover": "Couverture de profil",
       "workWithUser": "Intéressé par travailler avec {name} ?",
       "connectionPending": "Connexion en attente",
@@ -513,7 +513,7 @@
       "file": {
         "label": "Fichier",
         "dropTitle": "Déposer votre fichier ici",
-        "uploadTitle": "Télécharger votre document", 
+        "uploadTitle": "Télécharger votre document",
         "description": "Glisser-déposer votre fichier ou cliquer pour parcourir",
         "chooseFile": "Choisir Fichier",
         "supported": "Supporté : PDF, DOC, DOCX, TXT, JPG, PNG, XLS, PPT (Max 10MB)",
@@ -533,7 +533,7 @@
         "placeholder": "Sélectionner le type de document",
         "options": {
           "invoice": "Facture",
-          "quote": "Devis", 
+          "quote": "Devis",
           "contract": "Contrat"
         }
       },
@@ -553,7 +553,7 @@
       },
       "fileSize": {
         "bytes": "Octets",
-        "kb": "Ko", 
+        "kb": "Ko",
         "mb": "Mo",
         "gb": "Go"
       }
@@ -567,7 +567,7 @@
     "actions": {
       "view": "Voir Document",
       "edit": "Modifier",
-      "download": "Télécharger", 
+      "download": "Télécharger",
       "duplicate": "Dupliquer",
       "delete": "Supprimer"
     },
@@ -583,7 +583,7 @@
       "legal": "Juridique",
       "marketing": "Marketing",
       "hr": "Ressources Humaines",
-      "technical": "Technique", 
+      "technical": "Technique",
       "design": "Design",
       "project": "Projet",
       "client": "Client",
@@ -599,11 +599,69 @@
         "update": "Mettre à jour le document",
         "mise à jour": "Mise à jour..."
       }
-  }
+    }
   },
   "broadcasts": {
     "title": "Flux de Diffusion",
-    "description": "Restez informé avec le dernier contenu de vos sujets sélectionnés et subcasts favoris",
+    "description": "Restez informé du contenu le plus récent de vos sujets sélectionnés et subcasts favoris",
+    "feed": {
+      "createPost": "Créer un Post",
+      "loadMore": "Charger Plus de Posts",
+      "loading": "Chargement...",
+      "loadingPost": "Chargement du post...",
+      "noMorePosts": "🎉 Vous avez atteint la fin ! Revenez plus tard pour plus de contenu.",
+      "retry": "Réessayer",
+      "refreshFeed": "Actualiser le Flux",
+      "filteredBy": "Filtré par sujet",
+      "emptyFeed": {
+        "title": "Votre flux est vide",
+        "description": "Aucun post ne correspond à vos filtres actuels. Essayez d'ajuster vos filtres ou revenez plus tard !"
+      },
+      "error": {
+        "title": "Impossible de charger le flux",
+        "description": "Quelque chose s'est mal passé lors du chargement de votre flux de diffusion. Veuillez réessayer."
+      }
+    },
+    "post": {
+      "actions": {
+        "like": "J'aime",
+        "unlike": "Ne plus aimer",
+        "comment": "Commenter",
+        "share": "Partager",
+        "bookmark": "Signet",
+        "unbookmark": "Supprimer le signet",
+        "edit": "Modifier",
+        "delete": "Supprimer",
+        "viewPost": "Voir le post",
+        "sharePost": "Partager le Post",
+        "copyLink": "Copier le lien"
+      },
+      "menu": {
+        "moreOptions": "Plus d'options",
+        "reportPost": "Signaler le post",
+        "hidePost": "Masquer le post",
+        "notInterested": "Pas intéressé"
+      },
+      "stats": {
+        "likes": "{count, plural, =0 {Aucun j'aime} one {# j'aime} other {# j'aimes}}",
+        "comments": "{count, plural, =0 {Aucun commentaire} one {# commentaire} other {# commentaires}}",
+        "shares": "{count, plural, =0 {Aucun partage} one {# partage} other {# partages}}",
+        "views": "{count, plural, =0 {Aucune vue} one {# vue} other {# vues}}"
+      },
+      "time": {
+        "now": "maintenant",
+        "minutesAgo": "{minutes, plural, one {il y a # minute} other {il y a # minutes}}",
+        "hoursAgo": "{hours, plural, one {il y a # heure} other {il y a # heures}}",
+        "daysAgo": "{days, plural, one {il y a # jour} other {il y a # jours}}",
+        "weeksAgo": "{weeks, plural, one {il y a # semaine} other {il y a # semaines}}"
+      },
+      "delete": {
+        "title": "Supprimer le Post",
+        "description": "Êtes-vous sûr de vouloir supprimer \"{title}\" ? Cette action ne peut pas être annulée.",
+        "confirm": "Supprimer",
+        "cancel": "Annuler"
+      }
+    },
     "create": {
       "title": "Créer un Nouveau Post",
       "editTitle": "Modifier le Post",
@@ -611,411 +669,377 @@
       "autoSave": "Sauvegarde automatique des brouillons",
       "advancedOptions": "Options Avancées",
       "uploadProgress": "Téléchargement des médias...",
-      "success": {
-        "title": "Post Publié",
-        "description": "Votre post a été publié avec succès!"
-      },
-      "draft": {
-        "success": "Brouillon Sauvegardé",
-        "successDescription": "Votre brouillon a été sauvegardé avec succès!"
-      },
       "tabs": {
         "content": "Contenu",
-        "media": "Médias",
-        "tags": "Tags",
-        "advanced": "Avancé"
+        "media": "Média",
+        "advanced": "Avancé",
+        "preview": "Aperçu"
       },
       "fields": {
         "title": {
           "label": "Titre",
-          "placeholder": "Entrez un titre engageant...",
-          "description": "{count}/200 caractères"
+          "placeholder": "À quoi pensez-vous ?",
+          "required": "Le titre est requis"
         },
         "content": {
           "label": "Contenu",
-          "placeholder": "Partagez vos pensées, idées ou histoire...",
-          "description": "{wordCount} mots • {readTime} min de lecture"
+          "placeholder": "Partagez vos pensées, idées ou mises à jour...",
+          "required": "Le contenu est requis"
         },
-        "category": {
-          "label": "Catégorie",
-          "placeholder": "Sélectionnez une catégorie"
+        "topics": {
+          "title": "Sujets",
+          "label": "Sélectionner les Sujets",
+          "placeholder": "Choisissez des sujets pertinents...",
+          "selected": "Sujets sélectionnés",
+          "noTopics": "Aucun sujet sélectionné"
         },
-        "priority": {
-          "label": "Priorité",
-          "placeholder": "Sélectionnez la priorité"
-        },
-        "type": {
-          "label": "Type de Post",
-          "placeholder": "Sélectionnez le type de post"
-        },
-        "visibility": {
-          "label": "Qui peut voir ce post ?",
-          "options": {
-            "public": "Public - Tout le monde peut voir",
-            "followers": "Abonnés seulement",
-            "private": "Privé - Seulement vous"
-          }
-        },
-        "tags": {
-          "label": "Ajouter des Tags",
-          "placeholder": "Entrez un tag et appuyez sur Entrée",
-          "description": "{count}/10 tags",
-          "add": "Ajouter",
-          "currentTags": "Tags Actuels",
-          "popularTags": "Tags Populaires"
-        },
-        "schedule": {
-          "label": "Programmer pour plus tard (optionnel)",
-          "placeholder": "Sélectionnez la date et l'heure"
+        "skills": {
+          "title": "Compétences",
+          "label": "Sélectionner les Compétences",
+          "placeholder": "Ajoutez des compétences pertinentes...",
+          "selected": "Compétences sélectionnées",
+          "noSkills": "Aucune compétence sélectionnée"
         }
       },
       "media": {
-        "addImages": "Ajouter des Images",
-        "addVideo": "Ajouter une Vidéo",
-        "addCaption": "Ajouter une légende...",
-        "addAltText": "Texte alternatif pour l'accessibilité...",
-        "uploading": "Téléchargement...",
-        "maxSizeImage": "Taille maximale du fichier : 10MB",
-        "maxSizeVideo": "Taille maximale du fichier : 100MB",
-        "supportedFormats": "Formats supportés : {formats}"
-      },
-      "poll": {
-        "title": "Options du Sondage",
-        "addOption": "Ajouter une Option",
-        "option": "Option {number}",
-        "minOptions": "Minimum 2 options de sondage requises",
-        "maxOptions": "Maximum 6 options de sondage autorisées"
-      },
-      "link": {
-        "url": "URL du Lien",
-        "urlPlaceholder": "https://exemple.com",
-        "preview": "Aperçu du Lien"
-      },
-      "privacy": {
-        "title": "Confidentialité et Visibilité",
-        "allowComments": {
-          "title": "Autoriser les Commentaires",
-          "description": "Permettre aux gens de commenter votre post"
-        },
-        "allowSharing": {
-          "title": "Autoriser le Partage",
-          "description": "Permettre aux gens de partager votre post"
-        },
-        "contentWarning": {
-          "title": "Avertissement de Contenu",
-          "description": "Marquer si le contenu peut être sensible"
+        "title": "Média",
+        "upload": "Télécharger un Média",
+        "dragDrop": "Glissez-déposez les fichiers ici, ou cliquez pour sélectionner",
+        "supportedFormats": "Formats supportés : JPG, PNG, GIF, MP4, MOV",
+        "maxSize": "Taille maximale du fichier : 10 Mo",
+        "preview": "Aperçu",
+        "previous": "Précédent",
+        "next": "Suivant",
+        "remove": "Supprimer",
+        "noMedia": "Aucun fichier média téléchargé",
+        "tips": {
+          "title": "Conseils Média",
+          "quality": "Utilisez des images et vidéos de haute qualité",
+          "relevant": "Assurez-vous que le média soit pertinent pour votre contenu",
+          "alt": "Ajoutez du texte alternatif pour l'accessibilité"
         }
       },
-      "publishing": {
-        "title": "Options de Publication",
-        "publishNow": "Publier Maintenant",
-        "saveDraft": "Sauvegarder le Brouillon",
-        "schedule": "Programmer pour Plus Tard"
-      },
       "preview": {
-        "title": "Aperçu",
-        "yourContent": "Votre contenu apparaîtra ici...",
-        "moreItems": "+{count} de plus"
+        "title": "Aperçu en Direct",
+        "noContent": "Votre contenu apparaîtra ici pendant que vous tapez...",
+        "howItLooks": "À quoi ressemblera votre post"
       },
       "actions": {
-        "cancel": "Annuler",
+        "publish": "Publier",
+        "update": "Mettre à Jour",
         "saveDraft": "Sauvegarder le Brouillon",
-        "updatePost": "Mettre à Jour le Post",
-        "publishPost": "Publier le Post",
-        "scheduling": "Programmation...",
+        "cancel": "Annuler",
         "publishing": "Publication...",
+        "updating": "Mise à jour...",
         "saving": "Sauvegarde..."
+      },
+      "success": {
+        "title": "Post Publié",
+        "description": "Votre post a été publié avec succès !",
+        "updateTitle": "Post Mis à Jour",
+        "updateDescription": "Votre post a été mis à jour avec succès."
+      },
+      "draft": {
+        "success": "Brouillon Sauvegardé",
+        "successDescription": "Votre brouillon a été sauvegardé avec succès !",
+        "autoSaved": "Sauvegardé automatiquement"
+      },
+      "tips": {
+        "title": "Conseils de Rédaction",
+        "engaging": "Commencez par une accroche engageante",
+        "keywords": "Utilisez des mots-clés pertinents naturellement",
+        "structure": "Structurez votre contenu avec des paragraphes clairs"
+      },
+      "validation": {
+        "titleRequired": "Le titre est requis",
+        "contentRequired": "Le contenu est requis",
+        "titleMinLength": "Le titre doit contenir au moins 3 caractères",
+        "contentMinLength": "Le contenu doit contenir au moins 10 caractères"
       }
     },
-    "validation": {
-      "titleRequired": "Le titre est requis",
-      "titleMinLength": "Le titre doit contenir au moins 10 caractères",
-      "titleMaxLength": "Le titre ne peut pas dépasser 200 caractères",
-      "contentRequired": "Le contenu est requis",
-      "contentMinLength": "Le contenu doit contenir au moins 20 caractères",
-      "contentMaxLength": "Le contenu ne peut pas dépasser 10 000 caractères",
-      "categoryRequired": "La catégorie est requise",
-      "maxTags": "Maximum 10 tags autorisés",
-      "tagExists": "Le tag existe déjà",
-      "pollMinOptions": "Le sondage doit avoir au moins 2 options",
-      "pollMaxOptions": "Maximum 6 options de sondage autorisées",
-      "linkRequired": "L'URL du lien est requise",
-      "invalidUrl": "Veuillez entrer une URL valide",
-      "fileTooLarge": "Le fichier {filename} est trop volumineux. La taille maximale est {maxSize}",
-      "invalidFileType": "Type de fichier invalide pour {filename}. Veuillez sélectionner un fichier {type} valide",
-      "uploadFailed": "Échec du téléchargement des {type}s. Veuillez réessayer",
-      "maxFilesExceeded": "Maximum {maxFiles} fichiers autorisés"
-    },
-    "success": {
-      "published": "Post publié avec succès !",
-      "updated": "Post mis à jour avec succès !",
-      "draftSaved": "Brouillon sauvegardé avec succès !",
-      "scheduled": "Post programmé avec succès !",
-      "mediaUploaded": "Téléchargement réussi de {count} {type}(s)"
-    },
-    "errors": {
-      "publishFailed": "Échec de la publication du post. Veuillez réessayer.",
-      "updateFailed": "Échec de la mise à jour du post. Veuillez réessayer.",
-      "draftSaveFailed": "Échec de la sauvegarde du brouillon. Veuillez réessayer.",
-      "scheduleFailed": "Échec de la programmation du post. Veuillez réessayer.",
-      "autoSaveFailed": "Échec de la sauvegarde automatique",
-      "linkPreviewFailed": "Échec de la récupération de l'aperçu du lien",
-      "networkError": "Erreur réseau. Veuillez vérifier votre connexion.",
-      "serverError": "Erreur serveur. Veuillez réessayer plus tard.",
-      "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
-      "forbidden": "Cette action n'est pas autorisée.",
-      "tooManyRequests": "Trop de requêtes. Veuillez attendre avant de réessayer.",
-      "contentTooLong": "Le contenu est trop long. Veuillez le raccourcir.",
-      "invalidData": "Données invalides fournies. Veuillez vérifier vos entrées.",
-      "sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
-      "notFound": "La ressource demandée n'a pas été trouvée.",
-      "badRequest": "Requête invalide. Veuillez vérifier vos données et réessayer.",
-      "internalError": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard.",
-      "timeout": "Délai d'attente de la requête dépassé. Veuillez réessayer.",
-      "offline": "Vous semblez être hors ligne. Veuillez vérifier votre connexion internet."
-    },
-    "onboarding": {
-      "title": "Créez Votre Flux de Diffusion Parfait",
-      "subtitle": "Choisissez des sujets qui correspondent à vos intérêts et expertise pour obtenir des recommandations de contenu personnalisées",
-      "selectTopics": "Sélectionnez au moins {minSelect} sujets pour commencer avec votre flux personnalisé",
-      "selectedCount": "{selected} sur {max} sélectionnés (minimum {min} requis)",
-      "shuffleButton": "Choisir 5 pour Moi",
-      "shuffleTooltip": "Laissez-nous sélectionner 5 sujets populaires pour vous",
-      "clearButton": "Tout Effacer",
-      "confirmButton": "Créer Mon Flux",
-      "noTopicsSelected": "Aucun sujet sélectionné pour le moment. Choisissez des sujets qui vous intéressent !",
-      "moreTopics": "+{count} autres sélectionnés",
-      "searchPlaceholder": "Rechercher des sujets...",
-      "searchTooltip": "Parcourir les sujets disponibles",
-      "filterBy": "Filtrer par catégorie",
-      "allTopics": "Toutes les Catégories",
-      "featured": "Sujets Vedettes",
-      "showMore": "Afficher Plus d'Options",
-      "showLess": "Afficher Moins d'Options"
-    },
-    "categories": {
+    "topics": {
       "all": "Tous",
-      "ai": "IA & Agents",
-      "development": "Dév & Cloud",
-      "cloud": "Cloud",
-      "devops": "DevOps",
-      "data": "Données",
-      "design": "Design",
-      "product": "Produit",
-      "marketing": "Croissance Marketing",
-      "sales": "Guide de Vente",
-      "freelance": "Ops Freelance",
-      "business": "Business",
-      "tech": "Technologie",
-      "lifestyle": "Style de Vie",
-      "education": "Éducation"
+      "following": "Suivi",
+      "trending": "Tendances",
+      "searchPlaceholder": "Rechercher des sujets...",
+      "noTopicsFound": "Aucun sujet trouvé",
+      "follow": "Suivre",
+      "unfollow": "Ne plus suivre",
+      "followers": "{count, plural, =0 {Aucun abonné} one {# abonné} other {# abonnés}}",
+      "posts": "{count, plural, =0 {Aucun post} one {# post} other {# posts}}",
+      "feedHeader": {
+        "clearFilter": "Effacer le Filtre",
+        "showingPostsFrom": "Affichage des posts de {topic} uniquement",
+        "topicLabel": "Sujet"
+      }
     },
-    "actions": {
-      "resetTopics": "Réinitialiser la Sélection de Sujets",
-      "refreshFeed": "Actualiser le Flux",
-      "viewPost": "Voir l'Article Complet",
-      "readMore": "Lire Plus",
-      "readLess": "Lire Moins",
-      "share": "Partager l'Article",
-      "bookmark": "Sauvegarder pour Plus Tard",
-      "bookmarked": "Sauvegardé",
-      "like": "J'aime",
-      "liked": "Aimé",
-      "comment": "Ajouter un Commentaire",
-      "reply": "Répondre",
-      "savePost": "Sauvegarder l'Article",
-      "reportPost": "Signaler le Contenu"
-    },
-    "feed": {
-      "title": "Votre Flux de Diffusion",
-      "subtitle": "Dernières mises à jour de vos sujets sélectionnés et subcasts suivis",
-      "filterBy": "Filtrer par sujet",
+    "filters": {
+      "title": "Filtres",
+      "apply": "Appliquer les Filtres",
+      "clear": "Tout Effacer",
       "sortBy": "Trier par",
-      "allPosts": "Tous les Articles",
-      "recentPosts": "Récents",
-      "popularPosts": "Populaires",
-      "bookmarkedPosts": "Articles Sauvegardés",
-      "noPostsFound": "Aucun article trouvé",
-      "noPostsFoundDescription": "Essayez d'ajuster vos filtres, de sélectionner différents sujets ou de suivre plus de subcasts",
-      "loadMore": "Charger Plus d'Articles",
-      "loading": "Chargement des articles...",
-      "refreshing": "Actualisation de votre flux...",
-      "newPostsAvailable": "{count} {count, plural, one {nouvel article} other {nouveaux articles}} disponible{count, plural, one {} other {s}}",
-      "showNewPosts": "Afficher les Nouveaux Articles"
-    },
-    "post": {
-      "publishedOn": "Publié le {date}",
-      "readTime": "{minutes} min de lecture",
-      "author": "Par {author}",
-      "tags": "Sujets",
-      "relatedPosts": "Vous pourriez aussi aimer",
-      "types": {
-        "article": "Article",
-        "video": "Vidéo",
-        "image": "Image",
-        "poll": "Sondage",
-        "quote": "Citation"
+      "dateRange": "Plage de Dates",
+      "postType": "Type de Post",
+      "labels": {
+        "search": "Recherche",
+        "contentTypes": "Types de Contenu",
+        "category": "Catégorie",
+        "topic": "Sujet"
       },
-      "engagement": {
-        "likes": "{count, plural, =0 {Aucun j'aime} one {# j'aime} other {# j'aime}}",
-        "comments": "{count, plural, =0 {Aucun commentaire} one {# commentaire} other {# commentaires}}",
-        "shares": "{count, plural, =0 {Aucun partage} one {# partage} other {# partages}}",
-        "bookmarks": "{count, plural, =0 {Non sauvegardé} one {# sauvegarde} other {# sauvegardes}}"
-      },
-      "actions": {
-        "share": "Partager cet article",
-        "copyLink": "Copier le lien de l'article",
-        "reportPost": "Signaler un contenu inapproprié",
-        "hidePost": "Masquer cet article"
+      "options": {
+        "postsWithMedia": "Posts avec Média",
+        "textOnly": "Texte Seulement"
       }
     },
     "sidebar": {
-      "title": "Subcasts",
-      "subtitle": "Suivez des chaînes de contenu spécialisées pour des mises à jour ciblées",
-      "searchPlaceholder": "Rechercher des subcasts...",
-      "popularSubcasts": "Subcasts Populaires",
-      "followedSubcasts": "Suivis",
-      "recommendedSubcasts": "Recommandés pour Vous",
-      "allSubcasts": "Tous les Articles",
-      "follow": "Suivre",
-      "following": "Suivi {count}",
-      "unfollow": "Ne Plus Suivre",
-      "followers": "{count, plural, =0 {Aucun abonné} one {# abonné} other {# abonnés}}",
-      "posts": "{count, plural, =0 {Aucun article} one {# article} other {# articles}}",
-      "newPosts": "{count} {count, plural, one {nouvel article} other {nouveaux articles}}",
-      "lastPost": "Dernier article il y a {time}",
-      "noSubcasts": "Aucun subcast trouvé",
-      "noFollowedSubcasts": "Vous ne suivez encore aucun subcast. Découvrez des chaînes qui correspondent à vos intérêts !",
-      "exploreSubcasts": "Découvrir Plus",
-      "createSubcast": "Créer un Nouveau Subcast",
-      "manageSubcasts": "Gérer Mes Subcasts"
-    },
-    "subcast": {
-      "about": "À propos",
-      "description": "Description",
-      "moderators": "Modérateurs",
-      "rules": "Règles",
-      "recentActivity": "Activité Récente",
-      "topContributors": "Principaux Contributeurs",
-      "stats": {
-        "followers": "Abonnés",
-        "posts": "Articles",
-        "comments": "Commentaires",
-        "created": "Créé"
-      }
-    },
-    "comments": {
-      "title": "Discussion",
-      "subtitle": "{count, plural, =0 {Aucun commentaire pour le moment} one {# commentaire} other {# commentaires}}",
-      "noComments": "Aucun commentaire pour le moment",
-      "beFirstToComment": "Soyez le premier à lancer la discussion",
-      "writeComment": "Partagez vos réflexions...",
-      "postComment": "Publier le Commentaire",
-      "cancel": "Annuler",
-      "edit": "Modifier le Commentaire",
-      "delete": "Supprimer le Commentaire",
-      "reply": "Répondre",
-      "showReplies": "Afficher {count, plural, one {# réponse} other {# réponses}}",
-      "hideReplies": "Masquer les réponses",
-      "loadMoreComments": "Charger plus de commentaires",
-      "sortBy": "Trier par",
-      "newest": "Plus Récents",
-      "oldest": "Plus Anciens",
-      "popular": "Les Plus Populaires"
+      "quickActions": "Actions Rapides",
+      "savedPosts": "Posts Sauvegardés",
+      "following": "Suivis",
+      "trending": "Tendances",
+      "activeNow": "Actif Maintenant",
+      "usersActive": "{count, plural, one {# utilisateur actif} other {# utilisateurs actifs}} dans la dernière heure"
     },
     "notifications": {
-      "newPost": "Nouvel article dans {subcast}",
-      "newComment": "{author} a commenté votre article",
-      "newReply": "{author} a répondu à votre commentaire",
-      "postLiked": "{author} a aimé votre article",
-      "commentLiked": "{author} a aimé votre commentaire",
-      "newFollower": "{author} a commencé à suivre {subcast}",
-      "mentionedInPost": "{author} vous a mentionné dans un article",
-      "mentionedInComment": "{author} vous a mentionné dans un commentaire"
-    },
-    "loading": {
-      "title": "Chargement de votre flux de diffusion...",
-      "subtitle": "Préparation du contenu personnalisé basé sur vos intérêts",
-      "posts": "Chargement des articles...",
-      "comments": "Chargement de la discussion...",
-      "subcasts": "Chargement des subcasts...",
-      "loadingMore": "Chargement de plus d'articles...",
-      "refreshing": "Actualisation du contenu..."
-    },
-    "empty": {
-      "title": "Votre flux est vide",
-      "subtitle": "Sélectionnez des sujets ou suivez des subcasts pour voir du contenu pertinent ici",
-      "posts": {
-        "title": "Aucun article à afficher",
-        "subtitle": "Essayez de sélectionner différents sujets, de suivre plus de subcasts ou d'ajuster vos filtres"
+      "title": "Notifications",
+      "activity": "Activité",
+      "live": "Direct",
+      "trending": "Tendances",
+      "markAllRead": "Tout marquer comme lu",
+      "filter": {
+        "all": "Toutes les notifications",
+        "unread": "Non lues seulement",
+        "likes": "J'aimes",
+        "comments": "Commentaires",
+        "follows": "Abonnements",
+        "mentions": "Mentions"
       },
-      "subcasts": {
-        "title": "Aucun subcast ne correspond à votre recherche",
-        "subtitle": "Essayez des mots-clés différents ou parcourez tous les subcasts disponibles"
+      "types": {
+        "like": "a aimé votre post",
+        "comment": "a commenté votre post",
+        "follow": "a commencé à vous suivre",
+        "mention": "vous a mentionné dans un post",
+        "milestone": "Étape franchie !"
       },
-      "comments": {
-        "title": "Aucune discussion pour le moment",
-        "subtitle": "Soyez le premier à partager vos réflexions sur cet article"
+      "empty": {
+        "title": "Aucune notification",
+        "description": "Vous êtes à jour ! Revenez plus tard pour de nouvelles activités."
       }
     },
-    "error": {
-      "title": "Quelque chose s'est mal passé",
-      "subtitle": "Nous n'avons pas pu charger votre flux de diffusion. Veuillez vérifier votre connexion et réessayer.",
-      "retry": "Réessayer",
-      "posts": {
-        "title": "Impossible de charger les articles",
-        "subtitle": "Il y a eu un problème lors du chargement du contenu de votre flux"
+    "navigation": {
+      "home": "Accueil",
+      "broadcasts": "Diffusions",
+      "backToFeed": "Retour au Flux"
+    },
+    "postDetail": {
+      "title": "Détail du Post",
+      "notFound": {
+        "title": "Post Non Trouvé",
+        "description": "Le post que vous recherchez n'existe pas ou a peut-être été supprimé."
       },
-      "comments": {
-        "title": "Commentaires indisponibles",
-        "subtitle": "Nous n'avons pas pu charger la discussion pour cet article"
-      },
-      "subcasts": {
-        "title": "Subcasts indisponibles",
-        "subtitle": "Nous n'avons pas pu charger les subcasts disponibles en ce moment"
-      }
+      "postedOn": "Publié le {date}",
+      "relatedActions": "Actions Liées"
+    },
+    "imageModal": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "close": "Fermer",
+      "viewImage": "Voir l'image"
+    },
+    "tooltips": {
+      "editPost": "Modifier le post",
+      "deletePost": "Supprimer le post",
+      "bookmark": "Signet",
+      "unbookmark": "Supprimer le signet",
+      "like": "Aimer ce post",
+      "unlike": "Ne plus aimer",
+      "comment": "Commenter ce post",
+      "share": "Partager ce post",
+      "moreOptions": "Plus d'options"
     },
     "accessibility": {
-      "openPost": "Ouvrir le contenu complet de l'article",
-      "likePost": "Aimer cet article",
-      "bookmarkPost": "Sauvegarder cet article pour plus tard",
-      "sharePost": "Partager cet article avec d'autres",
-      "commentOnPost": "Ajouter un commentaire à cet article",
-      "followSubcast": "Suivre ce subcast pour les mises à jour",
-      "unfollowSubcast": "Arrêter de suivre ce subcast",
-      "viewProfile": "Voir le profil utilisateur et les détails",
-      "closeModal": "Fermer la fenêtre de dialogue",
-      "openMenu": "Ouvrir le menu d'options",
-      "closeMenu": "Fermer le menu d'options",
-      "searchPosts": "Rechercher parmi les articles",
-      "filterTopics": "Filtrer les articles par sujet",
-      "sortPosts": "Changer l'ordre de tri des articles"
+      "close": "Fermer",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "previousAttachment": "Pièce jointe précédente",
+      "nextAttachment": "Pièce jointe suivante",
+      "navigationKeys": "Utilisez les touches ← →"
     },
-    "feed": {
-      "createPost": "Créer un Post",
-      "searchPlaceholder": "Rechercher des posts...",
-      "filterPlaceholder": {
-        "sort": "Sélectionnez l'ordre de tri",
-        "category": "Sélectionnez une catégorie", 
-        "topic": "Sélectionnez un sujet"
-      },
-      "tabs": {
-        "all": "Tout",
-        "following": "Suivi",
-        "trending": "Tendances"
-      },
-      "placeholders": {
-        "searchTopics": "Rechercher des sujets...",
-        "category": "Catégorie",
-        "sort": "Tri",
-        "selectTopics": "Sélectionnez des sujets pour votre post"
+    "placeholders": {
+      "searchSkills": "Recherchez des compétences ou tapez pour en créer de nouvelles...",
+      "engagingTitle": "Entrez un titre engageant qui attire l'attention...",
+      "selectTopics": "Sélectionnez des sujets pour votre post",
+      "shareThoughts": "Partagez vos pensées, idées, histoires ou contenu créatif avec le monde. Que souhaitez-vous exprimer aujourd'hui ?",
+      "whoCanSee": "Qui peut voir ce post ?",
+      "scheduleLater": "Programmer pour plus tard (optionnel)",
+      "searchPosts": "Rechercher des posts...",
+      "selectCategory": "Sélectionner une catégorie",
+      "selectTopic": "Sélectionner un sujet"
+    },
+    "fallbacks": {
+      "untitledPost": "Post Sans Titre",
+      "untitledTopic": "Sujet Sans Titre",
+      "unknownUser": "Utilisateur Inconnu",
+      "unknownSkill": "Compétence Inconnue",
+      "preview": "Aperçu"
+    },
+    "modals": {
+      "notifications": {
+        "title": "Notifications",
+        "tabs": {
+          "activity": "Activité",
+          "live": "Direct",
+          "trending": "Tendances"
+        },
+        "filters": {
+          "allNotifications": "Toutes les notifications",
+          "unreadOnly": "Non lues seulement",
+          "likes": "J'aimes",
+          "comments": "Commentaires",
+          "follows": "Abonnements",
+          "mentions": "Mentions"
+        },
+        "empty": "Aucune notification trouvée",
+        "liveUpdates": "Mises à jour en Direct",
+        "trendingNow": "Tendance Maintenant"
       }
     },
-    "notifications": {
-      "tabs": {
-        "activity": "Activité",
-        "live": "En direct",
-        "trending": "Tendances"
+    "forms": {
+      "advanced": {
+        "privacyVisibility": "Confidentialité & Visibilité",
+        "allowComments": "Autoriser les Commentaires",
+        "allowSharing": "Autoriser le Partage",
+        "contentWarning": "Avertissement de Contenu",
+        "publishingOptions": "Options de Publication"
+      }
+    },
+    "content": {
+      "expandText": {
+        "showMore": "Afficher plus",
+        "showLess": "Afficher moins"
+      }
+    },
+    "errors": {
+      "loadTopics": "Échec du chargement des sujets",
+      "tryAgainLater": "Veuillez réessayer plus tard"
+    },
+    "page": {
+      "filters": "Filtres",
+      "topics": "Sujets",
+      "loadingPost": "Chargement de la publication...",
+      "postNotFound": "Publication Non Trouvée",
+      "postNotFoundDescription": "La publication demandée n'a pas pu être trouvée",
+      "loadingPostTitle": "Chargement de la Publication...",
+      "loadingPostDescription": "Chargement des détails de la publication broadcast"
+    },
+    "breadcrumbs": {
+      "topic": "Sujet",
+      "postDetail": "Détail de la Publication"
+    },
+    "filters": {
+      "dateRange": {
+        "from": "De",
+        "to": "À"
+      },
+      "categories": {
+        "technology": "Technologie",
+        "design": "Design",
+        "business": "Affaires",
+        "marketing": "Marketing",
+        "development": "Développement",
+        "aiMl": "IA & ML",
+        "startup": "Startup",
+        "career": "Carrière",
+        "remoteWork": "Travail à Distance",
+        "productivity": "Productivité"
+      }
+    },
+    "modals": {
+      "notifications": {
+        "title": "Notifications",
+        "noNotifications": "Aucune notification trouvée",
+        "liveUpdates": "Mises à Jour Live",
+        "trendingNow": "Tendance Maintenant"
+      },
+      "imageCarousel": {
+        "previous": "Précédent",
+        "next": "Suivant",
+        "close": "Fermer"
+      }
+    },
+    "common": {
+      "save": "Sauvegarder",
+      "cancel": "Annuler",
+      "create": "Créer",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "close": "Fermer",
+      "back": "Retour",
+      "retry": "Réessayer",
+      "loading": "Chargement...",
+      "error": "Erreur",
+      "success": "Succès",
+      "confirm": "Confirmer",
+      "remove": "Supprimer"
+    },
+    "topics": {
+      "title": "Sujets",
+      "all": "Tous",
+      "following": "Suivi",
+      "trending": "Tendances",
+      "hotTopics": "Sujets Tendance",
+      "searchPlaceholder": "Rechercher des sujets...",
+      "noTopicsFound": "Aucun sujet trouvé",
+      "noTopicsAvailable": "Aucun sujet disponible",
+      "noTopicsMatch": "Aucun sujet ne correspond à votre recherche",
+      "topicsWillAppear": "Les sujets apparaîtront ici lorsqu'ils seront disponibles",
+      "follow": "Suivre",
+      "unfollow": "Ne plus suivre",
+      "followingCount": "Suivi {count}",
+      "postCount": "{count, plural, =0 {Aucun post} one {# post} other {# posts}}",
+      "followers": "{count, plural, =0 {Aucun abonné} one {# abonné} other {# abonnés}}",
+      "posts": "{count, plural, =0 {Aucun post} one {# post} other {# posts}}",
+      "feedHeader": {
+        "clearFilter": "Effacer le Filtre",
+        "showingPostsFrom": "Affichage des posts de {topic} uniquement",
+        "topicLabel": "Sujet"
+      }
+    },
+    "filters": {
+      "title": "Filtres",
+      "apply": "Appliquer les Filtres",
+      "clear": "Tout Effacer",
+      "sortBy": "Trier par",
+      "dateRange": "Plage de Dates",
+      "postType": "Type de Post",
+      "labels": {
+        "search": "Recherche",
+        "contentTypes": "Types de Contenu",
+        "category": "Catégorie",
+        "topic": "Sujet"
+      },
+      "options": {
+        "postsWithMedia": "Posts avec Média",
+        "textOnly": "Texte Seulement"
+      },
+      "dateRange": {
+        "from": "De",
+        "to": "À"
+      },
+      "categories": {
+        "technology": "Technologie",
+        "design": "Design",
+        "business": "Affaires",
+        "marketing": "Marketing",
+        "development": "Développement",
+        "aiMl": "IA & ML",
+        "startup": "Startup",
+        "career": "Carrière",
+        "remoteWork": "Travail à Distance",
+        "productivity": "Productivité"
+      },
+      "actions": {
+        "clearAll": "Tout Effacer",
+        "backToTopics": "Retour aux Sujets"
       }
     }
   },

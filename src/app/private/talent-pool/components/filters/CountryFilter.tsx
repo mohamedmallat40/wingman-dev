@@ -192,7 +192,7 @@ export default function CountryFilter({
 
           <div className='border-default-200 rounded-medium flex max-h-[100px] flex-wrap gap-2 overflow-y-auto border p-2'>
             {selectedCountries.map((countryCode) => {
-              const country = countries.find((c: Country) => c.code === countryCode);
+              const country = countries?.find((c: Country) => c.code === countryCode);
 
               return (
                 <Chip
