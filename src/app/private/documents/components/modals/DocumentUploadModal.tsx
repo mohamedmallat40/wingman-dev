@@ -496,41 +496,52 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
         {() => (
           <>
             <ModalHeader className='via-default-50/20 to-default-50/40 dark:via-default-900/10 dark:to-default-900/20 flex flex-col gap-2 bg-gradient-to-b from-transparent px-8 pt-8 pb-6'>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className='flex items-center gap-3'
-              >
+              <div className='flex items-center justify-between'>
                 <motion.div
-                  className='from-primary/10 via-primary/5 ring-primary/20 relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent shadow-lg ring-1 backdrop-blur-sm'
-                  whileHover={{ scale: 1.08, rotate: 8 }}
-                  whileTap={{ scale: 0.92 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className='flex items-center gap-3'
                 >
-                  <div className='from-primary/5 to-primary/10 absolute inset-0 rounded-2xl bg-gradient-to-br blur-xl' />
-                  <Icon
-                    icon={
-                      success
-                        ? 'solar:check-circle-bold'
-                        : isEditMode
-                          ? 'solar:pen-linear'
-                          : 'solar:upload-linear'
-                    }
-                    className='text-primary relative z-10 h-8 w-8 drop-shadow-sm'
-                  />
+                  <motion.div
+                    className='from-primary/10 via-primary/5 ring-primary/20 relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent shadow-lg ring-1 backdrop-blur-sm'
+                    whileHover={{ scale: 1.08, rotate: 8 }}
+                    whileTap={{ scale: 0.92 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    <div className='from-primary/5 to-primary/10 absolute inset-0 rounded-2xl bg-gradient-to-br blur-xl' />
+                    <Icon
+                      icon={
+                        success
+                          ? 'solar:check-circle-outline'
+                          : isEditMode
+                            ? 'solar:pen-outline'
+                            : 'solar:upload-outline'
+                      }
+                      className='text-primary relative z-10 h-8 w-8 drop-shadow-sm'
+                    />
+                  </motion.div>
+                  <div className='flex flex-col gap-1'>
+                    <h2 className='text-foreground from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight'>
+                      {success ? `${isEditMode ? 'Update' : 'Upload'} Successful!` : modalTitle}
+                    </h2>
+                    <p className='text-default-500 text-sm font-medium tracking-wide opacity-90'>
+                      {success
+                        ? `Document "${documentName}" ${isEditMode ? 'updated' : 'uploaded'} successfully`
+                        : modalSubtitle}
+                    </p>
+                  </div>
                 </motion.div>
-                <div className='flex flex-col gap-1'>
-                  <h2 className='text-foreground from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight'>
-                    {success ? `${isEditMode ? 'Update' : 'Upload'} Successful!` : modalTitle}
-                  </h2>
-                  <p className='text-default-500 text-sm font-medium tracking-wide opacity-90'>
-                    {success
-                      ? `Document "${documentName}" ${isEditMode ? 'updated' : 'uploaded'} successfully`
-                      : modalSubtitle}
-                  </p>
-                </div>
-              </motion.div>
+                <Button
+                  isIconOnly
+                  variant='light'
+                  onPress={handleClose}
+                  disabled={isUploading}
+                  className='hover:bg-default-100 dark:hover:bg-default-800'
+                >
+                  <Icon icon='solar:close-circle-outline' className='h-5 w-5' />
+                </Button>
+              </div>
             </ModalHeader>
 
             <ModalBody className='via-default-50/20 to-default-50/40 dark:via-default-900/10 dark:to-default-900/20 gap-6 bg-gradient-to-b from-transparent px-8 py-6'>
