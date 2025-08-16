@@ -61,6 +61,15 @@ export type LanguageProficiencyLevel =
 export type CertificationLevel = 
   | 'C2' | 'C1' | 'B2' | 'B1' | 'A2' | 'A1' | 'NATIVE';
 
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  issueDate: string;
+  expiryDate: string;
+  credentialId: string;
+}
+
 export interface Language {
   id: string;
   name: string; // Full language name (e.g., "English", "Spanish")
@@ -116,5 +125,9 @@ export interface ProfileData {
   languages: Language[];
   education: Education[];
   notes: UserNote[];
+  userNotes: any[];
+  projects: Experience[];
+  services: any[];
+  testimonials: any[];
   connectionStatus: ConnectionStatus;
 }

@@ -27,7 +27,7 @@ import { type IUserProfile } from '@root/modules/profile/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { type IDocument } from '../../types';
+import { type IDocument, type SharedUser } from '../../types';
 
 interface DocumentShareModalProperties {
   isOpen: boolean;
@@ -66,13 +66,13 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
   const networkUsers = networkResponse?.items;
   const existingSharedUsers = useMemo(() => {
     return (
-      document?.sharedWith.map((shared: IUserProfile) => ({
-        id: shared?.id,
-        email: shared?.email,
-        firstName: shared?.firstName,
-        lastName: shared?.lastName,
-        avatar: shared?.profileImage,
-        role: shared?.kind
+      document?.sharedWith.map((shared: SharedUser) => ({
+        id: shared.id,
+        email: shared.email,
+        firstName: shared.firstName,
+        lastName: shared.lastName,
+        avatar: shared.profileImage || shared.avatar || '',
+        role: shared.role || 'FREELANCER'
       })) ?? []
     );
   }, [document]);
@@ -94,7 +94,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
   const filteredUsers = useMemo(() => {
     const existingUserIds = new Set(existingSharedUsers.map((user) => user.id));
     const selectedUserIds = new Set(selectedUsers);
-    return networkUsers?.filter((user: unknown) => {
+    return networkUsers?.filter((user: IUserProfile) => {
         if (existingUserIds.has(user.id) || selectedUserIds.has(user.id)) {
           return false;
         }
@@ -384,7 +384,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                             className='bg-default-100/80 dark:bg-default-800/80 flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 ring-white/10 backdrop-blur-sm dark:ring-white/5'
                           >
                             <Avatar
-                              src={user.avatar || user.profilePicture}
+                              src={user.avatar}
                               name={`${user.firstName} ${user.lastName}`}
                               size='sm'
                               className='h-6 w-6'
@@ -478,7 +478,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                         >
                           {filteredUsers.length > 0 ? (
                             <div className='h-full w-full space-y-2 overflow-y-auto'>
-                              {filteredUsers.map((user: any, index) => (
+                              {filteredUsers.map((user: IUserProfile, index: number) => (
                                 <motion.div
                                   key={user.id}
                                   initial={{ opacity: 0, y: 20, scale: 0.95 }}
@@ -510,7 +510,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                                             size='sm'
                                           >
                                             <Avatar
-                                              src={user.avatar || user.profilePicture}
+                                              src={user.avatar}
                                               name={`${user.firstName} ${user.lastName}`}
                                               size='md'
                                               className='h-12 w-12'
@@ -625,7 +625,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
 
                           <div className='flex flex-wrap gap-2'>
                             {[...selectedUsers].map((userId) => {
-                              const user = networkUsers.find((u: any) => u.id === userId);
+                              const user = networkUsers?.find((u: IUserProfile) => u.id === userId);
                               if (!user) return null;
 
                               return (
@@ -637,7 +637,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                                   className='bg-success-50/80 dark:bg-success-900/20 ring-success/10 dark:ring-success/5 flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 backdrop-blur-sm'
                                 >
                                   <Avatar
-                                    src={user.avatar || user.profilePicture}
+                                    src={user.avatar}
                                     name={`${user.firstName} ${user.lastName}`}
                                     size='sm'
                                     className='h-6 w-6'

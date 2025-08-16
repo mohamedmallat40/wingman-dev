@@ -112,3 +112,18 @@ export interface PostInteraction {
   timestamp: string;
 }
 
+// API-related types
+export interface CreatePostData {
+  title: string;
+  description: string;
+  topics: string[]; // Array of topic UUIDs
+  skills: string[]; // Array of skill UUIDs
+  attachments: string[]; // Array of filenames from successful uploads
+}
+
+export interface FeedParams {
+  page?: number;
+  limit?: number;
+  topics?: string[]; // Array of topic IDs for filtering
+}
+

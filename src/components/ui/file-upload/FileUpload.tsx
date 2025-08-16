@@ -19,6 +19,7 @@ export interface FileUploadProps {
   acceptedFileTypes?: string;
   maxFileSize?: number;
   className?: string;
+  disabled?: boolean;
 }
 
 // Get file icon based on type
@@ -55,34 +56,38 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   onDrop,
   acceptedFileTypes = '.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.xlsx,.xls,.ppt,.pptx',
   maxFileSize = 10 * 1024 * 1024, // 10MB
-  className = ''
+  className = '',
+  disabled = false
 }) => {
   const t = useTranslations();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (disabled) return;
       const files = e.target.files;
-      if (files && files.length > 0) {
+      if (files && files.length > 0 && files[0]) {
         onFileSelect(files[0]);
       }
     },
-    [onFileSelect]
+    [onFileSelect, disabled]
   );
 
   return (
     <motion.div
       className={`relative rounded-xl border-2 border-dashed transition-all duration-300 ${
-        isDragOver
+        isDragOver && !disabled
           ? 'border-primary bg-primary-50 dark:bg-primary-900/20 scale-[1.02]'
           : selectedFile
             ? 'border-success bg-success-50 dark:bg-success-900/20'
-            : 'border-default-300 hover:border-default-400 hover:bg-default-50 dark:hover:bg-default-900/20'
+            : disabled
+              ? 'border-default-200 bg-default-100 opacity-50 cursor-not-allowed'
+              : 'border-default-300 hover:border-default-400 hover:bg-default-50 dark:hover:bg-default-900/20'
       } ${className}`}
-      onDragEnter={onDragEnter}
-      onDragLeave={onDragLeave}
-      onDragOver={onDragOver}
-      onDrop={onDrop}
+      onDragEnter={disabled ? undefined : onDragEnter}
+      onDragLeave={disabled ? undefined : onDragLeave}
+      onDragOver={disabled ? undefined : onDragOver}
+      onDrop={disabled ? undefined : onDrop}
       whileHover={{ scale: selectedFile ? 1 : 1.01 }}
       whileTap={{ scale: 0.99 }}
     >
@@ -92,6 +97,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         onChange={handleFileInputChange}
         className='hidden'
         accept={acceptedFileTypes}
+        disabled={disabled}
       />
 
       {!selectedFile ? (
@@ -119,9 +125,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           <Button
             color='primary'
             variant='flat'
-            onPress={() => fileInputRef.current?.click()}
+            onPress={() => !disabled && fileInputRef.current?.click()}
             startContent={<Icon icon='solar:folder-open-linear' className='h-4 w-4' />}
             className='font-medium'
+            isDisabled={disabled}
           >
             Choose File
           </Button>

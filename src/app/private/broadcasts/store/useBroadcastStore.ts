@@ -12,7 +12,7 @@ interface FilterState {
     from: Date | null;
     to: Date | null;
   } | null;
-  postTypes: BroadcastPost['type'][];
+  postTypes: string[];
   authors: string[];
   tags: string[];
 }
@@ -74,7 +74,7 @@ interface BroadcastStore {
   setTopic: (topicId: string | null) => void;
   setSearchQuery: (query: string) => void;
   setDateRange: (range: FilterState['dateRange']) => void;
-  setPostTypes: (types: BroadcastPost['type'][]) => void;
+  setPostTypes: (types: string[]) => void;
   addAuthorFilter: (authorId: string) => void;
   removeAuthorFilter: (authorId: string) => void;
   addTagFilter: (tag: string) => void;
@@ -515,7 +515,7 @@ export const useBroadcastStore = create<BroadcastStore>()(
     }),
     {
       name: 'broadcast-store',
-      partialize: (state) => ({
+      partialize: (state: BroadcastStore) => ({
         filters: state.filters,
         ui: {
           sidebarOpen: state.ui.sidebarOpen,

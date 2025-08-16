@@ -319,7 +319,7 @@ const DocumentFiltersPanel: React.FC<DocumentFiltersPanelProperties> = ({
                     }}
                   >
                     {uniqueTags.map((tag) => (
-                      <SelectItem key={tag.id} value={tag.id} textValue={tag.name}>
+                      <SelectItem key={tag.id} textValue={tag.name}>
                         {tag.name}
                       </SelectItem>
                     ))}

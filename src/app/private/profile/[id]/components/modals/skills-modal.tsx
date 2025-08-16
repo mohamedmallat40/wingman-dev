@@ -29,6 +29,7 @@ interface AvailableSkill {
   id: string;
   key: string;
   type?: string;
+  category?: string;
 }
 
 interface SkillsModalProperties {
@@ -109,7 +110,7 @@ const SkillsModal: React.FC<SkillsModalProperties> = ({
   const handleRemoveSkill = (skillKey: string) => {
     setSelectedSkills((previous) => previous.filter((skill) => skill.key !== skillKey));
     setSkillToDelete({
-      skill: selectedSkills.find((skill) => skill.key === skillKey),
+      skill: selectedSkills.find((skill) => skill.key === skillKey) || null,
       isOpen: true
     });
   };
@@ -123,7 +124,7 @@ const SkillsModal: React.FC<SkillsModalProperties> = ({
       onClose();
     } catch (error: any) {
       console.error('Error deleting skill:', error);
-
+      const errorMessage = 'Failed to delete skill';
       addToast(errorMessage, 'error');
     }
   };
@@ -189,7 +190,7 @@ const SkillsModal: React.FC<SkillsModalProperties> = ({
 
     return selectedSkills.some((selected) => {
       const original = userSkills.find((skill) => skill.key === selected.key);
-      return !original || original.level !== selected.level;
+      return !original;
     });
   };
 
@@ -327,8 +328,8 @@ const SkillsModal: React.FC<SkillsModalProperties> = ({
       </ModalContent>
       <ConfirmDeleteModal
         isOpen={skillToDelete.isOpen}
-        onClose={() => {
-          setSkillToDelete({ language: null, isOpen: false });
+        onOpenChange={(open) => {
+          setSkillToDelete({ skill: null, isOpen: open });
         }}
         onConfirm={confirmDeleteSkill}
         title='Delete skill'

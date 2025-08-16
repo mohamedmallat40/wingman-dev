@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 
 import {
   Avatar,
@@ -292,6 +293,7 @@ export default function TopicSidebar({
   selectedSubcast,
   className = ''
 }: TopicSidebarProps) {
+  const t = useTranslations('broadcasts');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   // Fetch topics from API
@@ -484,8 +486,8 @@ export default function TopicSidebar({
                   icon='solar:danger-circle-linear'
                   className='text-danger mx-auto mb-2 h-8 w-8'
                 />
-                <p className='text-foreground-500 text-sm'>Failed to load topics</p>
-                <p className='text-foreground-400 mt-1 text-xs'>Please try again later</p>
+                <p className='text-foreground-500 text-sm'>{t('errors.loadTopics')}</p>
+                <p className='text-foreground-400 mt-1 text-xs'>{t('errors.tryAgainLater')}</p>
               </div>
             </div>
           </CardBody>
@@ -505,8 +507,8 @@ export default function TopicSidebar({
                 <Icon icon='solar:satellite-linear' className='text-primary h-4 w-4' />
               </div>
               <div>
-                <h2 className='text-foreground font-semibold'>Topics</h2>
-                <p className='text-foreground-500 text-xs'>Following {followingCount}</p>
+                <h2 className='text-foreground font-semibold'>{t('topics.title')}</h2>
+                <p className='text-foreground-500 text-xs'>{t('topics.followingCount', { count: followingCount })}</p>
               </div>
             </div>
           </div>
@@ -525,15 +527,15 @@ export default function TopicSidebar({
               cursor: 'bg-primary'
             }}
           >
-            <Tab key='all' title='All' />
-            <Tab key='following' title='Following' />
-            <Tab key='trending' title='Trending' />
+            <Tab key='all' title={t('topics.all')} />
+            <Tab key='following' title={t('topics.following')} />
+            <Tab key='trending' title={t('topics.trending')} />
           </Tabs>
 
           {/* Search */}
           <div className='mb-4'>
             <Input
-              placeholder='Search topics...'
+              placeholder={t('topics.searchPlaceholder')}
               value={searchQuery}
               onValueChange={setSearchQuery}
               startContent={
@@ -560,7 +562,7 @@ export default function TopicSidebar({
               <div className='mb-4'>
                 <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
                   <Icon icon='solar:fire-linear' className='text-warning h-4 w-4' />
-                  Hot Topics
+{t('topics.hotTopics')}
                 </h3>
                 <div className='space-y-2'>
                   {TRENDING_TOPICS.slice(0, 3).map((topic, index) => (
@@ -578,7 +580,7 @@ export default function TopicSidebar({
                         </Chip>
                       </div>
                       <div className='text-foreground-500 text-xs'>
-                        {topic.postCount} posts • {topic.category}
+{t('topics.postCount', { count: topic.postCount })} • {topic.category}
                       </div>
                     </motion.div>
                   ))}
@@ -675,7 +677,7 @@ export default function TopicSidebar({
                                   />
                                 )}
                                 <Tooltip
-                                  content={subcast.isFollowing ? 'Unfollow' : 'Follow'}
+                                  content={subcast.isFollowing ? t('tooltips.unfollow') : t('tooltips.follow')}
                                   placement="top"
                                   delay={500}
                                   closeDelay={0}
@@ -693,8 +695,7 @@ export default function TopicSidebar({
                                     }`}
                                     isLoading={loadingTopicId === subcast.id}
                                     isDisabled={loadingTopicId === subcast.id}
-                                    onPress={(e) => {
-                                      e?.stopPropagation?.();
+                                    onPress={() => {
                                       handleFollowToggle(subcast.id);
                                     }}
                                     onClick={(e) => {
@@ -752,11 +753,11 @@ export default function TopicSidebar({
                   <Icon icon='solar:inbox-linear' className='text-default-400 h-6 w-6' />
                 </div>
                 <p className='text-foreground-500 text-sm'>
-                  {subcasts.length === 0 ? 'No topics available' : 'No topics match your filters'}
+{subcasts.length === 0 ? t('topics.noTopicsAvailable') : t('topics.noTopicsMatch')}
                 </p>
                 {subcasts.length === 0 && (
                   <p className='text-foreground-400 mt-1 text-xs'>
-                    Topics will appear here once they're available
+{t('topics.topicsWillAppear')}
                   </p>
                 )}
               </div>

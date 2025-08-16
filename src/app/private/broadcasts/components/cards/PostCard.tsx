@@ -24,15 +24,22 @@ import { useDeletePost } from '../../hooks/useBroadcasts';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 
 // Utility functions
-const formatTimeAgo = (timestamp: string): string => {
+const formatTimeAgo = (timestamp: string, t: any): string => {
   const now = new Date();
   const postTime = new Date(timestamp);
   const diffInSeconds = Math.floor((now.getTime() - postTime.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return 'just now';
-  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-  return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  if (diffInSeconds < 60) return t('post.time.now');
+  if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60);
+    return t('post.time.minutesAgo', { minutes });
+  }
+  if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600);
+    return t('post.time.hoursAgo', { hours });
+  }
+  const days = Math.floor(diffInSeconds / 86400);
+  return t('post.time.daysAgo', { days });
 };
 
 const getFileType = (filename: string): 'image' | 'video' | 'file' => {
@@ -116,10 +123,10 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
     postTypeColor
   } = React.useMemo(() => {
     const safeDescription = post.description || '';
-    const safeTitle = post.title || 'Untitled Post';
+    const safeTitle = post.title || t('fallbacks.untitledPost');
     const safeOwner = post.owner || { 
-      firstName: 'Unknown', 
-      lastName: 'User', 
+      firstName: t('fallbacks.unknownUser'), 
+      lastName: '', 
       profileImage: null, 
       userName: null, 
       isMailVerified: false 
@@ -207,8 +214,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={handleConfirmDelete}
         isLoading={deletePost.isPending}
-        title="Delete Post"
-        description={`Are you sure you want to delete "${safeTitle}"? This action cannot be undone.`}
+        title={t('post.delete.title')}
+        description={t('post.delete.description', { title: safeTitle })}
       />
       
       <Card
@@ -248,7 +255,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
                 dateTime={safeCreatedAt}
                 title={new Date(safeCreatedAt).toLocaleString()}
               >
-                {formatTimeAgo(safeCreatedAt)}
+                {formatTimeAgo(safeCreatedAt, t)}
               </time>
             </div>
 
@@ -276,7 +283,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
                       }}
                       className='text-white font-medium'
                     >
-                      {topic.title || 'Untitled Topic'}
+                      {topic.title || t('fallbacks.untitledTopic')}
                     </Chip>
                   ))}
                   {safeTopics.length > 2 && (
@@ -294,7 +301,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
             {isOwnPost ? (
               // Edit/Delete actions for own posts
               <>
-                <Tooltip content='Edit post'>
+                <Tooltip content={t('tooltips.editPost')}>
                   <Button
                     isIconOnly
                     size='sm'
@@ -309,7 +316,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
                     />
                   </Button>
                 </Tooltip>
-                <Tooltip content='Delete post'>
+                <Tooltip content={t('tooltips.deletePost')}>
                   <Button
                     isIconOnly
                     size='sm'
@@ -327,7 +334,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
               </>
             ) : (
               // Bookmark action for other posts
-              <Tooltip content='Bookmark'>
+              <Tooltip content={t('tooltips.bookmark')}>
                 <Button
                   isIconOnly
                   size='sm'
@@ -368,7 +375,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
               onPress={() => setIsExpanded(!isExpanded)}
               className='text-primary ml-2 h-auto min-w-0 p-0 font-medium'
             >
-              {isExpanded ? 'Show less' : 'Show more'}
+              {isExpanded ? t('content.expandText.showLess') : t('content.expandText.showMore')}
             </Button>
           )}
         </div>
@@ -541,7 +548,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(({
                 variant='flat'
                 className='text-secondary-700 bg-secondary/10 hover:bg-secondary/20 cursor-pointer transition-colors'
               >
-                {skill.key || 'Unknown Skill'}
+                {skill.key || t('fallbacks.unknownSkill')}
               </Chip>
             ))}
             {safeSkills.length > 5 && (

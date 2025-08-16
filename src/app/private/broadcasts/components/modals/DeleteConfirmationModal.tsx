@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 
 import {
   Button,
@@ -28,11 +29,12 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
   onClose,
   onConfirm,
   isLoading = false,
-  title = 'Delete Post',
-  description = 'Are you sure you want to delete this post? This action cannot be undone.',
-  confirmText = 'Delete',
-  cancelText = 'Cancel'
+  title,
+  description,
+  confirmText,
+  cancelText
 }) => {
+  const t = useTranslations('broadcasts');
   const handleConfirm = () => {
     onConfirm();
   };
@@ -83,14 +85,14 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
           </div>
           <div>
             <h3 className="text-foreground text-lg font-semibold">
-              {title}
+              {title || t('post.delete.title')}
             </h3>
           </div>
         </ModalHeader>
 
         <ModalBody className="px-6 py-4">
           <p className="text-foreground-600 leading-relaxed">
-            {description}
+            {description || t('post.delete.description')}
           </p>
           
           <div className="mt-4 p-4 bg-danger/5 border border-danger/20 rounded-lg">
@@ -120,7 +122,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
               isDisabled={isLoading}
               className="min-w-20"
             >
-              {cancelText}
+              {cancelText || t('post.delete.cancel')}
             </Button>
             <Button
               color="danger"
@@ -134,7 +136,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
                 ) : undefined
               }
             >
-              {isLoading ? 'Deleting...' : confirmText}
+              {isLoading ? t('common.loading') : (confirmText || t('post.delete.confirm'))}
             </Button>
           </div>
         </ModalFooter>

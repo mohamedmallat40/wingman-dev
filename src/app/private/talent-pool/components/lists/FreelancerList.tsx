@@ -180,7 +180,9 @@ const FreelancerList: React.FC<FreelancerListProperties> = ({
       if (filters?.country?.length) {
         for (const country of filters.country) {
           const countryName = getName(country, locale);
-          parameters.append('country', countryName);
+          if (countryName) {
+            parameters.append('country', countryName);
+          }
         }
       }
       if (filters?.workType) {

@@ -102,15 +102,13 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         isDisabled={maxSelectedTags ? selectedTags.length >= maxSelectedTags : false}
         classNames={{
           base: 'w-full',
-          mainWrapper: 'w-full',
           inputWrapper:
             'border-default-300/60 data-[hover=true]:border-primary/60 data-[hover=true]:bg-primary/5 group-data-[focus=true]:border-primary group-data-[focus=true]:bg-primary/5 group-data-[focus=true]:shadow-lg group-data-[focus=true]:shadow-primary/10 rounded-2xl h-14 bg-default-100/50 dark:bg-default-50/50 backdrop-blur-sm transition-all duration-300',
           input:
             'text-foreground font-medium tracking-wide placeholder:text-default-400 pl-2 text-base',
           listbox: 'max-h-[200px]',
           popoverContent:
-            'rounded-2xl shadow-2xl ring-1 ring-white/10 dark:ring-white/5 border border-default-200/50 dark:border-default-700/50 backdrop-blur-xl',
-          item: 'data-[hover=true]:bg-blue-50 data-[hover=true]:text-black data-[selected=true]:bg-blue-100 data-[selected=true]:text-black dark:data-[hover=true]:bg-blue-950 dark:data-[selected=true]:bg-blue-900'
+            'rounded-2xl shadow-2xl ring-1 ring-white/10 dark:ring-white/5 border border-default-200/50 dark:border-default-700/50 backdrop-blur-xl'
         }}
         startContent={
           <Icon icon='solar:hashtag-linear' className='text-default-400 h-5 w-5 flex-shrink-0' />
@@ -124,7 +122,6 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         {filteredTags.map((tag) => (
           <AutocompleteItem
             key={tag.key}
-            value={tag.key}
             startContent={
               <div
                 className={`h-3 w-3 rounded-full`}

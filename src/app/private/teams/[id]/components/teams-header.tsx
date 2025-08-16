@@ -68,7 +68,7 @@ export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
                 {team.groupName}
               </h1>
               <Chip size='sm' variant='flat' className={getTeamColorClass(team.color)}>
-                {team.members} member{team.members === 1 ? '' : 's'}
+                {Array.isArray(team.members) ? team.members.length : team.members} member{(Array.isArray(team.members) ? team.members.length : team.members) === 1 ? '' : 's'}
               </Chip>
             </div>
           </div>
