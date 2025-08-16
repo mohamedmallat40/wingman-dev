@@ -38,39 +38,39 @@ const getDocumentIcon = (typeName: string) => {
     { icon: string; color: string; bgColor: string; gradient: string }
   > = {
     Proposal: {
-      icon: 'solar:document-text-bold',
+      icon: 'solar:document-text-bold-duotone',
       color: 'text-primary-600 dark:text-primary-400',
       bgColor:
-        'bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/20',
-      gradient: 'from-primary/20 to-primary-600/30'
+        'bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/30',
+      gradient: 'from-primary/10 to-primary-500/20'
     },
     Contract: {
-      icon: 'solar:shield-check-bold',
-      color: 'text-secondary-600 dark:text-secondary-400',
-      bgColor:
-        'bg-gradient-to-br from-secondary-100 to-secondary-200 dark:from-secondary-900/30 dark:to-secondary-800/20',
-      gradient: 'from-secondary/20 to-secondary-600/30'
-    },
-    Invoice: {
-      icon: 'solar:bill-list-bold',
+      icon: 'solar:shield-check-bold-duotone',
       color: 'text-success-600 dark:text-success-400',
       bgColor:
-        'bg-gradient-to-br from-success-100 to-success-200 dark:from-success-900/30 dark:to-success-800/20',
-      gradient: 'from-success/20 to-success-600/30'
+        'bg-gradient-to-br from-success-50 to-success-100 dark:from-success-900/20 dark:to-success-800/30',
+      gradient: 'from-success/10 to-success-500/20'
     },
-    Spreadsheet: {
-      icon: 'solar:chart-square-bold',
+    Invoice: {
+      icon: 'solar:bill-list-bold-duotone',
       color: 'text-warning-600 dark:text-warning-400',
       bgColor:
-        'bg-gradient-to-br from-warning-100 to-warning-200 dark:from-warning-900/30 dark:to-warning-800/20',
-      gradient: 'from-warning/20 to-warning-600/30'
+        'bg-gradient-to-br from-warning-50 to-warning-100 dark:from-warning-900/20 dark:to-warning-800/30',
+      gradient: 'from-warning/10 to-warning-500/20'
+    },
+    Spreadsheet: {
+      icon: 'solar:chart-square-bold-duotone',
+      color: 'text-secondary-600 dark:text-secondary-400',
+      bgColor:
+        'bg-gradient-to-br from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/30',
+      gradient: 'from-secondary/10 to-secondary-500/20'
     },
     Template: {
-      icon: 'solar:file-text-bold',
+      icon: 'solar:file-text-bold-duotone',
       color: 'text-default-600 dark:text-default-400',
       bgColor:
-        'bg-gradient-to-br from-default-100 to-default-200 dark:from-default-800/50 dark:to-default-700/30',
-      gradient: 'from-default/20 to-default-600/30'
+        'bg-gradient-to-br from-default-50 to-default-100 dark:from-default-800/30 dark:to-default-700/40',
+      gradient: 'from-default/10 to-default-500/20'
     }
   };
 
@@ -78,15 +78,15 @@ const getDocumentIcon = (typeName: string) => {
 
   return (
     <motion.div
-      className={`relative rounded-xl p-3 ${config!.bgColor} shadow-sm ring-1 ring-white/20`}
-      whileHover={{ scale: 1.05, rotate: 2 }}
+      className={`relative rounded-xl p-3 ${config!.bgColor} shadow-sm ring-1 ring-default-200 dark:ring-default-700`}
+      whileHover={{ scale: 1.05, rotate: 1 }}
       whileTap={{ scale: 0.95 }}
       transition={{ type: 'spring', stiffness: 400, damping: 17 }}
     >
       <div
-        className={`absolute inset-0 rounded-xl bg-gradient-to-br ${config!.gradient} opacity-50`}
+        className={`absolute inset-0 rounded-xl bg-gradient-to-br ${config!.gradient} opacity-60`}
       />
-      <Icon icon={config!.icon} className={`relative h-7 w-7 ${config!.color}`} />
+      <Icon icon={config!.icon} className={`relative h-8 w-8 ${config!.color} drop-shadow-sm`} />
     </motion.div>
   );
 };
@@ -263,7 +263,7 @@ export default function DocumentCard({
       onHoverEnd={() => setIsHovered(false)}
     >
       <Card
-        className={`group border-default-200 dark:border-default-700 bg-content1 dark:bg-content1 hover:border-primary/30 dark:hover:border-primary/50 relative overflow-hidden transition-all duration-300 hover:shadow-xl ${viewMode === 'grid' ? 'h-[165px]' : 'h-auto'}`}
+        className={`group border-default-200 dark:border-default-700 bg-content1 dark:bg-content1 hover:border-primary/30 dark:hover:border-primary/50 relative overflow-hidden transition-all duration-300 hover:shadow-xl ${viewMode === 'grid' ? 'h-[180px]' : 'h-auto'}`}
       >
         {/* Gradient overlay */}
         <div className='from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
@@ -280,7 +280,7 @@ export default function DocumentCard({
 
               <div className='min-w-0 flex-1'>
                 <div className='mb-2 flex items-center gap-2'>
-                  <h3 className='text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 truncate text-base font-semibold transition-colors'>
+                  <h3 className='text-foreground group-hover:text-primary-600 dark:group-hover:text-primary-400 min-w-0 flex-1 truncate text-base font-semibold transition-colors'>
                     {document.documentName}
                   </h3>
                   {document.sharedWith.length > 0 && (
@@ -308,17 +308,17 @@ export default function DocumentCard({
                 </div>
 
                 {/* Tags */}
-                <div className='mb-1 flex items-center gap-1.5'>
-                  <span className='text-default-500 flex-shrink-0 text-xs'>Tags:</span>
+                <div className='mb-1 flex items-start gap-1.5'>
+                  <span className='text-default-500 flex-shrink-0 text-xs mt-1'>Tags:</span>
                   {document.tags.length > 0 ? (
-                    <div className='flex gap-1'>
+                    <div className='flex flex-wrap gap-1 min-w-0'>
                       {document.tags.slice(0, 2).map((tag) => (
                         <Chip
                           key={tag.id}
                           size='sm'
                           variant='flat'
                           color={getTagColor(tag.name)}
-                          className='h-5 text-xs'
+                          className='h-5 text-xs max-w-full truncate'
                         >
                           {tag.name}
                         </Chip>
@@ -357,14 +357,14 @@ export default function DocumentCard({
               transition={{ duration: 0.2 }}
             >
               <Button
+                isIconOnly
                 size='sm'
                 variant='flat'
                 color='primary'
                 onPress={() => setShowShareModal(true)}
-                startContent={<Icon icon='solar:share-linear' className='h-3.5 w-3.5' />}
-                className='min-w-0 px-3 transition-transform hover:scale-105'
+                className='min-w-0 transition-transform hover:scale-105'
               >
-                <span className='hidden sm:inline'>{t('card.share')}</span>
+                <Icon icon='solar:share-linear' className='h-4 w-4' />
               </Button>
 
               <Dropdown>
@@ -387,24 +387,21 @@ export default function DocumentCard({
                     {t('actions.view')}
                   </DropdownItem>
                   <DropdownItem
+                    key='open-new-window'
+                    startContent={<Icon icon='solar:window-frame-linear' className='h-4 w-4' />}
+                    onPress={() => {
+                      window.open(`${getBaseUrl()}/upload/${document.fileName}`, '_blank', 'noopener,noreferrer');
+                    }}
+                  >
+                    Open in New Window
+                  </DropdownItem>
+                  <DropdownItem
                     key='edit'
                     startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
                     onPress={() => onEdit?.(document)}
                   >
                     {t('actions.edit')}
                   </DropdownItem>
-                  {/* <DropdownItem
-                    key='download'
-                    startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
-                  >
-                    {t('actions.download')}
-                  </DropdownItem>
-                  <DropdownItem
-                    key='duplicate'
-                    startContent={<Icon icon='solar:copy-linear' className='h-4 w-4' />}
-                  >
-                    {t('actions.duplicate')}
-                  </DropdownItem> */}
                   <DropdownItem
                     key='delete'
                     className='text-danger'
