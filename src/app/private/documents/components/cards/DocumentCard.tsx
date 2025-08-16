@@ -263,17 +263,12 @@ export default function DocumentCard({
       onHoverEnd={() => setIsHovered(false)}
     >
       <Card
-        className={`group border-default-200 dark:border-default-700 bg-content1 dark:bg-content1 hover:border-primary/30 dark:hover:border-primary/50 relative overflow-hidden transition-all duration-300 hover:shadow-xl ${viewMode === 'grid' ? 'h-[180px]' : 'h-auto'}`}
+        className={`group border-default-200 dark:border-default-700 bg-content1 dark:bg-content1 hover:border-primary/30 dark:hover:border-primary/50 relative transition-all duration-300 hover:shadow-xl ${viewMode === 'grid' ? 'h-[180px]' : 'h-auto'}`}
       >
         {/* Gradient overlay */}
         <div className='from-primary/5 to-secondary/5 absolute inset-0 bg-gradient-to-br via-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100' />
 
-        <CardBody
-          className='relative p-5 cursor-pointer'
-          onClick={() => {
-            window.open(`${getBaseUrl()}/upload/${document.fileName}`, '_blank');
-          }}
-        >
+        <CardBody className='relative p-5 overflow-hidden'>
           <div className='mb-4 flex items-start justify-between'>
             <div className='flex flex-1 items-start gap-4'>
               {getDocumentIcon(document.type?.name || '')}
