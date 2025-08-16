@@ -107,7 +107,7 @@ export default function LiveActivityBar({
 
       const randomActivity = newActivities[Math.floor(Math.random() * newActivities.length)];
 
-      setActivities((prev) => [randomActivity, ...prev.slice(0, 4)]);
+      setActivities((prev) => [randomActivity, ...prev.slice(0, 4)].filter(Boolean));
     }, 15000);
 
     return () => clearInterval(interval);

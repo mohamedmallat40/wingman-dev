@@ -1,4 +1,4 @@
-import type { CreatePostData } from '../services/broadcast.service';
+import type { CreatePostData } from '../types';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

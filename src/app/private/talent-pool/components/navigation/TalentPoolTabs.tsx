@@ -100,8 +100,8 @@ const HeroTabs: React.FC<HeroTabsProperties> = ({
     if (newState) {
       // Focus the input when expanding - wait for animation
       setTimeout(() => {
-        const searchInput = document.querySelector('[data-search-input]')!;
-        if (searchInput) {
+        const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement;
+        if (searchInput && searchInput.focus) {
           searchInput.focus();
         }
       }, 400); // Match animation duration

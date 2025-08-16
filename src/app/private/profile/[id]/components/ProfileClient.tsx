@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import wingManApi from '@/lib/axios';
 
 import { type ProfileData } from '../types';
+import { type IExperience } from 'modules/profile/types';
 import ErrorState from './ErrorState';
 import ProfileContent from './ProfileContent';
 import ProfileHeader from './ProfileHeader';
@@ -75,8 +76,9 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
           experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data : [],
         languages: languagesResponse.status === 'fulfilled' ? languagesResponse.value.data : [],
         education: educationResponse.status === 'fulfilled' ? educationResponse.value.data : [],
-        userNotes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
+        notes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
         projects: experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data.filter((item: IExperience) => item.title) : [],
+        userNotes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
         services: servicesResponse.status === 'fulfilled' ? servicesResponse.value.data : [],
         testimonials: testimonialsResponse.status === 'fulfilled' ? testimonialsResponse.value.data : [],
         connectionStatus: isOwnProfile
@@ -221,7 +223,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         title: 'Invitation declined',
         description: 'The invitation has been declined.',
         color: 'warning',
-        duration: 4000
+        timeout: 4000
       });
 
       // Refresh connection status
@@ -254,7 +256,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         title: 'Failed to decline invitation',
         description: 'Something went wrong. Please try again later.',
         color: 'danger',
-        duration: 4000
+        timeout: 4000
       });
     }
   };

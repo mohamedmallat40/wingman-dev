@@ -45,7 +45,6 @@ const workingTimes = ['FULL_TIME', 'PART_TIME', 'CONTRACT', 'FREELANCE'];
 
 interface UploadResponse {
   filename: string;
-  url: string;
 }
 
 interface ProfileUser {
@@ -500,7 +499,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                                   <Icon icon='solar:upload-linear' className='h-4 w-4' />
                                 }
                                 onPress={() =>
-                                  document.querySelector('#profile-image-input')?.click()
+                                  (document.querySelector('#profile-image-input') as HTMLInputElement)?.click()
                                 }
                                 isLoading={isUploadingImage}
                               >
@@ -587,7 +586,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                         variant='bordered'
                       >
                         {workTypes.map((type) => (
-                          <SelectItem key={type} value={type}>
+                          <SelectItem key={type}>
                             {getWorkTypeLabel(type)}
                           </SelectItem>
                         ))}
@@ -610,7 +609,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                         variant='bordered'
                       >
                         {workingTimes.map((time) => (
-                          <SelectItem key={time} value={time}>
+                          <SelectItem key={time}>
                             {getWorkingTimeLabel(time)}
                           </SelectItem>
                         ))}
@@ -687,7 +686,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                       isRequired
                     >
                       {statuses.map((status) => (
-                        <SelectItem key={status} value={status}>
+                        <SelectItem key={status}>
                           {getStatusLabel(status)}
                         </SelectItem>
                       ))}
@@ -846,7 +845,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                             }
                           >
                             {countryList.map((country) => (
-                              <SelectItem key={country.name} value={country.name}>
+                              <SelectItem key={country.name}>
                                 {country.name}
                               </SelectItem>
                             ))}

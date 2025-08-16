@@ -33,18 +33,18 @@ interface DocumentUploadModalProperties {
   onUpload?: (data: {
     name: string;
     tags: string[];
-    file: string;
-    type: { id: string; name: string };
-    status: { id: string; name: string };
+    file: File;
+    type: string;
+    status: string;
   }) => Promise<void>;
   onUpdate?: (
     documentId: string,
     data: {
       name: string;
       tags: string[];
-      file: string;
-      type: { id: string; name: string };
-      status: { id: string; name: string };
+      file?: File;
+      type: string;
+      status: string;
     }
   ) => Promise<void>;
   document?: IDocument | null; // Document to edit (null for upload mode)
@@ -124,9 +124,12 @@ const getTagColor = (
   ];
   let hash = 0;
   for (let index = 0; index < tagName.length; index++) {
-    hash = tagName.codePointAt(index) + ((hash << 5) - hash);
+    const charCode = tagName.codePointAt(index);
+    if (charCode !== undefined) {
+      hash = charCode + ((hash << 5) - hash);
+    }
   }
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || 'default';
 };
 
 const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
@@ -164,10 +167,10 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
   const upload = useUpload();
   // Initialize form with document data in edit mode
   useEffect(() => {
-    if (isEditMode) {
+    if (isEditMode && document) {
       setDocumentName(document.documentName);
       setSelectedTags(document.tags.map((tag) => tag.id));
-      setDocumentStatus(document.status.id);
+      setDocumentStatus(document.status?.id || '');
 
       // Find and set document type
       const documentType = documentTypes.find((type) => type.id === document.type?.id);
@@ -287,7 +290,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
       setIsDragOver(false);
 
       const files = [...e.dataTransfer.files];
-      if (files.length > 0) {
+      if (files.length > 0 && files[0]) {
         handleFileSelect(files[0]);
       }
     },
@@ -366,10 +369,10 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
             tags: tagIds,
             typeId: selectedDocumentType.id,
             statusId: selectedStatusObject.id,
-            fileName: document.fileName
+            fileName: document?.fileName || ''
           };
           // Update document
-          await wingManApi.patch(`/documents/${document.id}`, requestData);
+          await wingManApi.patch(`/documents/${document?.id}`, requestData);
 
           setUploadProgress(100);
         } else if (!isEditMode && onUpload) {
@@ -638,7 +641,6 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                         {documentTypes.map((type) => (
                           <SelectItem
                             key={type.id}
-                            value={type.id}
                             classNames={{
                               base: 'hover:!bg-blue-100 data-[hover=true]:!bg-blue-100 data-[selected=true]:!bg-blue-200'
                             }}
@@ -688,7 +690,6 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                         {availableStatuses.map((status) => (
                           <SelectItem
                             key={status.id}
-                            value={status.id}
                             classNames={{
                               base: 'hover:!bg-blue-100 data-[hover=true]:!bg-blue-100 data-[selected=true]:!bg-blue-200'
                             }}
@@ -744,7 +745,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                         onDrop={handleDrop}
                         acceptedFileTypes='.pdf,.jpg,.jpeg,.png'
                         maxFileSize={10 * 1024 * 1024}
-                        disabled={isEditMode}
+                        disabled={Boolean(isEditMode)}
                       />
                     )}
                   </FormField>

@@ -248,6 +248,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
         // Upload files one by one and track them by index
         for (let i = 0; i < newFiles.length; i++) {
           const file = newFiles[i];
+          if (!file?.file) continue;
           const fileId = file.id;
           
           setCurrentUploadingFile(file.file.name);
@@ -305,7 +306,7 @@ export const MediaUpload: React.FC<MediaUploadProps> = ({
               }
             );
           } catch (error) {
-            console.error(`Upload failed for file ${file.file.name}:`, error);
+            console.error(`Upload failed for file ${file?.file?.name}:`, error);
             // Error already handled in the error callback above
           }
         }

@@ -23,7 +23,7 @@ export default function AvailabilityFilter({
 
   const options = [
     {
-      key: null,
+      key: undefined,
       label: t('talentPool.availability.all'),
       icon: 'solar:users-group-rounded-outline'
     },

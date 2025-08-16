@@ -27,7 +27,9 @@ import { type BroadcastPost } from '../../types';
 // Helper functions for date conversion
 const dateToCalendarDate = (date: Date | null | undefined): CalendarDate | null => {
   if (!date) return null;
-  return parseDate(date.toISOString().split('T')[0]);
+  const dateString = date.toISOString().split('T')[0];
+  if (!dateString) return null;
+  return parseDate(dateString);
 };
 
 const calendarDateToDate = (calendarDate: CalendarDate | null): Date | null => {
@@ -59,16 +61,16 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
   const [localSearchQuery, setLocalSearchQuery] = useState(filters.searchQuery);
 
   const categories = [
-    'Technology',
-    'Design',
-    'Business',
-    'Marketing',
-    'Development',
-    'AI & ML',
-    'Startup',
-    'Career',
-    'Remote Work',
-    'Productivity'
+    { key: 'technology', label: t('filters.categories.technology') },
+    { key: 'design', label: t('filters.categories.design') },
+    { key: 'business', label: t('filters.categories.business') },
+    { key: 'marketing', label: t('filters.categories.marketing') },
+    { key: 'development', label: t('filters.categories.development') },
+    { key: 'aiMl', label: t('filters.categories.aiMl') },
+    { key: 'startup', label: t('filters.categories.startup') },
+    { key: 'career', label: t('filters.categories.career') },
+    { key: 'remoteWork', label: t('filters.categories.remoteWork') },
+    { key: 'productivity', label: t('filters.categories.productivity') }
   ];
 
 
@@ -96,7 +98,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
       <CardHeader className='flex items-center justify-between'>
         <div className='flex items-center gap-2'>
           <Icon icon='solar:filter-linear' className='h-5 w-5' />
-          <h3 className='text-lg font-semibold'>Filters</h3>
+          <h3 className='text-lg font-semibold'>{t('filters.title')}</h3>
           {activeFiltersCount > 0 && (
             <Chip size='sm' color='primary' variant='flat'>
               {activeFiltersCount}
@@ -110,17 +112,17 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
           startContent={<Icon icon='solar:arrow-left-linear' className='h-4 w-4' />}
           className='text-foreground-600 hover:text-primary'
         >
-          Topics
+{t('topics.title')}
         </Button>
       </CardHeader>
 
       <CardBody className='space-y-6'>
         {/* Search */}
         <div className='space-y-2'>
-          <label className='text-sm font-medium'>Search</label>
+          <label className='text-sm font-medium'>{t('filters.labels.search')}</label>
           <div className='flex gap-2'>
             <Input
-              placeholder='Search posts...'
+              placeholder={t('placeholders.searchPosts')}
               value={localSearchQuery}
               onValueChange={setLocalSearchQuery}
               onKeyDown={handleKeyPress}
@@ -137,7 +139,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
 
         {/* Content Types */}
         <div className='space-y-2'>
-          <label className='text-sm font-medium'>Content Types</label>
+          <label className='text-sm font-medium'>{t('filters.labels.contentTypes')}</label>
           <CheckboxGroup
             value={[]}
             onValueChange={() => {}}
@@ -149,13 +151,13 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
             <Checkbox value='with-media'>
               <div className='flex items-center gap-2'>
                 <Icon icon='solar:gallery-linear' className='h-4 w-4' />
-                <span className='text-sm'>Posts with Media</span>
+                <span className='text-sm'>{t('filters.options.postsWithMedia')}</span>
               </div>
             </Checkbox>
             <Checkbox value='text-only'>
               <div className='flex items-center gap-2'>
                 <Icon icon='solar:document-text-linear' className='h-4 w-4' />
-                <span className='text-sm'>Text Only</span>
+                <span className='text-sm'>{t('filters.options.textOnly')}</span>
               </div>
             </Checkbox>
           </CheckboxGroup>
@@ -165,17 +167,17 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
 
         {/* Category */}
         <div className='space-y-2'>
-          <label className='text-sm font-medium'>Category</label>
+          <label className='text-sm font-medium'>{t('filters.labels.category')}</label>
           <Select
             selectedKeys={filters.category ? [filters.category] : []}
             onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0] as string;
+              const selected = Array.from(keys)[0] as string | undefined;
               setCategory(selected || null);
             }}
-            placeholder='Select category'
+            placeholder={t('placeholders.selectCategory')}
           >
-            {categories.map((category) => (
-              <SelectItem key={category}>{category}</SelectItem>
+{categories.map((category) => (
+              <SelectItem key={category.key}>{category.label}</SelectItem>
             ))}
           </Select>
         </div>
@@ -184,14 +186,14 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
 
         {/* Topic */}
         <div className='space-y-2'>
-          <label className='text-sm font-medium'>Topic</label>
+          <label className='text-sm font-medium'>{t('filters.labels.topic')}</label>
           <Select
             selectedKeys={filters.topicId ? [filters.topicId] : []}
             onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0] as string;
+              const selected = Array.from(keys)[0] as string | undefined;
               setTopic(selected || null);
             }}
-            placeholder='Select topic'
+            placeholder={t('placeholders.selectTopic')}
             isLoading={!topics}
           >
             {topics?.map((topic: any) => (
@@ -209,10 +211,10 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
 
         {/* Date Range */}
         <div className='space-y-2'>
-          <label className='text-sm font-medium'>Date Range</label>
+          <label className='text-sm font-medium'>{t('filters.dateRange')}</label>
           <div className='grid grid-cols-2 gap-2'>
             <DatePicker
-              label='From'
+label={t('filters.dateRange.from')}
               value={dateToCalendarDate(filters.dateRange?.from || null)}
               onChange={(date) =>
                 setDateRange({
@@ -222,7 +224,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
               }
             />
             <DatePicker
-              label='To'
+label={t('filters.dateRange.to')}
               value={dateToCalendarDate(filters.dateRange?.to || null)}
               onChange={(date) =>
                 setDateRange({
@@ -245,7 +247,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
             isDisabled={activeFiltersCount === 0}
             fullWidth
           >
-            Clear All
+{t('filters.actions.clearAll')}
           </Button>
           <Button 
             color='primary' 
@@ -253,7 +255,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
             fullWidth
             startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
           >
-            Back to Topics
+{t('filters.actions.backToTopics')}
           </Button>
         </div>
       </CardBody>

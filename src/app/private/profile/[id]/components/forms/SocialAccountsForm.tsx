@@ -56,22 +56,30 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
 
   const handlePlatformChange = (index: number, platform: string) => {
     const account = socialAccounts[index];
+    if (!account) return;
     const baseUrl = generateBaseUrl(platform, account.username);
     onUpdate(index, { 
       ...account, 
       platform: platform as SocialAccount['platform'],
-      url: baseUrl || account.url
-    });
+      url: baseUrl || account.url,
+      id: account.id,
+      username: account.username,
+      isPublic: account.isPublic
+    } as SocialAccount);
   };
 
   const handleUsernameChange = (index: number, username: string) => {
     const account = socialAccounts[index];
+    if (!account) return;
     const baseUrl = generateBaseUrl(account.platform, username);
     onUpdate(index, { 
       ...account, 
       username,
-      url: baseUrl || account.url
-    });
+      url: baseUrl || account.url,
+      id: account.id,
+      platform: account.platform,
+      isPublic: account.isPublic
+    } as SocialAccount);
   };
 
   return (

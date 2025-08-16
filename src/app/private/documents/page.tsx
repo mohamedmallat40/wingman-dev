@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { useUpdateDocument, useUploadDocument } from '@root/modules/documents/hooks/use-documents';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
@@ -36,9 +35,6 @@ export default function DocumentsPage() {
   const [viewingDocument, setViewingDocument] = useState<IDocument | null>(null);
   const [showViewerDrawer, setShowViewerDrawer] = useState(false);
 
-  // Add these mutations after existing hooks
-  const uploadMutation = useUploadDocument();
-  const updateMutation = useUpdateDocument();
 
   // Enhanced state management using custom hooks
   const documentState = useDocumentState();
@@ -107,28 +103,6 @@ export default function DocumentsPage() {
     setShowUploadModal(true);
   }, []);
 
-  const handleUpload = useCallback(
-    async (data: { name: string; tags: string[]; file: File; type: string; status: string }) => {
-      try {
-        const formData = new FormData();
-        formData.append('image', data.file);
-        formData.append('documentName', data.name);
-        formData.append('typeId', data.type);
-        formData.append('statusId', data.status);
-
-        for (const tagId of data.tags) {
-          formData.append('tags', tagId);
-        }
-
-        await uploadMutation.mutateAsync(formData);
-        setShowUploadModal(false);
-      } catch (error) {
-        console.error('Upload failed:', error);
-        throw error;
-      }
-    },
-    [uploadMutation]
-  );
 
   const handleEditDocument = useCallback((document: IDocument) => {
     setModalMode('edit');
@@ -146,35 +120,6 @@ export default function DocumentsPage() {
     setViewingDocument(null);
   }, []);
 
-  const handleUpdate = useCallback(
-    async (
-      documentId: string,
-      data: { name: string; tags: string[]; file?: File; type: string; status: string }
-    ) => {
-      try {
-        const formData = new FormData();
-        formData.append('documentName', data.name);
-        formData.append('typeId', data.type);
-        formData.append('statusId', data.status);
-
-        if (data.file) {
-          formData.append('image', data.file);
-        }
-
-        for (const tagId of data.tags) {
-          formData.append('tags', tagId);
-        }
-
-        await updateMutation.mutateAsync({ documentId, formData });
-        setShowUploadModal(false);
-        setEditingDocument(null);
-      } catch (error) {
-        console.error('Update failed:', error);
-        throw error;
-      }
-    },
-    [updateMutation]
-  );
 
   const handleRefresh = useCallback(() => {
     // In a real app, this would refetch the data
@@ -295,8 +240,6 @@ export default function DocumentsPage() {
       <DocumentUploadModal
         isOpen={showUploadModal}
         onClose={handleUploadModalClose}
-        onUpload={handleUpload}
-        onUpdate={handleUpdate}
         document={editingDocument}
         mode={modalMode}
       />

@@ -16,6 +16,9 @@ interface DocumentTabsProperties {
   showFilters?: boolean;
   viewMode?: 'list' | 'grid';
   onViewModeChange?: (mode: 'list' | 'grid') => void;
+  searchQuery?: string;
+  onSearchChange?: (query: string) => void;
+  onSearch?: (query: string) => void;
 }
 
 const DocumentTabs: React.FC<DocumentTabsProperties> = ({
@@ -26,7 +29,10 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
   onToggleFilters,
   showFilters = false,
   viewMode = 'list',
-  onViewModeChange
+  onViewModeChange,
+  searchQuery,
+  onSearchChange,
+  onSearch
 }) => {
   const t = useTranslations();
 

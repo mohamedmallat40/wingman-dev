@@ -127,7 +127,7 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
             onPress={onClose}
             className='text-white hover:bg-white/10'
             size='lg'
-            aria-label="Close"
+            aria-label={t('accessibility.close')}
           >
             <Icon icon='solar:close-circle-bold' className='h-5 w-5' />
           </Button>
@@ -152,7 +152,7 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
               <div className='bg-black/40 backdrop-blur-md rounded-full px-3 py-1'>
                 <div className='flex items-center gap-2 text-white/70 text-xs'>
                   <Icon icon='solar:keyboard-linear' className='h-3 w-3' />
-                  <span>Use ← → keys</span>
+                  <span>{t('accessibility.navigationKeys')}</span>
                 </div>
               </div>
             </div>
@@ -224,7 +224,7 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                   onPress={handlePrevious}
                   className='absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 border-white/30 text-white backdrop-blur-md hover:bg-white/30 hover:scale-110 transition-all duration-200 shadow-lg z-10'
                   size='lg'
-                  aria-label="Previous attachment"
+                  aria-label={t('accessibility.previousAttachment')}
                 >
                   <Icon icon='solar:alt-arrow-left-bold' className='h-5 w-5' />
                 </Button>
@@ -236,7 +236,7 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                   onPress={handleNext}
                   className='absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 border-white/30 text-white backdrop-blur-md hover:bg-white/30 hover:scale-110 transition-all duration-200 shadow-lg z-10'
                   size='lg'
-                  aria-label="Next attachment"
+                  aria-label={t('accessibility.nextAttachment')}
                 >
                   <Icon icon='solar:alt-arrow-right-bold' className='h-5 w-5' />
                 </Button>
@@ -252,9 +252,8 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                   className='flex gap-3 overflow-x-auto pb-2 max-w-full' 
                   style={{ 
                     scrollbarWidth: 'none', 
-                    msOverflowStyle: 'none',
-                    WebkitScrollbar: { display: 'none' }
-                  }}
+                    msOverflowStyle: 'none'
+                  } as React.CSSProperties}
                 >
                   {attachments.map((attachment, index) => {
                     const type = getFileType(attachment);

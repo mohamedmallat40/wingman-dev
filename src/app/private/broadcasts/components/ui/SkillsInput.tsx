@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSkills } from '@/app/private/skills/hooks/useSkills';
 import { useCreateSkill } from '@/app/private/skills/hooks/useCreateSkill';
 import { type Skill } from '@/app/private/skills/types';
@@ -14,6 +15,7 @@ interface SkillsInputProps {
 }
 
 export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => {
+  const t = useTranslations('broadcasts');
   const [inputValue, setInputValue] = useState('');
   const { data: skills, isLoading } = useSkills();
   const createSkill = useCreateSkill();
@@ -34,7 +36,7 @@ export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => 
     return availableSkills.filter(skill => value.includes(skill.id));
   }, [availableSkills, value]);
 
-  const handleSelectionChange = (key: string | null) => {
+  const handleSelectionChange = (key: any) => {
     if (!key || value.includes(key)) return;
     if (value.length < 10) {
       onChange([...value, key]);
@@ -81,13 +83,13 @@ export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => 
     <div className="space-y-4">
       <div className="space-y-1">
         <Autocomplete
-          placeholder="Search skills or type to create new..."
+          placeholder={t('placeholders.searchSkills')}
           inputValue={inputValue}
           onInputChange={handleInputChange}
           onSelectionChange={handleSelectionChange}
           onKeyDown={handleKeyDown}
           isLoading={isLoading}
-          description={`${value.length}/10 skills`}
+description={t('skills.count', { current: value.length, max: 10 })}
           startContent={
             <Icon icon="solar:tag-circle-outline" className="text-success h-4 w-4" />
           }
@@ -96,34 +98,36 @@ export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => 
             listboxWrapper: 'max-h-64'
           }}
         >
-          {filteredSkills.map((skill) => (
-            <AutocompleteItem
-              key={skill.id}
-              textValue={skill.key}
-              startContent={
-                <Icon icon="solar:tag-linear" className="h-4 w-4" />
-              }
-              classNames={{
-                base: 'hover:bg-success-50 dark:hover:bg-success-900/50 transition-colors duration-200'
-              }}
-            >
-              {skill.key}
-            </AutocompleteItem>
-          ))}
-          {inputValue && filteredSkills.length === 0 && (
-            <AutocompleteItem
-              key="create-new"
-              textValue={`Create "${inputValue}"`}
-              startContent={
-                <Icon icon="solar:add-circle-linear" className="h-4 w-4 text-success" />
-              }
-              classNames={{
-                base: 'text-success hover:bg-success-50 dark:hover:bg-success-900/50'
-              }}
-            >
-              Create "{inputValue}"
-            </AutocompleteItem>
-          )}
+          {[
+            ...filteredSkills.map((skill) => (
+              <AutocompleteItem
+                key={skill.id}
+                textValue={skill.key}
+                startContent={
+                  <Icon icon="solar:tag-linear" className="h-4 w-4" />
+                }
+                classNames={{
+                  base: 'hover:bg-success-50 dark:hover:bg-success-900/50 transition-colors duration-200'
+                }}
+              >
+                {skill.key}
+              </AutocompleteItem>
+            )),
+            ...(inputValue && filteredSkills.length === 0 ? [
+              <AutocompleteItem
+                key="create-new"
+                textValue={t('skills.createNew', { skill: inputValue })}
+                startContent={
+                  <Icon icon="solar:add-circle-linear" className="h-4 w-4 text-success" />
+                }
+                classNames={{
+                  base: 'text-success hover:bg-success-50 dark:hover:bg-success-900/50'
+                }}
+              >
+                {t('skills.createNew', { skill: inputValue })}
+              </AutocompleteItem>
+            ] : [])
+          ]}
         </Autocomplete>
       </div>
 

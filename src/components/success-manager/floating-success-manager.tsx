@@ -262,7 +262,7 @@ const FloatingSuccessManager: React.FC<FloatingSuccessManagerProps> = ({ classNa
                       <div>
                         <div className="flex items-center gap-3 mb-1">
                           <h1 className="text-2xl font-bold text-foreground">Mr. Lode Schoors</h1>
-                          <Badge color="success" variant="dot" size="sm">Online</Badge>
+                          <Badge color="success" variant="flat" size="sm">Online</Badge>
                         </div>
                         <p className="text-sm text-default-600 flex items-center gap-2">
                           <Icon icon="solar:star-linear" className="h-4 w-4 text-warning" />

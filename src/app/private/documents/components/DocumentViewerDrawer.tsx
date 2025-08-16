@@ -70,13 +70,13 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
           <iframe
             src={previewUrl}
             className='h-full w-full border-0'
-            title={`Preview of ${document.documentName}`}
+            title={`Preview of ${document?.documentName || 'Document'}`}
             onError={() => {
               console.error('Failed to load PDF preview');
             }}
           />
           {/* Fallback message if PDF fails to load */}
-          <div className='hidden' id={`pdf-fallback-${document.id}`}>
+          <div className='hidden' id={`pdf-fallback-${document?.id}`}>
             <div className='flex h-full items-center justify-center'>
               <div className='text-center'>
                 <Icon icon='solar:file-text-linear' className='mx-auto mb-4 h-16 w-16 text-default-400' />
@@ -90,7 +90,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                   startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
                   as='a'
                   href={downloadUrl || '#'}
-                  download={document.documentName}
+                  download={document?.documentName}
                 >
                   Download PDF
                 </Button>
@@ -106,7 +106,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
         <div className='flex h-full items-center justify-center p-4 bg-default-50'>
           <motion.img
             src={previewUrl}
-            alt={document.documentName}
+            alt={document?.documentName || 'Document'}
             className='max-h-full max-w-full object-contain rounded-lg shadow-lg cursor-zoom-in'
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -139,7 +139,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
             className='mt-4'
             as='a'
             href={downloadUrl || '#'}
-            download={document.documentName}
+            download={document?.documentName}
           >
             Download File
           </Button>
@@ -191,7 +191,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                     startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
                     as='a'
                     href={downloadUrl || '#'}
-                    download={document.documentName}
+                    download={document?.documentName}
                   >
                     Download
                   </Button>
