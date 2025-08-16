@@ -16,7 +16,7 @@ const initialState: DocumentState = {
   searchQuery: '',
   filters: {},
   showFilters: false,
-  viewMode: 'list',
+  viewMode: 'grid',
   documentsCount: {
     'all-documents': 0,
     'shared-with-me': 0
