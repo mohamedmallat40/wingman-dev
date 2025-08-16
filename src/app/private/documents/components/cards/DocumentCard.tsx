@@ -38,35 +38,35 @@ const getDocumentIcon = (typeName: string) => {
     { icon: string; color: string; bgColor: string; gradient: string }
   > = {
     Proposal: {
-      icon: 'solar:document-text-bold-duotone',
+      icon: 'solar:document-text-outline',
       color: 'text-primary-600 dark:text-primary-400',
       bgColor:
         'bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/30',
       gradient: 'from-primary/10 to-primary-500/20'
     },
     Contract: {
-      icon: 'solar:shield-check-bold-duotone',
+      icon: 'solar:shield-check-outline',
       color: 'text-success-600 dark:text-success-400',
       bgColor:
         'bg-gradient-to-br from-success-50 to-success-100 dark:from-success-900/20 dark:to-success-800/30',
       gradient: 'from-success/10 to-success-500/20'
     },
     Invoice: {
-      icon: 'solar:bill-list-bold-duotone',
+      icon: 'solar:bill-list-outline',
       color: 'text-warning-600 dark:text-warning-400',
       bgColor:
         'bg-gradient-to-br from-warning-50 to-warning-100 dark:from-warning-900/20 dark:to-warning-800/30',
       gradient: 'from-warning/10 to-warning-500/20'
     },
     Spreadsheet: {
-      icon: 'solar:chart-square-bold-duotone',
+      icon: 'solar:chart-square-outline',
       color: 'text-secondary-600 dark:text-secondary-400',
       bgColor:
         'bg-gradient-to-br from-secondary-50 to-secondary-100 dark:from-secondary-900/20 dark:to-secondary-800/30',
       gradient: 'from-secondary/10 to-secondary-500/20'
     },
     Template: {
-      icon: 'solar:file-text-bold-duotone',
+      icon: 'solar:file-text-outline',
       color: 'text-default-600 dark:text-default-400',
       bgColor:
         'bg-gradient-to-br from-default-50 to-default-100 dark:from-default-800/30 dark:to-default-700/40',
