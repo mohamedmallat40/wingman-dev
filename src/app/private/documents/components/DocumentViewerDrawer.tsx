@@ -188,7 +188,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                     size='sm'
                     variant='flat'
                     color='primary'
-                    startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
+                    startContent={<Icon icon='solar:download-outline' className='h-4 w-4' />}
                     as='a'
                     href={downloadUrl || '#'}
                     download={document?.documentName}
@@ -200,7 +200,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       size='sm'
                       variant='flat'
                       color='secondary'
-                      startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
+                      startContent={<Icon icon='solar:pen-outline' className='h-4 w-4' />}
                       onPress={() => {
                         onEdit(document);
                         onClose();
@@ -214,7 +214,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       size='sm'
                       variant='flat'
                       color='danger'
-                      startContent={<Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />}
+                      startContent={<Icon icon='solar:trash-bin-minimalistic-outline' className='h-4 w-4' />}
                       onPress={() => {
                         onDelete(document);
                         onClose();
@@ -223,6 +223,15 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       Delete
                     </Button>
                   )}
+                  <Button
+                    isIconOnly
+                    size='sm'
+                    variant='light'
+                    onPress={onClose}
+                    className='hover:bg-default-100 dark:hover:bg-default-800'
+                  >
+                    <Icon icon='solar:close-circle-outline' className='h-4 w-4' />
+                  </Button>
                 </div>
               </div>
             </DrawerHeader>
