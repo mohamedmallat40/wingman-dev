@@ -922,14 +922,6 @@
       "loadTopics": "Échec du chargement des sujets",
       "tryAgainLater": "Veuillez réessayer plus tard"
     },
-    "topics": {
-      "followingCount": "Suivi {count}",
-      "hotTopics": "Sujets Tendance",
-      "postCount": "{count, plural, one {# publication} other {# publications}}",
-      "noTopicsAvailable": "Aucun sujet disponible",
-      "noTopicsMatch": "Aucun sujet ne correspond à vos filtres",
-      "topicsWillAppear": "Les sujets apparaîtront ici une fois qu'ils seront disponibles"
-    },
     "page": {
       "filters": "Filtres",
       "topics": "Sujets",
@@ -988,6 +980,67 @@
       "success": "Succès",
       "confirm": "Confirmer",
       "remove": "Supprimer"
+    },
+    "topics": {
+      "title": "Sujets",
+      "all": "Tous",
+      "following": "Suivi",
+      "trending": "Tendances",
+      "hotTopics": "Sujets Tendance",
+      "searchPlaceholder": "Rechercher des sujets...",
+      "noTopicsFound": "Aucun sujet trouvé",
+      "noTopicsAvailable": "Aucun sujet disponible",
+      "noTopicsMatch": "Aucun sujet ne correspond à votre recherche",
+      "topicsWillAppear": "Les sujets apparaîtront ici lorsqu'ils seront disponibles",
+      "follow": "Suivre",
+      "unfollow": "Ne plus suivre",
+      "followingCount": "Suivi {count}",
+      "postCount": "{count, plural, =0 {Aucun post} one {# post} other {# posts}}",
+      "followers": "{count, plural, =0 {Aucun abonné} one {# abonné} other {# abonnés}}",
+      "posts": "{count, plural, =0 {Aucun post} one {# post} other {# posts}}",
+      "feedHeader": {
+        "clearFilter": "Effacer le Filtre",
+        "showingPostsFrom": "Affichage des posts de {topic} uniquement",
+        "topicLabel": "Sujet"
+      }
+    },
+    "filters": {
+      "title": "Filtres",
+      "apply": "Appliquer les Filtres",
+      "clear": "Tout Effacer",
+      "sortBy": "Trier par",
+      "dateRange": "Plage de Dates",
+      "postType": "Type de Post",
+      "labels": {
+        "search": "Recherche",
+        "contentTypes": "Types de Contenu",
+        "category": "Catégorie",
+        "topic": "Sujet"
+      },
+      "options": {
+        "postsWithMedia": "Posts avec Média",
+        "textOnly": "Texte Seulement"
+      },
+      "dateRange": {
+        "from": "De",
+        "to": "À"
+      },
+      "categories": {
+        "technology": "Technologie",
+        "design": "Design",
+        "business": "Affaires",
+        "marketing": "Marketing",
+        "development": "Développement",
+        "aiMl": "IA & ML",
+        "startup": "Startup",
+        "career": "Carrière",
+        "remoteWork": "Travail à Distance",
+        "productivity": "Productivité"
+      },
+      "actions": {
+        "clearAll": "Tout Effacer",
+        "backToTopics": "Retour aux Sujets"
+      }
     }
   },
   "navigation": {

@@ -27,7 +27,9 @@ import { type BroadcastPost } from '../../types';
 // Helper functions for date conversion
 const dateToCalendarDate = (date: Date | null | undefined): CalendarDate | null => {
   if (!date) return null;
-  return parseDate(date.toISOString().split('T')[0]);
+  const dateString = date.toISOString().split('T')[0];
+  if (!dateString) return null;
+  return parseDate(dateString);
 };
 
 const calendarDateToDate = (calendarDate: CalendarDate | null): Date | null => {
@@ -169,7 +171,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
           <Select
             selectedKeys={filters.category ? [filters.category] : []}
             onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0] as string;
+              const selected = Array.from(keys)[0] as string | undefined;
               setCategory(selected || null);
             }}
             placeholder={t('placeholders.selectCategory')}
@@ -188,7 +190,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
           <Select
             selectedKeys={filters.topicId ? [filters.topicId] : []}
             onSelectionChange={(keys) => {
-              const selected = Array.from(keys)[0] as string;
+              const selected = Array.from(keys)[0] as string | undefined;
               setTopic(selected || null);
             }}
             placeholder={t('placeholders.selectTopic')}

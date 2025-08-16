@@ -131,7 +131,6 @@ export const ContentTab: React.FC<ContentTabProps> = ({
                 {availableTopics.map((topic) => (
                   <SelectItem
                     key={topic.id}
-                    value={topic.id}
                     textValue={topic.title}
                     startContent={
                       <Icon

@@ -28,7 +28,7 @@ export const MediaTab: React.FC<MediaTabProps> = ({
           files={mediaFiles}
           onFilesChange={(files) => {
             if (typeof files === 'function') {
-              setMediaFiles(files);
+              setMediaFiles((prev) => files(prev));
             } else {
               setMediaFiles(files);
             }

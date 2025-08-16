@@ -1,20 +1,6 @@
 import { API_ROUTES } from '@/lib/api-routes';
 import wingManApi from '@/lib/axios';
-
-// ===== TYPES =====
-export interface CreatePostData {
-  title: string;
-  description: string;
-  topics: string[]; // Array of topic UUIDs
-  skills: string[]; // Array of skill UUIDs
-  attachments: string[]; // Array of filenames from successful uploads
-}
-
-export interface FeedParams {
-  page?: number;
-  limit?: number;
-  topics?: string[]; // Array of topic IDs for filtering
-}
+import type { CreatePostData, FeedParams } from '../types';
 
 // ===== POSTS API =====
 

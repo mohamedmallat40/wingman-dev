@@ -9,19 +9,19 @@ import { useParams, useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
+import { BREADCRUMB_CONFIG } from './components/constants';
 //import { TeamDetailsHeader } from './components/header';
 //import { TeamDetailsTabs } from './components/navigation';
 import { TeamMembersTab } from './components/tabs/members';
 import { TeamOverviewTab } from './components/tabs/overview';
-import { useTeamDetails } from './hooks/useTeamsDetails';
 //import { TeamProjectsTab } from './components/tabs/projects';
 import { TeamToolsTab } from './components/tabs/tools-tab';
+import { TeamDetailsHeader } from './components/teams-header';
+import { TeamDetailsTabs } from './components/teams-navigation';
+import { useTeamDetails } from './hooks/useTeamsDetails';
 // Import constants
 // Import hooks
 import { type TeamDetailsTab as TabType } from './types';
-import { BREADCRUMB_CONFIG } from './components/constants';
-import { TeamDetailsHeader } from './components/teams-header';
-import { TeamDetailsTabs } from './components/teams-navigation';
 
 const TeamDetailsPage: React.FC = () => {
   // ============================================================================
@@ -37,7 +37,7 @@ const TeamDetailsPage: React.FC = () => {
 
   // Custom hook to fetch team data
   const { team, loading, error, refetch } = useTeamDetails(teamId);
-  
+
   const currentUserId = 'current-user-id';
   const isOwner = team?.owner.id === currentUserId;
   // ============================================================================
@@ -98,7 +98,7 @@ const TeamDetailsPage: React.FC = () => {
       }
       case 'tools':
         return <TeamToolsTab {...commonProperties} />;
-        /* 
+      /* 
       case 'projects':
         return <TeamProjectsTab {...commonProps} />; */
       default: {

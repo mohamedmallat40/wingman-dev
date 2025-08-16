@@ -148,7 +148,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
             {currentFile.type === 'image' ? (
               <img
                 src={currentFile.preview || currentFile.url}
-                alt={currentFile.alt || `Image ${currentIndex + 1}`}
+                alt={currentFile.altText || `Image ${currentIndex + 1}`}
                 className='max-h-full max-w-full object-contain'
                 style={{ userSelect: 'none' }}
               />

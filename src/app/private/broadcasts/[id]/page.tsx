@@ -76,6 +76,7 @@ label: primaryTopic.title || primaryTopic.name || t('breadcrumbs.topic'),
     // Add post title
     breadcrumbs.push({
 label: post?.title || t('breadcrumbs.postDetail'),
+      href: '',
       icon: 'solar:document-text-linear'
     });
 

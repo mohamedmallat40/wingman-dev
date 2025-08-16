@@ -19,6 +19,7 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 interface Notification {
   id: string;
@@ -178,6 +179,7 @@ export default function NotificationCenter({
   onClose,
   className = ''
 }: NotificationCenterProps) {
+  const t = useTranslations('broadcasts');
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
   const [liveUpdates, setLiveUpdates] = useState<LiveUpdate[]>(MOCK_LIVE_UPDATES);
   const [trending, setTrending] = useState<TrendingItem[]>(MOCK_TRENDING);
@@ -209,7 +211,7 @@ export default function NotificationCenter({
       ];
 
       const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
-      setLiveUpdates((prev) => [randomUpdate, ...prev.slice(0, 9)]);
+      setLiveUpdates((prev) => [randomUpdate, ...prev.slice(0, 9)].filter(Boolean));
     }, 10000);
 
     return () => clearInterval(interval);
@@ -322,11 +324,12 @@ export default function NotificationCenter({
                   <Icon icon='solar:bell-bold' className='text-primary h-6 w-6' />
                   {unreadCount > 0 && (
                     <Badge
-                      content={unreadCount > 99 ? '99+' : unreadCount}
                       color='danger'
                       size='sm'
                       className='absolute -top-1 -right-1'
-                    />
+                    >
+                      {unreadCount > 99 ? '99+' : unreadCount.toString()}
+                    </Badge>
                   )}
                 </div>
                 <div>
@@ -389,7 +392,7 @@ export default function NotificationCenter({
                         selectedKeys={[filter]}
                         onSelectionChange={(keys) => setFilter(Array.from(keys)[0] as string)}
                         classNames={{
-                          content: 'bg-background text-foreground border border-default-200'
+                          base: 'bg-background text-foreground border border-default-200'
                         }}
                       >
                         <DropdownItem key='all' className='text-foreground hover:bg-default-100'>

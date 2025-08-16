@@ -1,401 +1,652 @@
-# Wingman - Next.js 15 TypeScript & HeroUI Platform
+# Wingman - Enterprise-Grade Next.js 15 Platform
 
-A modern, scalable web application built with cutting-edge technologies including **Next.js 15**, **React 19**, **TypeScript**, **HeroUI**, **TailwindCSS**, and more. This platform features authentication, user management, talent pools, document management, broadcasts, and a comprehensive dashboard system.
+A comprehensive, scalable web application built with cutting-edge technologies including **Next.js 15**, **React 19**, **TypeScript**, **HeroUI**, **TailwindCSS**, and advanced architectural patterns. This platform features authentication, talent management, document systems, broadcast communications, team collaboration, and comprehensive user profiles.
 
-## 🏗️ Project Architecture
+## 🏗️ Complete Project Architecture
 
 ```
 wingman/
 ├── 📁 src/
-│   ├── 📁 app/                    # Next.js 15 App Router
-│   │   ├── 📁 (public)/           # Public routes (marketing, auth)
-│   │   │   ├── 📁 components/     # Public-specific components
-│   │   │   ├── 📁 register/       # Registration flow with wizards
-│   │   │   ├── layout.tsx         # Public layout wrapper
-│   │   │   └── page.tsx           # Landing page
-│   │   ├── 📁 private/            # Protected routes (dashboard, profile)
-│   │   │   ├── 📁 dashboard/      # Main dashboard with tabs
-│   │   │   ├── 📁 profile/        # 🆕 Unified profile system
-│   │   │   │   ├── [id]/          # Dynamic user profiles
-│   │   │   │   └── page.tsx       # Current user redirect
-│   │   │   ├── 📁 talent-pool/    # ⭐ Featured talent management
-│   │   │   ├── 📁 documents/      # 📄 Document management system
-│   │   │   ├── 📁 broadcasts/     # 📢 Broadcast center
-│   │   │   ├── 📁 challenges/     # Challenge system
-│   │   │   ├── 📁 community/      # Community features
-│   │   │   ├── 📁 solutions/      # Solutions marketplace
-│   │   │   └── private-navbar.tsx # Private navigation
-│   │   ├── 📁 api/                # API routes
-│   │   └── layout.tsx             # Root layout
-│   ├── 📁 components/             # Shared UI components
-│   │   ├── 📁 landing/            # Landing page sections
-│   │   ├── 📁 providers/          # Context providers
-│   │   ├── 📁 ui/                 # Reusable UI elements
-│   │   └── 📁 layouts/            # Layout components
-│   ├── 📁 hooks/                  # Custom React hooks
-│   ├── 📁 lib/                    # Utilities and configurations
-│   │   ├── 📁 types/              # Global TypeScript types
-│   │   ├── axios.ts               # API client setup
-│   │   └── seo.ts                 # SEO utilities
-│   └── 📁 styles/                 # Global styles
-├── 📁 modules/                    # Feature modules
-│   ├── 📁 auth/                   # Authentication system
-│   ├── 📁 profile/                # Profile management
-└── 📁 messages/                   # i18n translations
+│   ├── 📁 app/                                    # Next.js 15 App Router
+│   │   ├── 📁 (public)/                          # 🌐 Public Routes (Marketing & Auth)
+│   │   │   ├── 📁 components/
+│   │   │   │   ├── basic-navbar.tsx               # Public navigation
+│   │   │   │   ├── footer.tsx                     # Site footer
+│   │   │   │   └── login.tsx                      # Login component
+│   │   │   ├── 📁 register/                       # 📋 Registration System
+│   │   │   │   ├── 📁 components/                 # Registration components
+│   │   │   │   │   ├── billing-address-form.tsx   # Billing forms
+│   │   │   │   │   ├── billing-form.tsx
+│   │   │   │   │   ├── category-selection-form.tsx
+│   │   │   │   │   ├── category-selection.tsx
+│   │   │   │   │   ├── email-password-form.tsx
+│   │   │   │   │   ├── personal-info-form.tsx
+│   │   │   │   │   ├── plan-selection-form.tsx
+│   │   │   │   │   ├── plan-selection.tsx
+│   │   │   │   │   ├── premium-wizard.tsx         # Premium registration flow
+│   │   │   │   │   ├── registration-details-form.tsx
+│   │   │   │   │   ├── registration-wizard.tsx    # Main wizard controller
+│   │   │   │   │   ├── simple-wizard.tsx          # Simple registration flow
+│   │   │   │   │   └── terms-checkbox.tsx
+│   │   │   │   └── page.tsx                       # Registration entry point
+│   │   │   ├── layout.tsx                         # Public layout wrapper
+│   │   │   └── page.tsx                           # Landing page
+│   │   ├── 📁 private/                            # 🔒 Protected Routes (Dashboard)
+│   │   │   ├── 📁 broadcasts/                     # 📢 Broadcast Communication System
+│   │   │   │   ├── 📁 [id]/
+│   │   │   │   │   └── page.tsx                   # Individual broadcast view
+│   │   │   │   ├── 📁 components/
+│   │   │   │   │   ├── 📁 cards/
+│   │   │   │   │   │   ├── PostCard.tsx           # Enhanced post display
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 filters/
+│   │   │   │   │   │   ├── BroadcastFilters.tsx   # Advanced filtering system
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 headers/
+│   │   │   │   │   │   └── TopicFeedHeader.tsx    # Topic navigation
+│   │   │   │   │   ├── 📁 lists/
+│   │   │   │   │   │   ├── BroadcastFeed.tsx      # Main feed container
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 modals/
+│   │   │   │   │   │   ├── ContentCreator.tsx     # Advanced post creator
+│   │   │   │   │   │   ├── DeleteConfirmationModal.tsx
+│   │   │   │   │   │   ├── ImageCarouselModal.tsx
+│   │   │   │   │   │   ├── NotificationCenter.tsx
+│   │   │   │   │   │   ├── PostAttachmentModal.tsx
+│   │   │   │   │   │   ├── 📁 content-creator/    # Content creation system
+│   │   │   │   │   │   │   ├── AdvancedTab.tsx    # Advanced options
+│   │   │   │   │   │   │   ├── ContentTab.tsx     # Content editing
+│   │   │   │   │   │   │   ├── FooterActions.tsx  # Action buttons
+│   │   │   │   │   │   │   ├── MediaTab.tsx       # Media upload/management
+│   │   │   │   │   │   │   ├── PreviewSection.tsx # Live preview
+│   │   │   │   │   │   │   ├── types.ts           # Content creator types
+│   │   │   │   │   │   │   └── utils.ts           # Utility functions
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 navigation/
+│   │   │   │   │   │   ├── LiveActivityBar.tsx    # Real-time activity
+│   │   │   │   │   │   ├── TopicSidebar.tsx       # Topic navigation
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 states/
+│   │   │   │   │   │   ├── BroadcastFeedSkeleton.tsx # Loading states
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 ui/
+│   │   │   │   │   │   ├── ReactionPicker.tsx     # Reaction system
+│   │   │   │   │   │   ├── SmartSearch.tsx        # Smart search component
+│   │   │   │   │   │   ├── SkillsInput.tsx        # Skills input component
+│   │   │   │   │   │   ├── SmartMediaPreview.tsx  # Media preview
+│   │   │   │   │   │   ├── PostCardSkeleton.tsx   # Post loading skeleton
+│   │   │   │   │   │   └── TopicSidebarSkeleton.tsx # Sidebar skeleton
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── 📁 hooks/
+│   │   │   │   │   ├── useBroadcasts.ts           # Main broadcast hooks
+│   │   │   │   │   ├── useCreatePost.ts           # Post creation
+│   │   │   │   │   ├── usePostById.ts             # Single post fetching
+│   │   │   │   │   ├── useSaveDraft.ts            # Draft management
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── 📁 services/
+│   │   │   │   │   └── broadcast.service.ts       # API integration
+│   │   │   │   ├── 📁 store/
+│   │   │   │   │   └── useBroadcastStore.ts       # State management
+│   │   │   │   ├── types.ts                       # TypeScript definitions
+│   │   │   │   └── page.tsx                       # Main broadcasts page
+│   │   │   ├── 📁 community/
+│   │   │   │   └── page.tsx                       # Community features
+│   │   │   ├── 📁 components/
+│   │   │   │   ├── avatar.tsx                     # Shared avatar component
+│   │   │   │   └── confirm-delete.tsx             # Shared delete confirmation
+│   │   │   ├── 📁 dashboard/                      # 📊 Main Dashboard System
+│   │   │   │   ├── 📁 community/
+│   │   │   │   │   └── page.tsx                   # Community dashboard
+│   │   │   │   ├── 📁 components/
+│   │   │   │   │   ├── 📁 header-container/
+│   │   │   │   │   │   └── header-container.tsx   # Dashboard header
+│   │   │   │   │   ├── 📁 quick-actions/
+│   │   │   │   │   │   └── quick-actions.tsx      # Quick action buttons
+│   │   │   │   │   └── 📁 tabs/
+│   │   │   │   │       └── tabs-routing.tsx       # Tab navigation
+│   │   │   │   ├── 📁 solutions/
+│   │   │   │   │   └── page.tsx                   # Solutions dashboard
+│   │   │   │   ├── layout.tsx                     # Dashboard layout
+│   │   │   │   └── page.tsx                       # Main dashboard
+│   │   │   ├── 📁 documents/                      # 📄 Document Management System
+│   │   │   │   ├── 📁 components/
+│   │   │   │   │   ├── DocumentViewerDrawer.tsx   # Document viewer
+│   │   │   │   │   ├── 📁 cards/
+│   │   │   │   │   │   ├── DocumentCard.tsx       # Document display card
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 filters/
+│   │   │   │   │   │   ├── DocumentFiltersPanel.tsx # Advanced filtering
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 lists/
+│   │   │   │   │   │   ├── DocumentListContainer.tsx # Document listing
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 modals/
+│   │   │   │   │   │   ├── DocumentShareModal.tsx  # Sharing system
+│   │   │   │   │   │   ├── DocumentUploadModal.tsx # Upload interface
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 navigation/
+│   │   │   │   │   │   ├── DocumentTabs.tsx        # Document navigation
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 states/
+│   │   │   │   │   │   ├── DocumentEmptyState.tsx  # Empty states
+│   │   │   │   │   │   ├── DocumentErrorState.tsx  # Error handling
+│   │   │   │   │   │   ├── DocumentLoadingSkeleton.tsx # Loading states
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── 📁 constants/
+│   │   │   │   │   └── index.ts                    # Document constants
+│   │   │   │   ├── 📁 hooks/
+│   │   │   │   │   ├── useDebouncedSearch.ts       # Optimized search
+│   │   │   │   │   ├── useDocumentFilters.ts       # Filter management
+│   │   │   │   │   ├── useDocumentState.ts         # State management
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── 📁 utils/
+│   │   │   │   │   ├── document-utilities.ts       # Document utilities
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── types.ts                        # Document types
+│   │   │   │   ├── README.md                       # Documentation
+│   │   │   │   └── page.tsx                        # Main documents page
+│   │   │   ├── 📁 my-challenges/
+│   │   │   │   └── page.tsx                        # User challenges
+│   │   │   ├── 📁 profile/                         # 👤 Unified Profile System
+│   │   │   │   ├── 📁 [id]/                        # Dynamic profile routes
+│   │   │   │   │   ├── 📁 components/
+│   │   │   │   │   │   ├── ActionButtons.tsx       # Reusable action buttons
+│   │   │   │   │   │   ├── CVUploadDrawer.tsx      # CV upload & parsing
+│   │   │   │   │   │   ├── ErrorState.tsx          # Error handling
+│   │   │   │   │   │   ├── ProfileClient.tsx       # Main client component
+│   │   │   │   │   │   ├── ProfileContent.tsx      # Content layout
+│   │   │   │   │   │   ├── ProfileHeader.tsx       # Profile header with completion
+│   │   │   │   │   │   ├── 📁 cards/
+│   │   │   │   │   │   │   ├── ExperienceCard.tsx  # Experience display
+│   │   │   │   │   │   │   └── SocialAccountCard.tsx # Social accounts
+│   │   │   │   │   │   ├── 📁 forms/
+│   │   │   │   │   │   │   ├── CertificationsForm.tsx # Certifications editing
+│   │   │   │   │   │   │   ├── EducationForm.tsx    # Education editing
+│   │   │   │   │   │   │   ├── EnhancedLanguagesForm.tsx # Language skills
+│   │   │   │   │   │   │   ├── ExperienceForm.tsx   # Experience editing
+│   │   │   │   │   │   │   ├── PersonalInfoForm.tsx # Personal info editing
+│   │   │   │   │   │   │   ├── SkillsForm.tsx       # Skills management
+│   │   │   │   │   │   │   ├── SocialAccountsForm.tsx # Social accounts
+│   │   │   │   │   │   │   └── index.ts
+│   │   │   │   │   │   ├── 📁 modals/               # Legacy modals (being phased out)
+│   │   │   │   │   │   │   ├── about-me.tsx
+│   │   │   │   │   │   │   ├── edit-personal-data.tsx
+│   │   │   │   │   │   │   ├── education-modal.tsx
+│   │   │   │   │   │   │   ├── experience-modal.tsx
+│   │   │   │   │   │   │   ├── language-modal.tsx
+│   │   │   │   │   │   │   ├── notes-modal.tsx
+│   │   │   │   │   │   │   ├── projects-modal.tsx
+│   │   │   │   │   │   │   ├── services-modal.tsx
+│   │   │   │   │   │   │   ├── skills-modal.tsx
+│   │   │   │   │   │   │   └── testimonials-modal.tsx
+│   │   │   │   │   │   └── 📁 sections/
+│   │   │   │   │   │       ├── EducationSection.tsx # Self-contained education
+│   │   │   │   │   │       ├── ExperienceSection.tsx # Self-contained experience
+│   │   │   │   │   │       ├── LanguagesSection.tsx # Self-contained languages
+│   │   │   │   │   │       ├── notes-section.tsx    # Notes management
+│   │   │   │   │   │       ├── projects-section.tsx # Projects showcase
+│   │   │   │   │   │       ├── services-section.tsx # Services offered
+│   │   │   │   │   │       ├── testimonials-section.tsx # Testimonials
+│   │   │   │   │   │       └── index.ts
+│   │   │   │   │   ├── 📁 services/
+│   │   │   │   │   │   ├── cv-service.ts            # CV parsing service
+│   │   │   │   │   │   └── language-service.ts      # Language data service
+│   │   │   │   │   ├── 📁 utils/
+│   │   │   │   │   │   ├── profile-styles.ts        # HeroUI styling utilities
+│   │   │   │   │   │   └── profileCompletion.ts     # Completion calculations
+│   │   │   │   │   ├── types.ts                     # Profile TypeScript types
+│   │   │   │   │   └── page.tsx                     # Dynamic profile page
+│   │   │   │   └── page.tsx                         # Current user redirect
+│   │   │   ├── 📁 skills/                           # 🎯 Skills Management System
+│   │   │   │   ├── 📁 hooks/
+│   │   │   │   │   ├── useCreateSkill.ts            # Skill creation
+│   │   │   │   │   └── useSkills.ts                 # Skills management
+│   │   │   │   ├── 📁 services/
+│   │   │   │   │   └── skills.service.ts            # Skills API
+│   │   │   │   └── types.ts                         # Skills types
+│   │   │   ├── 📁 solutions/
+│   │   │   │   └── page.tsx                         # Solutions marketplace
+│   │   │   ├── 📁 talent-pool/                      # ⭐ Advanced Talent Discovery
+│   │   │   │   ├── 📁 components/
+│   │   │   │   │   ├── 📁 cards/
+│   │   │   │   │   │   ├── TalentCard.tsx           # Individual talent display
+│   │   │   │   │   │   ├── TalentGroupCard.tsx      # Group/team cards
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 filters/
+│   │   │   │   │   │   ├── AvailabilityFilter.tsx   # Availability filtering
+│   │   │   │   │   │   ├── CountryFilter.tsx        # Location filtering
+│   │   │   │   │   │   ├── ExperienceFilter.tsx     # Experience level
+│   │   │   │   │   │   ├── ProfessionFilter.tsx     # Profession filtering
+│   │   │   │   │   │   ├── TalentFiltersPanel.tsx   # Main filter panel
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 lists/
+│   │   │   │   │   │   ├── AgencyList.tsx           # Agency listings
+│   │   │   │   │   │   ├── FreelancerList.tsx       # Freelancer listings
+│   │   │   │   │   │   ├── TalentListContainer.tsx  # Main container
+│   │   │   │   │   │   ├── TeamList.tsx             # Team listings
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 modals/
+│   │   │   │   │   │   ├── InviteTalentModal.tsx    # Invitation system
+│   │   │   │   │   │   ├── TalentGroupModal.tsx     # Group management
+│   │   │   │   │   │   ├── TalentNoteModal.tsx      # Notes system
+│   │   │   │   │   │   ├── TalentTagsModal.tsx      # Tagging system
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 navigation/
+│   │   │   │   │   │   ├── TalentPoolTabs.tsx       # Tab navigation
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   ├── 📁 states/
+│   │   │   │   │   │   ├── TalentEmptyState.tsx     # Empty states
+│   │   │   │   │   │   ├── TalentErrorState.tsx     # Error handling
+│   │   │   │   │   │   ├── TalentLoadingSkeleton.tsx # Loading states
+│   │   │   │   │   │   └── index.ts
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── 📁 constants/
+│   │   │   │   │   └── index.ts                     # Talent pool constants
+│   │   │   │   ├── 📁 data/
+│   │   │   │   │   └── countries.ts                 # Country data
+│   │   │   │   ├── 📁 hooks/
+│   │   │   │   │   ├── useDebouncedSearch.ts        # Search optimization
+│   │   │   │   │   ├── useFilterMemoization.ts      # Filter optimization
+│   │   │   │   │   ├── useTalentPoolState.ts        # State management
+│   │   │   │   │   └── index.ts
+│   │   │   │   ├── 📁 utils/
+│   │   │   │   │   ├── country-flags.ts             # Flag utilities
+│   │   │   │   │   ├── countryUtils.ts              # Country utilities
+│   │   │   │   │   ├── search-utilities.ts          # Search utilities
+│   │   │   │   │   ├── skill-icons.ts               # Skill icon mapping
+│   │   │   │   │   └── talent-utilities.ts          # Core utilities
+│   │   │   │   ├── types.ts                         # Talent pool types
+│   │   │   │   └── page.tsx                         # Main talent pool page
+│   │   │   ├── 📁 teams/                            # 👥 Team Management System
+│   │   │   │   ├── 📁 [id]/                         # Dynamic team routes
+│   │   │   │   │   ├── 📁 components/
+│   │   │   │   │   │   ├── constants.ts             # Team constants
+│   │   │   │   │   │   ├── 📁 tabs/
+│   │   │   │   │   │   │   ├── members.tsx          # Team members tab
+│   │   │   │   │   │   │   ├── overview.tsx         # Team overview
+│   │   │   │   │   │   │   ├── projects-tab.tsx     # Projects management
+│   │   │   │   │   │   │   └── tools-tab.tsx        # Tools & resources
+│   │   │   │   │   │   ├── teams-header.tsx         # Team header
+│   │   │   │   │   │   └── teams-navigation.tsx     # Team navigation
+│   │   │   │   │   ├── 📁 hooks/
+│   │   │   │   │   │   └── useTeamsDetails.ts       # Team data hooks
+│   │   │   │   │   ├── 📁 services/
+│   │   │   │   │   │   └── teams.services.ts        # Team API
+│   │   │   │   │   ├── types.ts                     # Team types
+│   │   │   │   │   └── page.tsx                     # Team detail page
+│   │   │   │   └── page.tsx                         # Teams listing
+│   │   │   ├── layout.tsx                           # Private layout wrapper
+│   │   │   └── private-navbar.tsx                   # Private navigation
+│   │   ├── 📁 api/                                  # API Routes
+│   │   │   └── 📁 health/
+│   │   │       └── route.ts                         # Health check endpoint
+│   │   ├── layout.tsx                               # Root layout
+│   │   ├── loading.tsx                              # Global loading component
+│   │   └── sitemap.ts                               # SEO sitemap
+│   ├── 📁 components/                               # Shared UI Components
+│   │   ├── 📁 landing/                              # Landing page sections
+│   │   ├── 📁 providers/                            # Context providers
+│   │   ├── 📁 ui/                                   # Reusable UI elements
+│   │   └── 📁 layouts/                              # Layout components
+│   ├── 📁 hooks/                                    # Global Custom Hooks
+│   ├── 📁 lib/                                      # Utilities and Configurations
+│   │   ├── 📁 types/                                # Global TypeScript types
+│   │   ├── axios.ts                                 # API client setup
+│   │   └── seo.ts                                   # SEO utilities
+│   └── 📁 styles/                                   # Global Styles
+├── 📁 modules/                                      # Feature Modules
+│   ├── 📁 auth/                                     # 🔐 Authentication System
+│   │   ├── 📁 hooks/
+│   │   │   ├── use-login.tsx                        # Login hooks
+│   │   │   ├── use-oauth.ts                         # OAuth integration
+│   │   │   └── use-register.tsx                     # Registration hooks
+│   │   ├── 📁 schema/
+│   │   │   ├── login-schema.ts                      # Login validation
+│   │   │   └── register-schema.ts                   # Registration validation
+│   │   ├── 📁 services/
+│   │   │   └── auth.service.ts                      # Authentication API
+│   │   └── 📁 store/
+│   │       └── use-user-store.tsx                   # User state management
+│   ├── 📁 documents/                                # 📄 Document Module Services
+│   │   ├── 📁 hooks/
+│   │   │   ├── use-documents.ts                     # Document hooks
+│   │   │   └── useUpload.ts                         # Upload hooks
+│   │   └── 📁 services/
+│   │       ├── documents.service.ts                 # Document API
+│   │       └── upload.service.ts                    # Upload API
+│   ├── 📁 invitations/                              # 📬 Invitations System
+│   │   └── 📁 services/
+│   │       └── invitations.service.ts               # Invitations API
+│   └── 📁 profile/                                  # 👤 Profile Module Services
+│       ├── 📁 hooks/
+│       │   ├── profile.server.tsx                   # Server-side profile hooks
+│       │   ├── use-basic-profile.tsx                # Basic profile data
+│       │   └── use-profile.tsx                      # Full profile management
+│       ├── 📁 services/
+│       │   └── profile.service.ts                   # Profile API
+│       └── types.ts                                 # Profile module types
+├── 📁 messages/                                     # 🌍 Internationalization (i18n)
+│   ├── en.json                                      # English translations
+│   ├── nl.json                                      # Dutch translations
+│   └── fr.json                                      # French translations
+└── 📁 public/                                       # Static Assets
 ```
 
-## 🔥 Recent Major Updates
-
-### 🆕 Unified Profile System
-
-**Complete redesign and consolidation of profile functionality with clean, production-ready architecture:**
-
-```
-profile/[id]/
-├── components/
-│   ├── ActionButtons.tsx       # Reusable edit/delete/add buttons
-│   ├── ProfileClient.tsx       # Main client-side component
-│   ├── ProfileContent.tsx      # Content layout with modal system
-│   ├── ProfileHeader.tsx       # Header with CV upload & completion
-│   ├── ErrorState.tsx          # Error handling component
-│   ├── CVUploadDrawer.tsx      # CV parsing and import system
-│   ├── cards/
-│   │   ├── ExperienceCard.tsx  # Individual experience display
-│   │   └── SocialAccountCard.tsx # Social media account cards
-│   ├── forms/
-│   │   ├── ExperienceForm.tsx  # Experience editing form
-│   │   ├── EducationForm.tsx   # Education editing form
-│   │   ├── EnhancedLanguagesForm.tsx # Language skills form
-│   │   ├── PersonalInfoForm.tsx # Personal information form
-│   │   ├── SkillsForm.tsx      # Skills management form
-│   │   ├── CertificationsForm.tsx # Certifications form
-│   │   └── SocialAccountsForm.tsx # Social accounts form
-│   └── sections/
-│       ├── ExperienceSection.tsx  # Self-contained experience section
-│       ├── EducationSection.tsx   # Education display section
-│       └── LanguagesSection.tsx   # Language skills section
-├── services/
-│   ├── cv-service.ts           # CV parsing API integration
-│   └── language-service.ts     # Language data services
-├── utils/
-│   ├── profile-styles.ts       # Clean HeroUI styling utilities
-│   └── profileCompletion.ts    # Profile completion calculations
-├── types.ts                    # Comprehensive TypeScript definitions
-└── page.tsx                    # Dynamic profile page route
-```
-
-**✨ Key Features:**
-
-- **🎯 Clean Architecture**: Following talent-pool pattern with proper separation of concerns
-- **🔄 Dynamic Profile System**: Universal viewer with contextual edit capabilities
-- **📊 CV Import System**: Professional CV parsing with data review and import
-- **🎨 HeroUI Integration**: Direct component usage without unnecessary wrappers
-- **⚡ Self-contained Sections**: Independent sections with own CRUD operations
-- **🔗 Connection Management**: Real-time invitation system with status updates
-- **📱 Responsive Design**: Mobile-optimized layouts with progressive enhancement
-- **🧹 Zero Dead Code**: Complete cleanup of legacy code and unused imports
-
-**🛠️ Technical Excellence:**
-
-- **TypeScript Coverage**: 100% type safety across all components
-- **Clean Imports**: Zero unused imports or dependencies
-- **Error Handling**: Proper API error handling without mock fallbacks
-- **Performance**: Optimized component rendering with minimal re-renders
-- **Maintainability**: Clear component boundaries and single responsibilities
-
-### 📄 Document Management System
-
-**Complete document management platform with enterprise-grade features:**
-
-```
-documents/
-├── components/
-│   ├── cards/              # Document display components
-│   ├── filters/            # Advanced filtering system
-│   ├── lists/              # Document list containers
-│   ├── modals/             # Upload, share, and management modals
-│   ├── navigation/         # Document navigation tabs
-│   └── states/             # Loading, empty, and error states
-├── hooks/
-│   ├── useDocumentState.ts    # Document state management
-│   ├── useDocumentFilters.ts  # Filter state management
-│   └── useDebouncedSearch.ts  # Optimized search
-├── utils/
-│   └── document-utils.ts      # Document utilities and helpers
-├── types.ts                   # Document type definitions
-└── page.tsx                   # Main documents page
-```
-
-**Key Features:**
-
-- **Advanced Filtering**: Filter by type, date, size, tags, and more
-- **File Upload**: Drag-and-drop with progress tracking
-- **Search & Sort**: Real-time search with multiple sorting options
-- **Responsive Grid**: Adaptive layouts for all screen sizes
-- **Type Safety**: Comprehensive TypeScript integration
-
-### 📢 Broadcast Center
-
-**Professional announcement and communication system:**
-
-```
-broadcasts/
-├── components/
-│   ├── cards/              # Broadcast display cards
-│   ├── navigation/         # Broadcast navigation and banners
-│   └── onboarding/         # Welcome screens and tutorials
-├── types.ts                # Broadcast type definitions
-└── page.tsx                # Main broadcasts page
-```
-
-**Features:**
-
-- **Scrolling Banners**: Dynamic announcement displays
-- **Gradient Backgrounds**: Beautiful full-bleed designs
-- **Onboarding Flow**: Welcome screens for new users
-- **Responsive Design**: Mobile-optimized layouts
-
-### ⭐ Enhanced Talent Pool
-
-**Advanced talent discovery system with improved architecture:**
-
-```
-talent-pool/
-├── components/
-│   ├── cards/              # TalentCard, TalentGroupCard, TeamCard
-│   ├── filters/            # Advanced filtering panels
-│   ├── lists/              # Freelancer, Agency, Team lists
-│   ├── modals/             # Invite, notes, tags, groups
-│   ├── navigation/         # Tab navigation system
-│   └── states/             # Loading, empty, error states
-├── hooks/
-│   ├── useTalentPoolState.ts  # Centralized state management
-│   ├── useFilterMemoization.ts # Performance optimization
-│   └── useDebouncedSearch.ts   # Search optimization
-├── utils/
-│   ├── talent-utils.ts         # Core utility functions
-│   ├── country-flags.ts        # Country/flag utilities
-│   └── skill-icons.ts          # Skill icon mapping
-├── constants/              # Configuration and constants
-├── types.ts                # TypeScript definitions
-└── page.tsx                # Main talent pool interface
-```
-
-**Enhanced Features:**
-
-- **Profile Integration**: Seamless navigation to unified profile system
-- **Connection Management**: Improved invitation and connection flow
-- **Performance**: Optimized filtering and search with memoization
-- **Type Safety**: Comprehensive TypeScript coverage
-- **Responsive Design**: Enhanced mobile experience
-
-## 🚀 Application Features
+## 🚀 Feature Breakdown by Category
 
 ### 🔐 Authentication & User Management
 
-- **Multi-step Registration**: Simple and Premium wizard flows with billing integration
-- **OAuth Integration**: Social login with multiple providers
-- **Protected Routes**: Role-based access control
-- **Unified Profile System**: Complete profile management with contextual editing
+**Location**: `modules/auth/`, `app/(public)/register/`
 
-### 💼 Dashboard System
+**Features**:
+- **Multi-step Registration Wizards**: Simple and Premium flows with billing integration
+- **OAuth Integration**: Social login with Google, LinkedIn, and other providers
+- **Form Validation**: Zod schema validation with real-time feedback
+- **Role-based Access Control**: Protected routes with user permissions
+- **State Management**: Persistent user state with Zustand
 
-- **Overview Dashboard**: Metrics, quick actions, and activity feeds
-- **Tabbed Navigation**: Organized content with smooth routing
-- **Responsive Layout**: Optimized for all screen sizes
-- **Real-time Updates**: Live status indicators and notifications
+**Key Components**:
+- `registration-wizard.tsx` - Main wizard controller
+- `simple-wizard.tsx` - Streamlined registration flow
+- `premium-wizard.tsx` - Premium tier registration with billing
+- `billing-form.tsx` - Payment and billing information
+- `category-selection.tsx` - User type selection (Freelancer, Company, Agency)
 
-### 📄 Document Management
+### 👤 Unified Profile System
 
-- **File Organization**: Advanced categorization and tagging
-- **Search & Filter**: Powerful search with multiple filter options
-- **Upload System**: Drag-and-drop with progress tracking
-- **Sharing & Collaboration**: Team document sharing features
+**Location**: `app/private/profile/[id]/`, `modules/profile/`
 
-### 📢 Communication Hub
+**Features**:
+- **Dynamic Profile Viewing**: Universal profile viewer with contextual editing
+- **CV Import & Parsing**: Professional CV upload with data extraction and review
+- **Self-contained Sections**: Independent sections with CRUD operations
+- **Real-time Completion Tracking**: Profile completion percentage with guidance
+- **Connection Management**: Invitation system with status tracking
+- **Responsive Design**: Mobile-optimized with progressive enhancement
 
-- **Broadcast Center**: Professional announcement system
-- **Talent Pool**: Advanced talent discovery and connection
-- **Profile System**: Unified user profiles with edit capabilities
-- **Messaging**: Integrated communication features
+**Key Components**:
+- `ProfileClient.tsx` - Main client-side orchestrator
+- `ProfileHeader.tsx` - Header with completion tracking and CV upload
+- `CVUploadDrawer.tsx` - Advanced CV parsing and import system
+- `ExperienceSection.tsx` - Self-contained experience management
+- `EducationSection.tsx` - Education history management
+- `LanguagesSection.tsx` - Language skills with proficiency levels
 
-### 🎨 Modern UI/UX
+**Advanced Features**:
+- **CV Parsing Service**: Extract data from uploaded CVs with review interface
+- **Profile Completion Calculator**: Smart completion tracking with weighted sections
+- **Social Account Integration**: Link and manage social media profiles
+- **Skills Management**: Dynamic skills with autocomplete and validation
 
-- **HeroUI Design System**: Consistent, accessible components
-- **Dark/Light Mode**: Theme switching with system preference detection
-- **Animations**: Framer Motion for smooth interactions
-- **Loading States**: Detailed skeleton screens and progress indicators
-- **Responsive Design**: Mobile-first approach with progressive enhancement
+### ⭐ Advanced Talent Discovery
 
-## 🛠️ Technology Stack
+**Location**: `app/private/talent-pool/`
 
-| Category                 | Technologies                     |
-| ------------------------ | -------------------------------- |
-| **Frontend**             | Next.js 15, React 19, TypeScript |
-| **UI Framework**         | HeroUI, TailwindCSS              |
-| **Animations**           | Framer Motion                    |
-| **State Management**     | Zustand, React Hooks             |
-| **Forms**                | React Hook Form, Zod validation  |
-| **API Client**           | Axios with interceptors          |
-| **Internationalization** | next-intl                        |
-| **Code Quality**         | ESLint, Prettier, Husky          |
-| **Package Manager**      | pnpm                             |
+**Features**:
+- **Multi-category Browsing**: Freelancers, Agencies, Teams with specialized interfaces
+- **Advanced Filtering**: Location, skills, availability, experience, rates
+- **Search Optimization**: Debounced search with memoized results
+- **Invitation System**: Direct talent invitation with custom messages
+- **Connection Management**: Track invitation status and manage connections
+- **Performance Optimization**: Memoized filters and lazy loading
 
-## 📱 Route Structure
+**Key Components**:
+- `TalentCard.tsx` - Individual talent showcase with actions
+- `TalentFiltersPanel.tsx` - Advanced filtering interface
+- `InviteTalentModal.tsx` - Invitation system with custom messaging
+- `TalentListContainer.tsx` - Main listing container with pagination
 
-### Public Routes (Marketing & Auth)
+**Performance Features**:
+- `useFilterMemoization.ts` - Optimized filter performance
+- `useDebouncedSearch.ts` - Efficient search with reduced API calls
+- `useTalentPoolState.ts` - Centralized state management
 
+### 📄 Document Management System
+
+**Location**: `app/private/documents/`, `modules/documents/`
+
+**Features**:
+- **File Organization**: Advanced categorization, tagging, and folder structures
+- **Upload System**: Drag-and-drop with progress tracking and validation
+- **Search & Filter**: Real-time search with multiple filter criteria
+- **Sharing & Collaboration**: Team document sharing with permission controls
+- **Version Control**: Document versioning and history tracking
+- **Preview System**: In-app document preview for multiple file types
+
+**Key Components**:
+- `DocumentCard.tsx` - Rich document display with metadata
+- `DocumentUploadModal.tsx` - Advanced upload interface
+- `DocumentFiltersPanel.tsx` - Comprehensive filtering system
+- `DocumentViewerDrawer.tsx` - Document preview and viewing
+
+**Advanced Features**:
+- **Smart Categorization**: Automatic document categorization
+- **Bulk Operations**: Multi-select for batch operations
+- **Access Control**: Granular sharing permissions
+- **Search Intelligence**: Content-based search with OCR support
+
+### 📢 Broadcast Communication System
+
+**Location**: `app/private/broadcasts/`
+
+**Features**:
+- **Content Creation**: Advanced post creator with rich media support
+- **Topic Management**: Organized content by topics with following system
+- **Smart Search**: Auto-complete search with suggestions and recent searches
+- **Reaction System**: Advanced reactions beyond basic likes (Love, Laugh, Wow, etc.)
+- **Media Handling**: Support for images, videos, documents with smart previews
+- **Real-time Updates**: Live activity feeds and notifications
+
+**Key Components**:
+- `ContentCreator.tsx` - Advanced post creation interface
+- `PostCard.tsx` - Enhanced post display with glassmorphism design
+- `TopicSidebar.tsx` - Topic navigation with smart search
+- `ReactionPicker.tsx` - Advanced reaction system
+- `BroadcastFilters.tsx` - Content filtering and discovery
+
+**Advanced Features**:
+- **Smart Search**: `SmartSearch.tsx` with auto-complete and suggestions
+- **Reaction System**: Multiple reaction types with counts and animations
+- **Media Management**: Smart media preview and carousel
+- **Topic Following**: Subscribe to topics for personalized feeds
+
+### 👥 Team Collaboration
+
+**Location**: `app/private/teams/`
+
+**Features**:
+- **Team Management**: Create and manage teams with role-based permissions
+- **Project Tracking**: Monitor team projects and deliverables
+- **Member Management**: Add/remove team members with role assignments
+- **Tools Integration**: Integrate with external tools and services
+- **Performance Analytics**: Team performance metrics and insights
+
+**Key Components**:
+- `teams-header.tsx` - Team overview and key metrics
+- `members.tsx` - Team member management interface
+- `projects-tab.tsx` - Project tracking and management
+- `tools-tab.tsx` - Tools and integrations management
+
+### 📊 Dashboard System
+
+**Location**: `app/private/dashboard/`
+
+**Features**:
+- **Overview Dashboard**: Comprehensive metrics and KPI tracking
+- **Quick Actions**: Fast access to common operations
+- **Activity Feeds**: Recent activity across all platform features
+- **Customizable Layout**: Personalized dashboard configuration
+- **Real-time Updates**: Live data updates and notifications
+
+**Key Components**:
+- `header-container.tsx` - Dashboard header with metrics
+- `quick-actions.tsx` - Fast action buttons and shortcuts
+- `tabs-routing.tsx` - Tabbed navigation system
+
+### 🎯 Skills Management
+
+**Location**: `app/private/skills/`
+
+**Features**:
+- **Skill Creation**: Create and validate new skills
+- **Skill Hierarchy**: Organized skill categories and relationships
+- **Proficiency Levels**: Track skill proficiency and certification
+- **Skill Matching**: Match skills between users and opportunities
+
+### 🛠️ Technical Architecture
+
+#### Component Organization Patterns
+
+**Feature-based Structure**:
 ```
-/(public)/
-├── page.tsx              # Landing page with hero, features, pricing
-├── register/
-│   ├── page.tsx          # Registration entry point
-│   └── components/       # Multi-step wizard components
-└── components/           # Public-specific components (navbar, footer)
-```
-
-### Private Routes (Dashboard)
-
-```
-/private/
-├── dashboard/            # Main dashboard with overview
-├── profile/              # 🆕 Unified profile system
-│   ├── [id]/            # Dynamic user profiles with clean architecture
-│   │   ├── components/  # Self-contained profile components
-│   │   │   ├── cards/   # Display components (ExperienceCard, etc.)
-│   │   │   ├── forms/   # Editing forms (ExperienceForm, etc.)
-│   │   │   └── sections/ # Feature sections (Experience, Education, etc.)
-│   │   ├── services/    # API integration services
-│   │   ├── utils/       # Profile-specific utilities
-│   │   └── types.ts     # TypeScript definitions
-│   └── page.tsx         # Current user redirect
-├── talent-pool/          # Enhanced talent discovery system
-├── documents/            # 🆕 Complete document management
-├── broadcasts/           # 🆕 Professional broadcast center
-├── challenges/           # Challenge management
-├── community/            # Social features
-└── solutions/            # Solutions marketplace
-```
-
-## 🔧 Development
-
-### Getting Started
-
-```bash
-# Install dependencies
-pnpm install
-
-# Run development server
-pnpm dev
-
-# Build for production
-pnpm build
-
-# Run type checking
-pnpm type-check
-
-# Run linting
-pnpm lint
-
-# Format code
-pnpm format
-```
-
-### Recent Development Improvements
-
-#### 🧹 Profile System Cleanup (Latest)
-
-**Comprehensive cleanup and optimization of the profile system:**
-
-- **🗑️ Dead Code Removal**: Eliminated 100% of unused files, components, and code
-  - Removed unused sections: `AboutSection`, `SkillsSection`, `DocumentsSection`
-  - Deleted empty directories: `/states`, `/constants`, `/locales`, `/api`
-  - Cleaned up 20+ unused imports across all files
-- **🚫 Mock Data Elimination**: Removed all development mock data and fallbacks
-  - Deleted 237-line mock CV data function
-  - Removed mock fallback logic in favor of proper error handling
-  - Clean API integration without development artifacts
-- **🔇 Debug Code Removal**: Eliminated all console.log statements (20+ removed)
-- **📁 Clean Architecture**: Reorganized to follow talent-pool patterns
-  - Self-contained sections with proper separation of concerns
-  - Direct HeroUI component usage without unnecessary wrappers
-  - Clean import structure with zero unused dependencies
-
-#### ⚡ Performance & Architecture
-
-- **Code Architecture**: Feature-based organization with barrel exports
-- **Performance**: Optimized state management with memoization
-- **Type Safety**: Enhanced TypeScript coverage across all modules
-- **Clean Code**: Removed legacy code and consolidated systems
-- **Developer Experience**: Improved development workflow and hot reload
-
-### Project Structure Benefits
-
-- **Feature-based Organization**: Related code stays together
-- **Unified Systems**: Consolidated profile, document, and broadcast features
-- **Type Safety**: Comprehensive TypeScript coverage
-- **Modular Architecture**: Easy to test, maintain, and scale
-- **Performance**: Optimized with advanced React patterns
-- **Developer Experience**: Fast development with excellent tooling
-
-### 🎯 Profile Development Guidelines
-
-**Best practices for profile system development:**
-
-#### 📁 Component Organization
-```
-components/
-├── sections/     # Self-contained feature sections
-├── cards/        # Reusable display components  
-├── forms/        # Editing and input forms
-└── [core].tsx    # Main components (ProfileClient, ProfileHeader, etc.)
-```
-
-#### ✅ Code Quality Standards
-
-- **Zero Dead Code**: No unused imports, components, or files
-- **No Debug Code**: No console.log statements in production code
-- **No Mock Data**: Real API integration without development fallbacks
-- **Direct HeroUI Usage**: No unnecessary component wrappers
-- **Self-contained Sections**: Independent sections with own state management
-- **Clean Error Handling**: Proper try-catch with user-friendly error states
-
-#### 🔧 Development Commands
-
-```bash
-# Profile-specific development
-cd src/app/private/profile/[id]
-
-# Check for unused imports
-pnpm lint
-
-# Type checking
-pnpm type-check
-
-# Format code
-pnpm format
+feature/
+├── components/
+│   ├── cards/          # Display components
+│   ├── forms/          # Input and editing components
+│   ├── modals/         # Modal dialogs
+│   ├── lists/          # List containers
+│   ├── filters/        # Filtering components
+│   ├── navigation/     # Navigation elements
+│   └── states/         # Loading, error, empty states
+├── hooks/              # Feature-specific hooks
+├── services/           # API integration
+├── utils/              # Utility functions
+├── types.ts            # TypeScript definitions
+└── page.tsx            # Route component
 ```
 
-## 🎯 Architecture Highlights
+#### State Management Patterns
 
-### Component Reusability
+**Zustand Integration**:
+- Global user state in `modules/auth/store/`
+- Feature-specific stores (broadcasts, talent-pool)
+- Persistent state with localStorage integration
+- Optimistic updates for better UX
 
-- **Shared Components**: Reusable cards, filters, and navigation elements
-- **Consistent Patterns**: Standardized hooks, utilities, and type definitions
-- **Barrel Exports**: Clean import paths with organized exports
+**React Hook Patterns**:
+- Custom hooks for API integration
+- Debounced search hooks for performance
+- Memoized filter hooks for optimization
+- State management hooks for complex forms
 
-### Performance Optimizations
+#### Performance Optimizations
 
-- **Memoization**: Strategic use of React.memo and useMemo
-- **Debounced Search**: Optimized search with reduced API calls
-- **Lazy Loading**: Code splitting and dynamic imports
-- **State Management**: Efficient state updates and subscriptions
+**Memoization Strategies**:
+- `React.memo` for expensive components
+- `useMemo` for computed values
+- `useCallback` for stable function references
+- Filter memoization for search interfaces
 
-### User Experience
+**Code Splitting**:
+- Route-based code splitting
+- Component lazy loading
+- Dynamic imports for heavy features
+- Progressive enhancement patterns
 
-- **Responsive Design**: Mobile-first with progressive enhancement
+#### Type Safety
+
+**Comprehensive TypeScript Coverage**:
+- Strict TypeScript configuration
+- Feature-specific type definitions
+- API response type safety
+- Form validation with Zod schemas
+
+## 🌍 Internationalization (i18n)
+
+**Complete translation coverage** for English, Dutch, and French:
+- **Broadcast System**: All UI text, messages, and interactions
+- **Profile System**: Forms, labels, and user guidance
+- **Talent Pool**: Filters, actions, and status messages
+- **Document System**: File management and sharing text
+- **Authentication**: Registration and login flows
+
+**Translation Structure**:
+```
+messages/
+├── en.json     # English (primary)
+├── nl.json     # Dutch
+└── fr.json     # French
+```
+
+## 🎨 UI/UX Design System
+
+### Modern Design Language
+
+**HeroUI Integration**:
+- Consistent component library usage
+- Dark/Light mode with system preference detection
+- Accessible components with ARIA support
+- Responsive design patterns
+
+**Visual Enhancements**:
+- **Glassmorphism Effects**: Modern backdrop-blur and transparency
+- **Micro-animations**: Framer Motion for smooth interactions
 - **Loading States**: Comprehensive skeleton screens and progress indicators
-- **Error Handling**: Graceful error states with retry mechanisms
-- **Accessibility**: Full ARIA support and keyboard navigation
+- **Hover Effects**: Interactive feedback with scale and shadow transforms
 
-This architecture ensures scalability, maintainability, and excellent developer experience while delivering a modern, performant web application with enterprise-grade features.
+### Responsive Design
+
+**Mobile-first Approach**:
+- Progressive enhancement for larger screens
+- Touch-optimized interactions
+- Adaptive layouts for all device sizes
+- Performance optimization for mobile networks
+
+## 🚀 Development & Deployment
+
+### Technology Stack
+
+| Category | Technologies |
+|----------|-------------|
+| **Frontend** | Next.js 15, React 19, TypeScript |
+| **UI Framework** | HeroUI, TailwindCSS |
+| **Animations** | Framer Motion |
+| **State Management** | Zustand, React Hooks |
+| **Forms** | React Hook Form, Zod validation |
+| **API Client** | Axios with interceptors |
+| **Internationalization** | next-intl |
+| **Code Quality** | ESLint, Prettier, Husky |
+| **Package Manager** | pnpm |
+
+### Development Commands
+
+```bash
+# Development
+pnpm dev              # Start development server
+pnpm build            # Build for production
+pnpm type-check       # TypeScript checking
+pnpm lint             # Code linting
+pnpm format           # Code formatting
+
+# Feature-specific development
+cd src/app/private/[feature]  # Navigate to feature
+pnpm lint                     # Check feature code quality
+```
+
+### Architecture Benefits
+
+**Scalability**:
+- Feature-based organization keeps related code together
+- Modular architecture allows independent feature development
+- Clear separation of concerns between UI, logic, and data
+
+**Maintainability**:
+- Consistent patterns across features
+- Comprehensive TypeScript coverage
+- Clean component hierarchies
+- Standardized error handling
+
+**Performance**:
+- Optimized with advanced React patterns
+- Strategic memoization and lazy loading
+- Efficient state management
+- Minimal bundle sizes through code splitting
+
+**Developer Experience**:
+- Fast development with hot reload
+- Excellent tooling and debugging
+- Clear project structure and documentation
+- Automated code quality checks
+
+This architecture ensures a scalable, maintainable, and performant web application with enterprise-grade features and exceptional user experience.

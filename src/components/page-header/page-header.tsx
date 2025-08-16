@@ -238,8 +238,7 @@ export default function PageHeader({
                 size='sm'
                 classNames={{
                   list: 'gap-3',
-                  separator: 'text-default-400 mx-1',
-                  item: 'text-default-600 hover:text-primary transition-colors'
+                  separator: 'text-default-400 mx-1'
                 }}
               >
                 {breadcrumbs.map((crumb, index) => (

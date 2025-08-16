@@ -15,14 +15,14 @@ export const createBroadcastSchema = z.object({
     .min(20, 'Content must be at least 20 characters')
     .max(10000, 'Content cannot exceed 10,000 characters'),
   skills: z.array(z.string()).max(10, 'Maximum 10 skills allowed'),
-  topics: z.array(z.string()).max(3, 'Maximum 3 topics allowed').default([]),
-  visibility: z.enum(['public', 'private', 'followers']).default('public'),
-  allowComments: z.boolean().default(true),
-  allowSharing: z.boolean().default(true),
+  topics: z.array(z.string()).max(3, 'Maximum 3 topics allowed'),
+  visibility: z.enum(['public', 'private', 'followers']),
+  allowComments: z.boolean(),
+  allowSharing: z.boolean(),
   scheduleDate: z.date().optional(),
   thumbnailAlt: z.string().optional(),
-  contentWarning: z.boolean().default(false),
-  sensitive: z.boolean().default(false)
+  contentWarning: z.boolean(),
+  sensitive: z.boolean()
 });
 
 export type BroadcastFormData = z.infer<typeof createBroadcastSchema>;
@@ -30,7 +30,7 @@ export type BroadcastFormData = z.infer<typeof createBroadcastSchema>;
 export interface ContentCreatorProps {
   isOpen: boolean;
   onClose: () => void;
-  onPublish: (post: Partial<BroadcastPost>) => void;
+  onPublish?: (post: Partial<BroadcastPost>) => void | Promise<void>; // Made optional since it's not actually called
   onSaveDraft: (draft: Partial<BroadcastPost>) => void;
   initialData?: Partial<BroadcastPost>;
   className?: string;
@@ -51,7 +51,7 @@ export interface ContentTabProps {
 
 export interface MediaTabProps {
   mediaFiles: MediaFile[];
-  setMediaFiles: (files: MediaFile[]) => void;
+  setMediaFiles: (files: MediaFile[] | ((prev: MediaFile[]) => MediaFile[])) => void;
   isUploading: boolean;
 }
 

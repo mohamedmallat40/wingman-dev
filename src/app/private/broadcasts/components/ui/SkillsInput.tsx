@@ -36,7 +36,7 @@ export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => 
     return availableSkills.filter(skill => value.includes(skill.id));
   }, [availableSkills, value]);
 
-  const handleSelectionChange = (key: string | null) => {
+  const handleSelectionChange = (key: any) => {
     if (!key || value.includes(key)) return;
     if (value.length < 10) {
       onChange([...value, key]);
@@ -98,34 +98,36 @@ description={t('skills.count', { current: value.length, max: 10 })}
             listboxWrapper: 'max-h-64'
           }}
         >
-          {filteredSkills.map((skill) => (
-            <AutocompleteItem
-              key={skill.id}
-              textValue={skill.key}
-              startContent={
-                <Icon icon="solar:tag-linear" className="h-4 w-4" />
-              }
-              classNames={{
-                base: 'hover:bg-success-50 dark:hover:bg-success-900/50 transition-colors duration-200'
-              }}
-            >
-              {skill.key}
-            </AutocompleteItem>
-          ))}
-          {inputValue && filteredSkills.length === 0 && (
-            <AutocompleteItem
-              key="create-new"
-textValue={t('skills.createNew', { skill: inputValue })}
-              startContent={
-                <Icon icon="solar:add-circle-linear" className="h-4 w-4 text-success" />
-              }
-              classNames={{
-                base: 'text-success hover:bg-success-50 dark:hover:bg-success-900/50'
-              }}
-            >
-{t('skills.createNew', { skill: inputValue })}
-            </AutocompleteItem>
-          )}
+          {[
+            ...filteredSkills.map((skill) => (
+              <AutocompleteItem
+                key={skill.id}
+                textValue={skill.key}
+                startContent={
+                  <Icon icon="solar:tag-linear" className="h-4 w-4" />
+                }
+                classNames={{
+                  base: 'hover:bg-success-50 dark:hover:bg-success-900/50 transition-colors duration-200'
+                }}
+              >
+                {skill.key}
+              </AutocompleteItem>
+            )),
+            ...(inputValue && filteredSkills.length === 0 ? [
+              <AutocompleteItem
+                key="create-new"
+                textValue={t('skills.createNew', { skill: inputValue })}
+                startContent={
+                  <Icon icon="solar:add-circle-linear" className="h-4 w-4 text-success" />
+                }
+                classNames={{
+                  base: 'text-success hover:bg-success-50 dark:hover:bg-success-900/50'
+                }}
+              >
+                {t('skills.createNew', { skill: inputValue })}
+              </AutocompleteItem>
+            ] : [])
+          ]}
         </Autocomplete>
       </div>
 

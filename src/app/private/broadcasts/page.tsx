@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 
-import type { CreatePostData } from './services/broadcast.service';
+import type { CreatePostData } from './types';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
@@ -67,23 +67,24 @@ export default function BroadcastsPage() {
     openContentCreator();
   };
 
-  const handlePublishPost = async (postData: CreatePostData) => {
-    try {
-      if (editingPost) {
-        // Update existing post
-        await updatePost.mutateAsync({ postId: editingPost.id, postData });
-      } else {
-        // Create new post
-        await createPost.mutateAsync(postData);
-      }
-      closeContentCreator();
-      setEditingPost(null);
-    } catch (error) {
-      // Post publish error is handled by the mutation's onError
-    }
-  };
+  // Note: onPublish is no longer needed as ContentCreator handles the API calls internally
+  // const handlePublishPost = async (postData: CreatePostData) => {
+  //   try {
+  //     if (editingPost) {
+  //       // Update existing post
+  //       await updatePost.mutateAsync({ postId: editingPost.id, postData });
+  //     } else {
+  //       // Create new post
+  //       await createPost.mutateAsync(postData);
+  //     }
+  //     closeContentCreator();
+  //     setEditingPost(null);
+  //   } catch (error) {
+  //     // Post publish error is handled by the mutation's onError
+  //   }
+  // };
 
-  const handleSaveDraft = (draftData: any) => {
+  const handleSaveDraft = (draftData: Partial<BroadcastPost>) => {
     // Handle draft saving logic here
   };
 
@@ -114,7 +115,6 @@ export default function BroadcastsPage() {
       {/* Live Activity Bar */}
       <LiveActivityBar
         onNotificationClick={() => openNotificationCenter()}
-        unreadCount={unreadCount}
       />
 
       <DashboardLayout
@@ -309,7 +309,6 @@ export default function BroadcastsPage() {
           closeContentCreator();
           setEditingPost(null);
         }}
-        onPublish={handlePublishPost}
         onSaveDraft={handleSaveDraft}
         initialData={editingPost || undefined}
       />

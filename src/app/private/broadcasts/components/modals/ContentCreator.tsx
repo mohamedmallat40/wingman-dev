@@ -25,7 +25,7 @@ import { useForm } from 'react-hook-form';
 
 import { useCreatePost, useUpdatePost, useSaveDraft, useTopics } from '../../hooks';
 import { type BroadcastPost } from '../../types';
-import { type CreatePostData } from '../../services/broadcast.service';
+import { type CreatePostData } from '../../types';
 import { AdvancedTab } from './content-creator/AdvancedTab';
 // Import extracted components and utilities
 import { ContentTab } from './content-creator/ContentTab';
@@ -297,7 +297,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
       const formData = getValues();
       const draftData = {
         ...formData,
-        id: initialData?.id,
+        id: initialData?.id || `draft-${Date.now()}`,
         timestamp: new Date().toISOString(),
         isDraft: true
       };
@@ -314,7 +314,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         // Toast notification failed but draft was saved successfully
       }
 
-      onSaveDraft(draftData);
+      onSaveDraft(draftData as unknown as Partial<BroadcastPost>);
     } catch (error: any) {
       const errorMessage = getErrorMessage(error, tErrors);
 

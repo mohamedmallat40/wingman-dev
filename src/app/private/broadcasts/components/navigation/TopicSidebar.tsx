@@ -695,8 +695,7 @@ export default function TopicSidebar({
                                     }`}
                                     isLoading={loadingTopicId === subcast.id}
                                     isDisabled={loadingTopicId === subcast.id}
-                                    onPress={(e) => {
-                                      e?.stopPropagation?.();
+                                    onPress={() => {
                                       handleFollowToggle(subcast.id);
                                     }}
                                     onClick={(e) => {

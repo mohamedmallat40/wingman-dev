@@ -252,9 +252,8 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                   className='flex gap-3 overflow-x-auto pb-2 max-w-full' 
                   style={{ 
                     scrollbarWidth: 'none', 
-                    msOverflowStyle: 'none',
-                    WebkitScrollbar: { display: 'none' }
-                  }}
+                    msOverflowStyle: 'none'
+                  } as React.CSSProperties}
                 >
                   {attachments.map((attachment, index) => {
                     const type = getFileType(attachment);

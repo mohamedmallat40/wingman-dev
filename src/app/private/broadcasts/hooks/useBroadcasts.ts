@@ -1,6 +1,7 @@
 import type {
-  FeedParams
-} from '../services/broadcast.service';
+  FeedParams,
+  CreatePostData
+} from '../types';
 
 import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -102,7 +103,7 @@ export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, postData }: { postId: string; postData: any }) => 
+    mutationFn: ({ postId, postData }: { postId: string; postData: CreatePostData }) => 
       updatePost(postId, postData),
     onSuccess: (response, { postId }) => {
       // Only invalidate feed queries - no need to invalidate individual post query

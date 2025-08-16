@@ -8,9 +8,9 @@ import { motion } from 'framer-motion';
 
 import { getImageUrl } from '@/lib/utils/utilities';
 
-import { type TeamCardProps, type Tool } from '../../types';
+import { type TeamCardProperties, type Tool } from '../../types';
 
-const GroupCard: React.FC<TeamCardProps> = ({ group, onViewTeam, onJoinTeam }) => {
+const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam }) => {
   const { id, groupName, color, members, tools, owner, connections } = group;
 
   const displayTools = tools.slice(0, 4);

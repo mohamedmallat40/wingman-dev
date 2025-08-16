@@ -623,6 +623,9 @@
       }
     },
     "post": {
+      "type": {
+        "broadcast": "Broadcast"
+      },
       "actions": {
         "like": "Leuk vinden",
         "unlike": "Niet meer leuk vinden",
@@ -758,13 +761,20 @@
       }
     },
     "topics": {
+      "title": "Onderwerpen",
       "all": "Alle",
       "following": "Volgend",
       "trending": "Trending",
+      "hotTopics": "Populaire Onderwerpen",
       "searchPlaceholder": "Zoek onderwerpen...",
       "noTopicsFound": "Geen onderwerpen gevonden",
+      "noTopicsAvailable": "Geen onderwerpen beschikbaar",
+      "noTopicsMatch": "Geen onderwerpen komen overeen met je zoekopdracht",
+      "topicsWillAppear": "Onderwerpen verschijnen hier wanneer beschikbaar",
       "follow": "Volgen",
       "unfollow": "Ontvolgen",
+      "followingCount": "Volgend {count}",
+      "postCount": "{count, plural, =0 {Geen berichten} one {# bericht} other {# berichten}}",
       "followers": "{count, plural, =0 {Geen volgers} one {# volger} other {# volgers}}",
       "posts": "{count, plural, =0 {Geen berichten} one {# bericht} other {# berichten}}",
       "feedHeader": {
@@ -789,6 +799,26 @@
       "options": {
         "postsWithMedia": "Berichten met Media",
         "textOnly": "Alleen Tekst"
+      },
+      "dateRange": {
+        "from": "Van",
+        "to": "Tot"
+      },
+      "categories": {
+        "technology": "Technologie",
+        "design": "Ontwerp",
+        "business": "Bedrijfsleven",
+        "marketing": "Marketing",
+        "development": "Ontwikkeling",
+        "aiMl": "AI & ML",
+        "startup": "Startup",
+        "career": "Carrière",
+        "remoteWork": "Thuiswerken",
+        "productivity": "Productiviteit"
+      },
+      "actions": {
+        "clearAll": "Alles Wissen",
+        "backToTopics": "Terug naar Onderwerpen"
       }
     },
     "sidebar": {
@@ -922,14 +952,6 @@
       "loadTopics": "Laden van onderwerpen mislukt",
       "tryAgainLater": "Probeer het later opnieuw"
     },
-    "topics": {
-      "followingCount": "Volgend {count}",
-      "hotTopics": "Populaire Onderwerpen",
-      "postCount": "{count, plural, one {# bericht} other {# berichten}}",
-      "noTopicsAvailable": "Geen onderwerpen beschikbaar",
-      "noTopicsMatch": "Geen onderwerpen komen overeen met uw filters",
-      "topicsWillAppear": "Onderwerpen verschijnen hier zodra ze beschikbaar zijn"
-    },
     "page": {
       "filters": "Filters",
       "topics": "Onderwerpen",
@@ -988,6 +1010,67 @@
       "success": "Succes",
       "confirm": "Bevestigen",
       "remove": "Verwijderen"
+    },
+    "topics": {
+      "title": "Onderwerpen",
+      "all": "Alle",
+      "following": "Volgend",
+      "trending": "Trending",
+      "hotTopics": "Populaire Onderwerpen",
+      "searchPlaceholder": "Zoek onderwerpen...",
+      "noTopicsFound": "Geen onderwerpen gevonden",
+      "noTopicsAvailable": "Geen onderwerpen beschikbaar",
+      "noTopicsMatch": "Geen onderwerpen komen overeen met je zoekopdracht",
+      "topicsWillAppear": "Onderwerpen verschijnen hier wanneer beschikbaar",
+      "follow": "Volgen",
+      "unfollow": "Ontvolgen",
+      "followingCount": "Volgend {count}",
+      "postCount": "{count, plural, =0 {Geen berichten} one {# bericht} other {# berichten}}",
+      "followers": "{count, plural, =0 {Geen volgers} one {# volger} other {# volgers}}",
+      "posts": "{count, plural, =0 {Geen berichten} one {# bericht} other {# berichten}}",
+      "feedHeader": {
+        "clearFilter": "Filter Wissen",
+        "showingPostsFrom": "Alleen berichten van {topic} weergeven",
+        "topicLabel": "Onderwerp"
+      }
+    },
+    "filters": {
+      "title": "Filters",
+      "apply": "Filters Toepassen",
+      "clear": "Alles Wissen",
+      "sortBy": "Sorteren op",
+      "dateRange": "Datumbereik",
+      "postType": "Berichttype",
+      "labels": {
+        "search": "Zoeken",
+        "contentTypes": "Inhoudstypen",
+        "category": "Categorie",
+        "topic": "Onderwerp"
+      },
+      "options": {
+        "postsWithMedia": "Berichten met Media",
+        "textOnly": "Alleen Tekst"
+      },
+      "dateRange": {
+        "from": "Van",
+        "to": "Tot"
+      },
+      "categories": {
+        "technology": "Technologie",
+        "design": "Ontwerp",
+        "business": "Bedrijfsleven",
+        "marketing": "Marketing",
+        "development": "Ontwikkeling",
+        "aiMl": "AI & ML",
+        "startup": "Startup",
+        "career": "Carrière",
+        "remoteWork": "Thuiswerken",
+        "productivity": "Productiviteit"
+      },
+      "actions": {
+        "clearAll": "Alles Wissen",
+        "backToTopics": "Terug naar Onderwerpen"
+      }
     }
   },
   "navigation": {

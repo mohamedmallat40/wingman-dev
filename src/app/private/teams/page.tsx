@@ -9,16 +9,16 @@ import { useParams, useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import { TeamDetailsHeader } from './components/header';
-import { TeamDetailsTabs } from './components/navigation';
-import { TeamMembersTab } from './components/tabs/members';
-import { TeamOverviewTab } from './components/tabs/overview';
-import { TeamProjectsTab } from './components/tabs/projects';
-import { TeamToolsTab } from './components/tabs/tools';
+import { TeamDetailsHeader } from './[id]/components/teams-header';
+import { TeamDetailsTabs } from './[id]/components/teams-navigation';
+import { TeamMembersTab } from './[id]/components/tabs/members';
+import { TeamOverviewTab } from './[id]/components/tabs/overview';
+import { TeamProjectsTab } from './[id]/components/tabs/projects-tab';
+import { TeamToolsTab } from './[id]/components/tabs/tools-tab';
 // Import constants
-import { BREADCRUMB_CONFIG, TAB_CONFIG } from './constants';
+import { BREADCRUMB_CONFIG, TAB_CONFIG } from './[id]/components/constants';
 // Import hooks
-import { type TeamDetailsTab as TabType } from './types';
+import { type TeamDetailsTab as TabType } from './[id]/types';
 import { useTeamDetails } from './[id]/hooks/useTeamsDetails';
 
 const TeamDetailsPage: React.FC = () => {
