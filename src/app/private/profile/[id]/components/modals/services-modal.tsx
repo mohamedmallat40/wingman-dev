@@ -262,7 +262,7 @@ const ServiceModal: React.FC<ServiceModalProps> = ({
               disabled={isLoading}
             >
               {SERVICE_TYPES.map((type) => (
-                <SelectItem key={type.key} value={type.key}>
+                <SelectItem key={type.key}>
                   {type.label}
                 </SelectItem>
               ))}

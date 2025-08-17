@@ -111,13 +111,13 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
                     <div className="flex items-center gap-3">
                       <div className="p-2 rounded-lg bg-default-100">
                         <Icon 
-                          icon={platformDetails.icon} 
-                          className={`h-5 w-5 ${platformDetails.color}`}
+                          icon={platformDetails?.icon || 'solar:link-outline'} 
+                          className={`h-5 w-5 ${platformDetails?.color || 'text-default-500'}`}
                         />
                       </div>
                       <div>
                         <h4 className="font-medium text-foreground">
-                          {account.displayName || platformDetails.label}
+                          {account.displayName || platformDetails?.label || account.platform}
                         </h4>
                         <p className="text-sm text-default-600">@{account.username || 'username'}</p>
                       </div>
@@ -180,7 +180,7 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                       label="Custom Display Name"
-                      placeholder={platformDetails.label}
+                      placeholder={platformDetails?.label || account.platform}
                       value={account.displayName || ''}
                       onChange={(e) => onUpdate(index, { ...account, displayName: e.target.value })}
                       variant="bordered"

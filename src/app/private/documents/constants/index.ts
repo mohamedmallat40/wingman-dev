@@ -19,12 +19,18 @@ export const BREADCRUMB_CONFIG = {
 // Tab configuration
 export const TAB_BREADCRUMB_LABELS = {
   'all-documents': 'All Documents',
-  'shared-with-me': 'Shared with Me'
+  'shared-with-me': 'Shared with Me',
+  'my-documents': 'My Documents',
+  recent: 'Recent',
+  archived: 'Archived'
 };
 
 export const TAB_BREADCRUMB_ICONS = {
   'all-documents': 'solar:document-text-linear',
-  'shared-with-me': 'solar:share-linear'
+  'shared-with-me': 'solar:share-linear',
+  'my-documents': 'solar:user-linear',
+  recent: 'solar:clock-circle-linear',
+  archived: 'solar:archive-linear'
 };
 
 // Action items configuration

@@ -101,11 +101,7 @@ export const TagSelector: React.FC<TagSelectorProps> = ({
         variant='bordered'
         isDisabled={maxSelectedTags ? selectedTags.length >= maxSelectedTags : false}
         classNames={{
-          base: 'w-full',
-          inputWrapper:
-            'border-default-300/60 data-[hover=true]:border-primary/60 data-[hover=true]:bg-primary/5 group-data-[focus=true]:border-primary group-data-[focus=true]:bg-primary/5 group-data-[focus=true]:shadow-lg group-data-[focus=true]:shadow-primary/10 rounded-2xl h-14 bg-default-100/50 dark:bg-default-50/50 backdrop-blur-sm transition-all duration-300',
-          input:
-            'text-foreground font-medium tracking-wide placeholder:text-default-400 pl-2 text-base',
+          base: 'w-full border-default-300/60 data-[hover=true]:border-primary/60 data-[hover=true]:bg-primary/5 group-data-[focus=true]:border-primary group-data-[focus=true]:bg-primary/5 group-data-[focus=true]:shadow-lg group-data-[focus=true]:shadow-primary/10 rounded-2xl h-14 bg-default-100/50 dark:bg-default-50/50 backdrop-blur-sm transition-all duration-300',
           listbox: 'max-h-[200px]',
           popoverContent:
             'rounded-2xl shadow-2xl ring-1 ring-white/10 dark:ring-white/5 border border-default-200/50 dark:border-default-700/50 backdrop-blur-xl'

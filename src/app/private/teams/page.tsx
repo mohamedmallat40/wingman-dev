@@ -78,10 +78,15 @@ const TeamDetailsPage: React.FC = () => {
   const renderTabContent = () => {
     if (!team) return null;
 
+    // Check if current user is the team owner (you'll need to implement getCurrentUser)
+    const currentUserId = 'current-user-id'; // Replace with actual current user ID
+    const isOwner = team?.owner?.id === currentUserId;
+
     const commonProperties = {
       team,
       onViewProfile: handleViewMemberProfile,
-      onRefetch: refetch
+      onRefetch: refetch,
+      isOwner
     };
 
     switch (activeTab) {
@@ -118,7 +123,7 @@ const TeamDetailsPage: React.FC = () => {
 
     // Check if current user is the team owner (you'll need to implement getCurrentUser)
     const currentUserId = 'current-user-id'; // Replace with actual current user ID
-    const isOwner = team.owner.id === currentUserId;
+    const isOwner = team?.owner?.id === currentUserId;
 
     if (isOwner) {
       return (

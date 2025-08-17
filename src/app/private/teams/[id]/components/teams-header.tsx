@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { getAvailabilityConfig, mapUserType } from '@/app/private/talent-pool/components';
-import { type Group } from '@/app/private/talent-pool/types';
+import { type Group } from '../types';
 import { getBaseUrl } from '@/lib/utils/utilities';
 
 import { AVAILABILITY_COLORS, TEAM_COLORS } from './constants';
@@ -19,12 +19,18 @@ interface TeamDetailsHeaderProperties {
   onConnectToOwner: () => void;
 }
 
-const getTeamColorClass = (color: string) => {
-  return TEAM_COLORS[color as keyof typeof TEAM_COLORS];
+const getTeamColorClass = (color: string): string => {
+  const colorConfig = TEAM_COLORS.find(c => c.name.toLowerCase() === color.toLowerCase());
+  return colorConfig?.class || 'bg-gray-500';
 };
 
-const getAvailabilityColor = (status: string) => {
-  return AVAILABILITY_COLORS[status as keyof typeof AVAILABILITY_COLORS];
+const getAvailabilityColor = (status: string): "secondary" | "primary" | "warning" | "success" | "danger" | "default" => {
+  const colorMap: Record<string, "secondary" | "primary" | "warning" | "success" | "danger" | "default"> = {
+    available: 'success',
+    busy: 'warning', 
+    unavailable: 'danger'
+  };
+  return colorMap[status] || 'default';
 };
 export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
   team,
@@ -98,7 +104,7 @@ export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
                     variant='flat'
                     className='capitalize'
                   >
-                    {t(getAvailabilityConfig(team.owner.statusAviability).labelKey)}
+                    {t(getAvailabilityConfig(team.owner.statusAviability as any).labelKey)}
                   </Chip>
                 </div>
                 <p className='text-sm text-gray-600'>{mapUserType(team.owner.profession, t)}</p>

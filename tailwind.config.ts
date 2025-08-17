@@ -16,7 +16,7 @@ export default {
       },
       spacing: {
         'container-mobile': '0.5rem',
-        'container-tablet': '1rem', 
+        'container-tablet': '1rem',
         'container-desktop': '1.5rem'
       },
       animation: {

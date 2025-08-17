@@ -3,6 +3,7 @@
 // ============================================================================
 
 import type { DocumentFilters, IDocument } from '../types';
+
 import { getBaseUrl } from '@/lib/utils/utilities';
 
 /**
@@ -160,7 +161,7 @@ export const filterDocuments = (
   });
 };
 
-export const debounce = <T extends (...arguments_: any[]) => any>(
+export const debounce = <T extends (...arguments_: readonly unknown[]) => unknown>(
   function_: T,
   wait: number
 ): ((...arguments_: Parameters<T>) => void) => {
@@ -192,8 +193,8 @@ export const sortDocuments = (
         break;
       }
       case 'type': {
-        const aType = a.type?.name || '';
-        const bType = b.type?.name || '';
+        const aType = a.category?.name || '';
+        const bType = b.category?.name || '';
         comparison = aType.localeCompare(bType);
         break;
       }
@@ -229,7 +230,7 @@ export const getActiveFiltersCount = (filters: DocumentFilters): number => {
  */
 export const getDocumentPreviewUrl = (document: IDocument): string => {
   if (!document.fileName) return '';
-  
+
   // Use the same pattern as profile images: ${getBaseUrl()}/upload/${fileName}
   return `${getBaseUrl()}/upload/${document.fileName}`;
 };
@@ -239,7 +240,7 @@ export const getDocumentPreviewUrl = (document: IDocument): string => {
  */
 export const getDocumentDownloadUrl = (document: IDocument): string => {
   if (!document.fileName) return '';
-  
+
   // Use the same pattern as profile images: ${getBaseUrl()}/upload/${fileName}
   return `${getBaseUrl()}/upload/${document.fileName}`;
 };
@@ -252,7 +253,9 @@ export const canEditDocument = (document: IDocument, userId?: string): boolean =
   // For now, return true if user ID matches creator or if user is in shared list
   if (!userId) return false;
 
-  return document.createdBy === userId || document.sharedWith.some((user) => user.id === userId);
+  return (
+    document.ownerId === userId || document.sharedWith.some((share) => share.userId === userId)
+  );
 };
 
 /**
@@ -263,7 +266,7 @@ export const canShareDocument = (document: IDocument, userId?: string): boolean 
   // For now, return true if user ID matches creator
   if (!userId) return false;
 
-  return document.createdBy === userId;
+  return document.ownerId === userId;
 };
 
 /**

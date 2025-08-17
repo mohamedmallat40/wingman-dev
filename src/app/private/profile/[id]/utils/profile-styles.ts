@@ -1,11 +1,6 @@
-import type { ClassValue } from 'clsx';
+import { cn } from '@/lib/utils';
 
-import { clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+export { cn };
 
 /**
  * Profile-specific styling utilities that complement HeroUI

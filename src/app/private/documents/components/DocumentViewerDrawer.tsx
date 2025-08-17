@@ -42,7 +42,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
 
   const isPDF = useMemo(() => {
     if (!document) return false;
-    return document.fileName.toLowerCase().endsWith('.pdf') || document.type?.name.toLowerCase() === 'pdf';
+    return document.fileName.toLowerCase().endsWith('.pdf') || document.category?.name.toLowerCase() === 'pdf';
   }, [document]);
 
   const isImage = useMemo(() => {
@@ -79,7 +79,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
           <div className='hidden' id={`pdf-fallback-${document?.id}`}>
             <div className='flex h-full items-center justify-center'>
               <div className='text-center'>
-                <Icon icon='solar:file-text-linear' className='mx-auto mb-4 h-16 w-16 text-default-400' />
+                <Icon icon='solar:file-text-outline' className='mx-auto mb-4 h-16 w-16 text-default-400' />
                 <h3 className='mb-2 text-lg font-semibold text-default-600'>PDF Preview Unavailable</h3>
                 <p className='text-default-500 mb-4'>
                   Unable to preview this PDF file in browser.
@@ -166,11 +166,11 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
         >
           <DrawerContent>
             <DrawerHeader className='border-b border-default-200/50 bg-content1/50 backdrop-blur-md'>
-              <div className='flex items-center justify-between'>
+              <div className='flex items-center w-full'>
                 <div className='flex items-center gap-3'>
                   <div className='rounded-lg bg-primary/10 p-2'>
                     <Icon
-                      icon='solar:document-text-bold'
+                      icon='solar:document-text-outline'
                       className='h-5 w-5 text-primary-600'
                     />
                   </div>
@@ -179,16 +179,17 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       {document.documentName}
                     </h2>
                     <p className='text-sm text-default-500'>
-                      {document.type?.name} • {new Date(document.createdAt).toLocaleDateString()}
+                      {document.category?.name} • {new Date(document.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <div className='flex items-center gap-2'>
+                <div className='flex-1'></div>
+                <div className='flex items-center gap-2 ml-auto'>
                   <Button
                     size='sm'
                     variant='flat'
                     color='primary'
-                    startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
+                    startContent={<Icon icon='solar:download-outline' className='h-4 w-4' />}
                     as='a'
                     href={downloadUrl || '#'}
                     download={document?.documentName}
@@ -200,7 +201,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       size='sm'
                       variant='flat'
                       color='secondary'
-                      startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
+                      startContent={<Icon icon='solar:pen-outline' className='h-4 w-4' />}
                       onPress={() => {
                         onEdit(document);
                         onClose();
@@ -214,7 +215,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       size='sm'
                       variant='flat'
                       color='danger'
-                      startContent={<Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />}
+                      startContent={<Icon icon='solar:trash-bin-minimalistic-outline' className='h-4 w-4' />}
                       onPress={() => {
                         onDelete(document);
                         onClose();
@@ -223,6 +224,15 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       Delete
                     </Button>
                   )}
+                  <Button
+                    isIconOnly
+                    size='sm'
+                    variant='light'
+                    onPress={onClose}
+                    className='hover:bg-default-100 dark:hover:bg-default-800'
+                  >
+                    <Icon icon='solar:close-circle-outline' className='h-4 w-4' />
+                  </Button>
                 </div>
               </div>
             </DrawerHeader>
@@ -239,26 +249,6 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
               </motion.div>
             </DrawerBody>
 
-            <DrawerFooter className='border-t border-default-200/50 bg-content1/50 backdrop-blur-md'>
-              <div className='flex w-full items-center justify-between'>
-                <div className='flex items-center gap-2 text-sm text-default-500'>
-                  <Icon icon='solar:info-circle-linear' className='h-4 w-4' />
-                  <span>
-                    {document.tags.length > 0
-                      ? `Tags: ${document.tags.map((tag) => tag.name).join(', ')}`
-                      : 'No tags assigned'}
-                  </span>
-                </div>
-                <Button
-                  color='primary'
-                  variant='light'
-                  onPress={onClose}
-                  startContent={<Icon icon='solar:close-circle-linear' className='h-4 w-4' />}
-                >
-                  Close
-                </Button>
-              </div>
-            </DrawerFooter>
           </DrawerContent>
         </Drawer>
       )}

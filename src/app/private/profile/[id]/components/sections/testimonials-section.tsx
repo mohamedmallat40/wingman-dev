@@ -2,18 +2,7 @@ import React from 'react';
 import { Card, CardBody, CardHeader, Button, Avatar, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { ActionButtons } from '../ActionButtons';
-
-export interface IReview {
-  id?: string;
-  stars: number;
-  testimony: string;
-  status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
-  name: string;
-  email: string;
-  companyName: string;
-  position: string;
-  createdAt?: string;
-}
+import { type IReview } from '@root/modules/profile/types';
 
 interface TestimonialsSectionProps {
   testimonials: IReview[];

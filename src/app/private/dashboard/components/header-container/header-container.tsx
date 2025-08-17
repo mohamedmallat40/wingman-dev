@@ -4,16 +4,16 @@ import React from 'react';
 
 import type { FC } from 'react';
 
-import HeaderPage from '@/components/header-page/header-page';
+import PageHeader from '@/components/page-header/page-header';
 import SectionContainer from '@/components/section-container/section-container';
 
 const HeaderContainer: FC = () => (
   <SectionContainer>
-    <HeaderPage
+    <PageHeader
       title='Dashboard'
       description='   Connect with top experts to solve your digital challenges or share your expertise with
             others.'
-    ></HeaderPage>
+    ></PageHeader>
   </SectionContainer>
 );
 
