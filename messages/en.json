@@ -705,7 +705,9 @@
           "label": "Select Skills",
           "placeholder": "Add relevant skills...",
           "selected": "Selected skills",
-          "noSkills": "No skills selected"
+          "noSkills": "No skills selected",
+          "count": "{current}/{max} skills selected",
+          "createNew": "Create \"{skill}\""
         }
       },
       "media": {

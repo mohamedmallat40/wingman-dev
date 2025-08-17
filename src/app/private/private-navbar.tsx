@@ -90,7 +90,7 @@ export default function PrivateNavBar() {
             className='text-foreground hover:text-primary mr-3 h-8 w-8 transition-colors xl:hidden'
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           />
-          
+
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -99,7 +99,7 @@ export default function PrivateNavBar() {
           >
             <WingmanIcon />
           </motion.div>
-          
+
           <motion.div
             className='hidden min-w-0 flex-col sm:flex'
             initial={{ opacity: 0, x: -20 }}
@@ -117,7 +117,7 @@ export default function PrivateNavBar() {
 
         {/* Desktop Navigation - Enhanced Layout */}
         <NavbarContent className='hidden w-full max-w-none gap-2 xl:flex' justify='start'>
-          <div className='from-default-100/40 to-default-50/25 border-divider/25 flex h-11 items-center gap-2 rounded-2xl border bg-gradient-to-r px-3 backdrop-blur-md shadow-small'>
+          <div className='from-default-100/40 to-default-50/25 border-divider/25 shadow-small flex h-11 items-center gap-2 rounded-2xl border bg-gradient-to-r px-3 backdrop-blur-md'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -175,7 +175,7 @@ export default function PrivateNavBar() {
 
         {/* Tablet Navigation - Icon Only with Enhanced Spacing */}
         <NavbarContent className='hidden w-full max-w-none gap-2 lg:flex xl:hidden' justify='start'>
-          <div className='from-default-100/30 to-default-50/20 border-divider/20 flex h-11 items-center gap-2 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-md shadow-small'>
+          <div className='from-default-100/30 to-default-50/20 border-divider/20 shadow-small flex h-11 items-center gap-2 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-md'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -228,7 +228,7 @@ export default function PrivateNavBar() {
       {/* Right Side Actions - Enhanced Spacing */}
       <NavbarContent as='div' className='flex items-center gap-3 sm:gap-4' justify='end'>
         {/* Theme & Language Group - Reduced Height to Match Navigation */}
-        <div className='from-default-100/40 to-default-50/25 border-divider/25 hidden h-11 items-center gap-1 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-sm shadow-small sm:flex'>
+        <div className='from-default-100/40 to-default-50/25 border-divider/25 shadow-small hidden h-11 items-center gap-1 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-sm sm:flex'>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -416,7 +416,7 @@ export default function PrivateNavBar() {
               <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-medium rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
-                    <div className='bg-primary/20 flex h-8 w-8 items-center justify-center rounded-xl shadow-small'>
+                    <div className='bg-primary/20 shadow-small flex h-8 w-8 items-center justify-center rounded-xl'>
                       <Icon icon='solar:pallete-2-bold' className='text-primary h-4 w-4' />
                     </div>
                     <span className='text-foreground font-medium'>Preferences</span>
@@ -446,7 +446,7 @@ export default function PrivateNavBar() {
               <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-medium rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
-                    <div className='bg-primary/20 flex h-8 w-8 items-center justify-center rounded-xl shadow-small'>
+                    <div className='bg-primary/20 shadow-small flex h-8 w-8 items-center justify-center rounded-xl'>
                       <Icon icon='solar:user-bold' className='text-primary h-4 w-4' />
                     </div>
                     <div>

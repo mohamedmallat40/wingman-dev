@@ -20,13 +20,6 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { type IReview, type IService } from '@root/modules/profile/types';
-
-// Define local Skill type based on actual usage
-interface Skill {
-  id?: string;
-  key: string;
-  type?: string;
-}
 import ISO6391 from 'iso-639-1';
 import { useTranslations } from 'next-intl';
 
@@ -71,6 +64,13 @@ import { NotesSection } from './sections/notes-section';
 import { ProjectsSection } from './sections/projects-section';
 import { ServicesSection } from './sections/services-section';
 import { TestimonialsSection } from './sections/testimonials-section';
+
+// Define local Skill type based on actual usage
+interface Skill {
+  id?: string;
+  key: string;
+  type?: string;
+}
 
 interface ProfileContentProperties {
   user: ProfileUser;
@@ -1371,10 +1371,12 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
         onClose={() => {
           setIsSkillsModalOpen(false);
         }}
-        userSkills={user.skills.map(skill => ({
-          ...skill,
-          id: crypto.randomUUID()
-        })) as any}
+        userSkills={
+          user.skills.map((skill) => ({
+            ...skill,
+            id: crypto.randomUUID()
+          })) as any
+        }
         onSuccess={handleSkillsSuccess}
         addToast={addToast}
       />

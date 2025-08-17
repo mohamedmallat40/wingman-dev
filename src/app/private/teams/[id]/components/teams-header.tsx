@@ -6,9 +6,9 @@ import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { getAvailabilityConfig, mapUserType } from '@/app/private/talent-pool/components';
-import { type Group } from '../types';
 import { getBaseUrl } from '@/lib/utils/utilities';
 
+import { type Group } from '../types';
 import { AVAILABILITY_COLORS, TEAM_COLORS } from './constants';
 
 interface TeamDetailsHeaderProperties {
@@ -20,14 +20,19 @@ interface TeamDetailsHeaderProperties {
 }
 
 const getTeamColorClass = (color: string): string => {
-  const colorConfig = TEAM_COLORS.find(c => c.name.toLowerCase() === color.toLowerCase());
+  const colorConfig = TEAM_COLORS.find((c) => c.name.toLowerCase() === color.toLowerCase());
   return colorConfig?.class || 'bg-gray-500';
 };
 
-const getAvailabilityColor = (status: string): "secondary" | "primary" | "warning" | "success" | "danger" | "default" => {
-  const colorMap: Record<string, "secondary" | "primary" | "warning" | "success" | "danger" | "default"> = {
+const getAvailabilityColor = (
+  status: string
+): 'secondary' | 'primary' | 'warning' | 'success' | 'danger' | 'default' => {
+  const colorMap: Record<
+    string,
+    'secondary' | 'primary' | 'warning' | 'success' | 'danger' | 'default'
+  > = {
     available: 'success',
-    busy: 'warning', 
+    busy: 'warning',
     unavailable: 'danger'
   };
   return colorMap[status] || 'default';
@@ -74,7 +79,10 @@ export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
                 {team.groupName}
               </h1>
               <Chip size='sm' variant='flat' className={getTeamColorClass(team.color)}>
-                {Array.isArray(team.members) ? team.members.length : team.members} member{(Array.isArray(team.members) ? team.members.length : team.members) === 1 ? '' : 's'}
+                {Array.isArray(team.members) ? team.members.length : team.members} member
+                {(Array.isArray(team.members) ? team.members.length : team.members) === 1
+                  ? ''
+                  : 's'}
               </Chip>
             </div>
           </div>

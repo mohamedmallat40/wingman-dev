@@ -20,7 +20,11 @@ interface BroadcastFeedProps {
   className?: string;
 }
 
-const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost, className = '' }) => {
+const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
+  selectedTopic,
+  onEditPost,
+  className = ''
+}) => {
   const t = useTranslations('broadcasts');
   const router = useRouter();
   const filters = useBroadcastFilters();
@@ -34,18 +38,15 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
   // Real-time connection
 
   // Feed query parameters
-  const feedParams = useMemo(
-    () => {
-      const topics = [];
-      if (selectedTopic) topics.push(selectedTopic);
-      if (filters.topicId) topics.push(filters.topicId);
-      
-      return {
-        topics: topics.length > 0 ? topics : undefined
-      };
-    },
-    [selectedTopic, filters.topicId]
-  );
+  const feedParams = useMemo(() => {
+    const topics = [];
+    if (selectedTopic) topics.push(selectedTopic);
+    if (filters.topicId) topics.push(filters.topicId);
+
+    return {
+      topics: topics.length > 0 ? topics : undefined
+    };
+  }, [selectedTopic, filters.topicId]);
 
   // Fetch feed with infinite scroll
   const {
@@ -63,23 +64,35 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
     return feedData.pages.flatMap((page: any) => page?.data || []);
   }, [feedData]);
 
-  const handlePostLike = React.useCallback((postId: string) => {
-    likePost.mutate(postId);
-  }, [likePost]);
+  const handlePostLike = React.useCallback(
+    (postId: string) => {
+      likePost.mutate(postId);
+    },
+    [likePost]
+  );
 
-  const handlePostBookmark = React.useCallback((postId: string) => {
-    bookmarkPost.mutate(postId);
-  }, [bookmarkPost]);
+  const handlePostBookmark = React.useCallback(
+    (postId: string) => {
+      bookmarkPost.mutate(postId);
+    },
+    [bookmarkPost]
+  );
 
-  const handlePostView = React.useCallback((postId: string) => {
-    trackView.mutate(postId);
-  }, [trackView]);
+  const handlePostView = React.useCallback(
+    (postId: string) => {
+      trackView.mutate(postId);
+    },
+    [trackView]
+  );
 
-  const handlePostClick = React.useCallback((postId: string) => {
-    setSelectedPost(postId);
-    handlePostView(postId);
-    router.push(`/private/broadcasts/${postId}`);
-  }, [setSelectedPost, handlePostView, router]);
+  const handlePostClick = React.useCallback(
+    (postId: string) => {
+      setSelectedPost(postId);
+      handlePostView(postId);
+      router.push(`/private/broadcasts/${postId}`);
+    },
+    [setSelectedPost, handlePostView, router]
+  );
 
   if (isLoading) {
     return <BroadcastFeedSkeleton />;
@@ -150,7 +163,9 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
                 onLike={() => handlePostLike(post.id)}
                 onBookmark={() => handlePostBookmark(post.id)}
                 onComment={() => handlePostClick(post.id)}
-                onShare={() => {/* Share functionality would be implemented here */}}
+                onShare={() => {
+                  /* Share functionality would be implemented here */
+                }}
                 onClick={() => handlePostClick(post.id)}
                 onEdit={onEditPost}
                 isLoading={likePost.isPending || bookmarkPost.isPending}
@@ -181,9 +196,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({ selectedTopic, onEditPost
 
       {!hasNextPage && posts.length > 0 && (
         <div className='flex justify-center py-8'>
-          <p className='text-foreground-500 text-sm'>
-            {t('feed.noMorePosts')}
-          </p>
+          <p className='text-foreground-500 text-sm'>{t('feed.noMorePosts')}</p>
         </div>
       )}
     </div>

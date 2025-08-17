@@ -1,11 +1,13 @@
 'use client';
 
 import React from 'react';
+
 import { Button, Card, CardBody, CardHeader, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
-import { ActionButtons } from '../ActionButtons';
+
 import { type Language } from '../../types';
+import { ActionButtons } from '../ActionButtons';
 
 interface LanguagesSectionProps {
   languages: Language[];
@@ -27,7 +29,7 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
   const getLevelColor = (level: string) => {
     const colors = {
       NATIVE: 'success',
-      FLUENT: 'success', 
+      FLUENT: 'success',
       PROFESSIONAL: 'primary',
       CONVERSATIONAL: 'secondary',
       INTERMEDIATE: 'warning',
@@ -41,7 +43,7 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
     const labels = {
       NATIVE: 'Native',
       FLUENT: 'Fluent',
-      PROFESSIONAL: 'Professional', 
+      PROFESSIONAL: 'Professional',
       CONVERSATIONAL: 'Conversational',
       INTERMEDIATE: 'Intermediate',
       BEGINNER: 'Beginner',
@@ -56,30 +58,23 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
   };
 
   return (
-    <Card className='border-default-200/50 scroll-mt-24 shadow-sm hover:shadow-md transition-all duration-300 hover:border-warning/20'>
+    <Card className='border-default-200/50 hover:border-warning/20 scroll-mt-24 shadow-sm transition-all duration-300 hover:shadow-md'>
       <CardHeader className='pb-4'>
         <div className='flex w-full items-center justify-between'>
           <div className='flex items-center gap-4'>
-            <div className='bg-warning/10 rounded-full p-3 hover:bg-warning/15 transition-colors duration-200'>
+            <div className='bg-warning/10 hover:bg-warning/15 rounded-full p-3 transition-colors duration-200'>
               <Icon icon='solar:translation-outline' className='text-warning h-5 w-5' />
             </div>
             <div>
               <h3 className='text-foreground text-lg font-semibold'>
                 Languages ({languages.length})
               </h3>
-              <p className='text-small text-foreground-500 mt-1'>
-                Communicate across cultures
-              </p>
+              <p className='text-small text-foreground-500 mt-1'>Communicate across cultures</p>
             </div>
           </div>
 
           {isOwnProfile && (
-            <ActionButtons
-              showAdd
-              onAdd={onAdd}
-              addTooltip="Add new language"
-              size="md"
-            />
+            <ActionButtons showAdd onAdd={onAdd} addTooltip='Add new language' size='md' />
           )}
         </div>
       </CardHeader>
@@ -90,15 +85,15 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
             {languages.map((lang, index) => (
               <Card
                 key={lang.id || index}
-                className='border border-default-200/50 bg-gradient-to-br from-background to-default-50/30 hover:shadow-md transition-all duration-300 hover:border-warning/30 group'
+                className='border-default-200/50 from-background to-default-50/30 hover:border-warning/30 group border bg-gradient-to-br transition-all duration-300 hover:shadow-md'
               >
                 <CardBody className='p-3'>
                   <div className='space-y-2'>
                     {/* Header with flag and name */}
                     <div className='flex items-center justify-between'>
-                      <div className='flex items-center gap-2 min-w-0 flex-1'>
+                      <div className='flex min-w-0 flex-1 items-center gap-2'>
                         <div className='relative flex-shrink-0'>
-                          <div className='h-5 w-7 overflow-hidden rounded border border-default-200 shadow-sm bg-default-100'>
+                          <div className='border-default-200 bg-default-100 h-5 w-7 overflow-hidden rounded border shadow-sm'>
                             <img
                               src={getCountryFlag(lang)}
                               alt={`${lang.name || lang.key} flag`}
@@ -114,19 +109,19 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
                             />
                           </div>
                           {lang.isNative && (
-                            <div className='absolute -top-0.5 -right-0.5 h-2 w-2 bg-success rounded-full border border-background' />
+                            <div className='bg-success border-background absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full border' />
                           )}
                         </div>
 
                         <div className='min-w-0 flex-1'>
-                          <h4 className='font-semibold text-foreground text-sm truncate'>
+                          <h4 className='text-foreground truncate text-sm font-semibold'>
                             {lang.name || lang.key}
                           </h4>
                         </div>
                       </div>
 
                       {isOwnProfile && (
-                        <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex-shrink-0'>
+                        <div className='flex-shrink-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
                           <ActionButtons
                             showEdit
                             showDelete
@@ -134,7 +129,7 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
                             onDelete={() => onDelete(lang)}
                             editTooltip={`Edit ${lang.name || lang.key}`}
                             deleteTooltip={`Delete ${lang.name || lang.key}`}
-                            size="sm"
+                            size='sm'
                           />
                         </div>
                       )}
@@ -146,7 +141,7 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
                         size='sm'
                         color={getLevelColor(lang.level) as any}
                         variant='flat'
-                        className='font-medium text-xs'
+                        className='text-xs font-medium'
                       >
                         {getLevelLabel(lang.level)}
                       </Chip>
@@ -158,12 +153,10 @@ export const LanguagesSection: React.FC<LanguagesSectionProps> = ({
           </div>
         ) : (
           <div className='flex flex-col items-center justify-center py-8 text-center'>
-            <div className='mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-warning/10'>
-              <Icon icon='solar:translation-outline' className='h-6 w-6 text-warning/60' />
+            <div className='bg-warning/10 mb-3 flex h-12 w-12 items-center justify-center rounded-full'>
+              <Icon icon='solar:translation-outline' className='text-warning/60 h-6 w-6' />
             </div>
-            <p className='text-sm text-default-500 mb-3'>
-              No languages added yet
-            </p>
+            <p className='text-default-500 mb-3 text-sm'>No languages added yet</p>
             {isOwnProfile && (
               <Button
                 size='sm'

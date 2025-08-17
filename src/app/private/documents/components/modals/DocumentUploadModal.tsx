@@ -220,20 +220,23 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
   }, [isOpen]);
 
   // Reset form when modal closes
-  const handleClose = useCallback((shouldRefresh = false) => {
-    if (!isUploading) {
-      setDocumentName('');
-      setSelectedTags([]);
-      setSelectedFile(null);
-      setSelectedDocumentType(null);
-      setDocumentStatus('');
-      setUploadProgress(0);
-      setError('');
-      setSuccess(false);
-      setUploadedFileName(null);
-      onClose(shouldRefresh);
-    }
-  }, [isUploading, onClose]);
+  const handleClose = useCallback(
+    (shouldRefresh = false) => {
+      if (!isUploading) {
+        setDocumentName('');
+        setSelectedTags([]);
+        setSelectedFile(null);
+        setSelectedDocumentType(null);
+        setDocumentStatus('');
+        setUploadProgress(0);
+        setError('');
+        setSuccess(false);
+        setUploadedFileName(null);
+        onClose(shouldRefresh);
+      }
+    },
+    [isUploading, onClose]
+  );
 
   // Handle document type change
   const handleTypeChange = useCallback(
@@ -380,7 +383,9 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           let fileName = '';
           if (selectedFile) {
             try {
-              const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
+              const uploadResponse = (await upload.uploadeFileSingle(
+                selectedFile
+              )) as UploadResponse;
               fileName = uploadResponse.fileName;
               setUploadedFileName(uploadResponse.fileName);
             } catch (uploadError) {

@@ -1,14 +1,16 @@
 'use client';
 
 import React from 'react';
+
+import type { ContentTabProps } from './types';
+
+import { Chip, Input, Select, SelectItem, Textarea } from '@heroui/react';
+import { Icon } from '@iconify/react';
+import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { Controller } from 'react-hook-form';
-import { motion } from 'framer-motion';
-import { Icon } from '@iconify/react';
-import { Input, Select, SelectItem, Textarea, Chip } from '@heroui/react';
 
 import { SkillsInput } from '@/app/private/broadcasts/components/ui/SkillsInput';
-import type { ContentTabProps } from './types';
 
 export const ContentTab: React.FC<ContentTabProps> = ({
   control,
@@ -16,12 +18,14 @@ export const ContentTab: React.FC<ContentTabProps> = ({
   availableTopics,
   topicsLoading,
   watchedContent,
+  watchedLink,
   wordCount,
   readTime
 }) => {
   const t = useTranslations('broadcasts');
+
   return (
-    <div className="space-y-6 py-4">
+    <div className='space-y-6 py-4'>
       {/* Title */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -29,17 +33,14 @@ export const ContentTab: React.FC<ContentTabProps> = ({
         transition={{ duration: 0.4, delay: 0.1 }}
       >
         <Controller
-          name="title"
+          name='title'
           control={control}
           render={({ field, fieldState }) => (
             <Input
               {...field}
               placeholder={t('placeholders.engagingTitle')}
               startContent={
-                <Icon
-                  icon="solar:text-field-outline"
-                  className="text-primary h-4 w-4"
-                />
+                <Icon icon='solar:text-field-outline' className='text-primary h-4 w-4' />
               }
               isInvalid={!!fieldState.error}
               errorMessage={fieldState.error?.message}
@@ -62,13 +63,13 @@ export const ContentTab: React.FC<ContentTabProps> = ({
         transition={{ duration: 0.4, delay: 0.2 }}
       >
         <Controller
-          name="topics"
+          name='topics'
           control={control}
           render={({ field, fieldState }) => (
-            <div className="space-y-1">
+            <div className='space-y-1'>
               <Select
                 placeholder={t('placeholders.selectTopics')}
-                selectionMode="multiple"
+                selectionMode='multiple'
                 selectedKeys={new Set(field.value || [])}
                 onSelectionChange={(keys) => {
                   const selectedArray = Array.from(keys) as string[];
@@ -81,37 +82,27 @@ export const ContentTab: React.FC<ContentTabProps> = ({
                 isLoading={topicsLoading}
                 description={`${field.value?.length || 0}/3 topics`}
                 startContent={
-                  <Icon
-                    icon="solar:hashtag-circle-outline"
-                    className="text-secondary h-4 w-4"
-                  />
+                  <Icon icon='solar:hashtag-circle-outline' className='text-secondary h-4 w-4' />
                 }
                 renderValue={(items) => {
                   return (
-                    <div className="flex flex-wrap gap-2">
+                    <div className='flex flex-wrap gap-2'>
                       {items.map((item) => {
-                        const topic = availableTopics.find(
-                          (t) => t.id === item.key
-                        );
+                        const topic = availableTopics.find((t) => t.id === item.key);
                         return (
                           <Chip
                             key={item.key}
-                            variant="flat"
-                            size="sm"
+                            variant='flat'
+                            size='sm'
                             onClose={() => {
-                              const newTopics = field.value.filter(
-                                (id: string) => id !== item.key
-                              );
+                              const newTopics = field.value.filter((id: string) => id !== item.key);
                               field.onChange(newTopics);
                             }}
                             startContent={
                               topic?.icon ? (
-                                <Icon icon={topic.icon} className="h-3 w-3" />
+                                <Icon icon={topic.icon} className='h-3 w-3' />
                               ) : (
-                                <Icon
-                                  icon="solar:hashtag-linear"
-                                  className="h-3 w-3"
-                                />
+                                <Icon icon='solar:hashtag-linear' className='h-3 w-3' />
                               )
                             }
                             classNames={{
@@ -120,7 +111,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
                                 'text-default-500 hover:text-danger hover:bg-danger-50 dark:hover:bg-danger-900/20'
                             }}
                           >
-{topic?.title || t('fallbacks.loading')}
+                            {topic?.title || t('fallbacks.loading')}
                           </Chip>
                         );
                       })}
@@ -133,10 +124,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
                     key={topic.id}
                     textValue={topic.title}
                     startContent={
-                      <Icon
-                        icon={topic.icon || 'solar:hashtag-linear'}
-                        className="h-4 w-4"
-                      />
+                      <Icon icon={topic.icon || 'solar:hashtag-linear'} className='h-4 w-4' />
                     }
                     description={topic.description}
                     classNames={{
@@ -159,10 +147,45 @@ export const ContentTab: React.FC<ContentTabProps> = ({
         transition={{ duration: 0.4, delay: 0.3 }}
       >
         <Controller
-          name="skills"
+          name='skills'
           control={control}
-          render={({ field }) => (
-            <SkillsInput value={field.value} onChange={field.onChange} />
+          render={({ field }) => <SkillsInput value={field.value} onChange={field.onChange} />}
+        />
+      </motion.div>
+
+      {/* Link Input */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+      >
+        <Controller
+          name='link'
+          control={control}
+          render={({ field, fieldState }) => (
+            <Input
+              {...field}
+              placeholder='Add a link (optional) - e.g., https://example.com'
+              startContent={
+                <Icon
+                  icon='solar:link-broken-minimalistic-linear'
+                  className='text-success h-4 w-4'
+                />
+              }
+              isInvalid={!!fieldState.error}
+              errorMessage={fieldState.error?.message}
+              description={
+                field.value && !fieldState.error
+                  ? 'Valid URL - Link preview will appear in the preview section'
+                  : 'Enter a valid URL starting with http:// or https://'
+              }
+              classNames={{
+                inputWrapper:
+                  'border-0 data-[hover=true]:border-0 group-data-[focus=true]:border-0 group-data-[focus=true]:ring-4 group-data-[focus=true]:ring-success/10 rounded-md bg-default-100/50 dark:bg-default-50/50 p-4 transition-all duration-300 shadow-sm hover:shadow-md group-data-[focus=true]:shadow-lg',
+                input:
+                  'text-foreground font-normal tracking-[0.01em] placeholder:text-default-400 text-base transition-all duration-200'
+              }}
+            />
           )}
         />
       </motion.div>
@@ -171,10 +194,10 @@ export const ContentTab: React.FC<ContentTabProps> = ({
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.4 }}
+        transition={{ duration: 0.4, delay: 0.5 }}
       >
         <Controller
-          name="content"
+          name='content'
           control={control}
           render={({ field, fieldState }) => (
             <Textarea

@@ -29,19 +29,19 @@ export const FormField: React.FC<FormFieldProps> = ({
       className={`w-full ${className}`}
     >
       {label && (
-        <label className='text-foreground text-sm font-medium mb-2 block'>
+        <label className='text-foreground mb-2 block text-sm font-medium'>
           {label}
           {required && <span className='text-danger ml-1'>*</span>}
         </label>
       )}
-      
+
       {children}
-      
+
       {error && (
         <motion.p
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className='text-danger text-xs mt-1'
+          className='text-danger mt-1 text-xs'
         >
           {error}
         </motion.p>

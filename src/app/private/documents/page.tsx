@@ -35,7 +35,6 @@ export default function DocumentsPage() {
   const [viewingDocument, setViewingDocument] = useState<IDocument | null>(null);
   const [showViewerDrawer, setShowViewerDrawer] = useState(false);
 
-
   // Enhanced state management using custom hooks
   const documentState = useDocumentState();
   const {
@@ -62,7 +61,6 @@ export default function DocumentsPage() {
 
   // Filter documents based on active tab and search query
   const filteredDocuments = useMemo(() => {
-
     if (!result?.data) return [];
 
     let documents = result.data;
@@ -81,20 +79,22 @@ export default function DocumentsPage() {
     return filtered;
   }, [result?.data, activeTab, searchQuery, filters]);
 
-  const handleUploadModalClose = useCallback((shouldRefresh = false) => {
-    setShowUploadModal(false);
-    setEditingDocument(null);
-    if (shouldRefresh) {
-      refetch();
-    }
-  }, [refetch]);
+  const handleUploadModalClose = useCallback(
+    (shouldRefresh = false) => {
+      setShowUploadModal(false);
+      setEditingDocument(null);
+      if (shouldRefresh) {
+        refetch();
+      }
+    },
+    [refetch]
+  );
 
   const handleUploadDocument = useCallback(() => {
     setModalMode('upload');
     setEditingDocument(null);
     setShowUploadModal(true);
   }, []);
-
 
   const handleEditDocument = useCallback((document: IDocument) => {
     setModalMode('edit');
@@ -111,7 +111,6 @@ export default function DocumentsPage() {
     setShowViewerDrawer(false);
     setViewingDocument(null);
   }, []);
-
 
   const handleRefresh = useCallback(() => {
     refetch();

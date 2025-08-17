@@ -1,22 +1,20 @@
 'use client';
 
 import React from 'react';
+
+import type { MediaTabProps } from './types';
+
 import { motion } from 'framer-motion';
 
 import { MediaUpload } from '@/components/ui/file-upload/MediaUpload';
-import type { MediaTabProps } from './types';
 
-export const MediaTab: React.FC<MediaTabProps> = ({
-  mediaFiles,
-  setMediaFiles,
-  isUploading
-}) => {
+export const MediaTab: React.FC<MediaTabProps> = ({ mediaFiles, setMediaFiles, isUploading }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="space-y-6 py-4"
+      className='space-y-6 py-4'
     >
       {/* Media Upload Controls */}
       <motion.div

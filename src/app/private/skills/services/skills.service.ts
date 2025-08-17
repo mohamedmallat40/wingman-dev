@@ -1,5 +1,5 @@
-
 import { wingManApi } from '@/lib/axios';
+
 import { API_ROUTES } from '../../../../lib/api-routes';
 import { type Skill } from '../types';
 

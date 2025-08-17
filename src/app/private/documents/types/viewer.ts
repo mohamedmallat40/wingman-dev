@@ -5,18 +5,23 @@
 import type { Document } from './document';
 
 // Viewer mode types
-export type DocumentViewerMode = 
-  | 'preview'
-  | 'fullscreen'
-  | 'embedded'
-  | 'modal';
+export type DocumentViewerMode = 'preview' | 'fullscreen' | 'embedded' | 'modal';
 
 // Zoom levels for document viewer
-export type ZoomLevel = 
+export type ZoomLevel =
   | 'fit-width'
   | 'fit-height'
   | 'actual-size'
-  | 25 | 50 | 75 | 100 | 125 | 150 | 175 | 200 | 250 | 300;
+  | 25
+  | 50
+  | 75
+  | 100
+  | 125
+  | 150
+  | 175
+  | 200
+  | 250
+  | 300;
 
 // Rotation angles
 export type RotationAngle = 0 | 90 | 180 | 270;
@@ -47,12 +52,7 @@ export interface Annotation {
   readonly color?: string;
 }
 
-export type AnnotationType = 
-  | 'comment'
-  | 'highlight'
-  | 'note'
-  | 'stamp'
-  | 'drawing';
+export type AnnotationType = 'comment' | 'highlight' | 'note' | 'stamp' | 'drawing';
 
 export interface Position {
   readonly x: number;

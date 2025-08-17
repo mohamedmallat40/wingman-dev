@@ -1,6 +1,7 @@
+import type { CreatePostData, FeedParams } from '../types';
+
 import { API_ROUTES } from '@/lib/api-routes';
 import wingManApi from '@/lib/axios';
-import type { CreatePostData, FeedParams } from '../types';
 
 // ===== POSTS API =====
 

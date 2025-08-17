@@ -20,7 +20,14 @@ import wingManApi from '@/lib/axios';
 export interface ILanguage {
   id: string;
   key: string | undefined;
-  level: 'BEGINNER' | 'ELEMENTARY' | 'INTERMEDIATE' | 'CONVERSATIONAL' | 'PROFESSIONAL' | 'FLUENT' | 'NATIVE';
+  level:
+    | 'BEGINNER'
+    | 'ELEMENTARY'
+    | 'INTERMEDIATE'
+    | 'CONVERSATIONAL'
+    | 'PROFESSIONAL'
+    | 'FLUENT'
+    | 'NATIVE';
 }
 
 interface LanguageModalProps {
@@ -272,9 +279,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
               allowsCustomValue
             >
               {commonLanguages.map((lang) => (
-                <AutocompleteItem key={lang.code}>
-                  {lang.name}
-                </AutocompleteItem>
+                <AutocompleteItem key={lang.code}>{lang.name}</AutocompleteItem>
               ))}
             </Autocomplete>
 

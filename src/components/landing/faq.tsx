@@ -63,7 +63,7 @@ export default function FAQ() {
           __html: JSON.stringify(faqStructuredData)
         }}
       />
-      <section id='faq' className='relative z-10 mx-auto max-w-4xl px-2 sm:px-4 xl:px-6 py-20'>
+      <section id='faq' className='relative z-10 mx-auto max-w-4xl px-2 py-20 sm:px-4 xl:px-6'>
         <motion.header
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

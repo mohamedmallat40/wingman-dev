@@ -84,5 +84,4 @@ export class CVService {
       throw new Error('Failed to apply CV data to profile');
     }
   }
-
 }

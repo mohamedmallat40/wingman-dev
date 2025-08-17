@@ -2,20 +2,20 @@
  * Document-related types with enhanced typing system
  */
 
-import type { 
-  BaseEntity, 
-  Tag, 
-  Category, 
-  Status, 
-  Permission, 
-  BaseFilters, 
-  CreateDto, 
-  UpdateDto,
-  ViewMode,
-  SortConfig,
-  PaginatedResponse,
+import type {
   ApiResponse,
-  UserSummary
+  BaseEntity,
+  BaseFilters,
+  Category,
+  CreateDto,
+  PaginatedResponse,
+  Permission,
+  SortConfig,
+  Status,
+  Tag,
+  UpdateDto,
+  UserSummary,
+  ViewMode
 } from '@/types';
 
 // Re-export shared types that are used in this module
@@ -30,7 +30,7 @@ export const DOCUMENT_TYPES = {
   ARCHIVED: 'archived'
 } as const;
 
-export type DocumentType = typeof DOCUMENT_TYPES[keyof typeof DOCUMENT_TYPES];
+export type DocumentType = (typeof DOCUMENT_TYPES)[keyof typeof DOCUMENT_TYPES];
 
 // Document status constants
 export const DOCUMENT_STATUS = {
@@ -40,7 +40,7 @@ export const DOCUMENT_STATUS = {
   DELETED: 'deleted'
 } as const;
 
-export type DocumentStatusType = typeof DOCUMENT_STATUS[keyof typeof DOCUMENT_STATUS];
+export type DocumentStatusType = (typeof DOCUMENT_STATUS)[keyof typeof DOCUMENT_STATUS];
 
 // File type constants
 export const SUPPORTED_FILE_TYPES = {
@@ -56,7 +56,7 @@ export const SUPPORTED_FILE_TYPES = {
   IMAGE: 'image/*'
 } as const;
 
-export type SupportedFileType = typeof SUPPORTED_FILE_TYPES[keyof typeof SUPPORTED_FILE_TYPES];
+export type SupportedFileType = (typeof SUPPORTED_FILE_TYPES)[keyof typeof SUPPORTED_FILE_TYPES];
 
 // Core Document interface
 export interface Document extends BaseEntity {
@@ -146,7 +146,7 @@ export interface DocumentFilters extends BaseFilters {
 }
 
 // Sort fields for documents
-export type DocumentSortField = 
+export type DocumentSortField =
   | 'createdAt'
   | 'updatedAt'
   | 'documentName'
@@ -236,7 +236,7 @@ export interface DocumentShareModalProps {
 }
 
 // Action types for document operations
-export type DocumentAction = 
+export type DocumentAction =
   | 'view'
   | 'download'
   | 'share'

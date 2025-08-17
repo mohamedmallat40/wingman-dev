@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useTranslations } from 'next-intl';
 
 import {
   Avatar,
@@ -21,8 +20,9 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
-import { useTopics, useFollowTopic, useUnfollowTopic } from '../../hooks';
+import { useFollowTopic, useTopics, useUnfollowTopic } from '../../hooks';
 
 interface Subcast {
   id: string;
@@ -299,11 +299,11 @@ export default function TopicSidebar({
   // Fetch topics from API
   const { data: topicsData, isLoading: topicsLoading, error: topicsError } = useTopics();
   const [subcasts, setSubcasts] = useState<Subcast[]>([]);
-  
+
   // Follow/unfollow mutations
   const followMutation = useFollowTopic();
   const unfollowMutation = useUnfollowTopic();
-  
+
   // Track which topic is currently being processed
   const [loadingTopicId, setLoadingTopicId] = useState<string | null>(null);
 
@@ -357,7 +357,7 @@ export default function TopicSidebar({
 
   const handleFollowToggle = (subcastId: string) => {
     // Find the current subcast to determine if we should follow or unfollow
-    const subcast = subcasts.find(s => s.id === subcastId);
+    const subcast = subcasts.find((s) => s.id === subcastId);
     if (!subcast) return;
 
     // Set loading state for this specific topic
@@ -508,7 +508,9 @@ export default function TopicSidebar({
               </div>
               <div>
                 <h2 className='text-foreground font-semibold'>{t('topics.title')}</h2>
-                <p className='text-foreground-500 text-xs'>{t('topics.followingCount', { count: followingCount })}</p>
+                <p className='text-foreground-500 text-xs'>
+                  {t('topics.followingCount', { count: followingCount })}
+                </p>
               </div>
             </div>
           </div>
@@ -562,7 +564,7 @@ export default function TopicSidebar({
               <div className='mb-4'>
                 <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
                   <Icon icon='solar:fire-linear' className='text-warning h-4 w-4' />
-{t('topics.hotTopics')}
+                  {t('topics.hotTopics')}
                 </h3>
                 <div className='space-y-2'>
                   {TRENDING_TOPICS.slice(0, 3).map((topic, index) => (
@@ -580,7 +582,7 @@ export default function TopicSidebar({
                         </Chip>
                       </div>
                       <div className='text-foreground-500 text-xs'>
-{t('topics.postCount', { count: topic.postCount })} • {topic.category}
+                        {t('topics.postCount', { count: topic.postCount })} • {topic.category}
                       </div>
                     </motion.div>
                   ))}
@@ -625,9 +627,10 @@ export default function TopicSidebar({
                                     : 'bg-opacity-10'
                               }`}
                               style={{
-                                backgroundColor: selectedSubcast === subcast.id || subcast.isFollowing 
-                                  ? undefined 
-                                  : `${subcast.color}1A`
+                                backgroundColor:
+                                  selectedSubcast === subcast.id || subcast.isFollowing
+                                    ? undefined
+                                    : `${subcast.color}1A`
                               }}
                             >
                               <Icon
@@ -638,9 +641,10 @@ export default function TopicSidebar({
                                     : 'text-current'
                                 }`}
                                 style={{
-                                  color: selectedSubcast === subcast.id || subcast.isFollowing 
-                                    ? undefined 
-                                    : subcast.color
+                                  color:
+                                    selectedSubcast === subcast.id || subcast.isFollowing
+                                      ? undefined
+                                      : subcast.color
                                 }}
                               />
                             </div>
@@ -677,21 +681,25 @@ export default function TopicSidebar({
                                   />
                                 )}
                                 <Tooltip
-                                  content={subcast.isFollowing ? t('tooltips.unfollow') : t('tooltips.follow')}
-                                  placement="top"
+                                  content={
+                                    subcast.isFollowing
+                                      ? t('tooltips.unfollow')
+                                      : t('tooltips.follow')
+                                  }
+                                  placement='top'
                                   delay={500}
                                   closeDelay={0}
-                                  className="text-xs"
+                                  className='text-xs'
                                 >
                                   <Button
                                     isIconOnly
                                     size='sm'
                                     variant={subcast.isFollowing ? 'solid' : 'flat'}
                                     color={subcast.isFollowing ? 'success' : 'primary'}
-                                    className={`h-7 w-7 min-w-unit-7 transition-all duration-200 ${
+                                    className={`min-w-unit-7 h-7 w-7 transition-all duration-200 ${
                                       subcast.isFollowing
-                                        ? 'bg-success/20 text-success hover:bg-success/30 border border-success/30'
-                                        : 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/30'
+                                        ? 'bg-success/20 text-success hover:bg-success/30 border-success/30 border'
+                                        : 'bg-primary/10 text-primary hover:bg-primary/20 border-primary/30 border'
                                     }`}
                                     isLoading={loadingTopicId === subcast.id}
                                     isDisabled={loadingTopicId === subcast.id}
@@ -704,7 +712,11 @@ export default function TopicSidebar({
                                   >
                                     {!loadingTopicId || loadingTopicId !== subcast.id ? (
                                       <Icon
-                                        icon={subcast.isFollowing ? 'solar:check-circle-bold' : 'solar:add-circle-linear'}
+                                        icon={
+                                          subcast.isFollowing
+                                            ? 'solar:check-circle-bold'
+                                            : 'solar:add-circle-linear'
+                                        }
                                         className='h-4 w-4'
                                       />
                                     ) : null}
@@ -753,17 +765,16 @@ export default function TopicSidebar({
                   <Icon icon='solar:inbox-linear' className='text-default-400 h-6 w-6' />
                 </div>
                 <p className='text-foreground-500 text-sm'>
-{subcasts.length === 0 ? t('topics.noTopicsAvailable') : t('topics.noTopicsMatch')}
+                  {subcasts.length === 0
+                    ? t('topics.noTopicsAvailable')
+                    : t('topics.noTopicsMatch')}
                 </p>
                 {subcasts.length === 0 && (
-                  <p className='text-foreground-400 mt-1 text-xs'>
-{t('topics.topicsWillAppear')}
-                  </p>
+                  <p className='text-foreground-400 mt-1 text-xs'>{t('topics.topicsWillAppear')}</p>
                 )}
               </div>
             )}
           </div>
-
         </CardBody>
       </Card>
     </div>

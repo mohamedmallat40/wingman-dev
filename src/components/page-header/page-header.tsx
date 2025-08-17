@@ -217,7 +217,7 @@ export default function PageHeader({
     >
       {/* Enhanced Background Gradient */}
       <div className='from-primary/6 via-primary/3 to-secondary/6 absolute inset-0 bg-gradient-to-r opacity-70' />
-      
+
       {/* Subtle Pattern Overlay */}
       <div className='absolute inset-0 opacity-40'>
         <div className='bg-primary/5 absolute top-0 left-1/4 h-20 w-20 rounded-full blur-2xl' />
@@ -257,7 +257,7 @@ export default function PageHeader({
 
           <div className='flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between lg:gap-8'>
             {/* Enhanced Title Section */}
-            <div className='flex-1 min-w-0'>
+            <div className='min-w-0 flex-1'>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -266,13 +266,13 @@ export default function PageHeader({
               >
                 {/* Enhanced Icon */}
                 {icon && (
-                  <div className='bg-primary/15 ring-primary/25 ring-offset-background/50 flex h-14 w-14 items-center justify-center rounded-2xl ring-2 ring-offset-2 shadow-lg lg:h-16 lg:w-16'>
+                  <div className='bg-primary/15 ring-primary/25 ring-offset-background/50 flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg ring-2 ring-offset-2 lg:h-16 lg:w-16'>
                     <Icon icon={icon} className='text-primary h-7 w-7 lg:h-8 lg:w-8' />
                   </div>
                 )}
 
-                <div className='flex-1 min-w-0'>
-                  <div className='flex items-center gap-4 flex-wrap'>
+                <div className='min-w-0 flex-1'>
+                  <div className='flex flex-wrap items-center gap-4'>
                     <h1 className='text-foreground text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl'>
                       {title}
                     </h1>
@@ -299,7 +299,7 @@ export default function PageHeader({
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.4, duration: 0.4 }}
-                      className='text-default-600 mt-3 text-sm leading-relaxed sm:text-base lg:text-lg lg:mt-4'
+                      className='text-default-600 mt-3 text-sm leading-relaxed sm:text-base lg:mt-4 lg:text-lg'
                     >
                       {description}
                     </motion.p>

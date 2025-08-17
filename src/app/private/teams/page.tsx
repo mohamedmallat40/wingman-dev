@@ -9,17 +9,17 @@ import { useParams, useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import { TeamDetailsHeader } from './[id]/components/teams-header';
-import { TeamDetailsTabs } from './[id]/components/teams-navigation';
+// Import constants
+import { BREADCRUMB_CONFIG, TAB_CONFIG } from './[id]/components/constants';
 import { TeamMembersTab } from './[id]/components/tabs/members';
 import { TeamOverviewTab } from './[id]/components/tabs/overview';
 import { TeamProjectsTab } from './[id]/components/tabs/projects-tab';
 import { TeamToolsTab } from './[id]/components/tabs/tools-tab';
-// Import constants
-import { BREADCRUMB_CONFIG, TAB_CONFIG } from './[id]/components/constants';
+import { TeamDetailsHeader } from './[id]/components/teams-header';
+import { TeamDetailsTabs } from './[id]/components/teams-navigation';
+import { useTeamDetails } from './[id]/hooks/useTeamsDetails';
 // Import hooks
 import { type TeamDetailsTab as TabType } from './[id]/types';
-import { useTeamDetails } from './[id]/hooks/useTeamsDetails';
 
 const TeamDetailsPage: React.FC = () => {
   // ============================================================================

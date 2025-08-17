@@ -2,8 +2,8 @@
  * Document sharing specific types
  */
 
-import type { Document, DocumentShare, Permission } from './document';
 import type { UserSummary } from '@/types';
+import type { Document, DocumentShare, Permission } from './document';
 
 // Sharing configuration
 export interface SharingConfig {
@@ -90,12 +90,7 @@ export interface ShareInvitation {
   readonly createdAt: string;
 }
 
-export type InvitationStatus = 
-  | 'pending'
-  | 'accepted'
-  | 'rejected'
-  | 'expired'
-  | 'cancelled';
+export type InvitationStatus = 'pending' | 'accepted' | 'rejected' | 'expired' | 'cancelled';
 
 // Share permissions with detailed capabilities
 export interface DetailedPermission {

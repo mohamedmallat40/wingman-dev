@@ -60,7 +60,7 @@ const TalentCard: React.FC<TalentCardProperties> = ({
     amount,
     currency,
     paymentType,
-    reviewCount,
+    reviewCount
   } = user;
 
   const availabilityConfig = getAvailabilityConfig(statusAviability);

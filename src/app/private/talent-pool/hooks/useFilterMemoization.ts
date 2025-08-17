@@ -1,22 +1,24 @@
 'use client';
 
 import { useMemo } from 'react';
+
 import { TalentPoolFilters } from '../types';
 
 export const useFilterMemoization = (filters: TalentPoolFilters) => {
   // Memoize active filters count
   const activeFiltersCount = useMemo(() => {
-    return Object.keys(filters).filter(key => {
+    return Object.keys(filters).filter((key) => {
       const value = filters[key as keyof TalentPoolFilters];
-      return value !== undefined && value !== null && 
-             (Array.isArray(value) ? value.length > 0 : true);
+      return (
+        value !== undefined && value !== null && (Array.isArray(value) ? value.length > 0 : true)
+      );
     }).length;
   }, [filters]);
 
   // Memoize filter description for accessibility/SEO
   const filterDescription = useMemo(() => {
     const activeFilters: string[] = [];
-    
+
     if (filters.search || filters.name) {
       activeFilters.push(`Search: "${filters.search || filters.name}"`);
     }
@@ -36,8 +38,8 @@ export const useFilterMemoization = (filters: TalentPoolFilters) => {
       activeFilters.push(`Skills: ${filters.skills.length} selected`);
     }
 
-    return activeFilters.length > 0 
-      ? `Filtered by: ${activeFilters.join(', ')}` 
+    return activeFilters.length > 0
+      ? `Filtered by: ${activeFilters.join(', ')}`
       : 'No filters applied';
   }, [filters]);
 
@@ -54,6 +56,6 @@ export const useFilterMemoization = (filters: TalentPoolFilters) => {
     activeFiltersCount,
     filterDescription,
     hasActiveFilters,
-    isValidFilterState,
+    isValidFilterState
   };
 };

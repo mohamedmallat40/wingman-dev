@@ -189,15 +189,15 @@ const AgencyList: React.FC<AgencyListProperties> = ({
     };
   }, [loadMore, hasNextPage, isLoadingMore, isLoading]);
 
-    const searchFilteredAgencies = useMemo(() => {
-      return searchUtilities.searchAgencies(agencies, searchQuery || '') as User[];
-    }, [searchQuery]);
+  const searchFilteredAgencies = useMemo(() => {
+    return searchUtilities.searchAgencies(agencies, searchQuery || '') as User[];
+  }, [searchQuery]);
 
-    const filteredAgencies = useMemo(() => {
-      const result = searchFilteredAgencies;
+  const filteredAgencies = useMemo(() => {
+    const result = searchFilteredAgencies;
 
-      return result;
-    }, [searchFilteredAgencies, filters]);
+    return result;
+  }, [searchFilteredAgencies, filters]);
 
   const handleRetry = () => {
     fetchAgencies(1);
