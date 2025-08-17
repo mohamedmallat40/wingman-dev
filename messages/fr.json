@@ -297,7 +297,7 @@
       "available": "Disponible",
       "availableForProjects": "Disponible pour les Projets",
       "partTimeAvailable": "Disponible à Temps Partiel",
-      "busy": "Occupé"
+      "notAvailable": "Non disponible"
     },
     "workType": {
       "remote": "à distance",
@@ -528,6 +528,12 @@
         "upload": "Télécharger Document",
         "uploading": "Téléchargement..."
       },
+      "messages": {
+        "success": "Document \"{name}\" téléchargé avec succès !",
+        "error": "Échec du téléchargement du document. Veuillez réessayer.",
+        "missingTypeId": "Aucune correspondance d'ID trouvée pour le type de document : {type}",
+        "missingStatusId": "Aucune correspondance d'ID trouvée pour le statut : {status}"
+      },
       "type": {
         "label": "Type de Document",
         "placeholder": "Sélectionner le type de document",
@@ -569,6 +575,7 @@
       "edit": "Modifier",
       "download": "Télécharger",
       "duplicate": "Dupliquer",
+      "share": "Partager",
       "delete": "Supprimer"
     },
     "share": {
@@ -593,11 +600,11 @@
       "final": "Final"
     },
     "edit": {
-      "title": "Modifier le document",
+      "title": "Modifier le Document",
       "subtitle": "Mettre à jour les informations du document et le fichier",
       "buttons": {
-        "update": "Mettre à jour le document",
-        "mise à jour": "Mise à jour..."
+        "update": "Mettre à Jour le Document",
+        "updating": "Mise à jour..."
       }
     }
   },
@@ -854,7 +861,9 @@
       "unlike": "Ne plus aimer",
       "comment": "Commenter ce post",
       "share": "Partager ce post",
-      "moreOptions": "Plus d'options"
+      "moreOptions": "Plus d'options",
+      "follow": "Suivre ce sujet",
+      "unfollow": "Ne plus suivre ce sujet"
     },
     "accessibility": {
       "close": "Fermer",

@@ -29,7 +29,7 @@ import wingManApi from '@/lib/axios';
 
 interface DocumentUploadModalProperties {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (shouldRefresh?: boolean) => void;
   onUpload?: (data: {
     name: string;
     tags: string[];
@@ -53,7 +53,7 @@ interface DocumentUploadModalProperties {
 
 interface UploadResponse {
   originalname: string;
-  filename: string;
+  fileName: string; // Changed to match the service interface
   buffer: string;
 }
 
@@ -173,7 +173,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
       setDocumentStatus(document.status?.id || '');
 
       // Find and set document type
-      const documentType = documentTypes.find((type) => type.id === document.type?.id);
+      const documentType = documentTypes.find((type) => type.id === document.category?.id);
       if (documentType) {
         setSelectedDocumentType(documentType);
       }
@@ -220,7 +220,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
   }, [isOpen]);
 
   // Reset form when modal closes
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback((shouldRefresh = false) => {
     if (!isUploading) {
       setDocumentName('');
       setSelectedTags([]);
@@ -230,7 +230,8 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
       setUploadProgress(0);
       setError('');
       setSuccess(false);
-      onClose();
+      setUploadedFileName(null);
+      onClose(shouldRefresh);
     }
   }, [isUploading, onClose]);
 
@@ -356,7 +357,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           formData.append('statusId', statusId);
 
           // Append each tag ID separately
-          for (const [index, tagId] of tagIds.entries()) {
+          for (const tagId of tagIds) {
             formData.append(`tags`, tagId);
           }
 
@@ -375,12 +376,17 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           await wingManApi.patch(`/documents/${document?.id}`, requestData);
 
           setUploadProgress(100);
-        } else if (!isEditMode && onUpload) {
+        } else if (!isEditMode) {
           let fileName = '';
           if (selectedFile) {
-            const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
-            fileName = uploadResponse.filename;
-            setUploadedFileName(uploadResponse.filename);
+            try {
+              const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
+              fileName = uploadResponse.fileName;
+              setUploadedFileName(uploadResponse.fileName);
+            } catch (uploadError) {
+              console.error('File upload failed:', uploadError);
+              throw new Error('Failed to upload file. Please try again.');
+            }
           }
 
           const formData = new FormData();
@@ -390,7 +396,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           formData.append('statusId', statusId);
 
           // Append each tag ID separately
-          for (const [index, tagId] of tagIds.entries()) {
+          for (const tagId of tagIds) {
             formData.append(`tags`, tagId);
           }
 
@@ -404,14 +410,19 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
 
           // Upload document
           setUploadProgress(60);
-          await wingManApi.post('/documents', requestData);
-          setUploadProgress(100);
+          try {
+            await wingManApi.post('/documents', requestData);
+            setUploadProgress(100);
+          } catch (docError) {
+            console.error('Document creation failed:', docError);
+            throw new Error('Failed to create document. Please try again.');
+          }
         }
 
         setSuccess(true);
 
-        // Auto close after success
-        setTimeout(handleClose, 500);
+        // Auto close after success with refresh
+        setTimeout(() => handleClose(true), 500);
       } catch (error) {
         console.error(`${isEditMode ? 'Update' : 'Upload'} failed:`, error);
         const errorMessage =
@@ -535,7 +546,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                 <Button
                   isIconOnly
                   variant='light'
-                  onPress={handleClose}
+                  onPress={() => handleClose()}
                   disabled={isUploading}
                   className='hover:bg-default-100 dark:hover:bg-default-800'
                 >
@@ -806,7 +817,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                 >
                   <Button
                     variant='bordered'
-                    onPress={handleClose}
+                    onPress={() => handleClose()}
                     disabled={isUploading}
                     className='border-default-300/60 hover:border-primary/60 hover:bg-primary/5 hover:shadow-primary/10 h-12 rounded-2xl font-medium tracking-wide backdrop-blur-sm transition-all duration-300 hover:shadow-lg'
                   >

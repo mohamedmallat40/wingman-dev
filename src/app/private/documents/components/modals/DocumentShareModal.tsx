@@ -66,13 +66,13 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
   const networkUsers = networkResponse?.items;
   const existingSharedUsers = useMemo(() => {
     return (
-      document?.sharedWith.map((shared: SharedUser) => ({
-        id: shared.id,
-        email: shared.email,
-        firstName: shared.firstName,
-        lastName: shared.lastName,
-        avatar: shared.profileImage || shared.avatar || '',
-        role: shared.role || 'FREELANCER'
+      document?.sharedWith.map((share) => ({
+        id: share.user.id,
+        email: share.user.email,
+        firstName: share.user.firstName,
+        lastName: share.user.lastName,
+        avatar: share.user.profileImage || share.user.avatar || '',
+        role: share.user.role || 'FREELANCER'
       })) ?? []
     );
   }, [document]);
@@ -112,7 +112,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
 
         return true;
       })
-      .slice(0, 8); // Limit results
+      .slice(0, 5); // Limit results
   }, [searchQuery, selectedUsers, existingSharedUsers, networkUsers]);
 
   // Reset state on close
@@ -242,8 +242,8 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
       backdrop='opaque'
       isDismissable={!isSharing}
       classNames={{
-        wrapper: 'p-4 sm:p-6',
-        base: 'border-default-200 dark:border-default-700',
+        wrapper: 'p-0',
+        base: 'border-default-200 dark:border-default-700 m-0',
         backdrop: 'bg-black/50 backdrop-blur-sm'
       }}
       motionProps={{
@@ -274,7 +274,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
       <ModalContent className='w-full max-w-2xl'>
         {(onClose) => (
           <>
-            <ModalHeader className='flex flex-col gap-2 px-6 pt-6 pb-4'>
+            <ModalHeader className='flex flex-col gap-0 p-6'>
               <div className='flex items-center justify-between'>
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -299,25 +299,17 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                     </p>
                   </div>
                 </motion.div>
-                <Button
-                  isIconOnly
-                  variant='light'
-                  onPress={onClose}
-                  className='hover:bg-default-100 dark:hover:bg-default-800'
-                >
-                  <Icon icon='solar:close-circle-outline' className='h-5 w-5' />
-                </Button>
               </div>
             </ModalHeader>
 
-            <ModalBody className='flex flex-col gap-4 px-6 py-4 max-h-[70vh] overflow-y-auto'>
+            <ModalBody className='px-6 py-0 max-h-[80vh] min-h-[500px] overflow-y-auto w-full'>
               {success ? (
                 // Success state
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4 }}
-                  className='bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800/30 rounded-xl border p-6 text-center'
+                  className='bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800/30 rounded-xl border p-4 text-center'
                 >
                   <Icon icon='solar:check-circle-outline' className='text-success mx-auto mb-3 h-16 w-16' />
                   <p className='text-success-700 dark:text-success-400 mb-4 font-medium text-lg'>
@@ -330,7 +322,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                 </motion.div>
               ) : (
                 <Form
-                  className='flex flex-col gap-4'
+                  className='w-full space-y-4'
                   validationBehavior='native'
                   onSubmit={handleShare}
                 >
@@ -341,7 +333,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className='bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800/30 rounded-xl border p-4'
+                        className='bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800/30 rounded-xl border p-3'
                       >
                         <div className='flex items-center gap-2'>
                           <Icon icon='solar:danger-triangle-outline' className='text-danger h-5 w-5' />
@@ -357,7 +349,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1, duration: 0.4 }}
-                      className='space-y-3'
+                      className='space-y-2'
                     >
                       <div className='flex items-center gap-2'>
                         <Icon icon='solar:users-group-rounded-outline' className='text-primary h-4 w-4' />
@@ -387,7 +379,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                         ))}
                       </div>
 
-                      <Divider className='my-4' />
+                      <Divider className='my-3' />
                     </motion.div>
                   )}
 
@@ -396,30 +388,36 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.4 }}
-                    className='space-y-3'
+                    className='w-full space-y-2'
                   >
-                    <div className='flex items-center gap-2'>
-                      <Icon icon='solar:user-plus-outline' className='text-primary h-4 w-4' />
-                      <span className='text-foreground text-sm font-medium'>Add people</span>
+                    <div className='mb-2'>
+                      <div className='flex items-center gap-2'>
+                        <Icon icon='solar:user-plus-outline' className='text-primary h-4 w-4' />
+                        <span className='text-foreground text-sm font-medium'>Add people</span>
+                      </div>
                     </div>
 
-                    <Input
-                      value={searchQuery}
-                      onValueChange={setSearchQuery}
-                      placeholder='Search by name, email, or department...'
-                      variant='bordered'
-                      className='w-full'
-                      classNames={{
-                        inputWrapper: 'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary'
-                      }}
-                      startContent={
-                        isSearching ? (
-                          <Spinner size='sm' color='primary' />
-                        ) : (
-                          <Icon icon='solar:magnifer-outline' className='text-default-400 h-4 w-4' />
-                        )
-                      }
-                    />
+                    <div className='w-full'>
+                      <Input
+                        value={searchQuery}
+                        onValueChange={setSearchQuery}
+                        placeholder='Search by name, email, or department...'
+                        variant='bordered'
+                        className='w-full'
+                        classNames={{
+                          base: 'w-full',
+                          inputWrapper: 'w-full border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary',
+                          input: 'w-full'
+                        }}
+                        startContent={
+                          isSearching ? (
+                            <Spinner size='sm' color='primary' />
+                          ) : (
+                            <Icon icon='solar:magnifer-outline' className='text-default-400 h-4 w-4' />
+                          )
+                        }
+                      />
+                    </div>
                   </motion.div>
 
                   {/* User Results */}
@@ -427,7 +425,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.4 }}
-                    className='min-h-0 flex-1 space-y-2'
+                    className='w-full min-h-0 flex-1 space-y-1'
                   >
                     <AnimatePresence mode='wait'>
                       {isSearching ? (
@@ -449,7 +447,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className='space-y-2 max-h-60 overflow-y-auto'
+                          className='w-full space-y-2 max-h-80 overflow-y-auto p-1'
                         >
                           {filteredUsers.length > 0 ? (
                             filteredUsers.map((user: IUserProfile, index: number) => (
@@ -466,7 +464,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                                 }}
                               >
                                 <Card
-                                  className='border-default-200 hover:border-primary/50 hover:bg-primary/5 cursor-pointer border transition-all duration-200'
+                                  className='w-full border-default-200 hover:border-primary/50 hover:bg-primary/5 cursor-pointer border transition-all duration-200'
                                   isPressable
                                   onPress={() => toggleUser(user.id)}
                                 >
@@ -483,8 +481,8 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                                           <Avatar
                                             src={user.avatar}
                                             name={`${user.firstName} ${user.lastName}`}
-                                            size='md'
-                                            className='h-10 w-10'
+                                            size='sm'
+                                            className='h-8 w-8'
                                           />
                                         </Badge>
                                       </div>
@@ -497,9 +495,9 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                                           </h4>
                                           <Chip
                                             size='sm'
-                                            color={getRoleColor(user.role) as any}
+                                            color={getRoleColor(user.role)}
                                             variant='flat'
-                                            className='text-xs'
+                                            className='text-xs h-5'
                                           >
                                             {user.role || 'User'}
                                           </Chip>
@@ -568,7 +566,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.2 }}
-                        className='space-y-3'
+                        className='w-full space-y-2'
                       >
                         <Divider />
 
@@ -616,47 +614,45 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                           })}
                         </div>
 
-                        <div className='space-y-3'>
-                          <Textarea
-                            value={message}
-                            onValueChange={setMessage}
-                            label='Message (optional)'
-                            placeholder='Add a personal message...'
-                            variant='bordered'
-                            maxRows={3}
-                            classNames={{
-                              inputWrapper: 'border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary'
-                            }}
-                          />
-
-                          <div className='flex items-center gap-2'>
-                            <Switch
-                              size='sm'
-                              isSelected={notifyUsers}
-                              onValueChange={setNotifyUsers}
-                            />
-                            <span className='text-foreground text-sm'>Notify users via email</span>
-                          </div>
-                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
+
+                  {/* Message and notification settings - always visible */}
+                  <div className='w-full space-y-3 mt-4'>
+                    <div className='w-full'>
+                      <Textarea
+                        value={message}
+                        onValueChange={setMessage}
+                        label='Message (optional)'
+                        placeholder='Add a personal message...'
+                        variant='bordered'
+                        maxRows={3}
+                        className='w-full'
+                        classNames={{
+                          base: 'w-full',
+                          inputWrapper: 'w-full border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary',
+                          input: 'w-full'
+                        }}
+                      />
+                    </div>
+
+                    <div className='flex items-center gap-2'>
+                      <Switch
+                        size='sm'
+                        isSelected={notifyUsers}
+                        onValueChange={setNotifyUsers}
+                      />
+                      <span className='text-foreground text-sm'>Notify users via email</span>
+                    </div>
+                  </div>
                 </Form>
               )}
             </ModalBody>
 
-            <ModalFooter className='justify-end px-6 pt-4 pb-6'>
-              {!success && (
-                <div className='flex gap-3'>
-                  <Button
-                    variant='bordered'
-                    onPress={handleClose}
-                    disabled={isSharing}
-                  >
-                    Cancel
-                  </Button>
-                  {selectedUsers.size > 0 && (
-                    <Button
+            <ModalFooter className='justify-end p-6 pt-4'>
+              {!success && selectedUsers.size > 0 && (
+                <Button
                       type='submit'
                       color='primary'
                       isDisabled={selectedUsers.size === 0}
@@ -665,7 +661,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                         isSharing ? undefined : <Icon icon='solar:share-outline' className='h-4 w-4' />
                       }
                       onPress={() => {
-                        const form = document.querySelector('form');
+                        const form = window.document.querySelector('form');
                         if (form) {
                           form.requestSubmit();
                         }
@@ -674,9 +670,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                       {isSharing
                         ? 'Sharing...'
                         : `Share with ${selectedUsers.size} ${selectedUsers.size === 1 ? 'person' : 'people'}`}
-                    </Button>
-                  )}
-                </div>
+                </Button>
               )}
             </ModalFooter>
           </>

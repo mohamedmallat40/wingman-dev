@@ -19,7 +19,10 @@ const initialState: DocumentState = {
   viewMode: 'grid',
   documentsCount: {
     'all-documents': 0,
-    'shared-with-me': 0
+    'shared-with-me': 0,
+    'my-documents': 0,
+    recent: 0,
+    archived: 0
   }
 };
 
@@ -57,8 +60,7 @@ export default function useDocumentState() {
   }, []);
 
   const handleSearch = useCallback(() => {
-    // Trigger search logic if needed
-    console.log('Search triggered with query:', state.searchQuery);
+    // Search logic is handled by the filteredDocuments useMemo in the parent component
   }, [state.searchQuery]);
 
   const resetState = useCallback(() => {

@@ -62,11 +62,18 @@ export const EnhancedLanguagesForm: React.FC<EnhancedLanguagesFormProps> = ({
     if (selectedLang) {
       onUpdate(index, {
         ...languages[index],
+        id: languages[index]?.id || crypto.randomUUID(),
         name: selectedLang.name,
         nativeName: selectedLang.nativeName,
         code: selectedLang.code,
         key: selectedLang.name, // For backwards compatibility
-        countryFlag: selectedLang.countryFlag
+        countryFlag: selectedLang.countryFlag,
+        level: languages[index]?.level || 'BEGINNER',
+        isNative: languages[index]?.isNative || false,
+        canRead: languages[index]?.canRead || false,
+        canWrite: languages[index]?.canWrite || false,
+        canSpeak: languages[index]?.canSpeak || false,
+        canUnderstand: languages[index]?.canUnderstand || false
       });
     }
   };
@@ -84,6 +91,16 @@ export const EnhancedLanguagesForm: React.FC<EnhancedLanguagesFormProps> = ({
   const handleSkillToggle = (index: number, skill: keyof Pick<Language, 'canRead' | 'canWrite' | 'canSpeak' | 'canUnderstand'>, value: boolean) => {
     onUpdate(index, {
       ...languages[index],
+      id: languages[index]?.id || crypto.randomUUID(),
+      name: languages[index]?.name || '',
+      code: languages[index]?.code || '',
+      level: languages[index]?.level || 'BEGINNER',
+      isNative: languages[index]?.isNative || false,
+      canRead: languages[index]?.canRead || false,
+      canWrite: languages[index]?.canWrite || false,
+      canSpeak: languages[index]?.canSpeak || false,
+      canUnderstand: languages[index]?.canUnderstand || false,
+      key: languages[index]?.key || languages[index]?.name || '',
       [skill]: value
     });
   };
@@ -121,11 +138,12 @@ export const EnhancedLanguagesForm: React.FC<EnhancedLanguagesFormProps> = ({
                   )}
                   {lang.isNative && (
                     <Badge
-                      content="N"
                       color="success"
                       size="sm"
                       className="absolute -top-1 -right-1"
-                    />
+                    >
+                      N
+                    </Badge>
                   )}
                 </div>
                 <div>

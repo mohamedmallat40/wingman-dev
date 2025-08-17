@@ -1,118 +1,54 @@
-// Base types
-export interface DocumentTag {
-  id: string;
-  name: string;
-}
+/**
+ * @deprecated Use types from ./types/index.ts instead
+ * This file is kept for backward compatibility and will be removed in a future version
+ */
 
-export interface DocumentCategory {
-  id: string;
-  name: string;
-}
+// Re-export new types for backward compatibility
+export * from './types/index';
 
-export interface DocumentStatus {
-  id: string;
-  name: string;
-}
+// Import types for legacy aliases
+import type { 
+  Document, 
+  DocumentType,
+  ViewMode,
+  DocumentFilters,
+  DocumentListResponse,
+  ShareDocumentPayload,
+  CreateDocumentPayload
+} from './types/index';
+import type { UserSummary, Tag, Category, Status } from '@/types';
 
-export interface SharedUser {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  profileImage: string | null;
-  avatar?: string;
-  role?: 'AGENCY' | 'FREELANCER' | 'COMPANY' | 'ADMIN';
-  profilePicture?: string;
-}
+// Legacy type aliases - will be removed
+/** @deprecated Use Document instead */
+export type IDocument = Document;
 
-export interface IDocument {
-  id: string;
-  documentName: string;
-  fileName: string;
-  createdAt: string;
-  createdBy?: string;
-  sharedWith: SharedUser[];
-  tags: DocumentTag[];
-  type: DocumentCategory | null;
-  status: DocumentStatus | null;
-}
+/** @deprecated Use UserSummary instead */
+export type SharedUser = UserSummary;
 
-// Document operations
-export interface DocumentShareData {
-  documentId: string;
-  userIds: string[];
-  permissions?: 'read' | 'write' | 'admin';
-}
+/** @deprecated Use Tag instead */
+export type DocumentTag = Tag;
 
-export interface DocumentUploadData {
-  file: File;
-  documentName: string;
-  tags?: string[];
-  type?: string;
-}
+/** @deprecated Use Category instead */
+export type DocumentCategory = Category;
 
-export type DocumentType = 'all-documents' | 'shared-with-me';
+/** @deprecated Use Status instead */
+export type DocumentStatus = Status;
 
-export type ViewMode = 'list' | 'grid';
+/** @deprecated Use ShareDocumentPayload instead */
+export type DocumentShareData = ShareDocumentPayload;
 
-// Component props
-export interface DocumentEmptyStateProps {
-  title?: string;
-  description?: string;
-  actionLabel?: string;
-  actionIcon?: string;
-  onAction?: () => void;
-  onUpload?: () => void;
-  illustration?: string;
-  className?: string;
-}
+/** @deprecated Use CreateDocumentPayload instead */
+export type DocumentUploadData = CreateDocumentPayload;
 
-export interface DocumentCardProps {
-  document: IDocument;
-  viewMode: ViewMode;
-  onSelect?: (document: IDocument) => void;
-  onShare?: (document: IDocument) => void;
-  onDelete?: (document: IDocument) => void;
-  onDownload?: (document: IDocument) => void;
-}
+/** @deprecated Use DocumentFilters instead */
+export type DocumentFiltersState = DocumentFilters;
 
-export interface DocumentViewerProps {
-  document: IDocument | null;
-  isOpen: boolean;
-  onClose: () => void;
-}
+/** @deprecated Use DocumentListResponse instead */
+export type DocumentApiResponse = DocumentListResponse;
 
-// Filter and search types
-export interface DocumentFiltersState {
-  search: string;
-  name: string;
-  tags: string[];
-  type: string;
-  status: string;
-  dateFrom: string;
-  dateTo: string;
-}
-
-// API response types
-export interface DocumentApiResponse {
-  data: IDocument[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
+/** @deprecated Use ApiResponse<Document> instead */
 export interface DocumentShareResponse {
   success: boolean;
   message: string;
-  data?: IDocument;
-}
-
-export interface DocumentFilters {
-  search?: string;
-  name?: string;
-  tags?: string[];
-  type?: string;
-  status?: string;
-  dateFrom?: string;
-  dateTo?: string;
+  data?: Document;
 }

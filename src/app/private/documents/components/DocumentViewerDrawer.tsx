@@ -42,7 +42,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
 
   const isPDF = useMemo(() => {
     if (!document) return false;
-    return document.fileName.toLowerCase().endsWith('.pdf') || document.type?.name.toLowerCase() === 'pdf';
+    return document.fileName.toLowerCase().endsWith('.pdf') || document.category?.name.toLowerCase() === 'pdf';
   }, [document]);
 
   const isImage = useMemo(() => {
@@ -166,7 +166,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
         >
           <DrawerContent>
             <DrawerHeader className='border-b border-default-200/50 bg-content1/50 backdrop-blur-md'>
-              <div className='flex items-center justify-between'>
+              <div className='flex items-center w-full'>
                 <div className='flex items-center gap-3'>
                   <div className='rounded-lg bg-primary/10 p-2'>
                     <Icon
@@ -179,11 +179,12 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       {document.documentName}
                     </h2>
                     <p className='text-sm text-default-500'>
-                      {document.type?.name} • {new Date(document.createdAt).toLocaleDateString()}
+                      {document.category?.name} • {new Date(document.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <div className='flex items-center gap-2'>
+                <div className='flex-1'></div>
+                <div className='flex items-center gap-2 ml-auto'>
                   <Button
                     size='sm'
                     variant='flat'
@@ -248,26 +249,6 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
               </motion.div>
             </DrawerBody>
 
-            <DrawerFooter className='border-t border-default-200/50 bg-content1/50 backdrop-blur-md'>
-              <div className='flex w-full items-center justify-between'>
-                <div className='flex items-center gap-2 text-sm text-default-500'>
-                  <Icon icon='solar:info-circle-linear' className='h-4 w-4' />
-                  <span>
-                    {document.tags.length > 0
-                      ? `Tags: ${document.tags.map((tag) => tag.name).join(', ')}`
-                      : 'No tags assigned'}
-                  </span>
-                </div>
-                <Button
-                  color='primary'
-                  variant='light'
-                  onPress={onClose}
-                  startContent={<Icon icon='solar:close-circle-linear' className='h-4 w-4' />}
-                >
-                  Close
-                </Button>
-              </div>
-            </DrawerFooter>
           </DrawerContent>
         </Drawer>
       )}

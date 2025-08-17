@@ -14,6 +14,14 @@ import wingManApi from '@/lib/axios';
 
 export interface IEducation {
   id: string;
+  university?: string;
+  degree?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+interface EducationFormData {
   university: string;
   degree: string;
   description: string;
@@ -36,7 +44,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
   onSuccess,
   addToast
 }) => {
-  const [formData, setFormData] = useState<Omit<IEducation, 'id'>>({
+  const [formData, setFormData] = useState<EducationFormData>({
     university: '',
     degree: '',
     description: '',
@@ -51,11 +59,11 @@ const EducationModal: React.FC<EducationModalProps> = ({
   useEffect(() => {
     if (education) {
       setFormData({
-        university: education.university,
-        degree: education.degree,
-        description: education.description,
-        startDate: education.startDate ? education.startDate.split('T')[0] : '',
-        endDate: education.endDate ? education.endDate.split('T')[0] : ''
+        university: education.university || '',
+        degree: education.degree || '',
+        description: education.description || '',
+        startDate: (education.startDate && education.startDate.split('T')[0]) || '',
+        endDate: (education.endDate && education.endDate.split('T')[0]) || ''
       });
     } else {
       setFormData({

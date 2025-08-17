@@ -16,6 +16,7 @@ import {
   mapUserType,
   mapWorkingTime
 } from '@/app/private/talent-pool/utils/talent-utilities';
+import type { AvailabilityStatus, WorkType, Currency, PaymentType } from '@/app/private/talent-pool/types';
 import { getImageUrl } from '@/lib/utils/utilities';
 
 import {
@@ -66,12 +67,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Added state for edit modal
 
   const fullName = `${user.firstName} ${user.lastName}`;
-  const availabilityConfig = getAvailabilityConfig(user!.statusAviability);
-  const workTypeConfig = getWorkTypeConfig(user.workType ?? '');
+  const availabilityConfig = getAvailabilityConfig(user!.statusAviability as AvailabilityStatus);
+  const workTypeConfig = getWorkTypeConfig((user.workType ?? 'REMOTE') as WorkType);
   const rate = formatRate(
     user.amount || 0,
-    user.currency || 'EUR',
-    user.paymentType || 'DAILY_BASED',
+    (user.currency || 'EUR') as Currency,
+    (user.paymentType || 'DAILY_BASED') as PaymentType,
     t
   );
 
