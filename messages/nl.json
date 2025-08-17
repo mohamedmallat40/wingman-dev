@@ -1109,6 +1109,73 @@
     "monthsAgo": "{months, plural, one {# maand geleden} other {# maanden geleden}}",
     "yearsAgo": "{years, plural, one {# jaar geleden} other {# jaar geleden}}"
   },
+  "comments": {
+    "title": "Reacties",
+    "scrollToTop": "Terug naar boven",
+    "loadMore": "Meer reacties laden",
+    "endOfComments": "Je hebt het einde van de reacties bereikt",
+    "edited": "bewerkt",
+    "hideReplies": "Antwoorden verbergen",
+    "showReplies": "Antwoorden tonen",
+    "loadMoreReplies": "Laad {count, plural, one {# antwoord} other {# antwoorden}} meer",
+    "empty": {
+      "title": "Nog geen reacties",
+      "description": "Wees de eerste om je gedachten te delen!"
+    },
+    "error": {
+      "title": "Kan reacties niet laden",
+      "description": "Er is iets misgegaan bij het laden van de reacties. Probeer het opnieuw.",
+      "retry": "Opnieuw proberen"
+    },
+    "loading": {
+      "more": "Meer reacties laden..."
+    },
+    "actions": {
+      "like": "Leuk vinden",
+      "unlike": "Niet meer leuk vinden",
+      "reply": "Antwoorden",
+      "edit": "Bewerken",
+      "delete": "Verwijderen",
+      "report": "Rapporteren",
+      "share": "Delen",
+      "pin": "Reactie vastprikken",
+      "unpin": "Reactie losmaken"
+    },
+    "input": {
+      "placeholder": "Schrijf een reactie...",
+      "replyPlaceholder": "Antwoord op {name}...",
+      "editPlaceholder": "Bewerk je reactie...",
+      "post": "Plaatsen",
+      "update": "Bijwerken",
+      "cancel": "Annuleren",
+      "shortcut": "Druk op"
+    },
+    "mentions": {
+      "suggestions": "Suggesties"
+    },
+    "time": {
+      "justNow": "Zojuist",
+      "minutesAgo": "{count, plural, one {# minuut geleden} other {# minuten geleden}}",
+      "hoursAgo": "{count, plural, one {# uur geleden} other {# uur geleden}}",
+      "daysAgo": "{count, plural, one {# dag geleden} other {# dagen geleden}}"
+    },
+    "stats": {
+      "likes": "{count, plural, =0 {} one {# vind-ik-leuk} other {# vind-ik-leuks}}",
+      "replies": "{count, plural, =0 {} one {# antwoord} other {# antwoorden}}",
+      "comments": "{count, plural, =0 {Geen reacties} one {# reactie} other {# reacties}}"
+    },
+    "notifications": {
+      "liked": "{name} vindt je reactie leuk",
+      "replied": "{name} heeft op je reactie geantwoord",
+      "mentioned": "{name} heeft je genoemd in een reactie"
+    },
+    "moderation": {
+      "reported": "Reactie succesvol gerapporteerd",
+      "deleted": "Reactie verwijderd",
+      "pinned": "Reactie vastgeprikt",
+      "unpinned": "Reactie losgemaakt"
+    }
+  },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet"
   }

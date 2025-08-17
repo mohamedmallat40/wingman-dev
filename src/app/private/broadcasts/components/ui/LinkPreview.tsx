@@ -13,6 +13,7 @@ export interface LinkMetadata {
   image?: string;
   siteName?: string;
   favicon?: string;
+  author?: string;
 }
 
 interface LinkPreviewProps {
@@ -152,28 +153,10 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
                   />
                 </div>
 
-                {/* Title */}
+                {/* Title with author */}
                 <h4 className='text-foreground line-clamp-2 text-base leading-tight font-bold tracking-tight'>
-                  {metadata.title}
+                  {metadata.title}{metadata.author && ` - by ${metadata.author}`}
                 </h4>
-
-                {/* Description */}
-                {metadata.description && (
-                  <p className='text-foreground-700 line-clamp-2 text-sm leading-relaxed'>
-                    {metadata.description}
-                  </p>
-                )}
-
-                {/* URL */}
-                <div className='flex items-center gap-2 pt-1'>
-                  <p className='text-foreground-400 bg-default-100 truncate rounded-md px-2 py-1 font-mono text-xs'>
-                    {new URL(metadata.url).hostname}
-                  </p>
-                  <Icon
-                    icon='solar:external-link-outline'
-                    className='text-foreground-400 h-3 w-3 flex-shrink-0'
-                  />
-                </div>
               </div>
             </div>
           </div>

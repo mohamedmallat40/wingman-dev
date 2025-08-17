@@ -90,6 +90,8 @@ export interface BroadcastPost {
     siteName?: string;
     favicon?: string;
   }[]; // Array of link preview metadata
+  commentsCount?: number; // Number of comments on this post (legacy)
+  replyCount?: number; // Number of comments/replies on this post (from API)
 }
 
 export interface Comment {
