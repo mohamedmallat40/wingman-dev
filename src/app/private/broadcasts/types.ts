@@ -75,12 +75,21 @@ export interface BroadcastPost {
   id: string;
   title: string;
   description: string;
+  link?: string; // Optional dedicated link field
   createdAt: string;
   topics: Topic[];
   skills: Skill[];
   owner: BroadcastOwner;
   attachments?: string[]; // Array of filenames (images, videos, files)
   media?: string[]; // Array of filenames (legacy field)
+  linkPreviews?: {
+    url: string;
+    title: string;
+    description: string;
+    image?: string;
+    siteName?: string;
+    favicon?: string;
+  }[]; // Array of link preview metadata
 }
 
 export interface Comment {
@@ -116,6 +125,7 @@ export interface PostInteraction {
 export interface CreatePostData {
   title: string;
   description: string;
+  link?: string; // Optional dedicated link field
   topics: string[]; // Array of topic UUIDs
   skills: string[]; // Array of skill UUIDs
   attachments: string[]; // Array of filenames from successful uploads
@@ -126,4 +136,3 @@ export interface FeedParams {
   limit?: number;
   topics?: string[]; // Array of topic IDs for filtering
 }
-

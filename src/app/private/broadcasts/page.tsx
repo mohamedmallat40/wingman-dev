@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import type { CreatePostData } from './types';
 
@@ -18,7 +18,7 @@ import ContentCreator from './components/modals/ContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
 import TopicSidebar from './components/navigation/TopicSidebar';
-import { useCreatePost, useUpdatePost, useFollowTopic, useUnfollowTopic, useTopics } from './hooks';
+import { useCreatePost, useFollowTopic, useTopics, useUnfollowTopic, useUpdatePost } from './hooks';
 import { useBroadcastStore, useUnreadNotificationsCount } from './store/useBroadcastStore';
 import { BroadcastPost } from './types';
 
@@ -113,17 +113,21 @@ export default function BroadcastsPage() {
   return (
     <>
       {/* Live Activity Bar */}
-      <LiveActivityBar
-        onNotificationClick={() => openNotificationCenter()}
-      />
+      <LiveActivityBar onNotificationClick={() => openNotificationCenter()} />
 
       <DashboardLayout
         pageTitle={selectedTopicObject ? selectedTopicObject.title : t('title')}
         pageIcon={selectedTopicObject ? selectedTopicObject.icon : 'solar:satellite-linear'}
         breadcrumbs={[
           { label: tNav('home'), href: '/private/dashboard', icon: 'solar:home-linear' },
-          { label: tNav('broadcasts'), href: '/private/broadcasts', icon: 'solar:satellite-linear' },
-          ...(selectedTopicObject ? [{ label: selectedTopicObject.title, icon: selectedTopicObject.icon }] : [])
+          {
+            label: tNav('broadcasts'),
+            href: '/private/broadcasts',
+            icon: 'solar:satellite-linear'
+          },
+          ...(selectedTopicObject
+            ? [{ label: selectedTopicObject.title, icon: selectedTopicObject.icon }]
+            : [])
         ]}
         pageDescription={selectedTopicObject ? selectedTopicObject.description : t('description')}
         headerActions={
@@ -140,7 +144,7 @@ export default function BroadcastsPage() {
               }
               onPress={() => setSidebarView(sidebarView === 'topics' ? 'filters' : 'topics')}
             >
-{sidebarView === 'topics' ? t('page.filters') : t('page.topics')}
+              {sidebarView === 'topics' ? t('page.filters') : t('page.topics')}
             </Button>
 
             {/* Create Post Button */}
@@ -190,7 +194,7 @@ export default function BroadcastsPage() {
           </div>
 
           <div className='min-w-0 flex-1'>
-            <div className='py-6 space-y-6'>
+            <div className='space-y-6 py-6'>
               {/* Topic Feed Header */}
               {selectedTopicObject && (
                 <TopicFeedHeader
@@ -201,7 +205,7 @@ export default function BroadcastsPage() {
                   isLoading={followTopic.isPending || unfollowTopic.isPending}
                 />
               )}
-              
+
               <BroadcastFeed selectedTopic={activeTopic} onEditPost={handleEditPost} />
             </div>
           </div>
@@ -209,7 +213,9 @@ export default function BroadcastsPage() {
           <div className='hidden w-64 flex-shrink-0 xl:block'>
             <div className='sticky top-4 space-y-4'>
               <div className='bg-content1 border-default-200 rounded-lg border p-4'>
-                <h3 className='text-foreground mb-3 text-sm font-semibold'>{t('sidebar.quickActions')}</h3>
+                <h3 className='text-foreground mb-3 text-sm font-semibold'>
+                  {t('sidebar.quickActions')}
+                </h3>
                 <div className='space-y-3'>
                   <Button
                     variant='flat'
@@ -291,7 +297,9 @@ export default function BroadcastsPage() {
                     <span className='text-xs font-medium'>+12</span>
                   </div>
                 </div>
-                <p className='text-foreground-500 mt-2 text-xs'>{t('sidebar.usersActive', { count: 17 })}</p>
+                <p className='text-foreground-500 mt-2 text-xs'>
+                  {t('sidebar.usersActive', { count: 17 })}
+                </p>
               </div>
             </div>
           </div>

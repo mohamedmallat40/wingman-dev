@@ -2,6 +2,13 @@
 
 import React, { useState } from 'react';
 
+import type {
+  AvailabilityStatus,
+  Currency,
+  PaymentType,
+  WorkType
+} from '@/app/private/talent-pool/types';
+
 import { Button, Card, CardBody, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';

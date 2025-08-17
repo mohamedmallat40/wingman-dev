@@ -1,9 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { Spinner } from '@heroui/react';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { redirect } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function ProfilePage() {
   const { profile: currentUserProfile, isLoading } = useBasicProfile();

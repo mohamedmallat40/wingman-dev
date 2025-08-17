@@ -23,9 +23,8 @@ import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 
-import { useCreatePost, useUpdatePost, useSaveDraft, useTopics } from '../../hooks';
-import { type BroadcastPost } from '../../types';
-import { type CreatePostData } from '../../types';
+import { useCreatePost, useSaveDraft, useTopics, useUpdatePost } from '../../hooks';
+import { type BroadcastPost, type CreatePostData } from '../../types';
 import { AdvancedTab } from './content-creator/AdvancedTab';
 // Import extracted components and utilities
 import { ContentTab } from './content-creator/ContentTab';
@@ -72,6 +71,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     defaultValues: {
       title: initialData?.title || '',
       content: initialData?.description || '',
+      link: '',
       skills: initialData?.skills?.map((skill) => skill.id) || [],
       topics: initialData?.topics?.map((topic) => topic.id) || [],
       visibility: 'public',
@@ -86,6 +86,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   // Watch form fields for real-time updates
   const watchedContent = watch('content');
   const watchedTitle = watch('title');
+  const watchedLink = watch('link');
   const watchedSkills = watch('skills');
   const watchedTopics = watch('topics');
   const watchedVisibility = watch('visibility');
@@ -107,52 +108,61 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   // Check if form has meaningful changes from initial data
   const hasFormChanges = React.useMemo(() => {
     if (!isEditMode) return isDirty; // For create mode, use standard isDirty
-    
+
     if (!initialData) return false;
-    
+
     // Compare current form values with initial data
     const currentTitle = watchedTitle || '';
     const currentContent = watchedContent || '';
     const currentSkills = watchedSkills || [];
     const currentTopics = watchedTopics || [];
-    
+
     const initialTitle = initialData.title || '';
     const initialContent = initialData.description || '';
-    const initialSkills = initialData.skills?.map(skill => skill.id) || [];
-    const initialTopics = initialData.topics?.map(topic => topic.id) || [];
-    
+    const initialSkills = initialData.skills?.map((skill) => skill.id) || [];
+    const initialTopics = initialData.topics?.map((topic) => topic.id) || [];
+
     // Compare text fields
     if (currentTitle !== initialTitle) return true;
     if (currentContent !== initialContent) return true;
-    
+
     // Compare arrays (skills and topics)
     if (currentSkills.length !== initialSkills.length) return true;
     if (currentTopics.length !== initialTopics.length) return true;
-    
-    if (!currentSkills.every(skill => initialSkills.includes(skill))) return true;
-    if (!currentTopics.every(topic => initialTopics.includes(topic))) return true;
-    
+
+    if (!currentSkills.every((skill) => initialSkills.includes(skill))) return true;
+    if (!currentTopics.every((topic) => initialTopics.includes(topic))) return true;
+
     // Compare media files
     const currentAttachmentCount = mediaFiles.length;
     const initialAttachmentCount = initialData.attachments?.length || 0;
     if (currentAttachmentCount !== initialAttachmentCount) return true;
-    
+
     // If media files exist, compare filenames
     if (mediaFiles.length > 0 && initialData.attachments) {
       const currentFilenames = mediaFiles
-        .filter(file => file.uploaded && file.filename)
-        .map(file => file.filename!)
+        .filter((file) => file.uploaded && file.filename)
+        .map((file) => file.filename!)
         .sort();
       const initialFilenames = [...initialData.attachments].sort();
-      
+
       if (currentFilenames.length !== initialFilenames.length) return true;
       if (!currentFilenames.every((filename, index) => filename === initialFilenames[index])) {
         return true;
       }
     }
-    
+
     return false;
-  }, [isEditMode, isDirty, initialData, watchedTitle, watchedContent, watchedSkills, watchedTopics, mediaFiles]);
+  }, [
+    isEditMode,
+    isDirty,
+    initialData,
+    watchedTitle,
+    watchedContent,
+    watchedSkills,
+    watchedTopics,
+    mediaFiles
+  ]);
 
   // Get topics from API data - use topics directly
   const availableTopics = React.useMemo(() => {
@@ -168,6 +178,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         reset({
           title: initialData.title || '',
           content: initialData.description || '',
+          link: initialData.link || '',
           skills: initialData.skills?.map((skill) => skill.id) || [],
           topics: initialData.topics?.map((topic) => topic.id) || [],
           visibility: 'public',
@@ -181,7 +192,9 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         if (initialData.attachments && initialData.attachments.length > 0) {
           const editMediaFiles: MediaFile[] = initialData.attachments.map((filename, index) => ({
             id: `edit-${index}`,
-            type: filename.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp|svg)$/) ? 'image' : 'video',
+            type: filename.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp|svg)$/)
+              ? 'image'
+              : 'video',
             file: new File([], filename.split('/').pop() || filename), // Create dummy file object
             name: filename.split('/').pop() || filename,
             url: `https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`,
@@ -201,6 +214,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         reset({
           title: persistedFormData.title || '',
           content: persistedFormData.content || '',
+          link: persistedFormData.link || '',
           skills: persistedFormData.skills || [],
           topics: persistedFormData.topics || [],
           visibility: persistedFormData.visibility || 'public',
@@ -224,6 +238,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
       const postData: CreatePostData = {
         title: data.title,
         description: data.content, // Send content as description
+        link: data.link || undefined, // Include link if provided
         topics: data.topics || [], // Array of topic UUIDs
         skills: data.skills || [], // Array of skill UUIDs
         attachments: [] as string[] // Array of filenames from successful uploads
@@ -241,9 +256,9 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
 
       if (isEditMode && initialData?.id) {
         // Update existing post
-        await updatePostMutation.mutateAsync({ 
-          postId: initialData.id, 
-          postData 
+        await updatePostMutation.mutateAsync({
+          postId: initialData.id,
+          postData
         });
 
         try {
@@ -255,7 +270,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         } catch (e) {
           // Toast notification failed but post was updated successfully
         }
-        
+
         // For edit mode, don't call onPublish to avoid duplicate API calls
         handleClearForm();
         onClose();
@@ -272,7 +287,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         } catch (e) {
           // Toast notification failed but post was published successfully
         }
-        
+
         // For create mode, don't call onPublish to avoid duplicate API calls
         handleClearForm();
         onClose();
@@ -383,7 +398,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         size='5xl'
         scrollBehavior='inside'
         classNames={{
-          base: `${className} max-w-6xl w-[95vw] rounded-[24px] shadow-[0px_16px_32px_rgba(0,0,0,0.12)]`,
+          base: `${className} max-w-[90vw] w-[90vw] max-h-[90vh] rounded-[24px] shadow-[0px_16px_32px_rgba(0,0,0,0.12)]`,
           backdrop: 'bg-black/60 backdrop-blur-md',
           wrapper: 'pointer-events-auto',
           body: 'py-8 px-8',
@@ -392,7 +407,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
             'border-none pt-6 bg-gradient-to-t from-background/95 to-transparent backdrop-blur-sm rounded-b-[24px]'
         }}
       >
-        <ModalContent className="rounded-[24px] overflow-hidden">
+        <ModalContent className='overflow-hidden rounded-[24px]'>
           <ModalHeader className='flex flex-col gap-2 pb-4'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
@@ -421,9 +436,9 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
           </ModalHeader>
 
           <ModalBody>
-            <div className='grid h-full grid-cols-1 gap-8 lg:grid-cols-5'>
-              {/* Form Section - Left side (3/5 width) */}
-              <div className='lg:col-span-3'>
+            <div className='grid h-full grid-cols-1 gap-8 lg:grid-cols-7'>
+              {/* Form Section - Left side (4/7 width) */}
+              <div className='lg:col-span-4'>
                 <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
                   <Tabs
                     selectedKey={activeTab}
@@ -461,6 +476,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                         availableTopics={availableTopics}
                         topicsLoading={topicsLoading}
                         watchedContent={watchedContent}
+                        watchedLink={watchedLink || ''}
                         wordCount={wordCount}
                         readTime={readTime}
                       />
@@ -505,11 +521,12 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                 </form>
               </div>
 
-              {/* Preview Section - Right side (2/5 width) */}
-              <div className='lg:col-span-2'>
+              {/* Preview Section - Right side (3/7 width) */}
+              <div className='lg:col-span-3'>
                 <PreviewSection
                   watchedTitle={watchedTitle}
                   watchedContent={watchedContent}
+                  watchedLink={watchedLink || ''}
                   watchedTopics={watchedTopics}
                   watchedSkills={watchedSkills}
                   availableTopics={availableTopics}

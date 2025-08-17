@@ -1,3 +1,15 @@
+// Import types for legacy aliases
+import type { Category, Status, Tag, UserSummary } from '@/types';
+import type {
+  CreateDocumentPayload,
+  Document,
+  DocumentFilters,
+  DocumentListResponse,
+  DocumentType,
+  ShareDocumentPayload,
+  ViewMode
+} from './types/index';
+
 /**
  * @deprecated Use types from ./types/index.ts instead
  * This file is kept for backward compatibility and will be removed in a future version
@@ -5,18 +17,6 @@
 
 // Re-export new types for backward compatibility
 export * from './types/index';
-
-// Import types for legacy aliases
-import type { 
-  Document, 
-  DocumentType,
-  ViewMode,
-  DocumentFilters,
-  DocumentListResponse,
-  ShareDocumentPayload,
-  CreateDocumentPayload
-} from './types/index';
-import type { UserSummary, Tag, Category, Status } from '@/types';
 
 // Legacy type aliases - will be removed
 /** @deprecated Use Document instead */

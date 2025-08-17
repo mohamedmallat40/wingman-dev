@@ -68,7 +68,7 @@ const Avatar = () => {
       >
         <DropdownItem
           key='profile'
-          className='hover:bg-primary/10 h-16 gap-3 rounded-lg opacity-100 cursor-pointer transition-colors'
+          className='hover:bg-primary/10 h-16 cursor-pointer gap-3 rounded-lg opacity-100 transition-colors'
           textValue='Profile info'
           onPress={() => {
             router.push('/private/profile');

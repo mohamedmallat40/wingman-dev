@@ -182,7 +182,7 @@ const DashboardPage = () => {
         </div>
       }
     >
-      <div className='mx-auto w-full px-2 sm:px-4 md:px-6 xl:w-[70%] xl:px-0 space-y-8 py-6'>
+      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
         {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}

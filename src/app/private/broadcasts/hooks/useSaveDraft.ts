@@ -14,7 +14,6 @@ interface DraftData {
 }
 
 export const useSaveDraft = () => {
-
   return useMutation({
     mutationFn: (draftData: DraftData) => saveDraft(draftData),
     onSuccess: (data) => {

@@ -15,7 +15,7 @@ export interface UploadProgress {
   readonly uploadSpeed?: number;
 }
 
-export type UploadStatus = 
+export type UploadStatus =
   | 'pending'
   | 'uploading'
   | 'processing'

@@ -323,17 +323,15 @@ export default function NotificationCenter({
                 <div className='relative'>
                   <Icon icon='solar:bell-bold' className='text-primary h-6 w-6' />
                   {unreadCount > 0 && (
-                    <Badge
-                      color='danger'
-                      size='sm'
-                      className='absolute -top-1 -right-1'
-                    >
+                    <Badge color='danger' size='sm' className='absolute -top-1 -right-1'>
                       {unreadCount > 99 ? '99+' : unreadCount.toString()}
                     </Badge>
                   )}
                 </div>
                 <div>
-                  <h2 className='text-foreground text-lg font-semibold'>{t('modals.notifications.title')}</h2>
+                  <h2 className='text-foreground text-lg font-semibold'>
+                    {t('modals.notifications.title')}
+                  </h2>
                   <p className='text-foreground-500 text-sm'>{unreadCount} unread updates</p>
                 </div>
               </div>
@@ -529,7 +527,9 @@ export default function NotificationCenter({
                           icon='solar:bell-off-linear'
                           className='text-default-400 mb-3 h-12 w-12'
                         />
-                        <p className='text-foreground-500'>{t('modals.notifications.noNotifications')}</p>
+                        <p className='text-foreground-500'>
+                          {t('modals.notifications.noNotifications')}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -541,7 +541,9 @@ export default function NotificationCenter({
                   <div className='border-default-200 border-b p-4'>
                     <div className='mb-2 flex items-center gap-2'>
                       <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
-                      <span className='text-success text-sm font-medium'>{t('modals.notifications.liveUpdates')}</span>
+                      <span className='text-success text-sm font-medium'>
+                        {t('modals.notifications.liveUpdates')}
+                      </span>
                     </div>
                     <p className='text-foreground-500 text-xs'>
                       Real-time activity from your followed subcasts
@@ -595,7 +597,9 @@ export default function NotificationCenter({
                   <div className='border-default-200 border-b p-4'>
                     <div className='mb-2 flex items-center gap-2'>
                       <Icon icon='solar:fire-bold' className='text-warning h-4 w-4' />
-                      <span className='text-foreground text-sm font-medium'>{t('modals.notifications.trendingNow')}</span>
+                      <span className='text-foreground text-sm font-medium'>
+                        {t('modals.notifications.trendingNow')}
+                      </span>
                     </div>
                     <p className='text-foreground-500 text-xs'>
                       Popular topics and trending content

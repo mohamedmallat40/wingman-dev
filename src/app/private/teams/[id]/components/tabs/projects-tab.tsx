@@ -4,8 +4,14 @@ import { Avatar, AvatarGroup, Button, Card, CardBody, Chip, Progress } from '@he
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 
-import { PROJECT_PRIORITY_CONFIG, PROJECT_STATUS_CONFIG, STAGGER_CONTAINER_VARIANTS, STAGGER_ITEM_VARIANTS } from '../constants';
 import { getBaseUrl } from '@/lib/utils/utilities';
+
+import {
+  PROJECT_PRIORITY_CONFIG,
+  PROJECT_STATUS_CONFIG,
+  STAGGER_CONTAINER_VARIANTS,
+  STAGGER_ITEM_VARIANTS
+} from '../constants';
 
 //import { ProjectPriority, ProjectStatus } from '../../types';
 /* import {
@@ -299,7 +305,11 @@ export const TeamProjectsTab: React.FC<TeamProjectsTabProperties> = ({
                           {projectMembers.slice(0, 3).map((member) => (
                             <Avatar
                               key={member?.id}
-                              src={member?.profileImage ? `${getBaseUrl()}/upload/${member?.profileImage}` : undefined}
+                              src={
+                                member?.profileImage
+                                  ? `${getBaseUrl()}/upload/${member?.profileImage}`
+                                  : undefined
+                              }
                               name={`${member?.firstName} ${member?.lastName}`}
                               size='sm'
                             />

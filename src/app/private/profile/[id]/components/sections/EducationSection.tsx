@@ -1,11 +1,13 @@
 'use client';
 
 import React from 'react';
+
 import { Button, Card, CardBody, CardHeader, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
-import { ActionButtons } from '../ActionButtons';
+
 import { type Education } from '../../types';
+import { ActionButtons } from '../ActionButtons';
 
 interface EducationSectionProps {
   education: Education[];
@@ -45,26 +47,22 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
       <CardHeader className='pb-4'>
         <div className='flex w-full items-center justify-between'>
           <div className='flex items-center gap-3'>
-            <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-secondary/10 transition-colors duration-200'>
-              <Icon icon='solar:graduation-minimalistic-linear' className='h-5 w-5 text-secondary' />
+            <div className='bg-secondary/10 flex h-10 w-10 items-center justify-center rounded-lg transition-colors duration-200'>
+              <Icon
+                icon='solar:graduation-minimalistic-linear'
+                className='text-secondary h-5 w-5'
+              />
             </div>
             <div>
-              <h3 className='text-lg font-semibold text-foreground'>
+              <h3 className='text-foreground text-lg font-semibold'>
                 Education ({education.length})
               </h3>
-              <p className='text-sm text-default-500'>
-                Academic background and qualifications
-              </p>
+              <p className='text-default-500 text-sm'>Academic background and qualifications</p>
             </div>
           </div>
 
           {isOwnProfile && (
-            <ActionButtons
-              showAdd
-              onAdd={onAdd}
-              addTooltip="Add education"
-              size="md"
-            />
+            <ActionButtons showAdd onAdd={onAdd} addTooltip='Add education' size='md' />
           )}
         </div>
       </CardHeader>
@@ -77,11 +75,14 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
                 <div className='flex gap-4'>
                   {/* Timeline */}
                   <div className='flex flex-col items-center'>
-                    <div className='flex h-8 w-8 items-center justify-center rounded-full border-2 border-secondary/30 bg-background'>
-                      <Icon icon='solar:book-minimalistic-linear' className='h-4 w-4 text-secondary' />
+                    <div className='border-secondary/30 bg-background flex h-8 w-8 items-center justify-center rounded-full border-2'>
+                      <Icon
+                        icon='solar:book-minimalistic-linear'
+                        className='text-secondary h-4 w-4'
+                      />
                     </div>
                     {index < sortedEducation.length - 1 && (
-                      <div className='mt-2 h-16 w-px bg-default-200' />
+                      <div className='bg-default-200 mt-2 h-16 w-px' />
                     )}
                   </div>
 
@@ -89,48 +90,36 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
                   <div className='min-w-0 flex-1 pb-6'>
                     <div className='flex items-start justify-between gap-3'>
                       <div className='min-w-0 flex-1'>
-                        <div className='flex items-center gap-2 mb-1'>
-                          <h4 className='font-semibold text-foreground'>
-                            {edu.degree}
-                          </h4>
+                        <div className='mb-1 flex items-center gap-2'>
+                          <h4 className='text-foreground font-semibold'>{edu.degree}</h4>
                           {edu.grade && (
-                            <Chip 
-                              size='sm' 
-                              variant='flat' 
-                              color='secondary'
-                              className='text-xs'
-                            >
+                            <Chip size='sm' variant='flat' color='secondary' className='text-xs'>
                               {edu.grade}
                             </Chip>
                           )}
                         </div>
-                        
-                        <p className='text-secondary font-medium mb-1'>
-                          {edu.university}
-                        </p>
-                        
-                        {edu.field && (
-                          <p className='text-sm text-default-600 mb-2'>
-                            {edu.field}
-                          </p>
-                        )}
 
-                        <div className='flex items-center gap-1 text-xs text-default-500 mb-2'>
+                        <p className='text-secondary mb-1 font-medium'>{edu.university}</p>
+
+                        {edu.field && <p className='text-default-600 mb-2 text-sm'>{edu.field}</p>}
+
+                        <div className='text-default-500 mb-2 flex items-center gap-1 text-xs'>
                           <Icon icon='solar:calendar-linear' className='h-3 w-3' />
                           <span>
-                            {formatDate(edu.startDate)} - {edu.endDate ? formatDate(edu.endDate) : 'Present'}
+                            {formatDate(edu.startDate)} -{' '}
+                            {edu.endDate ? formatDate(edu.endDate) : 'Present'}
                           </span>
                         </div>
 
                         {edu.description && (
-                          <p className='text-sm text-default-600 leading-relaxed'>
+                          <p className='text-default-600 text-sm leading-relaxed'>
                             {edu.description}
                           </p>
                         )}
                       </div>
 
                       {isOwnProfile && (
-                        <div className='opacity-0 group-hover:opacity-100 transition-opacity duration-200'>
+                        <div className='opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
                           <ActionButtons
                             showEdit
                             showDelete
@@ -138,7 +127,7 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
                             onDelete={() => onDelete(edu)}
                             editTooltip={`Edit ${edu.degree}`}
                             deleteTooltip={`Delete ${edu.degree}`}
-                            size="sm"
+                            size='sm'
                           />
                         </div>
                       )}
@@ -150,12 +139,13 @@ export const EducationSection: React.FC<EducationSectionProps> = ({
           </div>
         ) : (
           <div className='flex flex-col items-center justify-center py-12 text-center'>
-            <div className='mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/10'>
-              <Icon icon='solar:graduation-minimalistic-linear' className='h-8 w-8 text-secondary/60' />
+            <div className='bg-secondary/10 mb-4 flex h-16 w-16 items-center justify-center rounded-full'>
+              <Icon
+                icon='solar:graduation-minimalistic-linear'
+                className='text-secondary/60 h-8 w-8'
+              />
             </div>
-            <p className='text-sm text-default-500 mb-4'>
-              No education added yet
-            </p>
+            <p className='text-default-500 mb-4 text-sm'>No education added yet</p>
             {isOwnProfile && (
               <Button
                 size='sm'

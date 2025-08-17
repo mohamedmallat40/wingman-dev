@@ -2,13 +2,7 @@
 
 import React from 'react';
 
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader
-} from '@heroui/react';
+import { Button, Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 
@@ -25,7 +19,7 @@ const getFileType = (filename: string): 'image' | 'video' | 'file' => {
   const extension = filename.toLowerCase().split('.').pop() || '';
   const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'];
   const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'];
-  
+
   if (imageExtensions.includes(extension)) return 'image';
   if (videoExtensions.includes(extension)) return 'video';
   return 'file';
@@ -111,15 +105,11 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
       }}
     >
       <ModalContent>
-        <ModalHeader className='flex items-center justify-between py-4 px-6'>
+        <ModalHeader className='flex items-center justify-between px-6 py-4'>
           <div className='text-white'>
-            {postTitle && (
-              <h2 className='text-lg font-medium truncate max-w-md'>
-                {postTitle}
-              </h2>
-            )}
+            {postTitle && <h2 className='max-w-md truncate text-lg font-medium'>{postTitle}</h2>}
           </div>
-          
+
           <Button
             isIconOnly
             variant='light'
@@ -133,14 +123,16 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
           </Button>
         </ModalHeader>
 
-        <ModalBody className='p-0 relative overflow-hidden'>
+        <ModalBody className='relative overflow-hidden p-0'>
           {/* Image counter overlay */}
           {attachments.length > 1 && (
             <div className='absolute top-6 left-6 z-30'>
-              <div className='bg-black/40 backdrop-blur-md rounded-full px-3 py-2'>
-                <div className='flex items-center gap-2 text-white text-sm font-medium'>
-                  <Icon icon='solar:gallery-bold-duotone' className='h-4 w-4 text-primary' />
-                  <span>{currentIndex + 1} / {attachments.length}</span>
+              <div className='rounded-full bg-black/40 px-3 py-2 backdrop-blur-md'>
+                <div className='flex items-center gap-2 text-sm font-medium text-white'>
+                  <Icon icon='solar:gallery-bold-duotone' className='text-primary h-4 w-4' />
+                  <span>
+                    {currentIndex + 1} / {attachments.length}
+                  </span>
                 </div>
               </div>
             </div>
@@ -149,22 +141,26 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
           {/* Keyboard shortcuts hint */}
           {attachments.length > 1 && (
             <div className='absolute bottom-6 left-6 z-20'>
-              <div className='bg-black/40 backdrop-blur-md rounded-full px-3 py-1'>
-                <div className='flex items-center gap-2 text-white/70 text-xs'>
+              <div className='rounded-full bg-black/40 px-3 py-1 backdrop-blur-md'>
+                <div className='flex items-center gap-2 text-xs text-white/70'>
                   <Icon icon='solar:keyboard-linear' className='h-3 w-3' />
                   <span>{t('accessibility.navigationKeys')}</span>
                 </div>
               </div>
             </div>
           )}
-          
-          <div className='relative flex h-[80vh] items-center justify-center bg-gradient-to-br from-black/10 via-black/20 to-black/30 overflow-hidden p-8'>
+
+          <div className='relative flex h-[80vh] items-center justify-center overflow-hidden bg-gradient-to-br from-black/10 via-black/20 to-black/30 p-8'>
             {currentType === 'image' ? (
               <img
                 src={attachmentUrl}
-                alt={postTitle ? `${postTitle} - Image ${currentIndex + 1}` : `Image ${currentIndex + 1}`}
-                className='object-contain rounded-lg shadow-2xl'
-                style={{ 
+                alt={
+                  postTitle
+                    ? `${postTitle} - Image ${currentIndex + 1}`
+                    : `Image ${currentIndex + 1}`
+                }
+                className='rounded-lg object-contain shadow-2xl'
+                style={{
                   userSelect: 'none',
                   maxHeight: 'calc(80vh - 4rem)',
                   maxWidth: 'calc(100vw - 4rem)',
@@ -181,7 +177,7 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                 src={attachmentUrl}
                 controls
                 className='rounded-lg shadow-2xl'
-                style={{ 
+                style={{
                   userSelect: 'none',
                   maxHeight: 'calc(80vh - 4rem)',
                   maxWidth: 'calc(100vw - 4rem)',
@@ -194,10 +190,10 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                 }}
               />
             ) : (
-              <div className='flex flex-col items-center justify-center text-white p-8'>
-                <Icon icon='solar:file-linear' className='h-16 w-16 mb-4 text-white/50' />
-                <p className='text-lg mb-2'>{currentAttachment.split('/').pop()}</p>
-                <p className='text-sm text-white/70 mb-4'>
+              <div className='flex flex-col items-center justify-center p-8 text-white'>
+                <Icon icon='solar:file-linear' className='mb-4 h-16 w-16 text-white/50' />
+                <p className='mb-2 text-lg'>{currentAttachment.split('/').pop()}</p>
+                <p className='mb-4 text-sm text-white/70'>
                   {currentAttachment.toLowerCase().split('.').pop()?.toUpperCase()} file
                 </p>
                 <Button
@@ -222,7 +218,7 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                   variant='solid'
                   color='default'
                   onPress={handlePrevious}
-                  className='absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 border-white/30 text-white backdrop-blur-md hover:bg-white/30 hover:scale-110 transition-all duration-200 shadow-lg z-10'
+                  className='absolute top-1/2 left-6 z-10 -translate-y-1/2 border-white/30 bg-white/20 text-white shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-110 hover:bg-white/30'
                   size='lg'
                   aria-label={t('accessibility.previousAttachment')}
                 >
@@ -234,7 +230,7 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                   variant='solid'
                   color='default'
                   onPress={handleNext}
-                  className='absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 border-white/30 text-white backdrop-blur-md hover:bg-white/30 hover:scale-110 transition-all duration-200 shadow-lg z-10'
+                  className='absolute top-1/2 right-6 z-10 -translate-y-1/2 border-white/30 bg-white/20 text-white shadow-lg backdrop-blur-md transition-all duration-200 hover:scale-110 hover:bg-white/30'
                   size='lg'
                   aria-label={t('accessibility.nextAttachment')}
                 >
@@ -246,27 +242,29 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
 
           {/* Thumbnail strip */}
           {attachments.length > 1 && (
-            <div className='border-t border-white/10 bg-black/30 backdrop-blur-sm p-6'>
+            <div className='border-t border-white/10 bg-black/30 p-6 backdrop-blur-sm'>
               <div className='flex items-center justify-center overflow-hidden'>
-                <div 
-                  className='flex gap-3 overflow-x-auto pb-2 max-w-full' 
-                  style={{ 
-                    scrollbarWidth: 'none', 
-                    msOverflowStyle: 'none'
-                  } as React.CSSProperties}
+                <div
+                  className='flex max-w-full gap-3 overflow-x-auto pb-2'
+                  style={
+                    {
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none'
+                    } as React.CSSProperties
+                  }
                 >
                   {attachments.map((attachment, index) => {
                     const type = getFileType(attachment);
                     const url = `https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${attachment}`;
-                    
+
                     return (
                       <button
                         key={index}
                         onClick={() => onIndexChange(index)}
-                        className={`flex-shrink-0 overflow-hidden rounded-xl transition-all duration-300 transform ${
+                        className={`flex-shrink-0 transform overflow-hidden rounded-xl transition-all duration-300 ${
                           index === currentIndex
-                            ? 'ring-3 ring-primary ring-offset-2 ring-offset-black/95 scale-110 shadow-xl'
-                            : 'opacity-60 hover:opacity-100 hover:scale-105 shadow-md'
+                            ? 'ring-primary scale-110 shadow-xl ring-3 ring-offset-2 ring-offset-black/95'
+                            : 'opacity-60 shadow-md hover:scale-105 hover:opacity-100'
                         }`}
                       >
                         {type === 'image' ? (
@@ -291,7 +289,10 @@ export const PostAttachmentModal: React.FC<PostAttachmentModalProps> = ({
                               }}
                             />
                             <div className='absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
-                              <Icon icon='solar:play-circle-bold' className='h-6 w-6 text-white drop-shadow-lg' />
+                              <Icon
+                                icon='solar:play-circle-bold'
+                                className='h-6 w-6 text-white drop-shadow-lg'
+                              />
                             </div>
                           </div>
                         ) : (

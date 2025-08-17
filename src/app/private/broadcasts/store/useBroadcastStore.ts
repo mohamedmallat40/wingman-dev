@@ -194,7 +194,6 @@ export const useBroadcastStore = create<BroadcastStore>()(
           'setTopic'
         ),
 
-
       setSearchQuery: (searchQuery) =>
         set(
           (state) => ({

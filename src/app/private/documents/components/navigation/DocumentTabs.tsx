@@ -127,7 +127,7 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
               >
                 <span className='hidden md:inline'>{t('documents.filters.button')}</span>
                 {showFilters && (
-                  <div className='absolute -top-1 -right-1 h-3 w-3 bg-white border-2 border-primary rounded-full'></div>
+                  <div className='border-primary absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 bg-white'></div>
                 )}
               </Button>
             </Tooltip>
@@ -188,7 +188,7 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
               >
                 <Icon icon='solar:filter-linear' className='h-4 w-4' />
                 {showFilters && (
-                  <div className='absolute -top-1 -right-1 h-3 w-3 bg-white border-2 border-primary rounded-full'></div>
+                  <div className='border-primary absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 bg-white'></div>
                 )}
               </Button>
 
@@ -246,7 +246,7 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
                 >
                   <Icon icon={config.mobileIcon} className='h-6 w-6' />
                   {isActive && !isLoading && (
-                    <span className='text-primary-500 dark:text-primary-400 absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 flex items-center justify-center font-medium min-w-4'>
+                    <span className='text-primary-500 dark:text-primary-400 bg-primary text-primary-foreground absolute -top-1 -right-1 flex h-4 w-4 min-w-4 items-center justify-center rounded-full text-xs font-medium'>
                       {documentsCount}
                     </span>
                   )}

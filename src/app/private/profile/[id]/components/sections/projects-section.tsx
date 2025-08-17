@@ -3,8 +3,8 @@ import React from 'react';
 import { Button, Card, CardBody, CardHeader } from '@heroui/react';
 import { Icon } from '@iconify/react';
 
-import { ActionButtons } from '../ActionButtons';
 import { Experience } from '../../types';
+import { ActionButtons } from '../ActionButtons';
 
 interface ProjectsSectionProps {
   projects: Experience[];
@@ -84,7 +84,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
                         <div className='space-y-2'>
                           <div className='flex items-center gap-2'>
-                            <h3 className='text-foreground text-lg font-bold'>{project.position}</h3>
+                            <h3 className='text-foreground text-lg font-bold'>
+                              {project.position}
+                            </h3>
                             {isOwnProfile && (
                               <ActionButtons
                                 showEdit

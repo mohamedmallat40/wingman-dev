@@ -3,6 +3,7 @@ import React from 'react';
 import { Button, Card, CardBody, Chip, Link } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
+
 import { Group } from '../../types';
 
 interface TeamToolsTabProperties {
@@ -27,8 +28,13 @@ export const TeamToolsTab: React.FC<TeamToolsTabProperties> = ({ team, isOwner, 
     console.log('Edit tool:', toolName);
   };
 
-  const getTagColor = (tag: string): "primary" | "default" | "secondary" | "success" | "warning" | "danger" => {
-    const colors: Record<string, "primary" | "default" | "secondary" | "success" | "warning" | "danger"> = {
+  const getTagColor = (
+    tag: string
+  ): 'primary' | 'default' | 'secondary' | 'success' | 'warning' | 'danger' => {
+    const colors: Record<
+      string,
+      'primary' | 'default' | 'secondary' | 'success' | 'warning' | 'danger'
+    > = {
       Frontend: 'primary',
       Backend: 'secondary',
       Database: 'success',

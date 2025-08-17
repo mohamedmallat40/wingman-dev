@@ -1,6 +1,11 @@
-import { z } from 'zod';
 import type { MediaFile } from '@/components/ui/file-upload/MediaUpload';
 import type { BroadcastPost } from '../../../types';
+
+import { z } from 'zod';
+
+// URL validation regex - more permissive to handle real-world URLs
+const urlRegex =
+  /^https?:\/\/(?:[\w.-])+(?:\:[0-9]+)?(?:\/(?:[\w\/_@~!$&'()*+,;=:-])*(?:\?(?:[\w&=%@~!$'()*+,;:-])*)?(?:\#(?:[\w@~!$&'()*+,;=:-])*)?)?$/;
 
 // Enhanced schema with comprehensive validation
 export const createBroadcastSchema = z.object({
@@ -14,6 +19,18 @@ export const createBroadcastSchema = z.object({
     .min(1, 'Content is required')
     .min(20, 'Content must be at least 20 characters')
     .max(10000, 'Content cannot exceed 10,000 characters'),
+  link: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        if (!val || val.trim() === '') return true; // Allow empty string
+        return urlRegex.test(val);
+      },
+      {
+        message: 'Please enter a valid URL (must start with http:// or https://)'
+      }
+    ),
   skills: z.array(z.string()).max(10, 'Maximum 10 skills allowed'),
   topics: z.array(z.string()).max(3, 'Maximum 3 topics allowed'),
   visibility: z.enum(['public', 'private', 'followers']),
@@ -45,6 +62,7 @@ export interface ContentTabProps {
   availableTopics: any[];
   topicsLoading: boolean;
   watchedContent: string;
+  watchedLink: string;
   wordCount: number;
   readTime: number;
 }
@@ -62,6 +80,7 @@ export interface AdvancedTabProps {
 export interface PreviewSectionProps {
   watchedTitle: string;
   watchedContent: string;
+  watchedLink: string;
   watchedTopics: string[];
   watchedSkills: string[];
   availableTopics: any[];

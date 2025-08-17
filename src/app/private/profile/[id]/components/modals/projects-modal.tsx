@@ -1,17 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   Button,
   Input,
-  Textarea,
-  Spinner
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  Spinner,
+  Textarea
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+
 import wingManApi from '@/lib/axios';
+import { Experience } from '../../types';
+
 import { Experience } from '../../types';
 
 interface ProjectModalProps {
@@ -72,19 +76,19 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
   }, [project, isOpen]);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleCurrentProjectChange = (checked: boolean) => {
     setIsCurrentProject(checked);
     if (checked) {
-      setFormData(prev => ({ ...prev, endDate: '' }));
+      setFormData((prev) => ({ ...prev, endDate: '' }));
     }
   };
 
   const validateForm = () => {
     const requiredFields = ['title', 'company', 'position', 'startDate'];
-    
+
     for (const field of requiredFields) {
       if (!formData[field as keyof typeof formData]?.trim()) {
         addToast(`Please fill in the ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`, 'error');
@@ -127,9 +131,9 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
       onClose();
     } catch (error: any) {
       console.error('Error saving project:', error);
-      
+
       let errorMessage = `Failed to ${isEditing ? 'update' : 'add'} project`;
-      
+
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 400) {
@@ -164,100 +168,100 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
     <Modal
       isOpen={isOpen}
       onClose={handleClose}
-      size="3xl"
-      scrollBehavior="inside"
+      size='3xl'
+      scrollBehavior='inside'
       isDismissable={!isLoading}
       hideCloseButton={isLoading}
     >
       <ModalContent>
-        <ModalHeader className="flex items-center gap-3">
-          <div className="bg-primary/20 rounded-xl p-2">
-            <Icon icon="solar:code-square-linear" className="text-primary h-5 w-5" />
+        <ModalHeader className='flex items-center gap-3'>
+          <div className='bg-primary/20 rounded-xl p-2'>
+            <Icon icon='solar:code-square-linear' className='text-primary h-5 w-5' />
           </div>
           <div>
-            <h2 className="text-xl font-semibold">
+            <h2 className='text-xl font-semibold'>
               {isEditing ? 'Edit Project' : 'Add New Project'}
             </h2>
-            <p className="text-foreground-500 text-sm">
+            <p className='text-foreground-500 text-sm'>
               {isEditing ? 'Update project details' : 'Share details about your project'}
             </p>
           </div>
         </ModalHeader>
-        
-        <ModalBody className="gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <ModalBody className='gap-4'>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <Input
-              label="Project Title"
-              placeholder="e.g., E-commerce Platform"
+              label='Project Title'
+              placeholder='e.g., E-commerce Platform'
               value={formData.title}
               onValueChange={(value) => handleInputChange('title', value)}
               isRequired
-              variant="bordered"
+              variant='bordered'
               disabled={isLoading}
             />
 
             <Input
-              label="Company/Client"
-              placeholder="e.g., Tech Solutions Inc."
+              label='Company/Client'
+              placeholder='e.g., Tech Solutions Inc.'
               value={formData.company}
               onValueChange={(value) => handleInputChange('company', value)}
               isRequired
-              variant="bordered"
+              variant='bordered'
               disabled={isLoading}
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <Input
-              label="Your Role"
-              placeholder="e.g., Full Stack Developer"
+              label='Your Role'
+              placeholder='e.g., Full Stack Developer'
               value={formData.position}
               onValueChange={(value) => handleInputChange('position', value)}
               isRequired
-              variant="bordered"
+              variant='bordered'
               disabled={isLoading}
             />
 
             <Input
-              label="Location"
-              placeholder="e.g., Remote, New York"
+              label='Location'
+              placeholder='e.g., Remote, New York'
               value={formData.location}
               onValueChange={(value) => handleInputChange('location', value)}
-              variant="bordered"
+              variant='bordered'
               disabled={isLoading}
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
             <Input
-              label="Start Date"
-              type="date"
+              label='Start Date'
+              type='date'
               value={formData.startDate}
               onValueChange={(value) => handleInputChange('startDate', value)}
               isRequired
-              variant="bordered"
+              variant='bordered'
               disabled={isLoading}
             />
 
-            <div className="space-y-2">
+            <div className='space-y-2'>
               <Input
-                label="End Date"
-                type="date"
+                label='End Date'
+                type='date'
                 value={formData.endDate}
                 onValueChange={(value) => handleInputChange('endDate', value)}
-                variant="bordered"
+                variant='bordered'
                 disabled={isLoading || isCurrentProject}
               />
-              <div className="flex items-center gap-2">
+              <div className='flex items-center gap-2'>
                 <input
-                  type="checkbox"
-                  id="currentProject"
+                  type='checkbox'
+                  id='currentProject'
                   checked={isCurrentProject}
                   onChange={(e) => handleCurrentProjectChange(e.target.checked)}
                   disabled={isLoading}
-                  className="rounded"
+                  className='rounded'
                 />
-                <label htmlFor="currentProject" className="text-sm text-foreground-600">
+                <label htmlFor='currentProject' className='text-foreground-600 text-sm'>
                   This is an ongoing project
                 </label>
               </div>
@@ -265,33 +269,29 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
           </div>
 
           <Textarea
-            label="Project Description"
-            placeholder="Describe the project, your contributions, technologies used, and key achievements..."
+            label='Project Description'
+            placeholder='Describe the project, your contributions, technologies used, and key achievements...'
             value={formData.description}
             onValueChange={(value) => handleInputChange('description', value)}
             minRows={4}
-            variant="bordered"
+            variant='bordered'
             disabled={isLoading}
           />
         </ModalBody>
-        
-        <ModalFooter className="gap-3">
-          <Button
-            variant="light"
-            onPress={handleClose}
-            disabled={isLoading}
-          >
+
+        <ModalFooter className='gap-3'>
+          <Button variant='light' onPress={handleClose} disabled={isLoading}>
             Cancel
           </Button>
           <Button
-            color="primary"
+            color='primary'
             onPress={handleSave}
             disabled={isLoading}
             startContent={
               isLoading ? (
-                <Spinner size="sm" color="white" />
+                <Spinner size='sm' color='white' />
               ) : (
-                <Icon icon="solar:check-linear" className="h-4 w-4" />
+                <Icon icon='solar:check-linear' className='h-4 w-4' />
               )
             }
           >
