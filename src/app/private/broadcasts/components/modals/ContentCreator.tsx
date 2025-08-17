@@ -114,17 +114,20 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     // Compare current form values with initial data
     const currentTitle = watchedTitle || '';
     const currentContent = watchedContent || '';
+    const currentLink = watchedLink || '';
     const currentSkills = watchedSkills || [];
     const currentTopics = watchedTopics || [];
 
     const initialTitle = initialData.title || '';
     const initialContent = initialData.description || '';
+    const initialLink = initialData.link || '';
     const initialSkills = initialData.skills?.map((skill) => skill.id) || [];
     const initialTopics = initialData.topics?.map((topic) => topic.id) || [];
 
     // Compare text fields
     if (currentTitle !== initialTitle) return true;
     if (currentContent !== initialContent) return true;
+    if (currentLink !== initialLink) return true;
 
     // Compare arrays (skills and topics)
     if (currentSkills.length !== initialSkills.length) return true;
@@ -159,6 +162,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     initialData,
     watchedTitle,
     watchedContent,
+    watchedLink,
     watchedSkills,
     watchedTopics,
     mediaFiles

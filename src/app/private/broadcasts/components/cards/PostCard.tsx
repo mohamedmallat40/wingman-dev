@@ -15,6 +15,8 @@ import { type BroadcastPost } from '../../types';
 import { DeleteConfirmationModal } from '../modals/DeleteConfirmationModal';
 import { PostAttachmentModal } from '../modals/PostAttachmentModal';
 import { LinkPreview } from '../ui/LinkPreview';
+import { CommentSection } from '../comments';
+import { useSmartCountFormat } from '../../utils/timeFormatting';
 
 // Utility functions
 const formatTimeAgo = (timestamp: string, t: any): string => {
@@ -89,10 +91,13 @@ const PostCard: React.FC<PostCardProps> = React.memo(
     className = ''
   }) => {
     const t = useTranslations('broadcasts');
+    const tComments = useTranslations('comments.stats');
+    const { formatCount } = useSmartCountFormat();
     const [isExpanded, setIsExpanded] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalIndex, setModalIndex] = useState(0);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [showComments, setShowComments] = useState(false);
 
     // Get current user profile
     const { profile: currentUser } = useBasicProfile();
@@ -591,15 +596,25 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
                 <Button
                   size='sm'
-                  variant='light'
+                  variant={showComments ? 'flat' : 'light'}
+                  color={showComments ? 'primary' : 'default'}
                   startContent={
-                    <Icon icon='solar:chat-round-linear' className='h-4 w-4' aria-hidden='true' />
+                    <Icon 
+                      icon={showComments ? 'solar:chat-round-dots-bold' : 'solar:chat-round-linear'} 
+                      className='h-4 w-4' 
+                      aria-hidden='true' 
+                    />
                   }
-                  onPress={() => onComment(post.id)}
-                  className='h-auto min-w-0 px-3 py-2'
-                  aria-label={`Comment on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
+                  onPress={() => setShowComments(!showComments)}
+                  className='h-auto min-w-0 px-3 py-2 transition-all duration-200'
+                  aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  Comment
+                  {showComments ? 'Hide Comments' : 'Comments'}
+                  {(post.replyCount || post.commentsCount || 0) > 0 && (
+                    <span className='text-foreground-500 ml-1 text-xs'>
+                      ({formatCount(post.replyCount || post.commentsCount || 0)})
+                    </span>
+                  )}
                 </Button>
 
                 <Button
@@ -623,6 +638,20 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                 </span>
               </div>
             </div>
+
+            {/* Comments Section */}
+            {showComments && (
+              <div className='mt-6 border-default-200 border-t pt-6'>
+                <CommentSection
+                  postId={post.id}
+                  totalComments={post.replyCount || post.commentsCount || 0}
+                  maxDepth={3}
+                  enableMentions={true}
+                  enableRichText={false}
+                  className='w-full'
+                />
+              </div>
+            )}
           </CardBody>
         </Card>
       </>

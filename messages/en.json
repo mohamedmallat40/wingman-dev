@@ -1055,6 +1055,73 @@
     "monthsAgo": "{months, plural, one {# month ago} other {# months ago}}",
     "yearsAgo": "{years, plural, one {# year ago} other {# years ago}}"
   },
+  "comments": {
+    "title": "Comments",
+    "scrollToTop": "Back to top",
+    "loadMore": "Load more comments",
+    "endOfComments": "You've reached the end of the comments",
+    "edited": "edited",
+    "hideReplies": "Hide replies",
+    "showReplies": "Show replies",
+    "loadMoreReplies": "Load {count, plural, one {# more reply} other {# more replies}}",
+    "empty": {
+      "title": "No comments yet",
+      "description": "Be the first to share your thoughts!"
+    },
+    "error": {
+      "title": "Failed to load comments",
+      "description": "Something went wrong while loading the comments. Please try again.",
+      "retry": "Try again"
+    },
+    "loading": {
+      "more": "Loading more comments..."
+    },
+    "actions": {
+      "like": "Like",
+      "unlike": "Unlike",
+      "reply": "Reply",
+      "edit": "Edit",
+      "delete": "Delete",
+      "report": "Report",
+      "share": "Share",
+      "pin": "Pin comment",
+      "unpin": "Unpin comment"
+    },
+    "input": {
+      "placeholder": "Write a comment...",
+      "replyPlaceholder": "Reply to {name}...",
+      "editPlaceholder": "Edit your comment...",
+      "post": "Post",
+      "update": "Update",
+      "cancel": "Cancel",
+      "shortcut": "Press"
+    },
+    "mentions": {
+      "suggestions": "Suggestions"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{count, plural, one {# minute ago} other {# minutes ago}}",
+      "hoursAgo": "{count, plural, one {# hour ago} other {# hours ago}}",
+      "daysAgo": "{count, plural, one {# day ago} other {# days ago}}"
+    },
+    "stats": {
+      "likes": "{count, plural, =0 {} one {# like} other {# likes}}",
+      "replies": "{count, plural, =0 {} one {# reply} other {# replies}}",
+      "comments": "{count, plural, =0 {No comments} one {# comment} other {# comments}}"
+    },
+    "notifications": {
+      "liked": "{name} liked your comment",
+      "replied": "{name} replied to your comment",
+      "mentioned": "{name} mentioned you in a comment"
+    },
+    "moderation": {
+      "reported": "Comment reported successfully",
+      "deleted": "Comment deleted",
+      "pinned": "Comment pinned",
+      "unpinned": "Comment unpinned"
+    }
+  },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"
   }

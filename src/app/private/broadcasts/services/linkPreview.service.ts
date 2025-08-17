@@ -7,6 +7,7 @@ interface LinkPreviewResponse {
   image?: string;
   siteName?: string;
   favicon?: string;
+  author?: string;
 }
 
 class LinkPreviewService {
@@ -74,7 +75,8 @@ class LinkPreviewService {
         title: this.extractTitle(url, domain),
         description: this.extractDescription(url, domain),
         siteName: this.getSiteName(domain),
-        favicon: `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+        favicon: `https://www.google.com/s2/favicons?domain=${domain}&sz=32`,
+        author: this.extractAuthor(url, domain)
       };
 
       // Enhanced metadata for specific sites
@@ -194,25 +196,12 @@ class LinkPreviewService {
 
     // Medium
     if (domain.includes('medium.com')) {
-      const path = urlObj.pathname;
-      // Extract author from @username
-      const authorMatch = path.match(/\/@([^\/]+)/);
-      if (authorMatch) {
-        const author = authorMatch[1];
-        return `Read this insightful article by ${author} on Medium`;
-      }
-      return 'Read this article on Medium';
+      return 'Article on Medium';
     }
 
     // Dev.to
     if (domain.includes('dev.to')) {
-      const path = urlObj.pathname;
-      const authorMatch = path.match(/\/([^\/]+)\//);
-      if (authorMatch) {
-        const author = authorMatch[1];
-        return `Read this developer article by ${author} on DEV Community`;
-      }
-      return 'Read this developer article on DEV Community';
+      return 'Developer article on DEV Community';
     }
 
     // Generic description
@@ -246,6 +235,36 @@ class LinkPreviewService {
       .slice(0, -1) // Remove TLD
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join('.');
+  }
+
+  private extractAuthor(url: string, domain: string): string | undefined {
+    const urlObj = new URL(url);
+
+    // Medium - extract author from @username
+    if (domain.includes('medium.com')) {
+      const authorMatch = urlObj.pathname.match(/\/@([^\/]+)/);
+      if (authorMatch) {
+        return authorMatch[1];
+      }
+    }
+
+    // Dev.to - extract author from username
+    if (domain.includes('dev.to')) {
+      const authorMatch = urlObj.pathname.match(/\/([^\/]+)\//);
+      if (authorMatch) {
+        return authorMatch[1];
+      }
+    }
+
+    // GitHub - extract author from repository owner
+    if (domain.includes('github.com')) {
+      const path = urlObj.pathname.split('/').filter(Boolean);
+      if (path.length >= 1) {
+        return path[0];
+      }
+    }
+
+    return undefined;
   }
 
   private async enhanceMetadata(metadata: LinkMetadata, urlObj: URL): Promise<void> {

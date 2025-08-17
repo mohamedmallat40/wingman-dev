@@ -1079,6 +1079,73 @@
     "monthsAgo": "{months, plural, one {il y a # mois} other {il y a # mois}}",
     "yearsAgo": "{years, plural, one {il y a # an} other {il y a # ans}}"
   },
+  "comments": {
+    "title": "Commentaires",
+    "scrollToTop": "Retour en haut",
+    "loadMore": "Charger plus de commentaires",
+    "endOfComments": "Vous avez atteint la fin des commentaires",
+    "edited": "modifié",
+    "hideReplies": "Masquer les réponses",
+    "showReplies": "Afficher les réponses",
+    "loadMoreReplies": "Charger {count, plural, one {# réponse} other {# réponses}} de plus",
+    "empty": {
+      "title": "Aucun commentaire pour le moment",
+      "description": "Soyez le premier à partager vos réflexions !"
+    },
+    "error": {
+      "title": "Impossible de charger les commentaires",
+      "description": "Une erreur s'est produite lors du chargement des commentaires. Veuillez réessayer.",
+      "retry": "Réessayer"
+    },
+    "loading": {
+      "more": "Chargement d'autres commentaires..."
+    },
+    "actions": {
+      "like": "J'aime",
+      "unlike": "Je n'aime plus",
+      "reply": "Répondre",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "report": "Signaler",
+      "share": "Partager",
+      "pin": "Épingler le commentaire",
+      "unpin": "Désépingler le commentaire"
+    },
+    "input": {
+      "placeholder": "Écrivez un commentaire...",
+      "replyPlaceholder": "Répondre à {name}...",
+      "editPlaceholder": "Modifiez votre commentaire...",
+      "post": "Publier",
+      "update": "Mettre à jour",
+      "cancel": "Annuler",
+      "shortcut": "Appuyez sur"
+    },
+    "mentions": {
+      "suggestions": "Suggestions"
+    },
+    "time": {
+      "justNow": "À l'instant",
+      "minutesAgo": "{count, plural, one {il y a # minute} other {il y a # minutes}}",
+      "hoursAgo": "{count, plural, one {il y a # heure} other {il y a # heures}}",
+      "daysAgo": "{count, plural, one {il y a # jour} other {il y a # jours}}"
+    },
+    "stats": {
+      "likes": "{count, plural, =0 {} one {# j'aime} other {# j'aimes}}",
+      "replies": "{count, plural, =0 {} one {# réponse} other {# réponses}}",
+      "comments": "{count, plural, =0 {Aucun commentaire} one {# commentaire} other {# commentaires}}"
+    },
+    "notifications": {
+      "liked": "{name} a aimé votre commentaire",
+      "replied": "{name} a répondu à votre commentaire",
+      "mentioned": "{name} vous a mentionné dans un commentaire"
+    },
+    "moderation": {
+      "reported": "Commentaire signalé avec succès",
+      "deleted": "Commentaire supprimé",
+      "pinned": "Commentaire épinglé",
+      "unpinned": "Commentaire désépinglé"
+    }
+  },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"
   }
