@@ -132,7 +132,7 @@ export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
               >
                 Connect to Owner
               </Button>
-              <Button
+              {/* <Button
                 color='primary'
                 variant='flat'
                 startContent={
@@ -143,7 +143,7 @@ export const TeamDetailsHeader: React.FC<TeamDetailsHeaderProperties> = ({
                 size='md'
               >
                 Join Team
-              </Button>
+              </Button> */}
             </>
           )}
         </div>
