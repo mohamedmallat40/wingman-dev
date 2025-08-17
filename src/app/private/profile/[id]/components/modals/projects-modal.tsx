@@ -12,6 +12,7 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import wingManApi from '@/lib/axios';
+import { Experience } from '../../types';
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -46,7 +47,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
   useEffect(() => {
     if (project && isOpen) {
       setFormData({
-        title: project.title || '',
+        title: project.position || '',
         company: project.company || '',
         position: project.position || '',
         startDate: project.startDate || '',
@@ -115,7 +116,7 @@ const ProjectModal: React.FC<ProjectModalProps> = ({
       };
 
       if (isEditing) {
-        await wingManApi.patch(`/experience/${project.id}`, projectData);
+        await wingManApi.patch(`/experience/${project?.id}`, projectData);
         addToast('Project updated successfully', 'success');
       } else {
         await wingManApi.post('/experience', projectData);

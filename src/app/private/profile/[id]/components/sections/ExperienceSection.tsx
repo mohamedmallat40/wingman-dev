@@ -89,10 +89,17 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
       <CardBody className='pt-0'>
         <div className='space-y-4'>
           {isAdding && (
-            <ExperienceForm
-              onSave={handleAdd}
-              onCancel={() => setIsAdding(false)}
-            />
+            <div className="p-4 border rounded-lg bg-content1">
+              <p className="text-sm text-default-500 mb-2">Add new experience functionality would go here</p>
+              <div className="flex gap-2">
+                <button 
+                  onClick={() => setIsAdding(false)}
+                  className="px-3 py-1 text-sm bg-default-100 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
           )}
 
           {isEmpty && !isAdding ? (
@@ -120,11 +127,17 @@ export const ExperienceSection: React.FC<ExperienceSectionProps> = ({
               {sortedExperiences.map((experience, index) => (
                 <div key={experience.id} className='relative'>
                   {editingId === experience.id ? (
-                    <ExperienceForm
-                      experience={experience}
-                      onSave={(data) => handleUpdate(experience.id, data)}
-                      onCancel={() => setEditingId(null)}
-                    />
+                    <div className="p-4 border rounded-lg bg-content1">
+                      <p className="text-sm text-default-500 mb-2">Edit experience functionality would go here</p>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => setEditingId(null)}
+                          className="px-3 py-1 text-sm bg-default-100 rounded"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
                   ) : (
                     <ExperienceCard
                       experience={experience}

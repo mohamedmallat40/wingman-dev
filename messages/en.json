@@ -575,6 +575,7 @@
       "edit": "Edit",
       "download": "Download",
       "duplicate": "Duplicate",
+      "share": "Share",
       "delete": "Delete"
     },
     "share": {
@@ -826,7 +827,9 @@
       "unlike": "Unlike this post",
       "comment": "Comment on this post",
       "share": "Share this post",
-      "moreOptions": "More options"
+      "moreOptions": "More options",
+      "follow": "Follow this topic",
+      "unfollow": "Unfollow this topic"
     },
     "accessibility": {
       "close": "Close",
@@ -839,7 +842,7 @@
     "placeholders": {
       "searchSkills": "Search skills or type to create new...",
       "engagingTitle": "Enter an engaging title that captures attention...",
-      "selectTopics": "Select topics for your post", 
+      "selectTopics": "Select topics for your post",
       "shareThoughts": "Share your thoughts, insights, stories, or creative content with the world. What would you like to express today?",
       "whoCanSee": "Who can see this post?",
       "scheduleLater": "Schedule for later (optional)",
@@ -849,7 +852,7 @@
     },
     "fallbacks": {
       "untitledPost": "Untitled Post",
-      "untitledTopic": "Untitled Topic", 
+      "untitledTopic": "Untitled Topic",
       "unknownUser": "Unknown User",
       "unknownSkill": "Unknown Skill",
       "preview": "Preview"
@@ -864,7 +867,7 @@
         },
         "filters": {
           "allNotifications": "All notifications",
-          "unreadOnly": "Unread only", 
+          "unreadOnly": "Unread only",
           "likes": "Likes",
           "comments": "Comments",
           "follows": "Follows",
@@ -879,7 +882,7 @@
       "advanced": {
         "privacyVisibility": "Privacy & Visibility",
         "allowComments": "Allow Comments",
-        "allowSharing": "Allow Sharing", 
+        "allowSharing": "Allow Sharing",
         "contentWarning": "Content Warning",
         "publishingOptions": "Publishing Options"
       }

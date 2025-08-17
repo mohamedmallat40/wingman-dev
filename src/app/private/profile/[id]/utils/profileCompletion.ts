@@ -21,7 +21,7 @@ export const calculateProfileCompletion = (data: ProfileCompletionData): number 
     { field: user.aboutMe, weight: 5 },
     { field: user.profileImage, weight: 3 },
     { field: user.phoneNumber, weight: 2 },
-    { field: user.country, weight: 2 },
+    { field: user.region, weight: 2 },
     { field: user.city, weight: 2 },
     { field: user.profession, weight: 3 }
   ];

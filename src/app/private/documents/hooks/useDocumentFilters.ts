@@ -17,8 +17,8 @@ export default function useDocumentFilters(filters: DocumentFilters): FilterMemo
       activeFilters.push(`Search: "${filters.search}"`);
     }
 
-    if (filters.type) {
-      activeFilters.push(`Type: ${filters.type}`);
+    if (filters.category) {
+      activeFilters.push(`Category: ${filters.category}`);
     }
 
     if (filters.status) {

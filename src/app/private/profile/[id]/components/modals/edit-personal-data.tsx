@@ -361,8 +361,8 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
       if (selectedFile) {
         setIsUploadingImage(true);
         try {
-          const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
-          profileImageFilename = uploadResponse.filename;
+          const uploadResponse = await upload.uploadeFileSingle(selectedFile);
+          profileImageFilename = uploadResponse.fileName;
         } catch (error) {
           console.error('Image upload failed:', error);
           // Continue with form submission even if image upload fails

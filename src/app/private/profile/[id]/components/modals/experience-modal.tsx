@@ -16,6 +16,15 @@ import wingManApi from '@/lib/axios';
 
 interface Experience {
   id?: string;
+  company?: string;
+  position?: string;
+  startDate?: string;
+  endDate?: string;
+  description?: string;
+}
+
+interface ExperienceFormData {
+  id?: string;
   company: string;
   position: string;
   startDate: string;
@@ -38,7 +47,7 @@ const ExperienceModal: React.FC<ExperienceModalProps> = ({
   onSuccess,
   addToast
 }) => {
-  const [formData, setFormData] = useState<Experience>({
+  const [formData, setFormData] = useState<ExperienceFormData>({
     company: '',
     position: '',
     startDate: '',
@@ -56,8 +65,8 @@ const ExperienceModal: React.FC<ExperienceModalProps> = ({
         id: experience.id,
         company: experience.company || '',
         position: experience.position || '',
-        startDate: experience.startDate ? experience.startDate.split('T')[0] : '',
-        endDate: experience.endDate ? experience.endDate.split('T')[0] : '',
+        startDate: (experience.startDate && experience.startDate.split('T')[0]) || '',
+        endDate: (experience.endDate && experience.endDate.split('T')[0]) || '',
         description: experience.description || ''
       });
     } else {

@@ -340,6 +340,7 @@ wingman/
 **Location**: `modules/auth/`, `app/(public)/register/`
 
 **Features**:
+
 - **Multi-step Registration Wizards**: Simple and Premium flows with billing integration
 - **OAuth Integration**: Social login with Google, LinkedIn, and other providers
 - **Form Validation**: Zod schema validation with real-time feedback
@@ -347,6 +348,7 @@ wingman/
 - **State Management**: Persistent user state with Zustand
 
 **Key Components**:
+
 - `registration-wizard.tsx` - Main wizard controller
 - `simple-wizard.tsx` - Streamlined registration flow
 - `premium-wizard.tsx` - Premium tier registration with billing
@@ -358,6 +360,7 @@ wingman/
 **Location**: `app/private/profile/[id]/`, `modules/profile/`
 
 **Features**:
+
 - **Dynamic Profile Viewing**: Universal profile viewer with contextual editing
 - **CV Import & Parsing**: Professional CV upload with data extraction and review
 - **Self-contained Sections**: Independent sections with CRUD operations
@@ -366,6 +369,7 @@ wingman/
 - **Responsive Design**: Mobile-optimized with progressive enhancement
 
 **Key Components**:
+
 - `ProfileClient.tsx` - Main client-side orchestrator
 - `ProfileHeader.tsx` - Header with completion tracking and CV upload
 - `CVUploadDrawer.tsx` - Advanced CV parsing and import system
@@ -374,6 +378,7 @@ wingman/
 - `LanguagesSection.tsx` - Language skills with proficiency levels
 
 **Advanced Features**:
+
 - **CV Parsing Service**: Extract data from uploaded CVs with review interface
 - **Profile Completion Calculator**: Smart completion tracking with weighted sections
 - **Social Account Integration**: Link and manage social media profiles
@@ -384,6 +389,7 @@ wingman/
 **Location**: `app/private/talent-pool/`
 
 **Features**:
+
 - **Multi-category Browsing**: Freelancers, Agencies, Teams with specialized interfaces
 - **Advanced Filtering**: Location, skills, availability, experience, rates
 - **Search Optimization**: Debounced search with memoized results
@@ -392,12 +398,14 @@ wingman/
 - **Performance Optimization**: Memoized filters and lazy loading
 
 **Key Components**:
+
 - `TalentCard.tsx` - Individual talent showcase with actions
 - `TalentFiltersPanel.tsx` - Advanced filtering interface
 - `InviteTalentModal.tsx` - Invitation system with custom messaging
 - `TalentListContainer.tsx` - Main listing container with pagination
 
 **Performance Features**:
+
 - `useFilterMemoization.ts` - Optimized filter performance
 - `useDebouncedSearch.ts` - Efficient search with reduced API calls
 - `useTalentPoolState.ts` - Centralized state management
@@ -407,6 +415,7 @@ wingman/
 **Location**: `app/private/documents/`, `modules/documents/`
 
 **Features**:
+
 - **File Organization**: Advanced categorization, tagging, and folder structures
 - **Upload System**: Drag-and-drop with progress tracking and validation
 - **Search & Filter**: Real-time search with multiple filter criteria
@@ -415,12 +424,14 @@ wingman/
 - **Preview System**: In-app document preview for multiple file types
 
 **Key Components**:
+
 - `DocumentCard.tsx` - Rich document display with metadata
 - `DocumentUploadModal.tsx` - Advanced upload interface
 - `DocumentFiltersPanel.tsx` - Comprehensive filtering system
 - `DocumentViewerDrawer.tsx` - Document preview and viewing
 
 **Advanced Features**:
+
 - **Smart Categorization**: Automatic document categorization
 - **Bulk Operations**: Multi-select for batch operations
 - **Access Control**: Granular sharing permissions
@@ -431,6 +442,7 @@ wingman/
 **Location**: `app/private/broadcasts/`
 
 **Features**:
+
 - **Content Creation**: Advanced post creator with rich media support
 - **Topic Management**: Organized content by topics with following system
 - **Smart Search**: Auto-complete search with suggestions and recent searches
@@ -439,6 +451,7 @@ wingman/
 - **Real-time Updates**: Live activity feeds and notifications
 
 **Key Components**:
+
 - `ContentCreator.tsx` - Advanced post creation interface
 - `PostCard.tsx` - Enhanced post display with glassmorphism design
 - `TopicSidebar.tsx` - Topic navigation with smart search
@@ -446,6 +459,7 @@ wingman/
 - `BroadcastFilters.tsx` - Content filtering and discovery
 
 **Advanced Features**:
+
 - **Smart Search**: `SmartSearch.tsx` with auto-complete and suggestions
 - **Reaction System**: Multiple reaction types with counts and animations
 - **Media Management**: Smart media preview and carousel
@@ -456,6 +470,7 @@ wingman/
 **Location**: `app/private/teams/`
 
 **Features**:
+
 - **Team Management**: Create and manage teams with role-based permissions
 - **Project Tracking**: Monitor team projects and deliverables
 - **Member Management**: Add/remove team members with role assignments
@@ -463,6 +478,7 @@ wingman/
 - **Performance Analytics**: Team performance metrics and insights
 
 **Key Components**:
+
 - `teams-header.tsx` - Team overview and key metrics
 - `members.tsx` - Team member management interface
 - `projects-tab.tsx` - Project tracking and management
@@ -473,6 +489,7 @@ wingman/
 **Location**: `app/private/dashboard/`
 
 **Features**:
+
 - **Overview Dashboard**: Comprehensive metrics and KPI tracking
 - **Quick Actions**: Fast access to common operations
 - **Activity Feeds**: Recent activity across all platform features
@@ -480,6 +497,7 @@ wingman/
 - **Real-time Updates**: Live data updates and notifications
 
 **Key Components**:
+
 - `header-container.tsx` - Dashboard header with metrics
 - `quick-actions.tsx` - Fast action buttons and shortcuts
 - `tabs-routing.tsx` - Tabbed navigation system
@@ -489,6 +507,7 @@ wingman/
 **Location**: `app/private/skills/`
 
 **Features**:
+
 - **Skill Creation**: Create and validate new skills
 - **Skill Hierarchy**: Organized skill categories and relationships
 - **Proficiency Levels**: Track skill proficiency and certification
@@ -499,6 +518,7 @@ wingman/
 #### Component Organization Patterns
 
 **Feature-based Structure**:
+
 ```
 feature/
 ├── components/
@@ -519,12 +539,14 @@ feature/
 #### State Management Patterns
 
 **Zustand Integration**:
+
 - Global user state in `modules/auth/store/`
 - Feature-specific stores (broadcasts, talent-pool)
 - Persistent state with localStorage integration
 - Optimistic updates for better UX
 
 **React Hook Patterns**:
+
 - Custom hooks for API integration
 - Debounced search hooks for performance
 - Memoized filter hooks for optimization
@@ -533,12 +555,14 @@ feature/
 #### Performance Optimizations
 
 **Memoization Strategies**:
+
 - `React.memo` for expensive components
 - `useMemo` for computed values
 - `useCallback` for stable function references
 - Filter memoization for search interfaces
 
 **Code Splitting**:
+
 - Route-based code splitting
 - Component lazy loading
 - Dynamic imports for heavy features
@@ -547,6 +571,7 @@ feature/
 #### Type Safety
 
 **Comprehensive TypeScript Coverage**:
+
 - Strict TypeScript configuration
 - Feature-specific type definitions
 - API response type safety
@@ -555,6 +580,7 @@ feature/
 ## 🌍 Internationalization (i18n)
 
 **Complete translation coverage** for English, Dutch, and French:
+
 - **Broadcast System**: All UI text, messages, and interactions
 - **Profile System**: Forms, labels, and user guidance
 - **Talent Pool**: Filters, actions, and status messages
@@ -562,6 +588,7 @@ feature/
 - **Authentication**: Registration and login flows
 
 **Translation Structure**:
+
 ```
 messages/
 ├── en.json     # English (primary)
@@ -574,12 +601,14 @@ messages/
 ### Modern Design Language
 
 **HeroUI Integration**:
+
 - Consistent component library usage
 - Dark/Light mode with system preference detection
 - Accessible components with ARIA support
 - Responsive design patterns
 
 **Visual Enhancements**:
+
 - **Glassmorphism Effects**: Modern backdrop-blur and transparency
 - **Micro-animations**: Framer Motion for smooth interactions
 - **Loading States**: Comprehensive skeleton screens and progress indicators
@@ -588,6 +617,7 @@ messages/
 ### Responsive Design
 
 **Mobile-first Approach**:
+
 - Progressive enhancement for larger screens
 - Touch-optimized interactions
 - Adaptive layouts for all device sizes
@@ -597,17 +627,17 @@ messages/
 
 ### Technology Stack
 
-| Category | Technologies |
-|----------|-------------|
-| **Frontend** | Next.js 15, React 19, TypeScript |
-| **UI Framework** | HeroUI, TailwindCSS |
-| **Animations** | Framer Motion |
-| **State Management** | Zustand, React Hooks |
-| **Forms** | React Hook Form, Zod validation |
-| **API Client** | Axios with interceptors |
-| **Internationalization** | next-intl |
-| **Code Quality** | ESLint, Prettier, Husky |
-| **Package Manager** | pnpm |
+| Category                 | Technologies                     |
+| ------------------------ | -------------------------------- |
+| **Frontend**             | Next.js 15, React 19, TypeScript |
+| **UI Framework**         | HeroUI, TailwindCSS              |
+| **Animations**           | Framer Motion                    |
+| **State Management**     | Zustand, React Hooks             |
+| **Forms**                | React Hook Form, Zod validation  |
+| **API Client**           | Axios with interceptors          |
+| **Internationalization** | next-intl                        |
+| **Code Quality**         | ESLint, Prettier, Husky          |
+| **Package Manager**      | pnpm                             |
 
 ### Development Commands
 
@@ -627,23 +657,27 @@ pnpm lint                     # Check feature code quality
 ### Architecture Benefits
 
 **Scalability**:
+
 - Feature-based organization keeps related code together
 - Modular architecture allows independent feature development
 - Clear separation of concerns between UI, logic, and data
 
 **Maintainability**:
+
 - Consistent patterns across features
 - Comprehensive TypeScript coverage
 - Clean component hierarchies
 - Standardized error handling
 
 **Performance**:
+
 - Optimized with advanced React patterns
 - Strategic memoization and lazy loading
 - Efficient state management
 - Minimal bundle sizes through code splitting
 
 **Developer Experience**:
+
 - Fast development with hot reload
 - Excellent tooling and debugging
 - Clear project structure and documentation

@@ -2,16 +2,7 @@ import React from 'react';
 import { Card, CardBody, CardHeader, Button, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { ActionButtons } from '../ActionButtons';
-
-export interface IService {
-  id?: string;
-  name: string;
-  description: string;
-  price: number;
-  type: 'HOURLY_BASED' | 'DAILY_BASED' | 'PROJECT_BASED';
-  createdAt?: string;
-  skills: string[];
-}
+import { type IService } from '@root/modules/profile/types';
 
 interface ServicesSectionProps {
   services: IService[];

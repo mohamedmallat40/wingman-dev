@@ -297,7 +297,7 @@
       "available": "Beschikbaar",
       "availableForProjects": "Beschikbaar voor Projecten",
       "partTimeAvailable": "Deeltijd Beschikbaar",
-      "busy": "Bezet"
+      "notAvailable": "Niet beschikbaar"
     },
     "workType": {
       "remote": "op afstand",
@@ -534,6 +534,12 @@
         "upload": "Document Uploaden",
         "uploading": "Uploaden..."
       },
+      "messages": {
+        "success": "Document \"{name}\" succesvol geüpload!",
+        "error": "Document uploaden mislukt. Probeer opnieuw.",
+        "missingTypeId": "Geen ID-mapping gevonden voor documenttype: {type}",
+        "missingStatusId": "Geen ID-mapping gevonden voor status: {status}"
+      },
       "type": {
         "label": "Documenttype",
         "placeholder": "Selecteer documenttype",
@@ -569,6 +575,7 @@
       "edit": "Bewerken",
       "download": "Downloaden",
       "duplicate": "Dupliceren",
+      "share": "Delen",
       "delete": "Verwijderen"
     },
     "share": {
@@ -592,12 +599,12 @@
       "draft": "Concept",
       "final": "Definitief"
     },
-    "bewerken": {
-      "titel": "Document bewerken",
-      "ondertitel": "Documentinformatie en bestand bijwerken",
-      "knoppen": {
-        "update": "Update document",
-        "updaten": "Updaten ..."
+    "edit": {
+      "title": "Document Bewerken",
+      "subtitle": "Documentinformatie en bestand bijwerken",
+      "buttons": {
+        "update": "Document Bijwerken",
+        "updating": "Bijwerken..."
       }
     }
   },
@@ -884,7 +891,9 @@
       "unlike": "Niet meer leuk vinden",
       "comment": "Reageren op dit bericht",
       "share": "Dit bericht delen",
-      "moreOptions": "Meer opties"
+      "moreOptions": "Meer opties",
+      "follow": "Dit onderwerp volgen",
+      "unfollow": "Dit onderwerp ontvolgen"
     },
     "accessibility": {
       "close": "Sluiten",
