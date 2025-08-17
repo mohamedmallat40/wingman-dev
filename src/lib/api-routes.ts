@@ -37,7 +37,8 @@ export const API_ROUTES = {
   },
   upload: {
     single: '/upload',
-    public: '/upload/public'
+    public: '/upload/public',
+    private: '/upload/private'
   },
   invitations: {
     platform: '/invitations/platform'

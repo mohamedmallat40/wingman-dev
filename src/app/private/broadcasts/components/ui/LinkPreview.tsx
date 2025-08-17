@@ -106,7 +106,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className='group relative w-full max-w-full'
+      className='group relative w-full max-w-full mx-auto'
     >
       <Card
         isPressable
