@@ -90,7 +90,7 @@ export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => 
           onSelectionChange={handleSelectionChange}
           onKeyDown={handleKeyDown}
           isLoading={isLoading}
-          description={t('skills.count', { current: value.length, max: 10 })}
+          description={t('create.fields.skills.count', { current: value.length, max: 10 })}
           startContent={<Icon icon='solar:tag-circle-outline' className='text-success h-4 w-4' />}
           classNames={{
             base: 'w-full',
@@ -114,7 +114,7 @@ export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => 
               ? [
                   <AutocompleteItem
                     key='create-new'
-                    textValue={t('skills.createNew', { skill: inputValue })}
+                    textValue={t('create.fields.skills.createNew', { skill: inputValue })}
                     startContent={
                       <Icon icon='solar:add-circle-linear' className='text-success h-4 w-4' />
                     }
@@ -122,7 +122,7 @@ export const SkillsInput: React.FC<SkillsInputProps> = ({ value, onChange }) => 
                       base: 'text-success hover:bg-success-50 dark:hover:bg-success-900/50'
                     }}
                   >
-                    {t('skills.createNew', { skill: inputValue })}
+                    {t('create.fields.skills.createNew', { skill: inputValue })}
                   </AutocompleteItem>
                 ]
               : [])

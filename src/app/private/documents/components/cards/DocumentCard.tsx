@@ -531,7 +531,7 @@ export default function DocumentCard({
                       startContent={<Icon icon='solar:window-frame-outline' className='h-4 w-4' />}
                       onPress={() => {
                         window.open(
-                          `${getBaseUrl()}/upload/${document.fileName}`,
+                          `${getBaseUrl()}/upload/private/${document.fileName}`,
                           '_blank',
                           'noopener,noreferrer'
                         );

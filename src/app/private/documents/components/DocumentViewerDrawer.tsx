@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   Button,
@@ -14,6 +14,7 @@ import { useTranslations } from 'next-intl';
 
 import { IDocument } from '../types';
 import { getDocumentDownloadUrl, getDocumentPreviewUrl } from '../utils';
+import { useUpload } from '@root/modules/documents/hooks/useUpload';
 
 interface DocumentViewerDrawerProps {
   isOpen: boolean;
@@ -31,14 +32,49 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
   onDelete
 }) => {
   const t = useTranslations('documents');
+  const [imageLoadError, setImageLoadError] = useState(false);
+  const [secureBlobUrl, setSecureBlobUrl] = useState<string | null>(null);
+  const [isLoadingSecure, setIsLoadingSecure] = useState(false);
+  
+  const { fetchSecureDocument } = useUpload();
 
-  const previewUrl = useMemo(() => {
-    return document ? getDocumentPreviewUrl(document) : null;
-  }, [document]);
-
+  // Generate secure download URL for the download button
   const downloadUrl = useMemo(() => {
     return document ? getDocumentDownloadUrl(document) : null;
   }, [document]);
+
+  // Reset image error state when document changes
+  useEffect(() => {
+    setImageLoadError(false);
+    setSecureBlobUrl(null);
+  }, [document]);
+
+  // Fetch secure document when needed
+  useEffect(() => {
+    const fetchSecureDocumentUrl = async () => {
+      if (!document?.fileName || !isOpen) return;
+
+      setIsLoadingSecure(true);
+      try {
+        const blobUrl = await fetchSecureDocument(document.fileName);
+        setSecureBlobUrl(blobUrl);
+      } catch (error) {
+        console.error('Failed to fetch secure document:', error);
+        setImageLoadError(true);
+      } finally {
+        setIsLoadingSecure(false);
+      }
+    };
+
+    fetchSecureDocumentUrl();
+
+    // Cleanup blob URL when component unmounts or document changes
+    return () => {
+      if (secureBlobUrl) {
+        URL.revokeObjectURL(secureBlobUrl);
+      }
+    };
+  }, [document?.fileName, isOpen]);
 
   const isPDF = useMemo(() => {
     if (!document) return false;
@@ -55,7 +91,26 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
   }, [document]);
 
   const renderDocumentContent = () => {
-    if (!previewUrl) {
+    // Show loading state while fetching secure document
+    if (isLoadingSecure) {
+      return (
+        <div className='flex h-full items-center justify-center'>
+          <div className='text-center'>
+            <Icon
+              icon='solar:refresh-linear'
+              className='text-primary mx-auto mb-4 h-16 w-16 animate-spin'
+            />
+            <h3 className='text-default-600 mb-2 text-lg font-semibold'>Loading Document...</h3>
+            <p className='text-default-500'>Please wait while we securely load your document.</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Only use secure blob URL - no fallback to insecure URLs
+    const displayUrl = secureBlobUrl;
+
+    if (!displayUrl) {
       return (
         <div className='flex h-full items-center justify-center'>
           <div className='text-center'>
@@ -74,7 +129,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
       return (
         <div className='bg-default-50 h-full w-full'>
           <iframe
-            src={previewUrl}
+            src={displayUrl}
             className='h-full w-full border-0'
             title={`Preview of ${document?.documentName || 'Document'}`}
             onError={() => {
@@ -111,22 +166,49 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
     }
 
     if (isImage) {
+      if (imageLoadError) {
+        // Fallback UI when image fails to load
+        return (
+          <div className='flex h-full items-center justify-center'>
+            <div className='text-center'>
+              <Icon icon='solar:gallery-broken-linear' className='text-danger mx-auto mb-4 h-16 w-16' />
+              <p className='text-foreground mb-2 text-lg font-medium'>Failed to load image</p>
+              <p className='text-foreground-500 mb-4 text-sm'>
+                The image could not be displayed. You can try downloading it instead.
+              </p>
+              {downloadUrl && (
+                <Button
+                  as='a'
+                  href={downloadUrl}
+                  download={document?.documentName}
+                  color='primary'
+                  variant='flat'
+                  startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
+                >
+                  Download File
+                </Button>
+              )}
+            </div>
+          </div>
+        );
+      }
+
       return (
         <div className='bg-default-50 flex h-full items-center justify-center p-4'>
           <motion.img
-            src={previewUrl}
+            src={displayUrl}
             alt={document?.documentName || 'Document'}
             className='max-h-full max-w-full cursor-zoom-in rounded-lg object-contain shadow-lg'
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
             onClick={() => {
-              // Open in new tab for full-screen view
-              window.open(previewUrl, '_blank');
+              // Open in new tab for full-screen view - use secure blob URL if available
+              window.open(displayUrl, '_blank');
             }}
             onError={(e) => {
-              console.error('Failed to load image:', e);
-              // Fallback to download option
+              console.error('Failed to load image. URL:', displayUrl, 'Error:', e.type);
+              setImageLoadError(true);
             }}
           />
         </div>
