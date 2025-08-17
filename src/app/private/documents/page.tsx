@@ -176,7 +176,7 @@ export default function DocumentsPage() {
           {/* Enhanced Tabs Navigation with Integrated Search */}
           <DocumentTabs
             activeTab={activeTab}
-            onTabChange={(tab) => {
+            onTabChange={(tab: any) => {
               setActiveTab(tab as DocumentType);
             }}
             documentsCount={filteredDocuments.length}

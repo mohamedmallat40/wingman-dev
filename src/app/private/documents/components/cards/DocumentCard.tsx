@@ -36,7 +36,6 @@ interface DocumentCardProperties {
 const getDocumentIcon = (fileName: string, typeName?: string) => {
   // Extract file extension from fileName
   const extension = fileName ? fileName.split('.').pop()?.toLowerCase() : '';
-
   const iconMap: Record<
     string,
     { icon: string; color: string; bgColor: string; gradient: string }
@@ -48,7 +47,6 @@ const getDocumentIcon = (fileName: string, typeName?: string) => {
       bgColor: 'bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/30',
       gradient: 'from-red/10 to-red-500/20'
     },
-
     // Word Documents
     doc: {
       icon: 'solar:document-text-outline',

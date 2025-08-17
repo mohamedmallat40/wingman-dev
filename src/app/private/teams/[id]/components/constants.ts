@@ -24,6 +24,7 @@ export const TEAM_DETAIL_TABS: TabConfig[] = [
 // BREADCRUMB CONFIGURATION
 // ============================================================================
 
+
 export const TEAM_DETAILS_BREADCRUMB_CONFIG: Record<string, BreadcrumbItem> = {
   HOME: {
     label: 'Dashboard',

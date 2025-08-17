@@ -72,6 +72,13 @@ interface Skill {
   type?: string;
 }
 
+// Define local Skill type based on actual usage
+interface Skill {
+  id?: string;
+  key: string;
+  type?: string;
+}
+
 interface ProfileContentProperties {
   user: ProfileUser;
   experiences: Experience[];

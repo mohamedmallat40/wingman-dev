@@ -23,6 +23,7 @@ import {
   mapUserType,
   mapWorkingTime
 } from '@/app/private/talent-pool/utils/talent-utilities';
+import type { AvailabilityStatus, WorkType, Currency, PaymentType } from '@/app/private/talent-pool/types';
 import { getImageUrl } from '@/lib/utils/utilities';
 
 import {
