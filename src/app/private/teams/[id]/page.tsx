@@ -4,12 +4,15 @@ import React, { useCallback, useState } from 'react';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { getMyProfile } from '@root/modules/profile/services/profile.service';
+import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import { BREADCRUMB_CONFIG } from './components/constants';
+import { EditTeamModal } from './components/modals/edit-team-modal';
 //import { TeamDetailsHeader } from './components/header';
 //import { TeamDetailsTabs } from './components/navigation';
 import { TeamMembersTab } from './components/tabs/members';
@@ -22,9 +25,6 @@ import { useTeamDetails } from './hooks/useTeamsDetails';
 // Import constants
 // Import hooks
 import { type TeamDetailsTab as TabType } from './types';
-import { useQuery } from '@tanstack/react-query';
-import { getMyProfile } from '@root/modules/profile/services/profile.service';
-import { EditTeamModal } from './components/modals/edit-team-modal';
 
 const TeamDetailsPage: React.FC = () => {
   // ============================================================================
@@ -148,6 +148,7 @@ const TeamDetailsPage: React.FC = () => {
 
     return (
       <div className='flex items-center gap-2'>
+        {/* 
         <Button
           color='secondary'
           variant='flat'
@@ -167,7 +168,7 @@ const TeamDetailsPage: React.FC = () => {
           className='transition-all duration-200 hover:shadow-md'
         >
           Join Team
-        </Button>
+        </Button> */}
       </div>
     );
   };
@@ -263,7 +264,9 @@ const TeamDetailsPage: React.FC = () => {
       {/* Edit Team Modal - Will be implemented later */}
       <EditTeamModal
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        onClose={() => {
+          setIsEditModalOpen(false);
+        }}
         team={team}
         onSave={refetch}
       />

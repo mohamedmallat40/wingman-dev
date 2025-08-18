@@ -24,7 +24,7 @@ import { type Group, type Skill } from '../../types';
 interface EditTeamModalProperties {
   isOpen: boolean;
   onClose: () => void;
-  team: Group;
+  team?: Group; // Optional - if not provided, we're creating a new team
   onSave: () => void;
 }
 
@@ -36,11 +36,22 @@ const getSkills = async (): Promise<Skill[]> => {
 };
 
 const updateTeam = async (teamId: string, data: Group) => {
-    // TODO: Implement ivalidate query
+  // TODO: Implement invalidate query
   const response = await wingManApi.put(`/groups`, data);
 
   if (!response.ok) {
     throw new Error('Failed to update team');
+  }
+
+  return response.data;
+};
+
+const createTeam = async (data: Omit<Group, 'id'>) => {
+  // TODO: Implement invalidate query
+  const response = await wingManApi.post('/groups', data);
+
+  if (!response.ok) {
+    throw new Error('Failed to create team');
   }
 
   return response.data;
@@ -52,16 +63,18 @@ export const EditTeamModal: React.FC<EditTeamModalProperties> = ({
   team,
   onSave
 }) => {
+  const isEditing = !!team;
+
   const [formData, setFormData] = useState({
-    groupName: team.groupName,
-    tagline: team.tagline || '',
-    type: team.type == 'private' ? true : false,
-    skills: team.skills.map((skill) => skill.id)
+    groupName: team?.groupName ?? '',
+    tagline: team?.tagline ?? '',
+    type: team?.type === 'private' ? true : false,
+    skills: team?.skills.map((skill) => skill.id) ?? []
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState<Set<string>>(
-    new Set(team.skills.map((skill) => skill.id))
+    new Set(team?.skills.map((skill) => skill.id) ?? [])
   );
 
   // Fetch available skills
@@ -71,16 +84,18 @@ export const EditTeamModal: React.FC<EditTeamModalProperties> = ({
     staleTime: 10 * 60 * 1000 // 10 minutes
   });
 
-  // Reset form when team changes
+  // Reset form when team changes or modal opens/closes
   useEffect(() => {
-    setFormData({
-      groupName: team.groupName,
-      tagline: team.tagline || '',
-      type: team.type == 'private' ? true : false,
-      skills: team.skills.map((skill) => skill.id)
-    });
-    setSelectedSkills(new Set(team.skills.map((skill) => skill.id)));
-  }, [team]);
+    if (isOpen) {
+      setFormData({
+        groupName: team?.groupName ?? '',
+        tagline: team?.tagline ?? '',
+        type: team?.type === 'private' ? true : false,
+        skills: team?.skills.map((skill) => skill.id) ?? []
+      });
+      setSelectedSkills(new Set(team?.skills.map((skill) => skill.id) ?? []));
+    }
+  }, [team, isOpen]);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((previous) => ({
@@ -101,22 +116,31 @@ export const EditTeamModal: React.FC<EditTeamModalProperties> = ({
     setIsLoading(true);
 
     try {
-      // Only make API call if there are changes
-      if (Object.keys(formData).length > 0) {
-        const requestData = {
-          ...formData,
-          color: '',
-          icon: '',
-          type: formData.type ? 'private' : 'public',
-          id: team.id
-        };
-        await updateTeam(team.id, requestData);
-        onSave(); // Trigger refetch
-      }
+      const requestData = {
+        ...formData,
+        color: '',
+        icon: '',
+        type: formData.type ? 'private' : 'public',
+        ...(isEditing && { id: team.id })
+      };
 
+      await (isEditing ? updateTeam(team.id, requestData) : createTeam(requestData));
+
+      onSave(); // Trigger refetch
       onClose();
+
+      // Reset form after successful create
+      if (!isEditing) {
+        setFormData({
+          groupName: '',
+          tagline: '',
+          type: false,
+          skills: []
+        });
+        setSelectedSkills(new Set());
+      }
     } catch (error) {
-      console.error('Failed to update team:', error);
+      console.error(`Failed to ${isEditing ? 'update' : 'create'} team:`, error);
       // Handle error - you might want to show a toast notification
     } finally {
       setIsLoading(false);
@@ -142,17 +166,24 @@ export const EditTeamModal: React.FC<EditTeamModalProperties> = ({
     ));
   };
 
+  const modalTitle = isEditing ? 'Edit Team Details' : 'Create New Team';
+  const modalDescription = isEditing
+    ? 'Update your team information and settings'
+    : 'Set up your new team with the details below';
+  const saveButtonText = isEditing ? 'Save Changes' : 'Create Team';
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size='2xl' scrollBehavior='inside' placement='center'>
       <ModalContent>
         <ModalHeader className='flex flex-col gap-1'>
           <div className='flex items-center gap-2'>
-            <Icon icon='solar:pen-linear' className='h-5 w-5' />
-            Edit Team Details
+            <Icon
+              icon={isEditing ? 'solar:pen-linear' : 'solar:add-circle-linear'}
+              className='h-5 w-5'
+            />
+            {modalTitle}
           </div>
-          <p className='text-sm font-normal text-gray-600'>
-            Update your team information and settings
-          </p>
+          <p className='text-sm font-normal text-gray-600'>{modalDescription}</p>
         </ModalHeader>
 
         <ModalBody className='py-4'>
@@ -218,12 +249,12 @@ export const EditTeamModal: React.FC<EditTeamModalProperties> = ({
               <div className='flex items-center justify-between rounded-lg border border-gray-200 p-3'>
                 <div className='space-y-1'>
                   <p className='text-sm font-medium'>
-                    {formData.public ? 'Public Team' : 'Private Team'}
+                    {formData.type ? 'Private Team' : 'Public Team'}
                   </p>
                   <p className='text-xs text-gray-600'>
-                    {formData.public
-                      ? 'Anyone can discover and request to join this team'
-                      : 'Only invited members can join this team'}
+                    {formData.type
+                      ? 'Only invited members can join this team'
+                      : 'Anyone can discover and request to join this team'}
                   </p>
                 </div>
                 <Switch
@@ -248,7 +279,7 @@ export const EditTeamModal: React.FC<EditTeamModalProperties> = ({
             isLoading={isLoading}
             isDisabled={!formData.groupName.trim()}
           >
-            Save Changes
+            {saveButtonText}
           </Button>
         </ModalFooter>
       </ModalContent>
