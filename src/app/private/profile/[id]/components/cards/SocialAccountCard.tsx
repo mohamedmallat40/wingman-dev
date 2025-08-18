@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+
 import { Icon } from '@iconify/react';
+
 import { type SocialAccount } from '../../types';
 import { ActionButtons } from '../ActionButtons';
 
@@ -33,27 +35,29 @@ export const SocialAccountCard: React.FC<SocialAccountCardProps> = ({
     other: { icon: 'solar:link-linear', color: 'text-default-600', bg: 'bg-default-50' }
   };
 
-  const details = platformDetails[account.platform as keyof typeof platformDetails] || platformDetails.other;
+  const details =
+    platformDetails[account.platform as keyof typeof platformDetails] || platformDetails.other;
 
   return (
-    <div className="relative group">
+    <div className='group relative'>
       <a
         href={account.url}
         target='_blank'
         rel='noopener noreferrer'
-        className={`${details.bg} hover:scale-105 transition-all duration-200 flex flex-col items-center gap-2 rounded-lg p-3 text-center hover:shadow-sm relative block`}
+        className={`${details.bg} relative block flex flex-col items-center gap-2 rounded-lg p-3 text-center transition-all duration-200 hover:scale-105 hover:shadow-sm`}
       >
         <Icon icon={details.icon} className={`h-6 w-6 ${details.color}`} />
         <div>
-          <p className='text-tiny font-medium text-foreground'>
-            {account.displayName || account.platform.charAt(0).toUpperCase() + account.platform.slice(1)}
+          <p className='text-tiny text-foreground font-medium'>
+            {account.displayName ||
+              account.platform.charAt(0).toUpperCase() + account.platform.slice(1)}
           </p>
           <p className='text-tiny text-foreground-500'>@{account.username}</p>
         </div>
       </a>
-      
+
       {isOwnProfile && (
-        <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className='absolute top-1 right-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100'>
           <ActionButtons
             showEdit
             showDelete
@@ -61,8 +65,8 @@ export const SocialAccountCard: React.FC<SocialAccountCardProps> = ({
             onDelete={onDelete}
             editTooltip={`Edit ${account.platform} account`}
             deleteTooltip={`Delete ${account.platform} account`}
-            size="sm"
-            variant="flat"
+            size='sm'
+            variant='flat'
           />
         </div>
       )}

@@ -1,6 +1,7 @@
+import type { CreatePostData, FeedParams } from '../types';
+
 import { API_ROUTES } from '@/lib/api-routes';
 import wingManApi from '@/lib/axios';
-import type { CreatePostData, FeedParams } from '../types';
 
 // ===== POSTS API =====
 
@@ -117,6 +118,22 @@ export const togglePostBookmark = async (postId: string) => {
  */
 export const trackPostView = async (postId: string) => {
   const response = await wingManApi.post(`${API_ROUTES.broadcasts.posts}/${postId}/view`);
+  return response.data;
+};
+
+/**
+ * Upvote a broadcast post
+ */
+export const upvotePost = async (postId: string) => {
+  const response = await wingManApi.post(`/broadcast/${postId}/upvote`);
+  return response.data;
+};
+
+/**
+ * Remove upvote from a broadcast post
+ */
+export const removeUpvote = async (postId: string) => {
+  const response = await wingManApi.delete(`/broadcast/${postId}/upvote`);
   return response.data;
 };
 

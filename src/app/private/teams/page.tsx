@@ -9,17 +9,17 @@ import { useParams, useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
-import { TeamDetailsHeader } from './[id]/components/teams-header';
-import { TeamDetailsTabs } from './[id]/components/teams-navigation';
+// Import constants
+import { BREADCRUMB_CONFIG, TAB_CONFIG } from './[id]/components/constants';
 import { TeamMembersTab } from './[id]/components/tabs/members';
 import { TeamOverviewTab } from './[id]/components/tabs/overview';
 import { TeamProjectsTab } from './[id]/components/tabs/projects-tab';
 import { TeamToolsTab } from './[id]/components/tabs/tools-tab';
-// Import constants
-import { BREADCRUMB_CONFIG, TAB_CONFIG } from './[id]/components/constants';
+import { TeamDetailsHeader } from './[id]/components/teams-header';
+import { TeamDetailsTabs } from './[id]/components/teams-navigation';
+import { useTeamDetails } from './[id]/hooks/useTeamsDetails';
 // Import hooks
 import { type TeamDetailsTab as TabType } from './[id]/types';
-import { useTeamDetails } from './[id]/hooks/useTeamsDetails';
 
 const TeamDetailsPage: React.FC = () => {
   // ============================================================================
@@ -78,10 +78,15 @@ const TeamDetailsPage: React.FC = () => {
   const renderTabContent = () => {
     if (!team) return null;
 
+    // Check if current user is the team owner (you'll need to implement getCurrentUser)
+    const currentUserId = 'current-user-id'; // Replace with actual current user ID
+    const isOwner = team?.owner?.id === currentUserId;
+
     const commonProperties = {
       team,
       onViewProfile: handleViewMemberProfile,
-      onRefetch: refetch
+      onRefetch: refetch,
+      isOwner
     };
 
     switch (activeTab) {
@@ -118,7 +123,7 @@ const TeamDetailsPage: React.FC = () => {
 
     // Check if current user is the team owner (you'll need to implement getCurrentUser)
     const currentUserId = 'current-user-id'; // Replace with actual current user ID
-    const isOwner = team.owner.id === currentUserId;
+    const isOwner = team?.owner?.id === currentUserId;
 
     if (isOwner) {
       return (

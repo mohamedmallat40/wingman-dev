@@ -20,7 +20,6 @@ export * from './navigation';
 // State Components
 export * from './states';
 
-
 // List container exports with old names
 export {
   FreelancerListContainer as OptimizedFreelancerList,

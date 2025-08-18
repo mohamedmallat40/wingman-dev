@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   Button,
@@ -9,11 +9,12 @@ import {
   DrawerHeader
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { useUpload } from '@root/modules/documents/hooks/useUpload';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { IDocument } from '../types';
-import { getDocumentPreviewUrl, getDocumentDownloadUrl } from '../utils';
+import { getDocumentDownloadUrl, getDocumentPreviewUrl } from '../utils';
 
 interface DocumentViewerDrawerProps {
   isOpen: boolean;
@@ -31,18 +32,56 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
   onDelete
 }) => {
   const t = useTranslations('documents');
+  const [imageLoadError, setImageLoadError] = useState(false);
+  const [secureBlobUrl, setSecureBlobUrl] = useState<string | null>(null);
+  const [isLoadingSecure, setIsLoadingSecure] = useState(false);
 
-  const previewUrl = useMemo(() => {
-    return document ? getDocumentPreviewUrl(document) : null;
-  }, [document]);
+  const { fetchSecureDocument } = useUpload();
 
+  // Generate secure download URL for the download button
   const downloadUrl = useMemo(() => {
     return document ? getDocumentDownloadUrl(document) : null;
   }, [document]);
 
+  // Reset image error state when document changes
+  useEffect(() => {
+    setImageLoadError(false);
+    setSecureBlobUrl(null);
+  }, [document]);
+
+  // Fetch secure document when needed
+  useEffect(() => {
+    const fetchSecureDocumentUrl = async () => {
+      if (!document?.fileName || !isOpen) return;
+
+      setIsLoadingSecure(true);
+      try {
+        const blobUrl = await fetchSecureDocument(document.fileName);
+        setSecureBlobUrl(blobUrl);
+      } catch (error) {
+        console.error('Failed to fetch secure document:', error);
+        setImageLoadError(true);
+      } finally {
+        setIsLoadingSecure(false);
+      }
+    };
+
+    fetchSecureDocumentUrl();
+
+    // Cleanup blob URL when component unmounts or document changes
+    return () => {
+      if (secureBlobUrl) {
+        URL.revokeObjectURL(secureBlobUrl);
+      }
+    };
+  }, [document?.fileName, isOpen]);
+
   const isPDF = useMemo(() => {
     if (!document) return false;
-    return document.fileName.toLowerCase().endsWith('.pdf') || document.type?.name.toLowerCase() === 'pdf';
+    return (
+      document.fileName.toLowerCase().endsWith('.pdf') ||
+      document.category?.name.toLowerCase() === 'pdf'
+    );
   }, [document]);
 
   const isImage = useMemo(() => {
@@ -52,12 +91,34 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
   }, [document]);
 
   const renderDocumentContent = () => {
-    if (!previewUrl) {
+    // Show loading state while fetching secure document
+    if (isLoadingSecure) {
       return (
         <div className='flex h-full items-center justify-center'>
           <div className='text-center'>
-            <Icon icon='solar:file-corrupted-linear' className='mx-auto mb-4 h-16 w-16 text-default-400' />
-            <h3 className='mb-2 text-lg font-semibold text-default-600'>No Preview Available</h3>
+            <Icon
+              icon='solar:refresh-linear'
+              className='text-primary mx-auto mb-4 h-16 w-16 animate-spin'
+            />
+            <h3 className='text-default-600 mb-2 text-lg font-semibold'>Loading Document...</h3>
+            <p className='text-default-500'>Please wait while we securely load your document.</p>
+          </div>
+        </div>
+      );
+    }
+
+    // Only use secure blob URL - no fallback to insecure URLs
+    const displayUrl = secureBlobUrl;
+
+    if (!displayUrl) {
+      return (
+        <div className='flex h-full items-center justify-center'>
+          <div className='text-center'>
+            <Icon
+              icon='solar:file-corrupted-linear'
+              className='text-default-400 mx-auto mb-4 h-16 w-16'
+            />
+            <h3 className='text-default-600 mb-2 text-lg font-semibold'>No Preview Available</h3>
             <p className='text-default-500'>This document cannot be previewed.</p>
           </div>
         </div>
@@ -66,9 +127,9 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
 
     if (isPDF) {
       return (
-        <div className='h-full w-full bg-default-50'>
+        <div className='bg-default-50 h-full w-full'>
           <iframe
-            src={previewUrl}
+            src={displayUrl}
             className='h-full w-full border-0'
             title={`Preview of ${document?.documentName || 'Document'}`}
             onError={() => {
@@ -79,11 +140,14 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
           <div className='hidden' id={`pdf-fallback-${document?.id}`}>
             <div className='flex h-full items-center justify-center'>
               <div className='text-center'>
-                <Icon icon='solar:file-text-linear' className='mx-auto mb-4 h-16 w-16 text-default-400' />
-                <h3 className='mb-2 text-lg font-semibold text-default-600'>PDF Preview Unavailable</h3>
-                <p className='text-default-500 mb-4'>
-                  Unable to preview this PDF file in browser.
-                </p>
+                <Icon
+                  icon='solar:file-text-outline'
+                  className='text-default-400 mx-auto mb-4 h-16 w-16'
+                />
+                <h3 className='text-default-600 mb-2 text-lg font-semibold'>
+                  PDF Preview Unavailable
+                </h3>
+                <p className='text-default-500 mb-4'>Unable to preview this PDF file in browser.</p>
                 <Button
                   color='primary'
                   variant='flat'
@@ -102,22 +166,52 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
     }
 
     if (isImage) {
+      if (imageLoadError) {
+        // Fallback UI when image fails to load
+        return (
+          <div className='flex h-full items-center justify-center'>
+            <div className='text-center'>
+              <Icon
+                icon='solar:gallery-broken-linear'
+                className='text-danger mx-auto mb-4 h-16 w-16'
+              />
+              <p className='text-foreground mb-2 text-lg font-medium'>Failed to load image</p>
+              <p className='text-foreground-500 mb-4 text-sm'>
+                The image could not be displayed. You can try downloading it instead.
+              </p>
+              {downloadUrl && (
+                <Button
+                  as='a'
+                  href={downloadUrl}
+                  download={document?.documentName}
+                  color='primary'
+                  variant='flat'
+                  startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
+                >
+                  Download File
+                </Button>
+              )}
+            </div>
+          </div>
+        );
+      }
+
       return (
-        <div className='flex h-full items-center justify-center p-4 bg-default-50'>
+        <div className='bg-default-50 flex h-full items-center justify-center p-4'>
           <motion.img
-            src={previewUrl}
+            src={displayUrl}
             alt={document?.documentName || 'Document'}
-            className='max-h-full max-w-full object-contain rounded-lg shadow-lg cursor-zoom-in'
+            className='max-h-full max-w-full cursor-zoom-in rounded-lg object-contain shadow-lg'
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.3 }}
             onClick={() => {
-              // Open in new tab for full-screen view
-              window.open(previewUrl, '_blank');
+              // Open in new tab for full-screen view - use secure blob URL if available
+              window.open(displayUrl, '_blank');
             }}
             onError={(e) => {
-              console.error('Failed to load image:', e);
-              // Fallback to download option
+              console.error('Failed to load image. URL:', displayUrl, 'Error:', e.type);
+              setImageLoadError(true);
             }}
           />
         </div>
@@ -127,8 +221,8 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
     return (
       <div className='flex h-full items-center justify-center'>
         <div className='text-center'>
-          <Icon icon='solar:file-text-linear' className='mx-auto mb-4 h-16 w-16 text-default-400' />
-          <h3 className='mb-2 text-lg font-semibold text-default-600'>Preview Not Supported</h3>
+          <Icon icon='solar:file-text-linear' className='text-default-400 mx-auto mb-4 h-16 w-16' />
+          <h3 className='text-default-600 mb-2 text-lg font-semibold'>Preview Not Supported</h3>
           <p className='text-default-500'>
             This file type cannot be previewed. Please download to view.
           </p>
@@ -165,30 +259,29 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
           }}
         >
           <DrawerContent>
-            <DrawerHeader className='border-b border-default-200/50 bg-content1/50 backdrop-blur-md'>
-              <div className='flex items-center justify-between'>
+            <DrawerHeader className='border-default-200/50 bg-content1/50 border-b backdrop-blur-md'>
+              <div className='flex w-full items-center'>
                 <div className='flex items-center gap-3'>
-                  <div className='rounded-lg bg-primary/10 p-2'>
-                    <Icon
-                      icon='solar:document-text-bold'
-                      className='h-5 w-5 text-primary-600'
-                    />
+                  <div className='bg-primary/10 rounded-lg p-2'>
+                    <Icon icon='solar:document-text-outline' className='text-primary-600 h-5 w-5' />
                   </div>
                   <div>
-                    <h2 className='text-lg font-semibold text-foreground'>
+                    <h2 className='text-foreground text-lg font-semibold'>
                       {document.documentName}
                     </h2>
-                    <p className='text-sm text-default-500'>
-                      {document.type?.name} • {new Date(document.createdAt).toLocaleDateString()}
+                    <p className='text-default-500 text-sm'>
+                      {document.category?.name} •{' '}
+                      {new Date(document.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
-                <div className='flex items-center gap-2'>
+                <div className='flex-1'></div>
+                <div className='ml-auto flex items-center gap-2'>
                   <Button
                     size='sm'
                     variant='flat'
                     color='primary'
-                    startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
+                    startContent={<Icon icon='solar:download-outline' className='h-4 w-4' />}
                     as='a'
                     href={downloadUrl || '#'}
                     download={document?.documentName}
@@ -200,7 +293,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       size='sm'
                       variant='flat'
                       color='secondary'
-                      startContent={<Icon icon='solar:pen-linear' className='h-4 w-4' />}
+                      startContent={<Icon icon='solar:pen-outline' className='h-4 w-4' />}
                       onPress={() => {
                         onEdit(document);
                         onClose();
@@ -214,7 +307,9 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       size='sm'
                       variant='flat'
                       color='danger'
-                      startContent={<Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />}
+                      startContent={
+                        <Icon icon='solar:trash-bin-minimalistic-outline' className='h-4 w-4' />
+                      }
                       onPress={() => {
                         onDelete(document);
                         onClose();
@@ -223,6 +318,15 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                       Delete
                     </Button>
                   )}
+                  <Button
+                    isIconOnly
+                    size='sm'
+                    variant='light'
+                    onPress={onClose}
+                    className='hover:bg-default-100 dark:hover:bg-default-800'
+                  >
+                    <Icon icon='solar:close-circle-outline' className='h-4 w-4' />
+                  </Button>
                 </div>
               </div>
             </DrawerHeader>
@@ -238,27 +342,6 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
                 {renderDocumentContent()}
               </motion.div>
             </DrawerBody>
-
-            <DrawerFooter className='border-t border-default-200/50 bg-content1/50 backdrop-blur-md'>
-              <div className='flex w-full items-center justify-between'>
-                <div className='flex items-center gap-2 text-sm text-default-500'>
-                  <Icon icon='solar:info-circle-linear' className='h-4 w-4' />
-                  <span>
-                    {document.tags.length > 0
-                      ? `Tags: ${document.tags.map((tag) => tag.name).join(', ')}`
-                      : 'No tags assigned'}
-                  </span>
-                </div>
-                <Button
-                  color='primary'
-                  variant='light'
-                  onPress={onClose}
-                  startContent={<Icon icon='solar:close-circle-linear' className='h-4 w-4' />}
-                >
-                  Close
-                </Button>
-              </div>
-            </DrawerFooter>
           </DrawerContent>
         </Drawer>
       )}

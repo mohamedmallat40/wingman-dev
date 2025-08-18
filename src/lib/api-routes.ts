@@ -21,7 +21,7 @@ export const API_ROUTES = {
     reviews: '/public-reviews/',
     skills: {
       getAll: '/skills',
-      create: '/skills',
+      create: '/skills'
     },
     address: '/address'
   },
@@ -37,7 +37,8 @@ export const API_ROUTES = {
   },
   upload: {
     single: '/upload',
-    public: '/upload/public'
+    public: '/upload/public',
+    private: '/upload/private'
   },
   invitations: {
     platform: '/invitations/platform'

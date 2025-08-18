@@ -361,8 +361,8 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
       if (selectedFile) {
         setIsUploadingImage(true);
         try {
-          const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
-          profileImageFilename = uploadResponse.filename;
+          const uploadResponse = await upload.uploadeFileSingle(selectedFile);
+          profileImageFilename = uploadResponse.fileName;
         } catch (error) {
           console.error('Image upload failed:', error);
           // Continue with form submission even if image upload fails
@@ -499,7 +499,11 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                                   <Icon icon='solar:upload-linear' className='h-4 w-4' />
                                 }
                                 onPress={() =>
-                                  (document.querySelector('#profile-image-input') as HTMLInputElement)?.click()
+                                  (
+                                    document.querySelector(
+                                      '#profile-image-input'
+                                    ) as HTMLInputElement
+                                  )?.click()
                                 }
                                 isLoading={isUploadingImage}
                               >
@@ -586,9 +590,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                         variant='bordered'
                       >
                         {workTypes.map((type) => (
-                          <SelectItem key={type}>
-                            {getWorkTypeLabel(type)}
-                          </SelectItem>
+                          <SelectItem key={type}>{getWorkTypeLabel(type)}</SelectItem>
                         ))}
                       </Select>
 
@@ -609,9 +611,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                         variant='bordered'
                       >
                         {workingTimes.map((time) => (
-                          <SelectItem key={time}>
-                            {getWorkingTimeLabel(time)}
-                          </SelectItem>
+                          <SelectItem key={time}>{getWorkingTimeLabel(time)}</SelectItem>
                         ))}
                       </Select>
                     </div>
@@ -686,9 +686,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                       isRequired
                     >
                       {statuses.map((status) => (
-                        <SelectItem key={status}>
-                          {getStatusLabel(status)}
-                        </SelectItem>
+                        <SelectItem key={status}>{getStatusLabel(status)}</SelectItem>
                       ))}
                     </Select>
                   </div>
@@ -845,9 +843,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
                             }
                           >
                             {countryList.map((country) => (
-                              <SelectItem key={country.name}>
-                                {country.name}
-                              </SelectItem>
+                              <SelectItem key={country.name}>{country.name}</SelectItem>
                             ))}
                           </Select>
                         </div>

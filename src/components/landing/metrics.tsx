@@ -37,7 +37,7 @@ export default function Metrics() {
   ];
 
   return (
-    <section id='services' className='relative z-10 mx-auto max-w-7xl px-2 sm:px-4 xl:px-6 py-8'>
+    <section id='services' className='relative z-10 mx-auto max-w-7xl px-2 py-8 sm:px-4 xl:px-6'>
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,8 +1,10 @@
 'use client';
 
 import React from 'react';
+
 import { Button, Card, CardBody, Input, Select, SelectItem, Switch } from '@heroui/react';
 import { Icon } from '@iconify/react';
+
 import { type SocialAccount } from '../../types';
 
 interface SocialAccountsFormProps {
@@ -23,18 +25,26 @@ const platformOptions = [
   { key: 'behance', label: 'Behance', icon: 'solar:palette-linear', color: 'text-blue-500' },
   { key: 'dribbble', label: 'Dribbble', icon: 'solar:basketball-linear', color: 'text-pink-500' },
   { key: 'medium', label: 'Medium', icon: 'solar:pen-new-square-linear', color: 'text-green-600' },
-  { key: 'portfolio', label: 'Portfolio', icon: 'solar:folder-open-linear', color: 'text-purple-600' },
+  {
+    key: 'portfolio',
+    label: 'Portfolio',
+    icon: 'solar:folder-open-linear',
+    color: 'text-purple-600'
+  },
   { key: 'other', label: 'Other', icon: 'solar:link-linear', color: 'text-default-600' }
 ];
 
-export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({ 
-  socialAccounts, 
-  onAdd, 
-  onRemove, 
-  onUpdate 
+export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
+  socialAccounts,
+  onAdd,
+  onRemove,
+  onUpdate
 }) => {
   const getPlatformDetails = (platform: string) => {
-    return platformOptions.find(option => option.key === platform) || platformOptions[platformOptions.length - 1];
+    return (
+      platformOptions.find((option) => option.key === platform) ||
+      platformOptions[platformOptions.length - 1]
+    );
   };
 
   const generateBaseUrl = (platform: string, username: string) => {
@@ -50,7 +60,7 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
       dribbble: 'https://dribbble.com/',
       medium: 'https://medium.com/@'
     };
-    
+
     return baseUrls[platform] ? `${baseUrls[platform]}${username}` : '';
   };
 
@@ -58,8 +68,8 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
     const account = socialAccounts[index];
     if (!account) return;
     const baseUrl = generateBaseUrl(platform, account.username);
-    onUpdate(index, { 
-      ...account, 
+    onUpdate(index, {
+      ...account,
       platform: platform as SocialAccount['platform'],
       url: baseUrl || account.url,
       id: account.id,
@@ -72,8 +82,8 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
     const account = socialAccounts[index];
     if (!account) return;
     const baseUrl = generateBaseUrl(account.platform, username);
-    onUpdate(index, { 
-      ...account, 
+    onUpdate(index, {
+      ...account,
       username,
       url: baseUrl || account.url,
       id: account.id,
@@ -83,81 +93,88 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between'>
         <div>
-          <h3 className="text-lg font-semibold">Social Accounts ({socialAccounts.length})</h3>
-          <p className="text-sm text-default-600">Connect your social media profiles and portfolios</p>
+          <h3 className='text-lg font-semibold'>Social Accounts ({socialAccounts.length})</h3>
+          <p className='text-default-600 text-sm'>
+            Connect your social media profiles and portfolios
+          </p>
         </div>
         <Button
-          color="primary"
-          variant="flat"
-          startContent={<Icon icon="solar:add-circle-outline" className="h-4 w-4" />}
+          color='primary'
+          variant='flat'
+          startContent={<Icon icon='solar:add-circle-outline' className='h-4 w-4' />}
           onPress={onAdd}
         >
           Add Social Account
         </Button>
       </div>
 
-      <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
+      <div className='max-h-96 space-y-4 overflow-y-auto pr-2'>
         {socialAccounts.map((account, index) => {
           const platformDetails = getPlatformDetails(account.platform);
-          
+
           return (
-            <Card key={account.id} className="border-2 border-default-200 hover:border-primary/50 transition-colors">
-              <CardBody className="p-4">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-default-100">
-                        <Icon 
-                          icon={platformDetails.icon} 
-                          className={`h-5 w-5 ${platformDetails.color}`}
+            <Card
+              key={account.id}
+              className='border-default-200 hover:border-primary/50 border-2 transition-colors'
+            >
+              <CardBody className='p-4'>
+                <div className='space-y-4'>
+                  <div className='flex items-center justify-between'>
+                    <div className='flex items-center gap-3'>
+                      <div className='bg-default-100 rounded-lg p-2'>
+                        <Icon
+                          icon={platformDetails?.icon || 'solar:link-outline'}
+                          className={`h-5 w-5 ${platformDetails?.color || 'text-default-500'}`}
                         />
                       </div>
                       <div>
-                        <h4 className="font-medium text-foreground">
-                          {account.displayName || platformDetails.label}
+                        <h4 className='text-foreground font-medium'>
+                          {account.displayName || platformDetails?.label || account.platform}
                         </h4>
-                        <p className="text-sm text-default-600">@{account.username || 'username'}</p>
+                        <p className='text-default-600 text-sm'>
+                          @{account.username || 'username'}
+                        </p>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center gap-2">
+
+                    <div className='flex items-center gap-2'>
                       <Switch
-                        size="sm"
+                        size='sm'
                         isSelected={account.isPublic}
                         onValueChange={(isPublic) => onUpdate(index, { ...account, isPublic })}
-                        color="success"
+                        color='success'
                       >
-                        <span className="text-sm text-default-600">Public</span>
+                        <span className='text-default-600 text-sm'>Public</span>
                       </Switch>
                       <Button
                         isIconOnly
-                        variant="light"
-                        color="danger"
-                        size="sm"
+                        variant='light'
+                        color='danger'
+                        size='sm'
                         onPress={() => onRemove(index)}
                       >
-                        <Icon icon="solar:trash-bin-minimalistic-linear" className="h-4 w-4" />
+                        <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
                       </Button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                     <Select
-                      label="Platform"
+                      label='Platform'
                       selectedKeys={[account.platform]}
                       onSelectionChange={(keys) => {
                         const platform = Array.from(keys)[0] as string;
                         handlePlatformChange(index, platform);
                       }}
-                      variant="bordered"
-                      size="sm"
+                      variant='bordered'
+                      size='sm'
                     >
                       {platformOptions.map((platform) => (
-                        <SelectItem 
-                          key={platform.key} 
+                        <SelectItem
+                          key={platform.key}
                           startContent={
                             <Icon icon={platform.icon} className={`h-4 w-4 ${platform.color}`} />
                           }
@@ -168,44 +185,46 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
                     </Select>
 
                     <Input
-                      label="Username"
+                      label='Username'
                       value={account.username}
                       onChange={(e) => handleUsernameChange(index, e.target.value)}
-                      variant="bordered"
-                      size="sm"
-                      startContent="@"
+                      variant='bordered'
+                      size='sm'
+                      startContent='@'
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
                     <Input
-                      label="Custom Display Name"
-                      placeholder={platformDetails.label}
+                      label='Custom Display Name'
+                      placeholder={platformDetails?.label || account.platform}
                       value={account.displayName || ''}
                       onChange={(e) => onUpdate(index, { ...account, displayName: e.target.value })}
-                      variant="bordered"
-                      size="sm"
+                      variant='bordered'
+                      size='sm'
                     />
 
                     <Input
-                      label="Full URL"
+                      label='Full URL'
                       value={account.url}
                       onChange={(e) => onUpdate(index, { ...account, url: e.target.value })}
-                      variant="bordered"
-                      size="sm"
-                      startContent={<Icon icon="solar:link-linear" className="h-4 w-4 text-default-400" />}
+                      variant='bordered'
+                      size='sm'
+                      startContent={
+                        <Icon icon='solar:link-linear' className='text-default-400 h-4 w-4' />
+                      }
                     />
                   </div>
 
                   {account.url && (
-                    <div className="flex items-center gap-2 p-3 bg-default-50 rounded-lg">
-                      <Icon icon="solar:eye-linear" className="h-4 w-4 text-default-600" />
-                      <span className="text-sm text-default-600">Preview:</span>
-                      <a 
-                        href={account.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-sm text-primary hover:underline truncate"
+                    <div className='bg-default-50 flex items-center gap-2 rounded-lg p-3'>
+                      <Icon icon='solar:eye-linear' className='text-default-600 h-4 w-4' />
+                      <span className='text-default-600 text-sm'>Preview:</span>
+                      <a
+                        href={account.url}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-primary truncate text-sm hover:underline'
                       >
                         {account.url}
                       </a>
@@ -219,17 +238,17 @@ export const SocialAccountsForm: React.FC<SocialAccountsFormProps> = ({
       </div>
 
       {socialAccounts.length === 0 && (
-        <div className="flex items-center justify-center py-12 text-center">
+        <div className='flex items-center justify-center py-12 text-center'>
           <div>
             <Icon
-              icon="solar:link-circle-linear"
-              className="text-default-300 mx-auto mb-4 h-12 w-12"
+              icon='solar:link-circle-linear'
+              className='text-default-300 mx-auto mb-4 h-12 w-12'
             />
-            <p className="text-default-500 mb-4">No social accounts added yet</p>
+            <p className='text-default-500 mb-4'>No social accounts added yet</p>
             <Button
-              color="primary"
-              variant="flat"
-              startContent={<Icon icon="solar:add-circle-linear" className="h-4 w-4" />}
+              color='primary'
+              variant='flat'
+              startContent={<Icon icon='solar:add-circle-linear' className='h-4 w-4' />}
               onPress={onAdd}
             >
               Add your first social account

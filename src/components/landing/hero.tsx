@@ -13,7 +13,7 @@ export default function Hero() {
   // const t = useTranslations('landing.hero');
 
   return (
-    <section className='relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-center gap-12 px-2 sm:px-4 xl:px-6 pt-32 pb-20 xl:pt-40 xl:pb-32'>
+    <section className='relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-center gap-12 px-2 pt-32 pb-20 sm:px-4 xl:px-6 xl:pt-40 xl:pb-32'>
       {/* Main Headline */}
       <motion.header
         initial={{ opacity: 0, y: 30 }}

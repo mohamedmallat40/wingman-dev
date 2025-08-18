@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import type { IDocument, ViewMode, DocumentEmptyStateProps } from '../../types';
+import type { IDocument, ViewMode } from '../../types';
 
 import { AnimatePresence, motion } from 'framer-motion';
 
@@ -112,7 +112,12 @@ const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
               delay: index * 0.05 // Stagger animation
             }}
           >
-            <DocumentCard document={document} viewMode={viewMode} onEdit={handleOnEdit} onView={handleOnView} />
+            <DocumentCard
+              document={document}
+              viewMode={viewMode}
+              onEdit={handleOnEdit}
+              onView={handleOnView}
+            />
           </motion.div>
         ))}
       </AnimatePresence>

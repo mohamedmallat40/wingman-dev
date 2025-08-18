@@ -65,6 +65,20 @@ import { ProjectsSection } from './sections/projects-section';
 import { ServicesSection } from './sections/services-section';
 import { TestimonialsSection } from './sections/testimonials-section';
 
+// Define local Skill type based on actual usage
+interface Skill {
+  id?: string;
+  key: string;
+  type?: string;
+}
+
+// Define local Skill type based on actual usage
+interface Skill {
+  id?: string;
+  key: string;
+  type?: string;
+}
+
 interface ProfileContentProperties {
   user: ProfileUser;
   experiences: Experience[];
@@ -218,9 +232,16 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const handleAddLanguage = () => {
     setEditingLanguage({
       item: {
-        id: '',
+        id: crypto.randomUUID(),
+        name: '',
+        code: '',
         key: '',
-        level: 'BEGINNER'
+        level: 'BEGINNER',
+        isNative: false,
+        canRead: false,
+        canWrite: false,
+        canSpeak: false,
+        canUnderstand: false
       },
       isOpen: true
     });
@@ -284,8 +305,11 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const getLevelDisplay = (level: Language['level']): string => {
     const levelMap = {
       NATIVE: 'Native',
+      FLUENT: 'Fluent',
       PROFESSIONAL: 'Professional',
+      CONVERSATIONAL: 'Conversational',
       INTERMEDIATE: 'Intermediate',
+      ELEMENTARY: 'Elementary',
       BEGINNER: 'Beginner'
     };
     return levelMap[level] || level;
@@ -295,8 +319,11 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const getLevelColor = (level: Language['level']): string => {
     const colorMap = {
       NATIVE: 'success',
+      FLUENT: 'success',
       PROFESSIONAL: 'primary',
+      CONVERSATIONAL: 'secondary',
       INTERMEDIATE: 'warning',
+      ELEMENTARY: 'warning',
       BEGINNER: 'default'
     };
     return colorMap[level] || 'default';
@@ -383,6 +410,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const handleAddExperience = () => {
     setEditingExperience({
       item: {
+        id: `temp_${Date.now()}`,
         company: '',
         position: '',
         startDate: '',
@@ -461,7 +489,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
   const confirmDeleteEducation = async () => {
     try {
-      await wingManApi.delete(`/education/${educationToDelete.education.id}`);
+      await wingManApi.delete(`/education/${educationToDelete.education?.id}`);
       addToast('Education deleted successfully', 'success');
 
       // Refresh the education data here
@@ -489,9 +517,9 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const handleAddProject = () => {
     setEditingProject({
       item: {
-        title: '',
-        company: '',
+        id: `temp_${Date.now()}`,
         position: '',
+        company: '',
         startDate: '',
         endDate: '',
         description: '',
@@ -543,11 +571,13 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const handleAddService = () => {
     setEditingService({
       item: {
+        id: crypto.randomUUID(),
         name: '',
         description: '',
         price: 0,
         type: 'HOURLY_BASED',
-        skills: []
+        skills: [],
+        createdAt: new Date().toISOString()
       },
       isOpen: true
     });
@@ -664,8 +694,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
   const handleNotesSuccess = async () => {
     // Refresh notes data
     try {
-      const updatedNotes = await notesApi.getNotes(user.id);
-      setNotes(updatedNotes);
+      const response = await wingManApi.get(`/notes/${user.id}`);
+      setNotes(response.data);
     } catch (error) {
       console.error('Error refreshing notes:', error);
     }
@@ -871,14 +901,14 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
             isOwnProfile={isOwnProfile}
             onAdd={handleAddEducation}
             onEdit={(edu) => {
-              handleEditEducation(edu);
+              handleEditEducation(edu as IEducation);
             }}
             onDelete={(edu) => {
-              handleDeleteEducation(edu);
+              handleDeleteEducation(edu as IEducation);
             }}
           />
           <ProjectsSection
-            projects={projects}
+            projects={projects || []}
             isOwnProfile={isOwnProfile}
             onAdd={handleAddProject}
             onEdit={handleEditProject}
@@ -888,7 +918,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
           {/* Services */}
           <ServicesSection
-            services={services}
+            services={services || []}
             isOwnProfile={isOwnProfile}
             onAdd={handleAddService}
             onEdit={handleEditService}
@@ -898,7 +928,7 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
           {/* Testimonials */}
           <TestimonialsSection
-            testimonials={testimonials}
+            testimonials={testimonials || []}
             isOwnProfile={isOwnProfile}
             onView={handleViewTestimonial}
             onDelete={handleDeleteTestimonial}
@@ -958,14 +988,6 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
                       >
                         <div className='flex items-center gap-1'>
                           <span>{skill.key}</span>
-                          {skill.level && (
-                            <span className='ml-1 text-xs opacity-75'>
-                              (
-                              {SKILL_LEVELS[skill.level]?.toLowerCase() ||
-                                skill.level.toLowerCase()}
-                              )
-                            </span>
-                          )}
                         </div>
                       </Chip>
                     );
@@ -1356,7 +1378,12 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
         onClose={() => {
           setIsSkillsModalOpen(false);
         }}
-        userSkills={user.skills}
+        userSkills={
+          user.skills.map((skill) => ({
+            ...skill,
+            id: crypto.randomUUID()
+          })) as any
+        }
         onSuccess={handleSkillsSuccess}
         addToast={addToast}
       />
@@ -1521,8 +1548,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
       </Modal>
       <ConfirmDeleteModal
         isOpen={educationToDelete.isOpen}
-        onClose={() => {
-          setEducationToDelete({ education: null, isOpen: false });
+        onOpenChange={(open) => {
+          if (!open) setEducationToDelete({ education: null, isOpen: false });
         }}
         onConfirm={confirmDeleteEducation}
         title='Delete Education'
@@ -1531,8 +1558,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
       />
       <ConfirmDeleteModal
         isOpen={experienceToDelete.isOpen}
-        onClose={() => {
-          setExperienceToDelete({ experience: null, isOpen: false });
+        onOpenChange={(open) => {
+          if (!open) setExperienceToDelete({ experience: null, isOpen: false });
         }}
         onConfirm={confirmDeleteExperience}
         title='Delete Experience'
@@ -1541,8 +1568,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
       />
       <ConfirmDeleteModal
         isOpen={languageToDelete.isOpen}
-        onClose={() => {
-          setLanguageToDelete({ language: null, isOpen: false });
+        onOpenChange={(open) => {
+          if (!open) setLanguageToDelete({ language: null, isOpen: false });
         }}
         onConfirm={confirmDeleteLanguage}
         title='Delete Language'
@@ -1551,18 +1578,18 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
       />
       <ConfirmDeleteModal
         isOpen={projectToDelete.isOpen}
-        onClose={() => {
-          setProjectToDelete({ project: null, isOpen: false });
+        onOpenChange={(open) => {
+          if (!open) setProjectToDelete({ project: null, isOpen: false });
         }}
         onConfirm={confirmDeleteProject}
         title='Delete Project'
         message={`Are you sure you want to delete the project from ${projectToDelete.project?.company}?`}
-        itemName={projectToDelete.project?.title}
+        itemName={projectToDelete.project?.position}
       />
       <ConfirmDeleteModal
         isOpen={serviceToDelete.isOpen}
-        onClose={() => {
-          setServiceToDelete({ service: null, isOpen: false });
+        onOpenChange={(open) => {
+          if (!open) setServiceToDelete({ service: null, isOpen: false });
         }}
         onConfirm={confirmDeleteService}
         title='Delete Service'
@@ -1571,8 +1598,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
       />
       <ConfirmDeleteModal
         isOpen={testimonialToDelete.isOpen}
-        onClose={() => {
-          setTestimonialToDelete({ testimonial: null, isOpen: false });
+        onOpenChange={(open) => {
+          if (!open) setTestimonialToDelete({ testimonial: null, isOpen: false });
         }}
         onConfirm={confirmDeleteTestimonial}
         title='Delete Testimonial'
@@ -1582,8 +1609,8 @@ const ProfileContent: React.FC<ProfileContentProperties> = ({
 
       <ConfirmDeleteModal
         isOpen={noteToDelete.isOpen}
-        onClose={() => {
-          setNoteToDelete({ note: null, isOpen: false });
+        onOpenChange={(open) => {
+          if (!open) setNoteToDelete({ note: null, isOpen: false });
         }}
         onConfirm={confirmDeleteNote}
         title='Delete Note'

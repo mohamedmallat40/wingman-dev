@@ -575,6 +575,7 @@
       "edit": "Edit",
       "download": "Download",
       "duplicate": "Duplicate",
+      "share": "Share",
       "delete": "Delete"
     },
     "share": {
@@ -632,7 +633,12 @@
       "actions": {
         "like": "Like",
         "unlike": "Unlike",
+        "upvote": "Upvote",
+        "upvoted": "Upvoted",
         "comment": "Comment",
+        "comments": "Comments",
+        "hideComments": "Hide Comments",
+        "broadcast": "Broadcast",
         "share": "Share",
         "bookmark": "Bookmark",
         "unbookmark": "Remove bookmark",
@@ -640,7 +646,9 @@
         "delete": "Delete",
         "viewPost": "View post",
         "sharePost": "Share Post",
-        "copyLink": "Copy link"
+        "copyLink": "Copy link",
+        "backToFeed": "Back to Feed",
+        "retry": "Retry"
       },
       "menu": {
         "moreOptions": "More options",
@@ -666,6 +674,33 @@
         "description": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
         "confirm": "Delete",
         "cancel": "Cancel"
+      },
+      "share": {
+        "title": "Share Post",
+        "subtitle": "Share this post with your network or on social media",
+        "copyLink": {
+          "title": "Copy Link",
+          "copy": "Copy",
+          "copied": "Copied!"
+        },
+        "nativeShare": {
+          "title": "Share",
+          "button": "Share via device"
+        },
+        "socialMedia": {
+          "title": "Share on Social Media"
+        },
+        "analytics": {
+          "title": "Share Analytics",
+          "description": "Track engagement and views from shared links"
+        },
+        "copySuccess": "Link copied to clipboard!",
+        "copyError": "Failed to copy link",
+        "shareError": "Failed to share post",
+        "close": "Close",
+        "fallbacks": {
+          "untitledPost": "Untitled Post"
+        }
       }
     },
     "create": {
@@ -704,7 +739,9 @@
           "label": "Select Skills",
           "placeholder": "Add relevant skills...",
           "selected": "Selected skills",
-          "noSkills": "No skills selected"
+          "noSkills": "No skills selected",
+          "count": "{current}/{max} skills selected",
+          "createNew": "Create \"{skill}\""
         }
       },
       "media": {
@@ -811,6 +848,26 @@
       "postedOn": "Posted {date}",
       "relatedActions": "Related Actions"
     },
+    "detail": {
+      "title": "Broadcast Detail",
+      "subtitle": "View detailed information about this broadcast"
+    },
+    "engagement": {
+      "title": "Engage with this post",
+      "description": "Share your thoughts and connect with the community"
+    },
+    "actions": {
+      "goBack": "Go Back",
+      "goHome": "Go Home",
+      "share": "Share"
+    },
+    "loading": "Loading broadcast...",
+    "errors": {
+      "notFound": {
+        "title": "Broadcast Not Found",
+        "description": "This broadcast doesn't exist or has been removed."
+      }
+    },
     "imageModal": {
       "previous": "Previous",
       "next": "Next",
@@ -826,7 +883,9 @@
       "unlike": "Unlike this post",
       "comment": "Comment on this post",
       "share": "Share this post",
-      "moreOptions": "More options"
+      "moreOptions": "More options",
+      "follow": "Follow this topic",
+      "unfollow": "Unfollow this topic"
     },
     "accessibility": {
       "close": "Close",
@@ -839,7 +898,7 @@
     "placeholders": {
       "searchSkills": "Search skills or type to create new...",
       "engagingTitle": "Enter an engaging title that captures attention...",
-      "selectTopics": "Select topics for your post", 
+      "selectTopics": "Select topics for your post",
       "shareThoughts": "Share your thoughts, insights, stories, or creative content with the world. What would you like to express today?",
       "whoCanSee": "Who can see this post?",
       "scheduleLater": "Schedule for later (optional)",
@@ -849,7 +908,7 @@
     },
     "fallbacks": {
       "untitledPost": "Untitled Post",
-      "untitledTopic": "Untitled Topic", 
+      "untitledTopic": "Untitled Topic",
       "unknownUser": "Unknown User",
       "unknownSkill": "Unknown Skill",
       "preview": "Preview"
@@ -864,7 +923,7 @@
         },
         "filters": {
           "allNotifications": "All notifications",
-          "unreadOnly": "Unread only", 
+          "unreadOnly": "Unread only",
           "likes": "Likes",
           "comments": "Comments",
           "follows": "Follows",
@@ -879,7 +938,7 @@
       "advanced": {
         "privacyVisibility": "Privacy & Visibility",
         "allowComments": "Allow Comments",
-        "allowSharing": "Allow Sharing", 
+        "allowSharing": "Allow Sharing",
         "contentWarning": "Content Warning",
         "publishingOptions": "Publishing Options"
       }
@@ -1049,6 +1108,73 @@
     "weeksAgo": "{weeks, plural, one {# week ago} other {# weeks ago}}",
     "monthsAgo": "{months, plural, one {# month ago} other {# months ago}}",
     "yearsAgo": "{years, plural, one {# year ago} other {# years ago}}"
+  },
+  "comments": {
+    "title": "Comments",
+    "scrollToTop": "Back to top",
+    "loadMore": "Load more comments",
+    "endOfComments": "You've reached the end of the comments",
+    "edited": "edited",
+    "hideReplies": "Hide replies",
+    "showReplies": "Show replies",
+    "loadMoreReplies": "Load {count, plural, one {# more reply} other {# more replies}}",
+    "empty": {
+      "title": "No comments yet",
+      "description": "Be the first to share your thoughts!"
+    },
+    "error": {
+      "title": "Failed to load comments",
+      "description": "Something went wrong while loading the comments. Please try again.",
+      "retry": "Try again"
+    },
+    "loading": {
+      "more": "Loading more comments..."
+    },
+    "actions": {
+      "like": "Like",
+      "unlike": "Unlike",
+      "reply": "Reply",
+      "edit": "Edit",
+      "delete": "Delete",
+      "report": "Report",
+      "share": "Share",
+      "pin": "Pin comment",
+      "unpin": "Unpin comment"
+    },
+    "input": {
+      "placeholder": "Write a comment...",
+      "replyPlaceholder": "Reply to {name}...",
+      "editPlaceholder": "Edit your comment...",
+      "post": "Post",
+      "update": "Update",
+      "cancel": "Cancel",
+      "shortcut": "Press"
+    },
+    "mentions": {
+      "suggestions": "Suggestions"
+    },
+    "time": {
+      "justNow": "Just now",
+      "minutesAgo": "{count, plural, one {# minute ago} other {# minutes ago}}",
+      "hoursAgo": "{count, plural, one {# hour ago} other {# hours ago}}",
+      "daysAgo": "{count, plural, one {# day ago} other {# days ago}}"
+    },
+    "stats": {
+      "likes": "{count, plural, =0 {} one {# like} other {# likes}}",
+      "replies": "{count, plural, =0 {} one {# reply} other {# replies}}",
+      "comments": "{count, plural, =0 {No comments} one {# comment} other {# comments}}"
+    },
+    "notifications": {
+      "liked": "{name} liked your comment",
+      "replied": "{name} replied to your comment",
+      "mentioned": "{name} mentioned you in a comment"
+    },
+    "moderation": {
+      "reported": "Comment reported successfully",
+      "deleted": "Comment deleted",
+      "pinned": "Comment pinned",
+      "unpinned": "Comment unpinned"
+    }
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"

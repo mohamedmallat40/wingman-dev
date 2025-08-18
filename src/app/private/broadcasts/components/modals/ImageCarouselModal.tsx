@@ -1,18 +1,12 @@
 'use client';
 
 import React from 'react';
-import { useTranslations } from 'next-intl';
 
 import type { MediaFile } from '@/components/ui/file-upload/MediaUpload';
 
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalHeader
-} from '@heroui/react';
+import { Button, Modal, ModalBody, ModalContent, ModalHeader } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { useTranslations } from 'next-intl';
 
 interface ImageCarouselModalProps {
   isOpen: boolean;
@@ -169,7 +163,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
                   variant='flat'
                   color='default'
                   onPress={handlePrevious}
-                  className='absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white backdrop-blur-sm hover:bg-black/70'
+                  className='absolute top-1/2 left-4 -translate-y-1/2 bg-black/50 text-white backdrop-blur-sm hover:bg-black/70'
                   aria-label={t('modals.imageCarousel.previous')}
                 >
                   <Icon icon='solar:chevron-left-linear' className='h-6 w-6' />
@@ -180,7 +174,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
                   variant='flat'
                   color='default'
                   onPress={handleNext}
-                  className='absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white backdrop-blur-sm hover:bg-black/70'
+                  className='absolute top-1/2 right-4 -translate-y-1/2 bg-black/50 text-white backdrop-blur-sm hover:bg-black/70'
                   aria-label={t('modals.imageCarousel.next')}
                 >
                   <Icon icon='solar:chevron-right-linear' className='h-6 w-6' />
@@ -199,7 +193,7 @@ export const ImageCarouselModal: React.FC<ImageCarouselModalProps> = ({
                     onClick={() => onIndexChange(index)}
                     className={`flex-shrink-0 overflow-hidden rounded-lg transition-all duration-200 ${
                       index === currentIndex
-                        ? 'ring-2 ring-primary ring-offset-2 ring-offset-black/95'
+                        ? 'ring-primary ring-2 ring-offset-2 ring-offset-black/95'
                         : 'opacity-70 hover:opacity-100'
                     }`}
                   >

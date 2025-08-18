@@ -16,9 +16,6 @@ interface DocumentTabsProperties {
   showFilters?: boolean;
   viewMode?: 'list' | 'grid';
   onViewModeChange?: (mode: 'list' | 'grid') => void;
-  searchQuery?: string;
-  onSearchChange?: (query: string) => void;
-  onSearch?: (query: string) => void;
 }
 
 const DocumentTabs: React.FC<DocumentTabsProperties> = ({
@@ -29,10 +26,7 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
   onToggleFilters,
   showFilters = false,
   viewMode = 'list',
-  onViewModeChange,
-  searchQuery,
-  onSearchChange,
-  onSearch
+  onViewModeChange
 }) => {
   const t = useTranslations();
 
@@ -93,16 +87,16 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
                             <div className='flex flex-col items-start'>
                               <span className='font-medium'>{config.label}</span>
                               <div className='flex items-center gap-2'>
-                                <span className='text-default-500 dark:text-default-400 text-xs'>
+                                <span className='text-primary-500 dark:text-primary-400 text-xs'>
                                   {config.description}
                                 </span>
                                 {isActive && !isLoading && (
-                                  <span className='bg-default-100 dark:bg-default-800 text-default-700 dark:text-default-300 rounded-full px-2 py-0.5 text-xs font-medium'>
+                                  <span className='bg-primary-100 dark:bg-primary-800/50 text-primary-700 dark:text-primary-300 rounded-full px-2 py-0.5 text-xs font-medium'>
                                     {documentsCount}
                                   </span>
                                 )}
                                 {isLoading && (
-                                  <div className='bg-default-200 dark:bg-default-700 h-4 w-8 animate-pulse rounded' />
+                                  <div className='bg-primary-200 dark:bg-primary-700/50 h-4 w-8 animate-pulse rounded' />
                                 )}
                               </div>
                             </div>
@@ -125,34 +119,32 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
                 size='md'
                 color='primary'
                 onPress={onToggleFilters}
-                className='hover:shadow-medium'
+                className='hover:shadow-medium relative'
                 startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
                 as={motion.button}
                 whileHover={{ scale: 1.02, y: -1 }}
                 whileTap={{ scale: 0.98 }}
               >
-                {t('documents.filters.button')}
+                <span className='hidden md:inline'>{t('documents.filters.button')}</span>
                 {showFilters && (
-                  <div className='relative inline-flex shrink-0'>
-                    <span className='text-primary dark:bg-content1 dark:text-primary border-primary absolute top-[5%] right-[5%] z-10 box-border flex h-3 min-h-3 w-3 min-w-3 origin-center translate-x-1/2 -translate-y-1/2 scale-100 flex-wrap place-content-center items-center rounded-full border-2 bg-white px-1 whitespace-nowrap subpixel-antialiased opacity-100 !duration-300 select-none'></span>
-                  </div>
+                  <div className='border-primary absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 bg-white'></div>
                 )}
               </Button>
             </Tooltip>
 
             {/* View Toggle Buttons */}
-            <div className='border-default-200 dark:border-default-700 bg-content1 dark:bg-content2 flex items-center gap-1 rounded-lg border p-1 shadow-sm'>
+            <div className='border-primary-200 dark:border-primary-700/50 bg-content1 dark:bg-content2 flex items-center gap-1 rounded-lg border p-1 shadow-sm'>
               <Tooltip content={t('documents.views.list')} placement='bottom'>
                 <Button
                   isIconOnly
                   size='sm'
                   variant={viewMode === 'list' ? 'solid' : 'ghost'}
-                  color={viewMode === 'list' ? 'primary' : 'default'}
+                  color={viewMode === 'list' ? 'primary' : 'primary'}
                   onPress={() => onViewModeChange?.('list')}
                   className={`h-8 w-8 transition-all duration-200 ${
                     viewMode === 'list'
                       ? 'text-white shadow-md'
-                      : 'hover:bg-default-100 dark:hover:bg-default-800 text-default-600 dark:text-default-400 opacity-70 hover:opacity-100'
+                      : 'hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-600 dark:text-primary-400 opacity-80 hover:opacity-100'
                   }`}
                 >
                   <Icon icon='solar:list-bold' className='h-4 w-4' />
@@ -163,12 +155,12 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
                   isIconOnly
                   size='sm'
                   variant={viewMode === 'grid' ? 'solid' : 'ghost'}
-                  color={viewMode === 'grid' ? 'primary' : 'default'}
+                  color={viewMode === 'grid' ? 'primary' : 'primary'}
                   onPress={() => onViewModeChange?.('grid')}
                   className={`h-8 w-8 transition-all duration-200 ${
                     viewMode === 'grid'
                       ? 'text-white shadow-md'
-                      : 'hover:bg-default-100 dark:hover:bg-default-800 text-default-600 dark:text-default-400 opacity-70 hover:opacity-100'
+                      : 'hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-600 dark:text-primary-400 opacity-80 hover:opacity-100'
                   }`}
                 >
                   <Icon icon='solar:widget-4-bold' className='h-4 w-4' />
@@ -187,33 +179,31 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
             <div className='flex items-center justify-between'>
               {/* Mobile Filter Button */}
               <Button
+                isIconOnly
                 variant='solid'
                 size='md'
                 color='primary'
                 onPress={onToggleFilters}
-                className='hover:shadow-medium'
-                startContent={<Icon icon='solar:filter-linear' className='h-4 w-4' />}
+                className='hover:shadow-medium relative'
               >
-                {t('documents.filters.button')}
+                <Icon icon='solar:filter-linear' className='h-4 w-4' />
                 {showFilters && (
-                  <div className='relative inline-flex shrink-0'>
-                    <span className='text-primary dark:bg-content1 dark:text-primary border-primary absolute top-[5%] right-[5%] z-10 box-border flex h-3 min-h-3 w-3 min-w-3 origin-center translate-x-1/2 -translate-y-1/2 scale-100 flex-wrap place-content-center items-center rounded-full border-2 bg-white px-1 whitespace-nowrap subpixel-antialiased opacity-100 !duration-300 select-none'></span>
-                  </div>
+                  <div className='border-primary absolute -top-1 -right-1 h-3 w-3 rounded-full border-2 bg-white'></div>
                 )}
               </Button>
 
               {/* Mobile View Toggle */}
-              <div className='border-default-200 dark:border-default-700 bg-content1 dark:bg-content2 flex items-center gap-1 rounded-lg border p-1 shadow-sm'>
+              <div className='border-primary-200 dark:border-primary-700/50 bg-content1 dark:bg-content2 flex items-center gap-1 rounded-lg border p-1 shadow-sm'>
                 <Button
                   isIconOnly
                   size='sm'
                   variant={viewMode === 'list' ? 'solid' : 'ghost'}
-                  color={viewMode === 'list' ? 'primary' : 'default'}
+                  color={viewMode === 'list' ? 'primary' : 'primary'}
                   onPress={() => onViewModeChange?.('list')}
                   className={`h-8 w-8 transition-all duration-200 ${
                     viewMode === 'list'
                       ? 'text-white shadow-md'
-                      : 'hover:bg-default-100 dark:hover:bg-default-800 text-default-600 dark:text-default-400 opacity-70 hover:opacity-100'
+                      : 'hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-600 dark:text-primary-400 opacity-80 hover:opacity-100'
                   }`}
                 >
                   <Icon icon='solar:list-bold' className='h-4 w-4' />
@@ -222,12 +212,12 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
                   isIconOnly
                   size='sm'
                   variant={viewMode === 'grid' ? 'solid' : 'ghost'}
-                  color={viewMode === 'grid' ? 'primary' : 'default'}
+                  color={viewMode === 'grid' ? 'primary' : 'primary'}
                   onPress={() => onViewModeChange?.('grid')}
                   className={`h-8 w-8 transition-all duration-200 ${
                     viewMode === 'grid'
                       ? 'text-white shadow-md'
-                      : 'hover:bg-default-100 dark:hover:bg-default-800 text-default-600 dark:text-default-400 opacity-70 hover:opacity-100'
+                      : 'hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-600 dark:text-primary-400 opacity-80 hover:opacity-100'
                   }`}
                 >
                   <Icon icon='solar:widget-4-bold' className='h-4 w-4' />
@@ -237,7 +227,7 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
           </div>
 
           {/* Mobile Tabs */}
-          <div className='bg-default-100 dark:bg-default-800 flex rounded-xl p-1'>
+          <div className='bg-primary-100 dark:bg-primary-800/50 flex rounded-xl p-1'>
             {Object.entries(tabConfig).map(([key, config]) => {
               const isActive = activeTab === key;
 
@@ -247,25 +237,22 @@ const DocumentTabs: React.FC<DocumentTabsProperties> = ({
                   onClick={() => {
                     onTabChange(key);
                   }}
-                  className={`relative flex flex-1 flex-col items-center gap-1 rounded-lg px-3 py-3 transition-all duration-200 ${
+                  className={`relative flex flex-1 items-center justify-center rounded-lg px-3 py-3 transition-all duration-200 ${
                     isActive
                       ? 'bg-background dark:bg-content1 text-primary-600 dark:text-primary-400 shadow-sm'
-                      : 'text-default-600 dark:text-default-400 hover:text-default-900 dark:hover:text-default-100'
+                      : 'text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-100'
                   } `}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <Icon icon={config.mobileIcon} className='h-5 w-5' />
-                  <div className='flex flex-col items-center'>
-                    <span className='text-xs font-medium'>{config.label}</span>
-                    {isActive && !isLoading && (
-                      <span className='text-default-500 dark:text-default-400 mt-0.5 text-xs'>
-                        {documentsCount}
-                      </span>
-                    )}
-                    {isLoading && (
-                      <div className='bg-default-200 dark:bg-default-700 mt-0.5 h-2 w-6 animate-pulse rounded' />
-                    )}
-                  </div>
+                  <Icon icon={config.mobileIcon} className='h-6 w-6' />
+                  {isActive && !isLoading && (
+                    <span className='text-primary-500 dark:text-primary-400 bg-primary text-primary-foreground absolute -top-1 -right-1 flex h-4 w-4 min-w-4 items-center justify-center rounded-full text-xs font-medium'>
+                      {documentsCount}
+                    </span>
+                  )}
+                  {isLoading && (
+                    <div className='bg-primary-200 dark:bg-primary-700/50 absolute -top-1 -right-1 h-3 w-3 animate-pulse rounded-full' />
+                  )}
 
                   {isActive && (
                     <motion.div

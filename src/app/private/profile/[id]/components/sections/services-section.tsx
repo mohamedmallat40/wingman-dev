@@ -1,17 +1,10 @@
 import React from 'react';
-import { Card, CardBody, CardHeader, Button, Chip } from '@heroui/react';
-import { Icon } from '@iconify/react';
-import { ActionButtons } from '../ActionButtons';
 
-export interface IService {
-  id?: string;
-  name: string;
-  description: string;
-  price: number;
-  type: 'HOURLY_BASED' | 'DAILY_BASED' | 'PROJECT_BASED';
-  createdAt?: string;
-  skills: string[];
-}
+import { Button, Card, CardBody, CardHeader, Chip } from '@heroui/react';
+import { Icon } from '@iconify/react';
+import { type IService } from '@root/modules/profile/types';
+
+import { ActionButtons } from '../ActionButtons';
 
 interface ServicesSectionProps {
   services: IService[];
@@ -53,7 +46,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
       style: 'currency',
       currency: 'USD'
     }).format(price);
-    
+
     switch (type) {
       case 'HOURLY_BASED':
         return `${formatted}/hr`;
@@ -88,30 +81,23 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
           </div>
 
           {isOwnProfile && (
-            <ActionButtons
-              showAdd
-              onAdd={onAdd}
-              addTooltip='Add new service'
-              size='md'
-            />
+            <ActionButtons showAdd onAdd={onAdd} addTooltip='Add new service' size='md' />
           )}
         </div>
       </CardHeader>
       <CardBody className='px-8 pt-2'>
         {services.length > 0 ? (
-          <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
             {services.map((service, index) => (
               <Card
                 key={service.id || index}
-                className='bg-default-50 hover:bg-default-100 border border-default-200 transition-all duration-200 hover:shadow-md'
+                className='bg-default-50 hover:bg-default-100 border-default-200 border transition-all duration-200 hover:shadow-md'
               >
                 <CardBody className='p-6'>
-                  <div className='flex items-start justify-between mb-4'>
+                  <div className='mb-4 flex items-start justify-between'>
                     <div className='flex-1'>
-                      <div className='flex items-center gap-2 mb-2'>
-                        <h3 className='text-foreground text-lg font-bold'>
-                          {service.name}
-                        </h3>
+                      <div className='mb-2 flex items-center gap-2'>
+                        <h3 className='text-foreground text-lg font-bold'>{service.name}</h3>
                         {isOwnProfile && (
                           <ActionButtons
                             showEdit
@@ -124,7 +110,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
                           />
                         )}
                       </div>
-                      <div className='flex items-center gap-2 mb-3'>
+                      <div className='mb-3 flex items-center gap-2'>
                         <Chip
                           color={getServiceTypeColor(service.type) as any}
                           variant='flat'
@@ -132,20 +118,20 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
                         >
                           {getServiceTypeDisplay(service.type)}
                         </Chip>
-                        <span className='text-lg font-bold text-success'>
+                        <span className='text-success text-lg font-bold'>
                           {formatPrice(service.price, service.type)}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <p className='text-foreground-600 text-sm mb-4 leading-relaxed'>
+                  <p className='text-foreground-600 mb-4 text-sm leading-relaxed'>
                     {service.description}
                   </p>
 
                   {service.skills && service.skills.length > 0 && (
                     <div className='space-y-2'>
-                      <p className='text-xs font-medium text-foreground-500 uppercase tracking-wide'>
+                      <p className='text-foreground-500 text-xs font-medium tracking-wide uppercase'>
                         Skills Required
                       </p>
                       <div className='flex flex-wrap gap-1'>
@@ -174,9 +160,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
                 icon='solar:bag-smile-linear'
                 className='text-default-300 mx-auto mb-4 h-12 w-12'
               />
-              <p className='text-foreground-500 mb-4'>
-                No services available
-              </p>
+              <p className='text-foreground-500 mb-4'>No services available</p>
               {isOwnProfile && (
                 <Button
                   color='primary'

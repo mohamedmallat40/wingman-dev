@@ -6,7 +6,10 @@ export const calculateReadTime = (content: string): number => {
 };
 
 // Error translation helper
-export const getErrorMessage = (error: any, tErrors: any): { title: string; description: string } => {
+export const getErrorMessage = (
+  error: any,
+  tErrors: any
+): { title: string; description: string } => {
   // Check if it's a network error
   if (!navigator.onLine) {
     return {

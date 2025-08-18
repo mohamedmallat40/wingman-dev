@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useTranslations } from 'next-intl';
 
 import type { MediaFile } from '@/components/ui/file-upload/MediaUpload';
 
 import { Icon } from '@iconify/react';
+import { useTranslations } from 'next-intl';
 
 import { ImageCarouselModal } from '../modals/ImageCarouselModal';
 

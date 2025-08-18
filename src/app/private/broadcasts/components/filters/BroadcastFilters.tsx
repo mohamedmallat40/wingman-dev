@@ -17,8 +17,8 @@ import {
   SelectItem
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { CalendarDate, parseDate } from '@internationalized/date';
 import { useTranslations } from 'next-intl';
-import { parseDate, CalendarDate } from '@internationalized/date';
 
 import { useTopics } from '../../hooks';
 import { useActiveFiltersCount, useBroadcastStore } from '../../store/useBroadcastStore';
@@ -73,7 +73,6 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
     { key: 'productivity', label: t('filters.categories.productivity') }
   ];
 
-
   // Post types removed as they don't exist in the new API structure
 
   const handleSearchSubmit = () => {
@@ -105,14 +104,14 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
             </Chip>
           )}
         </div>
-        <Button 
-          variant='light' 
-          size='sm' 
+        <Button
+          variant='light'
+          size='sm'
           onPress={onClose}
           startContent={<Icon icon='solar:arrow-left-linear' className='h-4 w-4' />}
           className='text-foreground-600 hover:text-primary'
         >
-{t('topics.title')}
+          {t('topics.title')}
         </Button>
       </CardHeader>
 
@@ -133,7 +132,6 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
             </Button>
           </div>
         </div>
-
 
         <Divider />
 
@@ -176,7 +174,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
             }}
             placeholder={t('placeholders.selectCategory')}
           >
-{categories.map((category) => (
+            {categories.map((category) => (
               <SelectItem key={category.key}>{category.label}</SelectItem>
             ))}
           </Select>
@@ -214,7 +212,7 @@ const BroadcastFilters: React.FC<BroadcastFiltersProps> = ({ isOpen, onClose, cl
           <label className='text-sm font-medium'>{t('filters.dateRange')}</label>
           <div className='grid grid-cols-2 gap-2'>
             <DatePicker
-label={t('filters.dateRange.from')}
+              label={t('filters.dateRange.from')}
               value={dateToCalendarDate(filters.dateRange?.from || null)}
               onChange={(date) =>
                 setDateRange({
@@ -224,7 +222,7 @@ label={t('filters.dateRange.from')}
               }
             />
             <DatePicker
-label={t('filters.dateRange.to')}
+              label={t('filters.dateRange.to')}
               value={dateToCalendarDate(filters.dateRange?.to || null)}
               onChange={(date) =>
                 setDateRange({
@@ -247,15 +245,15 @@ label={t('filters.dateRange.to')}
             isDisabled={activeFiltersCount === 0}
             fullWidth
           >
-{t('filters.actions.clearAll')}
+            {t('filters.actions.clearAll')}
           </Button>
-          <Button 
-            color='primary' 
-            onPress={onClose} 
+          <Button
+            color='primary'
+            onPress={onClose}
             fullWidth
             startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
           >
-{t('filters.actions.backToTopics')}
+            {t('filters.actions.backToTopics')}
           </Button>
         </div>
       </CardBody>

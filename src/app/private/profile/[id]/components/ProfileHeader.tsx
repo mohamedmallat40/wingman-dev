@@ -2,6 +2,13 @@
 
 import React, { useState } from 'react';
 
+import type {
+  AvailabilityStatus,
+  Currency,
+  PaymentType,
+  WorkType
+} from '@/app/private/talent-pool/types';
+
 import { Button, Card, CardBody, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
@@ -66,12 +73,12 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Added state for edit modal
 
   const fullName = `${user.firstName} ${user.lastName}`;
-  const availabilityConfig = getAvailabilityConfig(user!.statusAviability);
-  const workTypeConfig = getWorkTypeConfig(user.workType ?? '');
+  const availabilityConfig = getAvailabilityConfig(user!.statusAviability as AvailabilityStatus);
+  const workTypeConfig = getWorkTypeConfig((user.workType ?? 'REMOTE') as WorkType);
   const rate = formatRate(
     user.amount || 0,
-    user.currency || 'EUR',
-    user.paymentType || 'DAILY_BASED',
+    (user.currency || 'EUR') as Currency,
+    (user.paymentType || 'DAILY_BASED') as PaymentType,
     t
   );
 

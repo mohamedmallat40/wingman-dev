@@ -20,7 +20,14 @@ import wingManApi from '@/lib/axios';
 export interface ILanguage {
   id: string;
   key: string | undefined;
-  level: 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE';
+  level:
+    | 'BEGINNER'
+    | 'ELEMENTARY'
+    | 'INTERMEDIATE'
+    | 'CONVERSATIONAL'
+    | 'PROFESSIONAL'
+    | 'FLUENT'
+    | 'NATIVE';
 }
 
 interface LanguageModalProps {
@@ -190,7 +197,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
         const { id, ...languageData } = formData;
         const requestData = {
           ...languageData,
-          key: ISO6391.getCode(languageData?.key.toLowerCase()).toUpperCase()
+          key: languageData.key ? ISO6391.getCode(languageData.key.toLowerCase()).toUpperCase() : ''
         };
         await wingManApi.post('/languages', requestData);
         addToast('Language added successfully', 'success');
@@ -272,9 +279,7 @@ const LanguageModal: React.FC<LanguageModalProps> = ({
               allowsCustomValue
             >
               {commonLanguages.map((lang) => (
-                <AutocompleteItem key={lang.code} value={lang.code}>
-                  {lang.name}
-                </AutocompleteItem>
+                <AutocompleteItem key={lang.code}>{lang.name}</AutocompleteItem>
               ))}
             </Autocomplete>
 

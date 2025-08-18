@@ -24,17 +24,16 @@ import {
 } from './constants';
 import { useDocuments, useDocumentState } from './hooks';
 import { type DocumentType, type IDocument } from './types';
-import { debounce, filterDocuments } from './utils';
+import { filterDocuments } from './utils';
 
 export default function DocumentsPage() {
   const t = useTranslations('documents');
-  const { data: result, isLoading, error, isError } = useDocuments();
+  const { data: result, isLoading, error, isError, refetch } = useDocuments();
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [editingDocument, setEditingDocument] = useState<IDocument | null>(null);
   const [modalMode, setModalMode] = useState<'upload' | 'edit'>('upload');
   const [viewingDocument, setViewingDocument] = useState<IDocument | null>(null);
   const [showViewerDrawer, setShowViewerDrawer] = useState(false);
-
 
   // Enhanced state management using custom hooks
   const documentState = useDocumentState();
@@ -52,28 +51,16 @@ export default function DocumentsPage() {
     handleSearch
   } = documentState;
 
-  // Debounced search to improve performance
-  const debouncedSearch = useMemo(
-    () =>
-      debounce((query: string) => {
-        // This will automatically trigger the filteredDocuments useMemo
-        // since searchQuery is a dependency
-      }, 300),
-    []
-  );
-
   // Handle search input changes with debouncing
   const handleSearchChange = useCallback(
     (query: string) => {
       setSearchQuery(query);
-      debouncedSearch(query);
     },
-    [setSearchQuery, debouncedSearch]
+    [setSearchQuery]
   );
 
   // Filter documents based on active tab and search query
   const filteredDocuments = useMemo(() => {
-
     if (!result?.data) return [];
 
     let documents = result.data;
@@ -92,17 +79,22 @@ export default function DocumentsPage() {
     return filtered;
   }, [result?.data, activeTab, searchQuery, filters]);
 
-  const handleUploadModalClose = useCallback(() => {
-    setShowUploadModal(false);
-    setEditingDocument(null);
-  }, []);
+  const handleUploadModalClose = useCallback(
+    (shouldRefresh = false) => {
+      setShowUploadModal(false);
+      setEditingDocument(null);
+      if (shouldRefresh) {
+        refetch();
+      }
+    },
+    [refetch]
+  );
 
   const handleUploadDocument = useCallback(() => {
     setModalMode('upload');
     setEditingDocument(null);
     setShowUploadModal(true);
   }, []);
-
 
   const handleEditDocument = useCallback((document: IDocument) => {
     setModalMode('edit');
@@ -120,11 +112,9 @@ export default function DocumentsPage() {
     setViewingDocument(null);
   }, []);
 
-
   const handleRefresh = useCallback(() => {
-    // In a real app, this would refetch the data
-    globalThis.location.reload();
-  }, []);
+    refetch();
+  }, [refetch]);
 
   // Clear search and filters when tab changes
   useEffect(() => {
@@ -150,7 +140,7 @@ export default function DocumentsPage() {
     () =>
       ACTION_ITEMS.map((item) => ({
         ...item,
-        onClick: item.key === 'upload' ? handleUploadDocument : undefined
+        onPress: item.key === 'upload' ? handleUploadDocument : undefined
       })),
     [handleUploadDocument]
   );
@@ -172,10 +162,10 @@ export default function DocumentsPage() {
               startContent={
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
-              onPress={action.onClick}
+              onPress={action.onPress}
               className='font-medium transition-all duration-200 hover:shadow-md'
             >
-              {action.label}
+              <span className='hidden sm:inline'>{action.label}</span>
             </Button>
           ))}
         </div>
@@ -186,12 +176,9 @@ export default function DocumentsPage() {
           {/* Enhanced Tabs Navigation with Integrated Search */}
           <DocumentTabs
             activeTab={activeTab}
-            onTabChange={(tab) => {
+            onTabChange={(tab: any) => {
               setActiveTab(tab as DocumentType);
             }}
-            searchQuery={searchQuery}
-            onSearchChange={handleSearchChange}
-            onSearch={handleSearchChange}
             documentsCount={filteredDocuments.length}
             onToggleFilters={toggleFilters}
             showFilters={showFilters}

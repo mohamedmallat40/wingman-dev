@@ -1,17 +1,10 @@
 'use client';
 
 import React from 'react';
-import { useTranslations } from 'next-intl';
 
-import {
-  Button,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalHeader
-} from '@heroui/react';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { useTranslations } from 'next-intl';
 
 interface DeleteConfirmationModalProps {
   isOpen: boolean;
@@ -43,7 +36,7 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="md"
+      size='md'
       isDismissable={!isLoading}
       hideCloseButton={isLoading}
       classNames={{
@@ -76,67 +69,63 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
       }}
     >
       <ModalContent>
-        <ModalHeader className="flex items-center gap-3 py-4 px-6">
-          <div className="bg-danger/10 rounded-full p-2">
-            <Icon 
-              icon="solar:trash-bin-minimalistic-bold" 
-              className="h-5 w-5 text-danger" 
-            />
+        <ModalHeader className='flex items-center gap-3 px-6 py-4'>
+          <div className='bg-danger/10 rounded-full p-2'>
+            <Icon icon='solar:trash-bin-minimalistic-bold' className='text-danger h-5 w-5' />
           </div>
           <div>
-            <h3 className="text-foreground text-lg font-semibold">
+            <h3 className='text-foreground text-lg font-semibold'>
               {title || t('post.delete.title')}
             </h3>
           </div>
         </ModalHeader>
 
-        <ModalBody className="px-6 py-4">
-          <p className="text-foreground-600 leading-relaxed">
+        <ModalBody className='px-6 py-4'>
+          <p className='text-foreground-600 leading-relaxed'>
             {description || t('post.delete.description')}
           </p>
-          
-          <div className="mt-4 p-4 bg-danger/5 border border-danger/20 rounded-lg">
-            <div className="flex items-start gap-3">
-              <Icon 
-                icon="solar:danger-circle-linear" 
-                className="h-5 w-5 text-danger flex-shrink-0 mt-0.5" 
+
+          <div className='bg-danger/5 border-danger/20 mt-4 rounded-lg border p-4'>
+            <div className='flex items-start gap-3'>
+              <Icon
+                icon='solar:danger-circle-linear'
+                className='text-danger mt-0.5 h-5 w-5 flex-shrink-0'
               />
               <div>
-                <p className="text-danger text-sm font-medium mb-1">
-                  Warning
-                </p>
-                <p className="text-danger-600 text-sm">
-                  This action is permanent and cannot be reversed. All data associated with this post will be permanently deleted.
+                <p className='text-danger mb-1 text-sm font-medium'>Warning</p>
+                <p className='text-danger-600 text-sm'>
+                  This action is permanent and cannot be reversed. All data associated with this
+                  post will be permanently deleted.
                 </p>
               </div>
             </div>
           </div>
         </ModalBody>
 
-        <ModalFooter className="px-6 py-4">
-          <div className="flex gap-3 w-full justify-end">
+        <ModalFooter className='px-6 py-4'>
+          <div className='flex w-full justify-end gap-3'>
             <Button
-              variant="flat"
-              color="default"
+              variant='flat'
+              color='default'
               onPress={onClose}
               isDisabled={isLoading}
-              className="min-w-20"
+              className='min-w-20'
             >
               {cancelText || t('post.delete.cancel')}
             </Button>
             <Button
-              color="danger"
+              color='danger'
               onPress={handleConfirm}
               isLoading={isLoading}
               isDisabled={isLoading}
-              className="min-w-20"
+              className='min-w-20'
               startContent={
                 !isLoading ? (
-                  <Icon icon="solar:trash-bin-minimalistic-linear" className="h-4 w-4" />
+                  <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
                 ) : undefined
               }
             >
-              {isLoading ? t('common.loading') : (confirmText || t('post.delete.confirm'))}
+              {isLoading ? t('common.loading') : confirmText || t('post.delete.confirm')}
             </Button>
           </div>
         </ModalFooter>

@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+
 import {
   Button,
   Input,
@@ -10,10 +11,19 @@ import {
   Textarea
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+
 import wingManApi from '@/lib/axios';
 
 export interface IEducation {
   id: string;
+  university?: string;
+  degree?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+interface EducationFormData {
   university: string;
   degree: string;
   description: string;
@@ -36,7 +46,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
   onSuccess,
   addToast
 }) => {
-  const [formData, setFormData] = useState<Omit<IEducation, 'id'>>({
+  const [formData, setFormData] = useState<EducationFormData>({
     university: '',
     degree: '',
     description: '',
@@ -51,11 +61,11 @@ const EducationModal: React.FC<EducationModalProps> = ({
   useEffect(() => {
     if (education) {
       setFormData({
-        university: education.university,
-        degree: education.degree,
-        description: education.description,
-        startDate: education.startDate ? education.startDate.split('T')[0] : '',
-        endDate: education.endDate ? education.endDate.split('T')[0] : ''
+        university: education.university || '',
+        degree: education.degree || '',
+        description: education.description || '',
+        startDate: (education.startDate && education.startDate.split('T')[0]) || '',
+        endDate: (education.endDate && education.endDate.split('T')[0]) || ''
       });
     } else {
       setFormData({
@@ -84,7 +94,11 @@ const EducationModal: React.FC<EducationModalProps> = ({
       newErrors.startDate = 'Start date is required';
     }
 
-    if (formData.endDate && formData.startDate && new Date(formData.endDate) < new Date(formData.startDate)) {
+    if (
+      formData.endDate &&
+      formData.startDate &&
+      new Date(formData.endDate) < new Date(formData.startDate)
+    ) {
       newErrors.endDate = 'End date must be after start date';
     }
 
@@ -93,9 +107,9 @@ const EducationModal: React.FC<EducationModalProps> = ({
   };
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -107,7 +121,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
       if (isEditMode && education) {
         // Update existing education
         const updateData: Partial<IEducation> = {};
-        
+
         // Only include changed fields
         if (formData.university !== education.university) {
           updateData.university = formData.university;
@@ -142,9 +156,9 @@ const EducationModal: React.FC<EducationModalProps> = ({
       onClose();
     } catch (error: any) {
       console.error('Error saving education:', error);
-      
+
       let errorMessage = 'Failed to save education';
-      
+
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 400) {
@@ -158,7 +172,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
       } else if (error.code === 'NETWORK_ERROR') {
         errorMessage = 'Network error. Please check your connection.';
       }
-      
+
       addToast(errorMessage, 'error');
     } finally {
       setIsLoading(false);
@@ -176,9 +190,9 @@ const EducationModal: React.FC<EducationModalProps> = ({
       onClose();
     } catch (error: any) {
       console.error('Error deleting education:', error);
-      
+
       let errorMessage = 'Failed to delete education';
-      
+
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.response?.status === 404) {
@@ -188,7 +202,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
       } else if (error.response?.status >= 500) {
         errorMessage = 'Server error. Please try again later.';
       }
-      
+
       addToast(errorMessage, 'error');
     } finally {
       setIsLoading(false);
@@ -240,7 +254,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
                 isDisabled={isLoading}
               />
             </div>
-            
+
             <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
               <Input
                 label='Start Date *'
@@ -262,7 +276,7 @@ const EducationModal: React.FC<EducationModalProps> = ({
                 placeholder='Leave empty if currently studying'
               />
             </div>
-            
+
             <Textarea
               label='Description'
               placeholder='Describe your studies, achievements, or relevant coursework...'
@@ -283,27 +297,32 @@ const EducationModal: React.FC<EducationModalProps> = ({
                   variant='light'
                   onPress={handleDelete}
                   isLoading={isLoading}
-                  startContent={!isLoading ? <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' /> : undefined}
+                  startContent={
+                    !isLoading ? (
+                      <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
+                    ) : undefined
+                  }
                 >
                   Delete
                 </Button>
               )}
             </div>
             <div className='flex gap-2'>
-              <Button
-                variant='light'
-                onPress={onClose}
-                isDisabled={isLoading}
-              >
+              <Button variant='light' onPress={onClose} isDisabled={isLoading}>
                 Cancel
               </Button>
               <Button
                 color='primary'
                 onPress={handleSubmit}
                 isLoading={isLoading}
-                startContent={!isLoading ? (
-                  <Icon icon={isEditMode ? 'solar:pen-linear' : 'solar:plus-linear'} className='h-4 w-4' />
-                ) : undefined}
+                startContent={
+                  !isLoading ? (
+                    <Icon
+                      icon={isEditMode ? 'solar:pen-linear' : 'solar:plus-linear'}
+                      className='h-4 w-4'
+                    />
+                  ) : undefined
+                }
               >
                 {isEditMode ? 'Update' : 'Add'} Education
               </Button>

@@ -81,7 +81,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           : selectedFile
             ? 'border-success bg-success-50 dark:bg-success-900/20'
             : disabled
-              ? 'border-default-200 bg-default-100 opacity-50 cursor-not-allowed'
+              ? 'border-default-200 bg-default-100 cursor-not-allowed opacity-50'
               : 'border-default-300 hover:border-default-400 hover:bg-default-50 dark:hover:bg-default-900/20'
       } ${className}`}
       onDragEnter={disabled ? undefined : onDragEnter}

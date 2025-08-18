@@ -1,8 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { type Group } from '../types';
+
 import { teamService } from '../services/teams.services';
+import { type Group } from '../types';
 
 interface UseTeamDetailsReturn {
   team: Group | null;

@@ -2,8 +2,9 @@
 
 import { useEffect } from 'react';
 
-import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+
 import { getSkills } from '@/app/private/skills/services/skills.service';
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
@@ -21,7 +22,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     queryClient.prefetchQuery({
       queryKey: ['skills'],
       queryFn: getSkills,
-      staleTime: 1000 * 60 * 15, // 15 minutes
+      staleTime: 1000 * 60 * 15 // 15 minutes
     });
   }, [router, queryClient]);
 

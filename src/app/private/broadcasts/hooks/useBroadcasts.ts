@@ -1,20 +1,17 @@
-import type {
-  FeedParams,
-  CreatePostData
-} from '../types';
+import type { CreatePostData, FeedParams } from '../types';
 
-import { useInfiniteQuery, useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  deletePost,
+  followTopic,
   getBroadcastFeed,
   getTopics,
-  followTopic,
-  unfollowTopic,
   togglePostBookmark,
   togglePostLike,
   trackPostView,
-  updatePost,
-  deletePost
+  unfollowTopic,
+  updatePost
 } from '../services/broadcast.service';
 
 // ===== FEED HOOKS =====
@@ -103,7 +100,7 @@ export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, postData }: { postId: string; postData: CreatePostData }) => 
+    mutationFn: ({ postId, postData }: { postId: string; postData: CreatePostData }) =>
       updatePost(postId, postData),
     onSuccess: (response, { postId }) => {
       // Only invalidate feed queries - no need to invalidate individual post query
@@ -164,14 +161,14 @@ export const useFollowTopic = () => {
       // Update the topics cache to reflect the new follow status
       queryClient.setQueryData(['broadcasts', 'topics'], (oldData: any) => {
         if (!oldData) return oldData;
-        
-        return oldData.map((topic: any) => 
-          topic.id === topicId 
+
+        return oldData.map((topic: any) =>
+          topic.id === topicId
             ? { ...topic, isFollowed: true, followerCount: topic.followerCount + 1 }
             : topic
         );
       });
-      
+
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'topics'] });
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
@@ -196,14 +193,14 @@ export const useUnfollowTopic = () => {
       // Update the topics cache to reflect the new follow status
       queryClient.setQueryData(['broadcasts', 'topics'], (oldData: any) => {
         if (!oldData) return oldData;
-        
-        return oldData.map((topic: any) => 
-          topic.id === topicId 
+
+        return oldData.map((topic: any) =>
+          topic.id === topicId
             ? { ...topic, isFollowed: false, followerCount: Math.max(0, topic.followerCount - 1) }
             : topic
         );
       });
-      
+
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'topics'] });
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });

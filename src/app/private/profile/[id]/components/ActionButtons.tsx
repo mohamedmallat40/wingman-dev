@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+
 import { Button, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 
@@ -35,9 +36,9 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
   const buttonSize = size === 'sm' ? 'h-6 w-6' : size === 'md' ? 'h-8 w-8' : 'h-10 w-10';
 
   return (
-    <div className='flex items-center gap-1 backdrop-blur-sm bg-background/30 rounded-lg p-1 border border-divider/50 hover:bg-background/60 transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 transform'>
+    <div className='bg-background/30 border-divider/50 hover:bg-background/60 flex transform items-center gap-1 rounded-lg border p-1 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg'>
       {showEdit && onEdit && (
-        <Tooltip content={editTooltip} size="sm" closeDelay={0}>
+        <Tooltip content={editTooltip} size='sm' closeDelay={0}>
           <Button
             isIconOnly
             variant={variant}
@@ -49,9 +50,9 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
           </Button>
         </Tooltip>
       )}
-      
+
       {showDelete && onDelete && (
-        <Tooltip content={deleteTooltip} size="sm" closeDelay={0} color="danger">
+        <Tooltip content={deleteTooltip} size='sm' closeDelay={0} color='danger'>
           <Button
             isIconOnly
             variant={variant}
@@ -63,9 +64,9 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
           </Button>
         </Tooltip>
       )}
-      
+
       {showAdd && onAdd && (
-        <Tooltip content={addTooltip} size="sm" closeDelay={0} color="success">
+        <Tooltip content={addTooltip} size='sm' closeDelay={0} color='success'>
           <Button
             isIconOnly
             variant={variant}
