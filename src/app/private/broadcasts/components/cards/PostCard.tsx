@@ -12,11 +12,12 @@ import { getImageUrl } from '@/lib/utils/utilities';
 import { useDeletePost } from '../../hooks/useBroadcasts';
 import { useLinkPreviewForPost } from '../../hooks/useLinkPreviewForPost';
 import { type BroadcastPost } from '../../types';
+import { useSmartCountFormat } from '../../utils/timeFormatting';
+import { CommentSection } from '../comments';
 import { DeleteConfirmationModal } from '../modals/DeleteConfirmationModal';
 import { PostAttachmentModal } from '../modals/PostAttachmentModal';
+import { ShareModal } from '../modals/ShareModal';
 import { LinkPreview } from '../ui/LinkPreview';
-import { CommentSection } from '../comments';
-import { useSmartCountFormat } from '../../utils/timeFormatting';
 
 // Utility functions
 const formatTimeAgo = (timestamp: string, t: any): string => {
@@ -68,10 +69,10 @@ const getFileIcon = (filename: string): string => {
 
 interface PostCardProps {
   post: BroadcastPost;
-  onLike: (postId: string) => void;
   onBookmark: (postId: string) => void;
   onComment: (postId: string) => void;
   onShare: (postId: string) => void;
+  onUpvote: (postId: string, isCurrentlyUpvoted: boolean) => void;
   onClick?: (postId: string) => void;
   onEdit?: (post: BroadcastPost) => void;
   isLoading?: boolean;
@@ -81,10 +82,10 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = React.memo(
   ({
     post,
-    onLike,
     onBookmark,
     onComment,
     onShare,
+    onUpvote,
     onClick,
     onEdit,
     isLoading = false,
@@ -97,6 +98,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
     const [modalOpen, setModalOpen] = useState(false);
     const [modalIndex, setModalIndex] = useState(0);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [shareModalOpen, setShareModalOpen] = useState(false);
     const [showComments, setShowComments] = useState(false);
 
     // Get current user profile
@@ -220,6 +222,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(
           description={t('post.delete.description', { title: safeTitle })}
         />
 
+        <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
+
         <Card
           className={`border-divider/50 shadow-sm transition-all duration-200 hover:shadow-md ${className}`}
           role='article'
@@ -268,7 +272,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     variant='flat'
                     startContent={<Icon icon={postIcon} className='h-3 w-3' />}
                   >
-                    Broadcast
+                    {t('post.actions.broadcast')}
                   </Chip>
 
                   {safeTopics.length > 0 && (
@@ -415,7 +419,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                                 className='w-full rounded-lg object-cover transition-transform group-hover:scale-[1.02]'
                                 style={{
                                   aspectRatio: 'auto',
-                                  maxHeight: '400px',
+                                  maxHeight: '360px',
                                   height: 'auto'
                                 }}
                                 loading='lazy'
@@ -496,7 +500,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                                 controls
                                 preload='metadata'
                                 style={{
-                                  maxHeight: '400px',
+                                  maxHeight: '360px',
                                   height: 'auto'
                                 }}
                                 onError={(e) => {
@@ -582,16 +586,27 @@ const PostCard: React.FC<PostCardProps> = React.memo(
               <div className='flex items-center gap-1'>
                 <Button
                   size='sm'
-                  variant='light'
-                  color='default'
+                  variant={post.isUpvoted === true ? 'flat' : 'light'}
+                  color={post.isUpvoted === true ? 'success' : 'default'}
                   startContent={
-                    <Icon icon='solar:heart-linear' className='h-4 w-4' aria-hidden='true' />
+                    <Icon
+                      icon={
+                        post.isUpvoted === true ? 'solar:arrow-up-bold' : 'solar:arrow-up-linear'
+                      }
+                      className='h-4 w-4'
+                      aria-hidden='true'
+                    />
                   }
-                  onPress={() => onLike(post.id)}
-                  className='h-auto min-w-0 px-3 py-2'
-                  aria-label={`Like post by ${safeOwner.firstName} ${safeOwner.lastName}`}
+                  onPress={() => onUpvote(post.id, post.isUpvoted === true)}
+                  className='h-auto min-w-0 px-3 py-2 transition-all duration-200'
+                  aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  Like
+                  {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
+                  {(post.upvotes || 0) > 0 && (
+                    <span className='text-foreground-500 ml-1 text-xs'>
+                      ({formatCount(post.upvotes || 0)})
+                    </span>
+                  )}
                 </Button>
 
                 <Button
@@ -599,17 +614,17 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   variant={showComments ? 'flat' : 'light'}
                   color={showComments ? 'primary' : 'default'}
                   startContent={
-                    <Icon 
-                      icon={showComments ? 'solar:chat-round-dots-bold' : 'solar:chat-round-linear'} 
-                      className='h-4 w-4' 
-                      aria-hidden='true' 
+                    <Icon
+                      icon={showComments ? 'solar:chat-round-dots-bold' : 'solar:chat-round-linear'}
+                      className='h-4 w-4'
+                      aria-hidden='true'
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
                   className='h-auto min-w-0 px-3 py-2 transition-all duration-200'
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  {showComments ? 'Hide Comments' : 'Comments'}
+                  {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
                   {(post.replyCount || post.commentsCount || 0) > 0 && (
                     <span className='text-foreground-500 ml-1 text-xs'>
                       ({formatCount(post.replyCount || post.commentsCount || 0)})
@@ -623,11 +638,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   startContent={
                     <Icon icon='solar:share-linear' className='h-4 w-4' aria-hidden='true' />
                   }
-                  onPress={() => onShare(post.id)}
+                  onPress={() => setShareModalOpen(true)}
                   className='h-auto min-w-0 px-3 py-2'
                   aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  Share
+                  {t('post.actions.share')}
                 </Button>
               </div>
 
@@ -641,7 +656,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Comments Section */}
             {showComments && (
-              <div className='mt-6 border-default-200 border-t pt-6'>
+              <div className='border-default-200 mt-6 border-t pt-6'>
                 <CommentSection
                   postId={post.id}
                   totalComments={post.replyCount || post.commentsCount || 0}

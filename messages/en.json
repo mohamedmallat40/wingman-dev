@@ -633,7 +633,12 @@
       "actions": {
         "like": "Like",
         "unlike": "Unlike",
+        "upvote": "Upvote",
+        "upvoted": "Upvoted",
         "comment": "Comment",
+        "comments": "Comments",
+        "hideComments": "Hide Comments",
+        "broadcast": "Broadcast",
         "share": "Share",
         "bookmark": "Bookmark",
         "unbookmark": "Remove bookmark",
@@ -641,7 +646,9 @@
         "delete": "Delete",
         "viewPost": "View post",
         "sharePost": "Share Post",
-        "copyLink": "Copy link"
+        "copyLink": "Copy link",
+        "backToFeed": "Back to Feed",
+        "retry": "Retry"
       },
       "menu": {
         "moreOptions": "More options",
@@ -667,6 +674,33 @@
         "description": "Are you sure you want to delete \"{title}\"? This action cannot be undone.",
         "confirm": "Delete",
         "cancel": "Cancel"
+      },
+      "share": {
+        "title": "Share Post",
+        "subtitle": "Share this post with your network or on social media",
+        "copyLink": {
+          "title": "Copy Link",
+          "copy": "Copy",
+          "copied": "Copied!"
+        },
+        "nativeShare": {
+          "title": "Share",
+          "button": "Share via device"
+        },
+        "socialMedia": {
+          "title": "Share on Social Media"
+        },
+        "analytics": {
+          "title": "Share Analytics",
+          "description": "Track engagement and views from shared links"
+        },
+        "copySuccess": "Link copied to clipboard!",
+        "copyError": "Failed to copy link",
+        "shareError": "Failed to share post",
+        "close": "Close",
+        "fallbacks": {
+          "untitledPost": "Untitled Post"
+        }
       }
     },
     "create": {
@@ -813,6 +847,26 @@
       },
       "postedOn": "Posted {date}",
       "relatedActions": "Related Actions"
+    },
+    "detail": {
+      "title": "Broadcast Detail",
+      "subtitle": "View detailed information about this broadcast"
+    },
+    "engagement": {
+      "title": "Engage with this post",
+      "description": "Share your thoughts and connect with the community"
+    },
+    "actions": {
+      "goBack": "Go Back",
+      "goHome": "Go Home",
+      "share": "Share"
+    },
+    "loading": "Loading broadcast...",
+    "errors": {
+      "notFound": {
+        "title": "Broadcast Not Found",
+        "description": "This broadcast doesn't exist or has been removed."
+      }
     },
     "imageModal": {
       "previous": "Previous",

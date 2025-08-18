@@ -92,6 +92,8 @@ export interface BroadcastPost {
   }[]; // Array of link preview metadata
   commentsCount?: number; // Number of comments on this post (legacy)
   replyCount?: number; // Number of comments/replies on this post (from API)
+  upvotes: number; // Number of upvotes on this post (from API)
+  isUpvoted?: boolean; // Whether current user has upvoted this post
 }
 
 export interface Comment {

@@ -9,12 +9,12 @@ import {
   DrawerHeader
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { useUpload } from '@root/modules/documents/hooks/useUpload';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
 import { IDocument } from '../types';
 import { getDocumentDownloadUrl, getDocumentPreviewUrl } from '../utils';
-import { useUpload } from '@root/modules/documents/hooks/useUpload';
 
 interface DocumentViewerDrawerProps {
   isOpen: boolean;
@@ -35,7 +35,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
   const [imageLoadError, setImageLoadError] = useState(false);
   const [secureBlobUrl, setSecureBlobUrl] = useState<string | null>(null);
   const [isLoadingSecure, setIsLoadingSecure] = useState(false);
-  
+
   const { fetchSecureDocument } = useUpload();
 
   // Generate secure download URL for the download button
@@ -171,7 +171,10 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
         return (
           <div className='flex h-full items-center justify-center'>
             <div className='text-center'>
-              <Icon icon='solar:gallery-broken-linear' className='text-danger mx-auto mb-4 h-16 w-16' />
+              <Icon
+                icon='solar:gallery-broken-linear'
+                className='text-danger mx-auto mb-4 h-16 w-16'
+              />
               <p className='text-foreground mb-2 text-lg font-medium'>Failed to load image</p>
               <p className='text-foreground-500 mb-4 text-sm'>
                 The image could not be displayed. You can try downloading it instead.

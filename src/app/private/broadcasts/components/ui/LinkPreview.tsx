@@ -107,7 +107,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.3 }}
-      className='group relative w-full max-w-full mx-auto'
+      className='group relative mx-auto w-full max-w-full'
     >
       <Card
         isPressable
@@ -155,7 +155,8 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
 
                 {/* Title with author */}
                 <h4 className='text-foreground line-clamp-2 text-base leading-tight font-bold tracking-tight'>
-                  {metadata.title}{metadata.author && ` - by ${metadata.author}`}
+                  {metadata.title}
+                  {metadata.author && ` - by ${metadata.author}`}
                 </h4>
               </div>
             </div>
