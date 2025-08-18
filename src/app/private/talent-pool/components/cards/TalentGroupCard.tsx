@@ -5,12 +5,15 @@ import React from 'react';
 import { Avatar, Button, Card, CardBody, CardHeader, Chip, Divider } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import { getImageUrl } from '@/lib/utils/utilities';
 
-import { type TeamCardProperties, type Tool } from '../../types';
+import { type TeamCardProps as TeamCardProperties, type Tool } from '../../types';
+import { mapUserType } from '../../utils/talent-utilities';
 
 const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam }) => {
+  const t = useTranslations();
   const { id, groupName, color, members, tools, owner, connections } = group;
 
   const displayTools = tools.slice(0, 4);
@@ -46,7 +49,7 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
             </div>
 
             <div className='flex gap-2'>
-              <Button
+              {/*  <Button
                 className='bg-primary-500 hover:bg-primary-600 text-white shadow-lg hover:shadow-xl'
                 radius='full'
                 size='sm'
@@ -54,7 +57,7 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
                 onPress={() => onJoinTeam?.(id)}
               >
                 Join Team
-              </Button>
+              </Button> */}
 
               <Button
                 className='border-primary-200 text-primary-600 hover:bg-primary-50'
@@ -62,7 +65,9 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
                 size='sm'
                 variant='bordered'
                 isIconOnly
-                onPress={() => onViewTeam?.(id)}
+                onPress={() => {
+                  onViewTeam(id);
+                }}
               >
                 <Icon icon='solar:eye-bold' className='h-4 w-4' />
               </Button>
@@ -78,7 +83,7 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
                   className='text-default-600 h-3 w-3'
                 />
                 <span className='text-default-600 text-xs font-medium'>
-                  {members} member{members !== 1 ? 's' : ''}
+                  {members} member{members === 1 ? '' : 's'}
                 </span>
               </div>
             </div>
@@ -107,7 +112,7 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
                 <p className='text-medium text-foreground font-bold'>
                   {owner.firstName} {owner.lastName}
                 </p>
-                <p className='text-small text-default-500'>{owner.profession || 'Team Lead'}</p>
+                <p className='text-small text-default-500'>{mapUserType(owner.profession, t)}</p>
               </div>
             </div>
           </div>
@@ -170,7 +175,7 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
           </div>
 
           {/* Join Action Section */}
-          <div className='from-primary-50 to-secondary-50 border-primary-200 rounded-xl border bg-gradient-to-r p-4'>
+          {/* <div className='from-primary-50 to-secondary-50 border-primary-200 rounded-xl border bg-gradient-to-r p-4'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-2'>
                 <Icon icon='solar:users-group-rounded-linear' className='text-primary h-4 w-4' />
@@ -180,7 +185,7 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
                 <p className='text-small text-primary'>Collaborate & grow together</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </CardBody>
       </Card>
     </motion.div>

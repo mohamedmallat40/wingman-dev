@@ -4,24 +4,27 @@ import React, { useCallback, useState } from 'react';
 
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import { getMyProfile } from '@root/modules/profile/services/profile.service';
+import { useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useParams, useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import { BREADCRUMB_CONFIG } from './components/constants';
+import { EditTeamModal } from './components/modals/edit-team-modal';
 //import { TeamDetailsHeader } from './components/header';
 //import { TeamDetailsTabs } from './components/navigation';
 import { TeamMembersTab } from './components/tabs/members';
 import { TeamOverviewTab } from './components/tabs/overview';
-//import { TeamProjectsTab } from './components/tabs/projects';
+import { TeamProjectsTab } from './components/tabs/projects-tab';
 import { TeamToolsTab } from './components/tabs/tools-tab';
 import { TeamDetailsHeader } from './components/teams-header';
 import { TeamDetailsTabs } from './components/teams-navigation';
-import { useTeamDetails } from './hooks/useTeamsDetails';
 // Import constants
 // Import hooks
 import { type TeamDetailsTab as TabType } from './types';
+import { useTeamDetails } from './hooks/useTeamsDetails';
 
 const TeamDetailsPage: React.FC = () => {
   // ============================================================================
@@ -38,8 +41,13 @@ const TeamDetailsPage: React.FC = () => {
   // Custom hook to fetch team data
   const { team, loading, error, refetch } = useTeamDetails(teamId);
 
-  const currentUserId = 'current-user-id';
-  const isOwner = team?.owner.id === currentUserId;
+  const { data: currentUser } = useQuery({
+    queryKey: ['profile'],
+    queryFn: async () => await getMyProfile()
+  });
+
+  console.log('currentUser', currentUser);
+  const isOwner = team?.owner.id === currentUser?.data?.id;
   // ============================================================================
   // EVENT HANDLERS
   // ============================================================================
@@ -96,11 +104,12 @@ const TeamDetailsPage: React.FC = () => {
       case 'members': {
         return <TeamMembersTab {...commonProperties} />;
       }
-      case 'tools':
+      case 'tools': {
         return <TeamToolsTab {...commonProperties} />;
-      /* 
-      case 'projects':
-        return <TeamProjectsTab {...commonProps} />; */
+      }
+      case 'projects': {
+        return <TeamProjectsTab {...commonProperties} />;
+      }
       default: {
         return null;
       }
@@ -139,6 +148,7 @@ const TeamDetailsPage: React.FC = () => {
 
     return (
       <div className='flex items-center gap-2'>
+        {/* 
         <Button
           color='secondary'
           variant='flat'
@@ -158,7 +168,7 @@ const TeamDetailsPage: React.FC = () => {
           className='transition-all duration-200 hover:shadow-md'
         >
           Join Team
-        </Button>
+        </Button> */}
       </div>
     );
   };
@@ -226,13 +236,13 @@ const TeamDetailsPage: React.FC = () => {
     >
       <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[90%] xl:px-0'>
         {/* Team Header */}
-        <TeamDetailsHeader
+        {/* <TeamDetailsHeader
           team={team}
           onBack={handleBack}
           onEdit={handleEditTeam}
           onJoin={handleJoinTeam}
           onConnectToOwner={handleConnectToOwner}
-        />
+        /> */}
 
         {/* Tabs Navigation */}
         <TeamDetailsTabs activeTab={activeTab} onTabChange={handleTabChange} team={team} />
@@ -252,12 +262,14 @@ const TeamDetailsPage: React.FC = () => {
       </div>
 
       {/* Edit Team Modal - Will be implemented later */}
-      {/* <EditTeamModal
+      <EditTeamModal
         isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
+        onClose={() => {
+          setIsEditModalOpen(false);
+        }}
         team={team}
         onSave={refetch}
-      /> */}
+      />
     </DashboardLayout>
   );
 };

@@ -153,7 +153,7 @@ const USER_TYPE_MAP = {
   CONTRACTOR: 'talentPool.userTypes.contractor'
 } as const;
 
-export const mapUserType = (userType: UserKind | string, t?: (key: string) => string): string => {
+export const mapUserType = (userType: string, t?: (key: string) => string): string => {
   const translationKey = USER_TYPE_MAP[userType as keyof typeof USER_TYPE_MAP];
   if (translationKey && t) {
     return t(translationKey);
@@ -180,9 +180,8 @@ export const mapUserType = (userType: UserKind | string, t?: (key: string) => st
       return 'Contractor';
     }
     default: {
-      // Format unknown types by replacing underscores and capitalizing
       return userType
-        .toLowerCase()
+        ?.toLowerCase()
         .replaceAll('_', ' ')
         .replaceAll(/\b\w/g, (l) => l.toUpperCase());
     }
