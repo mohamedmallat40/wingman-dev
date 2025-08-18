@@ -24,32 +24,29 @@ interface GroupCardProperties {
 const GroupCard: React.FC<GroupCardProperties> = ({ group, onViewTeam, activeTab }) => {
   const t = useTranslations();
   const { id, groupName, color, members, tools, owner, connections, type } = group;
-  const { user, setUser, removeUser } = useUserStore();
+  const { user } = useUserStore();
 
   const displayTools = tools.slice(0, 4);
   const hasMoreTools = tools.length > 4;
-  const connectionsCount = connections?.length || 0;
+  const connectionsCount = connections.length || 0;
 
   // Determine team type chip properties
   const getTeamTypeChip = () => {
     const isSharedWithMe =
-      user?.id && owner?.id !== user.id && connections.some((conn) => conn.id === user?.id);
+      user?.id && owner.id !== user.id && connections.some((conn) => conn.id === user.id);
 
     let chipColor: 'primary' | 'danger' | 'warning' | 'success' = 'primary';
     let chipText = '';
 
     if (isSharedWithMe) {
       chipColor = 'warning';
-      chipText = 'Shared';
+      chipText = t('talentPool.tabs.sharedWithMe');
     } else if (type === 'public') {
-      chipText = 'Public';
-    } else if (type === 'private') {
-      chipColor = 'danger';
-      chipText = 'Private';
+      chipText = t('talentPool.tabs.publicGroups');
     }
 
     return (
-      <Chip size='sm' color={chipColor} variant='flat' className=''>
+      <Chip size='sm' color={chipColor} variant='flat' className='mb-4'>
         {chipText}
       </Chip>
     );
@@ -61,11 +58,16 @@ const GroupCard: React.FC<GroupCardProperties> = ({ group, onViewTeam, activeTab
       transition={{ duration: 0.2, ease: 'easeOut' }}
       className='h-full w-full'
     >
-      <Card className='border-default-200 bg-background/60 hover:border-default-300 dark:bg-background/80 min-h-[25rem] w-full max-w-[600px] border backdrop-blur-sm transition-all duration-200 hover:shadow-md'>
-        <CardHeader className='flex w-full flex-col items-start gap-4 p-6'>
+      <Card className='border-default-200 bg-background/60 hover:border-default-300 dark:bg-background/80 h-full w-full max-w-[600px] border backdrop-blur-sm transition-all duration-200 hover:shadow-md'>
+        <CardHeader className='flex flex-col items-start gap-4 p-6'>
+          {/* Type Chip - Only show on 'all' tab */}
+          {activeTab === 'all' && (
+            <div className='flex w-full justify-end'>{getTeamTypeChip()}</div>
+          )}
+
           {/* Header with Avatar and Action Button */}
           <div className='flex w-full items-start justify-between'>
-            <div className='flex w-full items-center gap-4'>
+            <div className='flex items-center gap-4'>
               <div className='relative'>
                 <div
                   className='flex h-14 w-14 items-center justify-center rounded-xl text-lg font-semibold text-white shadow-sm'
@@ -78,32 +80,27 @@ const GroupCard: React.FC<GroupCardProperties> = ({ group, onViewTeam, activeTab
                 </div>
               </div>
 
-              <div className='w-full'>
-                <div className='flex w-full items-center justify-between gap-1'>
-                  <h2 className='text-foreground flex-1 text-xl font-semibold'>{groupName}</h2>
-                  {activeTab === 'all' && (
-                    <div className='flex justify-end'>{getTeamTypeChip()}</div>
-                  )}
-
-                  <Button
-                    className='text-default-600 hover:text-foreground float-right'
-                    radius='lg'
-                    size='sm'
-                    variant='light'
-                    isIconOnly
-                    onPress={() => {
-                      onViewTeam(id);
-                    }}
-                  >
-                    <Icon icon='solar:eye-bold' className='h-4 w-4' />
-                  </Button>
-                </div>
+              <div>
+                <h2 className='text-foreground text-xl font-semibold'>{groupName}</h2>
                 <p className='text-default-500 mt-1 text-sm'>
-                  {members} member{members === 1 ? '' : 's'} • {connectionsCount} connection
-                  {connectionsCount === 1 ? '' : 's'}
+                  {members} {t('talentPool.cards.membersCount')} • {connectionsCount}{' '}
+                  {connectionsCount === 1 ? 'connection' : 'connections'}
                 </p>
               </div>
             </div>
+
+            <Button
+              className='text-default-600 hover:text-foreground'
+              radius='lg'
+              size='sm'
+              variant='light'
+              isIconOnly
+              onPress={() => {
+                onViewTeam(id);
+              }}
+            >
+              <Icon icon='solar:eye-bold' className='h-4 w-4' />
+            </Button>
           </div>
         </CardHeader>
 
@@ -131,7 +128,7 @@ const GroupCard: React.FC<GroupCardProperties> = ({ group, onViewTeam, activeTab
             <div>
               <div className='mb-2 flex items-center gap-2'>
                 <Icon icon='solar:document-text-linear' className='text-default-600 h-4 w-4' />
-                <span className='text-foreground text-sm font-medium'>Tools</span>
+                <span className='text-foreground text-sm font-medium'>{t('talentPool.cards.tools')}</span>
               </div>
               <div className='flex flex-wrap gap-2'>
                 {displayTools.map((tool: Tool, index: number) => (
@@ -157,7 +154,7 @@ const GroupCard: React.FC<GroupCardProperties> = ({ group, onViewTeam, activeTab
             </div>
           )}
 
-          <Divider className='my-2 mt-auto' />
+          <Divider className='my-2' />
 
           {/* Stats Grid */}
           <div className='grid grid-cols-3 gap-4'>
@@ -166,7 +163,7 @@ const GroupCard: React.FC<GroupCardProperties> = ({ group, onViewTeam, activeTab
                 <Icon icon='solar:users-group-rounded-linear' className='h-3 w-3' />
                 <span className='text-sm font-medium'>{members}</span>
               </div>
-              <p className='text-default-400 mt-1 text-xs'>Members</p>
+              <p className='text-default-400 mt-1 text-xs'>{t('talentPool.cards.members')}</p>
             </div>
 
             <div className='text-center'>
@@ -174,7 +171,7 @@ const GroupCard: React.FC<GroupCardProperties> = ({ group, onViewTeam, activeTab
                 <Icon icon='solar:document-text-linear' className='h-3 w-3' />
                 <span className='text-sm font-medium'>{tools.length}</span>
               </div>
-              <p className='text-default-400 mt-1 text-xs'>Tools</p>
+              <p className='text-default-400 mt-1 text-xs'>{t('talentPool.cards.tools')}</p>
             </div>
 
             <div className='text-center'>
