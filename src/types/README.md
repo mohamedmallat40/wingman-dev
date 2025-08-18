@@ -15,12 +15,14 @@ src/types/
 ## Guidelines
 
 ### ✅ What goes in `/src/types/`:
+
 - **Common interfaces**: `BaseEntity`, `ApiResponse<T>`, `PaginatedResponse<T>`
 - **Shared utilities**: `CreateDto<T>`, `UpdateDto<T>`, `ViewMode`
 - **Cross-feature types**: `User`, `UserSummary`, `UserRole`
 - **Global constants**: Permission types, common enums
 
 ### ❌ What does NOT go here:
+
 - **Feature-specific types**: Document types, Profile types, etc.
 - **Component prop interfaces**: Should be near the components
 - **Domain-specific business logic types**
@@ -42,11 +44,13 @@ src/app/private/documents/types/
 ## Import Guidelines
 
 ### From shared types:
+
 ```typescript
-import type { User, ApiResponse, BaseEntity } from '@/types';
+import type { ApiResponse, BaseEntity, User } from '@/types';
 ```
 
 ### From feature types:
+
 ```typescript
 // Within the same feature
 import type { Document, DocumentFilters } from './types';

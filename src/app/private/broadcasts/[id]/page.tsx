@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Button, Card, CardBody, Spinner } from '@heroui/react';
+import { addToast } from '@heroui/toast';
 import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter } from 'next/navigation';
@@ -10,33 +11,40 @@ import { useParams, useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
 import PostCard from '../components/cards/PostCard';
+import { ShareModal } from '../components/modals/ShareModal';
 import { usePostById } from '../hooks/usePostById';
+import { useUpvote } from '../hooks/useUpvote';
 
 const PostDetailPage: React.FC = () => {
   const t = useTranslations('broadcasts');
   const params = useParams();
   const router = useRouter();
   const postId = params.id as string;
+  const { toggleUpvote } = useUpvote();
+
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const { data: post, isLoading, error, refetch } = usePostById(postId);
 
   // Handle post interactions
-  const handleLike = (postId: string) => {
-    console.log('Like post:', postId);
-  };
-
   const handleBookmark = (postId: string) => {
-    console.log('Bookmark post:', postId);
+    addToast({
+      title: 'Bookmark',
+      description: 'Bookmark functionality coming soon',
+      color: 'primary'
+    });
   };
 
   const handleComment = (postId: string) => {
-    console.log('Comment on post:', postId);
+    // Comments are handled within the PostCard component
   };
 
   const handleShare = (postId: string) => {
-    // Copy current URL to clipboard
-    navigator.clipboard.writeText(window.location.href);
-    console.log('Share post:', postId);
+    setShareModalOpen(true);
+  };
+
+  const handleUpvote = (postId: string, isCurrentlyUpvoted: boolean) => {
+    toggleUpvote(postId, isCurrentlyUpvoted);
   };
 
   const handleBackToFeed = () => {
@@ -117,7 +125,7 @@ const PostDetailPage: React.FC = () => {
         <div className='flex min-h-96 flex-col items-center justify-center space-y-6'>
           <div className='text-center'>
             <Icon icon='solar:close-circle-linear' className='text-danger mx-auto mb-4 h-20 w-20' />
-            <h2 className='text-foreground mb-2 text-2xl font-bold'>Post Not Found</h2>
+            <h2 className='text-foreground mb-2 text-2xl font-bold'>{t('page.postNotFound')}</h2>
             <p className='text-foreground-500 max-w-md'>
               The post you're looking for doesn't exist or may have been removed.
             </p>
@@ -130,7 +138,7 @@ const PostDetailPage: React.FC = () => {
               startContent={<Icon icon='solar:arrow-left-linear' className='h-4 w-4' />}
               onPress={handleBackToFeed}
             >
-              Back to Feed
+              {t('post.actions.backToFeed')}
             </Button>
             <Button
               color='default'
@@ -138,7 +146,7 @@ const PostDetailPage: React.FC = () => {
               startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
               onPress={() => refetch()}
             >
-              Retry
+              {t('post.actions.retry')}
             </Button>
           </div>
         </div>
@@ -161,7 +169,7 @@ const PostDetailPage: React.FC = () => {
           startContent={<Icon icon='solar:arrow-left-linear' className='h-4 w-4' />}
           onPress={handleBackToFeed}
         >
-          Back to Feed
+          {t('post.actions.backToFeed')}
         </Button>
       }
     >
@@ -171,10 +179,10 @@ const PostDetailPage: React.FC = () => {
           <CardBody className='p-0'>
             <PostCard
               post={post}
-              onLike={handleLike}
               onBookmark={handleBookmark}
               onComment={handleComment}
               onShare={handleShare}
+              onUpvote={handleUpvote}
               className='border-0 shadow-none'
             />
           </CardBody>
@@ -190,7 +198,7 @@ const PostDetailPage: React.FC = () => {
               startContent={<Icon icon='solar:share-linear' className='h-4 w-4' />}
               onPress={() => handleShare(post.id)}
             >
-              Share Post
+              {t('post.actions.sharePost')}
             </Button>
             <Button
               variant='flat'
@@ -199,7 +207,7 @@ const PostDetailPage: React.FC = () => {
               startContent={<Icon icon='solar:bookmark-linear' className='h-4 w-4' />}
               onPress={() => handleBookmark(post.id)}
             >
-              Bookmark
+              {t('post.actions.bookmark')}
             </Button>
           </div>
 
@@ -215,6 +223,11 @@ const PostDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Share Modal */}
+      {post && (
+        <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
+      )}
     </DashboardLayout>
   );
 };

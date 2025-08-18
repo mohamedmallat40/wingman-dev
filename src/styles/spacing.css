@@ -178,15 +178,15 @@
 
 /* Professional Layout Classes */
 .layout-container {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
 }
 
 .layout-container-wide {
-  @apply max-w-none mx-auto px-4 sm:px-6 lg:px-8 xl:px-12;
+  @apply mx-auto max-w-none px-4 sm:px-6 lg:px-8 xl:px-12;
 }
 
 .layout-container-narrow {
-  @apply max-w-4xl mx-auto px-4 sm:px-6 lg:px-8;
+  @apply mx-auto max-w-4xl px-4 sm:px-6 lg:px-8;
 }
 
 /* Component Spacing Classes */

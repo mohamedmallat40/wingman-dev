@@ -633,7 +633,12 @@
       "actions": {
         "like": "J'aime",
         "unlike": "Ne plus aimer",
+        "upvote": "Voter pour",
+        "upvoted": "Voté",
         "comment": "Commenter",
+        "comments": "Commentaires",
+        "hideComments": "Masquer les commentaires",
+        "broadcast": "Diffusion",
         "share": "Partager",
         "bookmark": "Signet",
         "unbookmark": "Supprimer le signet",
@@ -641,7 +646,9 @@
         "delete": "Supprimer",
         "viewPost": "Voir le post",
         "sharePost": "Partager le Post",
-        "copyLink": "Copier le lien"
+        "copyLink": "Copier le lien",
+        "backToFeed": "Retour au fil",
+        "retry": "Réessayer"
       },
       "menu": {
         "moreOptions": "Plus d'options",
@@ -667,6 +674,33 @@
         "description": "Êtes-vous sûr de vouloir supprimer \"{title}\" ? Cette action ne peut pas être annulée.",
         "confirm": "Supprimer",
         "cancel": "Annuler"
+      },
+      "share": {
+        "title": "Partager le Post",
+        "subtitle": "Partagez ce post avec votre réseau ou sur les réseaux sociaux",
+        "copyLink": {
+          "title": "Copier le Lien",
+          "copy": "Copier",
+          "copied": "Copié !"
+        },
+        "nativeShare": {
+          "title": "Partager",
+          "button": "Partager via l'appareil"
+        },
+        "socialMedia": {
+          "title": "Partager sur les Réseaux Sociaux"
+        },
+        "analytics": {
+          "title": "Analytics de Partage",
+          "description": "Suivez l'engagement et les vues des liens partagés"
+        },
+        "copySuccess": "Lien copié dans le presse-papiers !",
+        "copyError": "Échec de la copie du lien",
+        "shareError": "Échec du partage du post",
+        "close": "Fermer",
+        "fallbacks": {
+          "untitledPost": "Post Sans Titre"
+        }
       }
     },
     "create": {
@@ -845,6 +879,26 @@
       },
       "postedOn": "Publié le {date}",
       "relatedActions": "Actions Liées"
+    },
+    "detail": {
+      "title": "Détail de Diffusion",
+      "subtitle": "Voir les informations détaillées sur cette diffusion"
+    },
+    "engagement": {
+      "title": "Interagir avec ce post",
+      "description": "Partagez vos pensées et connectez-vous avec la communauté"
+    },
+    "actions": {
+      "goBack": "Retour",
+      "goHome": "Aller à l'Accueil",
+      "share": "Partager"
+    },
+    "loading": "Chargement de la diffusion...",
+    "errors": {
+      "notFound": {
+        "title": "Diffusion Non Trouvée",
+        "description": "Cette diffusion n'existe pas ou a été supprimée."
+      }
     },
     "imageModal": {
       "previous": "Précédent",

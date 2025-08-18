@@ -6,8 +6,9 @@ import type { CommentInputProps } from '../../types/comments';
 
 import { Avatar, Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { motion } from 'framer-motion';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
+import { motion } from 'framer-motion';
+
 import { getImageUrl } from '@/lib/utils/utilities';
 
 export const CommentInput: React.FC<CommentInputProps> = ({
@@ -24,11 +25,11 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   showCancel = false
 }) => {
   const { profile: currentUser } = useBasicProfile();
-  
+
   const [content, setContent] = useState(initialValue);
   const [mentions, setMentions] = useState<string[]>([]);
   const [isFocused, setIsFocused] = useState(false);
-  
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // Character count and validation
@@ -69,9 +70,9 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   // Handle submit
   const handleSubmit = () => {
     if (!isValid || isLoading) return;
-    
+
     onSubmit(content.trim(), mentions.length > 0 ? mentions : undefined);
-    
+
     // Reset form if not in edit mode
     if (!showCancel) {
       setContent('');
@@ -92,21 +93,21 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   return (
     <div className={`${className}`}>
       {/* Main Input */}
-      <div className="flex gap-3 items-start">
+      <div className='flex items-start gap-3'>
         {/* Avatar */}
         <Avatar
           src={currentUser?.profileImage ? getImageUrl(currentUser.profileImage) : undefined}
           name={`${currentUser?.firstName || ''} ${currentUser?.lastName || ''}`.trim() || 'User'}
-          size="sm"
-          className="flex-shrink-0 w-8 h-8"
+          size='sm'
+          className='h-8 w-8 flex-shrink-0'
           showFallback
-          fallback={<Icon icon="solar:user-linear" className="text-default-500 w-4 h-4" />}
+          fallback={<Icon icon='solar:user-linear' className='text-default-500 h-4 w-4' />}
         />
-        
+
         {/* Input Area */}
-        <div className="flex-1">
+        <div className='flex-1'>
           {/* Textarea */}
-          <div className="relative">
+          <div className='relative'>
             <textarea
               ref={textareaRef}
               value={content}
@@ -116,9 +117,9 @@ export const CommentInput: React.FC<CommentInputProps> = ({
               onBlur={() => setIsFocused(false)}
               placeholder={placeholder}
               disabled={isLoading}
-              className="w-full resize-none border-0 bg-transparent text-sm leading-5 placeholder-default-400 focus:outline-none focus:ring-0"
+              className='placeholder-default-400 w-full resize-none border-0 bg-transparent text-sm leading-5 focus:ring-0 focus:outline-none'
               rows={1}
-              style={{ 
+              style={{
                 minHeight: '20px',
                 maxHeight: '100px'
               }}
@@ -127,45 +128,50 @@ export const CommentInput: React.FC<CommentInputProps> = ({
 
           {/* Actions Row - only show when focused or has content */}
           {(isFocused || content.trim().length > 0 || showCancel) && (
-            <div className="flex items-center justify-between mt-2">
-              <div className="flex items-center gap-3">
+            <div className='mt-2 flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
                 {enableMentions && (
                   <button
-                    type="button"
-                    className="text-default-500 hover:text-default-700 transition-colors"
+                    type='button'
+                    className='text-default-500 hover:text-default-700 transition-colors'
                   >
-                    <Icon icon="solar:at-linear" className="w-4 h-4" />
+                    <Icon icon='solar:at-linear' className='h-4 w-4' />
                   </button>
                 )}
 
                 {/* Character count */}
-                <span className={`text-xs transition-colors ${
-                  isNearLimit ? 'text-orange-500' : 
-                  charCount > maxLength ? 'text-red-500' : 'text-default-400'
-                }`}>
+                <span
+                  className={`text-xs transition-colors ${
+                    isNearLimit
+                      ? 'text-orange-500'
+                      : charCount > maxLength
+                        ? 'text-red-500'
+                        : 'text-default-400'
+                  }`}
+                >
                   {charCount}/{maxLength}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className='flex items-center gap-2'>
                 {showCancel && (
                   <button
-                    type="button"
+                    type='button'
                     onClick={handleCancel}
                     disabled={isLoading}
-                    className="text-xs text-default-500 hover:text-default-700 transition-colors font-medium"
+                    className='text-default-500 hover:text-default-700 text-xs font-medium transition-colors'
                   >
                     Cancel
                   </button>
                 )}
-                
+
                 <button
-                  type="button"
+                  type='button'
                   onClick={handleSubmit}
                   disabled={!isValid || isLoading}
                   className={`text-xs font-semibold transition-colors ${
                     isValid && !isLoading
-                      ? 'text-blue-500 hover:text-blue-600' 
+                      ? 'text-blue-500 hover:text-blue-600'
                       : 'text-default-300 cursor-not-allowed'
                   }`}
                 >
@@ -181,10 +187,22 @@ export const CommentInput: React.FC<CommentInputProps> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="mt-1"
+              className='mt-1'
             >
-              <p className="text-xs text-default-400">
-                Press <kbd className="bg-default-100 text-default-600 rounded px-1 py-0.5 text-xs font-mono">Enter</kbd> to post • <kbd className="bg-default-100 text-default-600 rounded px-1 py-0.5 text-xs font-mono">Shift</kbd>+<kbd className="bg-default-100 text-default-600 rounded px-1 py-0.5 text-xs font-mono">Enter</kbd> for new line
+              <p className='text-default-400 text-xs'>
+                Press{' '}
+                <kbd className='bg-default-100 text-default-600 rounded px-1 py-0.5 font-mono text-xs'>
+                  Enter
+                </kbd>{' '}
+                to post •{' '}
+                <kbd className='bg-default-100 text-default-600 rounded px-1 py-0.5 font-mono text-xs'>
+                  Shift
+                </kbd>
+                +
+                <kbd className='bg-default-100 text-default-600 rounded px-1 py-0.5 font-mono text-xs'>
+                  Enter
+                </kbd>{' '}
+                for new line
               </p>
             </motion.div>
           )}

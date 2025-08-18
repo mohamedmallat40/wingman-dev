@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import { useBookmarkPost, useBroadcastFeed, useLikePost, useTrackPostView } from '../../hooks';
+import { useBookmarkPost, useBroadcastFeed, useTrackPostView, useUpvote } from '../../hooks';
 import { useBroadcastFilters, useBroadcastStore } from '../../store/useBroadcastStore';
 import { BroadcastPost } from '../../types';
 import PostCard from '../cards/PostCard';
@@ -31,9 +31,9 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
   const { setSelectedPost } = useBroadcastStore();
 
   // Hooks for API operations
-  const likePost = useLikePost();
   const bookmarkPost = useBookmarkPost();
   const trackView = useTrackPostView();
+  const { toggleUpvote, isLoading: isUpvoting } = useUpvote();
 
   // Real-time connection
 
@@ -64,13 +64,6 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
     return feedData.pages.flatMap((page: any) => page?.data || []);
   }, [feedData]);
 
-  const handlePostLike = React.useCallback(
-    (postId: string) => {
-      likePost.mutate(postId);
-    },
-    [likePost]
-  );
-
   const handlePostBookmark = React.useCallback(
     (postId: string) => {
       bookmarkPost.mutate(postId);
@@ -92,6 +85,13 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
       router.push(`/private/broadcasts/${postId}`);
     },
     [setSelectedPost, handlePostView, router]
+  );
+
+  const handlePostUpvote = React.useCallback(
+    (postId: string, isCurrentlyUpvoted: boolean) => {
+      toggleUpvote(postId, isCurrentlyUpvoted);
+    },
+    [toggleUpvote]
   );
 
   if (isLoading) {
@@ -160,15 +160,17 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
             >
               <PostCard
                 post={post}
-                onLike={() => handlePostLike(post.id)}
                 onBookmark={() => handlePostBookmark(post.id)}
                 onComment={() => handlePostClick(post.id)}
                 onShare={() => {
                   /* Share functionality would be implemented here */
                 }}
+                onUpvote={(postId, isCurrentlyUpvoted) =>
+                  handlePostUpvote(postId, isCurrentlyUpvoted)
+                }
                 onClick={() => handlePostClick(post.id)}
                 onEdit={onEditPost}
-                isLoading={likePost.isPending || bookmarkPost.isPending}
+                isLoading={bookmarkPost.isPending || isUpvoting}
               />
             </motion.div>
           ))}

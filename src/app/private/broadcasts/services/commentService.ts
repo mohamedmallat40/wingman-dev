@@ -1,20 +1,24 @@
 import type { AxiosRequestConfig } from 'axios';
-import type { 
-  Comment, 
-  CommentFilters, 
-  CommentListResponse, 
-  CreateCommentPayload, 
-  UpdateCommentPayload 
+import type {
+  Comment,
+  CommentFilters,
+  CommentListResponse,
+  CreateCommentPayload,
+  UpdateCommentPayload
 } from '../types/comments';
+
 import wingManApi from '@/lib/axios';
 
 class CommentService {
   private readonly baseUrl = '/comments';
 
   // Get comments for a broadcast post
-  async getComments(filters: CommentFilters, config?: AxiosRequestConfig): Promise<CommentListResponse> {
+  async getComments(
+    filters: CommentFilters,
+    config?: AxiosRequestConfig
+  ): Promise<CommentListResponse> {
     const params = new URLSearchParams();
-    
+
     if (filters.parentId) params.append('parentId', filters.parentId);
     if (filters.limit) params.append('limit', filters.limit.toString());
     if (filters.offset) params.append('offset', filters.offset.toString());
@@ -22,7 +26,7 @@ class CommentService {
 
     // Use the broadcast-specific endpoint
     const endpoint = `/broadcast/${filters.postId}/reply${params.toString() ? `?${params.toString()}` : ''}`;
-    
+
     const response = await wingManApi.get<CommentListResponse>(endpoint, config);
 
     return response.data;
@@ -35,27 +39,30 @@ class CommentService {
   }
 
   // Create a new comment
-  async createComment(payload: CreateCommentPayload, config?: AxiosRequestConfig): Promise<Comment> {
+  async createComment(
+    payload: CreateCommentPayload,
+    config?: AxiosRequestConfig
+  ): Promise<Comment> {
     // Use the broadcast-specific endpoint for creating comments
     const endpoint = `/broadcast/${payload.postId}/reply`;
-    
+
     // Prepare the request body with correct field names for the API
     const requestBody = {
       response: payload.content, // API expects 'response' not 'content'
       parentReplyId: payload.parentId || null, // Map parentId to parentReplyId, null for root comments
       mentions: payload.mentions || []
     };
-    
+
     console.log('Creating comment:', { endpoint, requestBody });
-    
+
     const response = await wingManApi.post<Comment>(endpoint, requestBody, config);
     return response.data;
   }
 
   // Update an existing comment
   async updateComment(
-    id: string, 
-    payload: UpdateCommentPayload, 
+    id: string,
+    payload: UpdateCommentPayload,
     config?: AxiosRequestConfig
   ): Promise<Comment> {
     // Map internal 'content' to API 'response' field
@@ -63,7 +70,7 @@ class CommentService {
       response: payload.content, // API expects 'response' not 'content'
       mentions: payload.mentions || []
     };
-    
+
     const response = await wingManApi.patch<Comment>(`${this.baseUrl}/${id}`, requestBody, config);
     return response.data;
   }
@@ -86,12 +93,12 @@ class CommentService {
   // Get replies for a comment
   async getReplies(
     postId: string,
-    parentId: string, 
+    parentId: string,
     filters?: Omit<CommentFilters, 'postId' | 'parentId'>,
     config?: AxiosRequestConfig
   ): Promise<CommentListResponse> {
     const params = new URLSearchParams();
-    
+
     params.append('parentId', parentId);
     if (filters?.limit) params.append('limit', filters.limit.toString());
     if (filters?.offset) params.append('offset', filters.offset.toString());
@@ -106,16 +113,8 @@ class CommentService {
   }
 
   // Report a comment
-  async reportComment(
-    id: string, 
-    reason: string, 
-    config?: AxiosRequestConfig
-  ): Promise<void> {
-    await wingManApi.post(
-      `${this.baseUrl}/${id}/report`, 
-      { reason }, 
-      config
-    );
+  async reportComment(id: string, reason: string, config?: AxiosRequestConfig): Promise<void> {
+    await wingManApi.post(`${this.baseUrl}/${id}/report`, { reason }, config);
   }
 
   // Pin/unpin a comment (admin/moderator feature)
@@ -130,7 +129,10 @@ class CommentService {
   }
 
   // Get comment statistics
-  async getCommentStats(postId: string, config?: AxiosRequestConfig): Promise<{
+  async getCommentStats(
+    postId: string,
+    config?: AxiosRequestConfig
+  ): Promise<{
     total: number;
     totalReplies: number;
     totalLikes: number;
@@ -147,7 +149,7 @@ class CommentService {
     config?: AxiosRequestConfig
   ): Promise<CommentListResponse> {
     const params = new URLSearchParams();
-    
+
     params.append('q', query);
     if (filters?.postId) params.append('postId', filters.postId);
     if (filters?.limit) params.append('limit', filters.limit.toString());
@@ -173,7 +175,7 @@ class CommentService {
     config?: AxiosRequestConfig
   ): Promise<CommentListResponse> {
     const params = new URLSearchParams();
-    
+
     if (filters?.limit) params.append('limit', filters.limit.toString());
     if (filters?.offset) params.append('offset', filters.offset.toString());
     if (filters?.unreadOnly) params.append('unreadOnly', 'true');
@@ -192,11 +194,7 @@ class CommentService {
     commentIds: string[],
     config?: AxiosRequestConfig
   ): Promise<void> {
-    await wingManApi.post(
-      `${this.baseUrl}/mentions/${userId}/mark-read`,
-      { commentIds },
-      config
-    );
+    await wingManApi.post(`${this.baseUrl}/mentions/${userId}/mark-read`, { commentIds }, config);
   }
 }
 

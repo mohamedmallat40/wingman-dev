@@ -2,8 +2,6 @@
 
 import React, { useMemo, useState } from 'react';
 
-import type { CreatePostData } from './types';
-
 import { Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -18,7 +16,7 @@ import ContentCreator from './components/modals/ContentCreator';
 import NotificationCenter from './components/modals/NotificationCenter';
 import LiveActivityBar from './components/navigation/LiveActivityBar';
 import TopicSidebar from './components/navigation/TopicSidebar';
-import { useCreatePost, useFollowTopic, useTopics, useUnfollowTopic, useUpdatePost } from './hooks';
+import { useFollowTopic, useTopics, useUnfollowTopic } from './hooks';
 import { useBroadcastStore, useUnreadNotificationsCount } from './store/useBroadcastStore';
 import { BroadcastPost } from './types';
 
@@ -37,8 +35,6 @@ export default function BroadcastsPage() {
   } = useBroadcastStore();
 
   const unreadCount = useUnreadNotificationsCount();
-  const createPost = useCreatePost();
-  const updatePost = useUpdatePost();
   const followTopic = useFollowTopic();
   const unfollowTopic = useUnfollowTopic();
   const { data: topics } = useTopics();
@@ -66,23 +62,6 @@ export default function BroadcastsPage() {
   const handleCreatePost = () => {
     openContentCreator();
   };
-
-  // Note: onPublish is no longer needed as ContentCreator handles the API calls internally
-  // const handlePublishPost = async (postData: CreatePostData) => {
-  //   try {
-  //     if (editingPost) {
-  //       // Update existing post
-  //       await updatePost.mutateAsync({ postId: editingPost.id, postData });
-  //     } else {
-  //       // Create new post
-  //       await createPost.mutateAsync(postData);
-  //     }
-  //     closeContentCreator();
-  //     setEditingPost(null);
-  //   } catch (error) {
-  //     // Post publish error is handled by the mutation's onError
-  //   }
-  // };
 
   const handleSaveDraft = (draftData: Partial<BroadcastPost>) => {
     // Handle draft saving logic here
@@ -153,7 +132,7 @@ export default function BroadcastsPage() {
               size='sm'
               startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
               onPress={handleCreatePost}
-              isLoading={createPost.isPending}
+              isLoading={false}
             >
               {t('feed.createPost')}
             </Button>

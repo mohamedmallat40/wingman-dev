@@ -121,6 +121,22 @@ export const trackPostView = async (postId: string) => {
   return response.data;
 };
 
+/**
+ * Upvote a broadcast post
+ */
+export const upvotePost = async (postId: string) => {
+  const response = await wingManApi.post(`/broadcast/${postId}/upvote`);
+  return response.data;
+};
+
+/**
+ * Remove upvote from a broadcast post
+ */
+export const removeUpvote = async (postId: string) => {
+  const response = await wingManApi.delete(`/broadcast/${postId}/upvote`);
+  return response.data;
+};
+
 // ===== TOPICS API =====
 
 /**

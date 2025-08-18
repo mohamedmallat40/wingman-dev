@@ -31,10 +31,10 @@ export interface Comment {
   readonly taggedUsers: readonly any[]; // Tagged users in the comment
   readonly depth: number; // Nesting depth from API
   readonly replies: readonly Comment[]; // Nested replies
-  
+
   // Computed/additional fields for UI
   readonly content?: string; // For compatibility
-  readonly authorId?: string; // For compatibility  
+  readonly authorId?: string; // For compatibility
   readonly author?: UserSummary; // For compatibility
   readonly postId?: string; // For compatibility
   readonly parentId?: string; // For nested replies
@@ -151,6 +151,7 @@ export interface UseCommentsReturn {
     readonly deleteComment: (id: string) => Promise<void>;
     readonly likeComment: (id: string) => Promise<void>;
     readonly unlikeComment: (id: string) => Promise<void>;
+    readonly loadInitialComments: () => Promise<void>;
   };
 }
 

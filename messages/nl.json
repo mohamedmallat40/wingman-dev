@@ -636,7 +636,12 @@
       "actions": {
         "like": "Leuk vinden",
         "unlike": "Niet meer leuk vinden",
+        "upvote": "Stem op",
+        "upvoted": "Gestemd",
         "comment": "Reageren",
+        "comments": "Reacties",
+        "hideComments": "Reacties verbergen",
+        "broadcast": "Uitzending",
         "share": "Delen",
         "bookmark": "Bladwijzer",
         "unbookmark": "Bladwijzer verwijderen",
@@ -644,7 +649,9 @@
         "delete": "Verwijderen",
         "viewPost": "Bericht bekijken",
         "sharePost": "Bericht Delen",
-        "copyLink": "Link kopiëren"
+        "copyLink": "Link kopiëren",
+        "backToFeed": "Terug naar feed",
+        "retry": "Opnieuw proberen"
       },
       "menu": {
         "moreOptions": "Meer opties",
@@ -670,6 +677,33 @@
         "description": "Weet je zeker dat je \"{title}\" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.",
         "confirm": "Verwijderen",
         "cancel": "Annuleren"
+      },
+      "share": {
+        "title": "Bericht Delen",
+        "subtitle": "Deel dit bericht met je netwerk of op sociale media",
+        "copyLink": {
+          "title": "Link Kopiëren",
+          "copy": "Kopiëren",
+          "copied": "Gekopieerd!"
+        },
+        "nativeShare": {
+          "title": "Delen",
+          "button": "Delen via apparaat"
+        },
+        "socialMedia": {
+          "title": "Delen op Sociale Media"
+        },
+        "analytics": {
+          "title": "Deel Analytics",
+          "description": "Volg betrokkenheid en weergaven van gedeelde links"
+        },
+        "copySuccess": "Link naar klembord gekopieerd!",
+        "copyError": "Kopiëren van link mislukt",
+        "shareError": "Delen van bericht mislukt",
+        "close": "Sluiten",
+        "fallbacks": {
+          "untitledPost": "Naamloos Bericht"
+        }
       }
     },
     "create": {
@@ -875,6 +909,26 @@
       },
       "postedOn": "Geplaatst op {date}",
       "relatedActions": "Gerelateerde Acties"
+    },
+    "detail": {
+      "title": "Broadcast Detail",
+      "subtitle": "Bekijk gedetailleerde informatie over deze broadcast"
+    },
+    "engagement": {
+      "title": "Interactie met dit bericht",
+      "description": "Deel je gedachten en maak verbinding met de gemeenschap"
+    },
+    "actions": {
+      "goBack": "Ga Terug",
+      "goHome": "Ga naar Home",
+      "share": "Delen"
+    },
+    "loading": "Broadcast laden...",
+    "errors": {
+      "notFound": {
+        "title": "Broadcast Niet Gevonden",
+        "description": "Deze broadcast bestaat niet of is verwijderd."
+      }
     },
     "imageModal": {
       "previous": "Vorige",

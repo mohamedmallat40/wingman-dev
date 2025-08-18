@@ -14,7 +14,6 @@ import {
 import { Icon } from '@iconify/react';
 
 import wingManApi from '@/lib/axios';
-import { Experience } from '../../types';
 
 import { Experience } from '../../types';
 

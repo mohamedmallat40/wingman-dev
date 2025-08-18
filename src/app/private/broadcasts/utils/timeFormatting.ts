@@ -15,15 +15,8 @@ export interface TimeFormatOptions {
 export const useSmartTimeFormat = () => {
   const t = useTranslations('comments.time');
 
-  const formatRelativeTime = (
-    dateString: string, 
-    options: TimeFormatOptions = {}
-  ): string => {
-    const {
-      precision = 'short',
-      showSeconds = false,
-      maxDays = 7
-    } = options;
+  const formatRelativeTime = (dateString: string, options: TimeFormatOptions = {}): string => {
+    const { precision = 'short', showSeconds = false, maxDays = 7 } = options;
 
     const date = new Date(dateString);
     const now = new Date();
@@ -31,33 +24,25 @@ export const useSmartTimeFormat = () => {
 
     // Just now (less than 1 minute)
     if (diffInSeconds < 60) {
-      return showSeconds && diffInSeconds > 0 
-        ? `${diffInSeconds}s` 
-        : t('justNow');
+      return showSeconds && diffInSeconds > 0 ? `${diffInSeconds}s` : t('justNow');
     }
 
     // Minutes ago (less than 1 hour)
     if (diffInSeconds < 3600) {
       const minutes = Math.floor(diffInSeconds / 60);
-      return precision === 'short' 
-        ? `${minutes}m`
-        : t('minutesAgo', { count: minutes });
+      return precision === 'short' ? `${minutes}m` : t('minutesAgo', { count: minutes });
     }
 
     // Hours ago (less than 24 hours)
     if (diffInSeconds < 86400) {
       const hours = Math.floor(diffInSeconds / 3600);
-      return precision === 'short'
-        ? `${hours}h`
-        : t('hoursAgo', { count: hours });
+      return precision === 'short' ? `${hours}h` : t('hoursAgo', { count: hours });
     }
 
     // Days ago (within maxDays)
     const days = Math.floor(diffInSeconds / 86400);
     if (days <= maxDays) {
-      return precision === 'short'
-        ? `${days}d`
-        : t('daysAgo', { count: days });
+      return precision === 'short' ? `${days}d` : t('daysAgo', { count: days });
     }
 
     // After maxDays, show absolute date
@@ -100,12 +85,12 @@ export const useSmartPluralization = () => {
     if (locale === 'en') {
       return count === 1 ? 'one' : 'other';
     }
-    
+
     // Dutch pluralization rules
     if (locale === 'nl') {
       return count === 1 ? 'one' : 'other';
     }
-    
+
     // French pluralization rules (more complex)
     if (locale === 'fr') {
       if (count === 0) return 'zero';
@@ -141,22 +126,22 @@ export const useContextualActions = () => {
     switch (action) {
       case 'like':
         return isLiked ? t('unlike') : t('like');
-      
+
       case 'edit':
         return isOwner ? t('edit') : '';
-      
+
       case 'delete':
         return isOwner ? t('delete') : '';
-      
+
       case 'reply':
         return t('reply');
-      
+
       case 'share':
         return t('share');
-      
+
       case 'report':
         return !isOwner ? t('report') : '';
-      
+
       default:
         return t(action);
     }
@@ -207,7 +192,7 @@ export const useSmartCountFormat = () => {
     t: (key: string, values?: any) => string
   ): string => {
     if (count === 0) return '';
-    
+
     const formattedCount = formatCount(count);
     return t(labelKey, { count });
   };
@@ -219,7 +204,9 @@ export const useSmartCountFormat = () => {
  * Mention parsing and formatting
  */
 export const useMentionFormatting = () => {
-  const parseMentions = (text: string | undefined | null): {
+  const parseMentions = (
+    text: string | undefined | null
+  ): {
     text: string;
     mentions: Array<{ username: string; startIndex: number; endIndex: number }>;
   } => {
@@ -234,9 +221,9 @@ export const useMentionFormatting = () => {
 
     while ((match = mentionRegex.exec(text)) !== null) {
       mentions.push({
-        username: match[1],
-        startIndex: match.index,
-        endIndex: match.index + match[0].length
+        username: match[1] || '',
+        startIndex: match.index || 0,
+        endIndex: (match.index || 0) + match[0].length
       });
     }
 
@@ -248,7 +235,7 @@ export const useMentionFormatting = () => {
     if (!text || typeof text !== 'string') {
       return '';
     }
-    
+
     return text.replace(
       /@(\w+)/g,
       '<span class="text-primary font-medium hover:underline cursor-pointer" data-mention="$1">@$1</span>'
