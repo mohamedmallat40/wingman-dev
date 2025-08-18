@@ -65,7 +65,8 @@ const sampleMessages: Message[] = [
   {
     id: '1',
     type: 'assistant',
-    content: '👋 Hello! I\'m Mr. Lode Schoors, your personal Success Manager at Wingman. I\'m here to help you succeed with your projects and find the perfect talent. How can I assist you today?',
+    content:
+      "👋 Hello! I'm Mr. Lode Schoors, your personal Success Manager at Wingman. I'm here to help you succeed with your projects and find the perfect talent. How can I assist you today?",
     timestamp: new Date(Date.now() - 60000)
   },
   {
@@ -122,7 +123,7 @@ export default function AssistantSidebar({
         id: (Date.now() + 1).toString(),
         type: 'assistant',
         content:
-          'Thank you for your question! 💡 I\'m analyzing your request and will get back to you with the perfect solution. Let me connect you with the right resources and talent that match your needs.',
+          "Thank you for your question! 💡 I'm analyzing your request and will get back to you with the perfect solution. Let me connect you with the right resources and talent that match your needs.",
         timestamp: new Date()
       };
       setMessages((prev) => [...prev, assistantMessage]);
@@ -189,15 +190,12 @@ export default function AssistantSidebar({
                     className={`flex max-w-[85%] items-start gap-3 ${message.type === 'user' ? 'flex-row-reverse' : ''}`}
                   >
                     {message.type === 'assistant' && (
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        transition={{ duration: 0.2 }}
-                      >
+                      <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                         <Avatar
                           src='/mr_success_manager.png'
                           alt='Mr. Lode Schoors'
                           size='sm'
-                          className='ring-primary/30 flex-shrink-0 ring-2 ring-offset-1 ring-offset-background shadow-medium transition-all duration-300 hover:ring-primary/50'
+                          className='ring-primary/30 ring-offset-background shadow-medium hover:ring-primary/50 flex-shrink-0 ring-2 ring-offset-1 transition-all duration-300'
                           imgProps={{
                             className: 'object-cover'
                           }}
@@ -205,10 +203,10 @@ export default function AssistantSidebar({
                       </motion.div>
                     )}
                     <div
-                      className={`rounded-2xl px-5 py-4 backdrop-blur-sm transition-all duration-300 hover:shadow-medium ${
+                      className={`hover:shadow-medium rounded-2xl px-5 py-4 backdrop-blur-sm transition-all duration-300 ${
                         message.type === 'user'
-                          ? 'bg-gradient-to-r from-primary to-primary-600 text-primary-foreground shadow-medium ring-1 ring-primary/20'
-                          : 'bg-gradient-to-br from-background/90 to-background/70 border border-divider/50 shadow-soft ring-1 ring-foreground/5 hover:ring-primary/10'
+                          ? 'from-primary to-primary-600 text-primary-foreground shadow-medium ring-primary/20 bg-gradient-to-r ring-1'
+                          : 'from-background/90 to-background/70 border-divider/50 shadow-soft ring-foreground/5 hover:ring-primary/10 border bg-gradient-to-br ring-1'
                       }`}
                     >
                       <p className='text-sm leading-relaxed whitespace-pre-wrap'>
@@ -226,7 +224,7 @@ export default function AssistantSidebar({
                               isIconOnly
                               size='sm'
                               variant='light'
-                              className='h-6 w-6 min-w-6 hover:bg-primary/10 transition-all duration-200 hover:scale-110'
+                              className='hover:bg-primary/10 h-6 w-6 min-w-6 transition-all duration-200 hover:scale-110'
                             >
                               <Icon icon='solar:copy-linear' className='h-3 w-3' />
                             </Button>
@@ -234,14 +232,13 @@ export default function AssistantSidebar({
                               isIconOnly
                               size='sm'
                               variant='light'
-                              className='h-6 w-6 min-w-6 hover:bg-success/10 hover:text-success transition-all duration-200 hover:scale-110'
+                              className='hover:bg-success/10 hover:text-success h-6 w-6 min-w-6 transition-all duration-200 hover:scale-110'
                             >
                               <Icon icon='solar:like-linear' className='h-3 w-3' />
                             </Button>
                           </div>
                         )}
                       </div>
-
                     </div>
                   </div>
                 </motion.div>
@@ -257,21 +254,18 @@ export default function AssistantSidebar({
                 className='flex justify-start'
               >
                 <div className='flex items-start gap-3'>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.2 }}
-                  >
+                  <motion.div whileHover={{ scale: 1.05 }} transition={{ duration: 0.2 }}>
                     <Avatar
                       src='/mr_success_manager.png'
                       alt='Mr. Lode Schoors'
                       size='sm'
-                      className='ring-primary/30 ring-2 ring-offset-1 ring-offset-background shadow-medium transition-all duration-300 hover:ring-primary/50'
+                      className='ring-primary/30 ring-offset-background shadow-medium hover:ring-primary/50 ring-2 ring-offset-1 transition-all duration-300'
                       imgProps={{
                         className: 'object-cover'
                       }}
                     />
                   </motion.div>
-                  <div className='bg-gradient-to-br from-background/90 to-background/70 border border-divider/50 shadow-soft rounded-2xl px-5 py-4 ring-1 ring-foreground/5'>
+                  <div className='from-background/90 to-background/70 border-divider/50 shadow-soft ring-foreground/5 rounded-2xl border bg-gradient-to-br px-5 py-4 ring-1'>
                     <div className='flex items-center gap-2'>
                       <div className='flex items-center gap-1'>
                         <div className='bg-primary h-2 w-2 animate-bounce rounded-full [animation-delay:-0.3s]' />
@@ -292,7 +286,7 @@ export default function AssistantSidebar({
         </ScrollShadow>
 
         {/* Premium Input Area */}
-        <div className='flex-shrink-0 border-t border-divider/30 bg-gradient-to-r from-background/95 to-background/90 backdrop-blur-sm px-4 py-3'>
+        <div className='border-divider/30 from-background/95 to-background/90 flex-shrink-0 border-t bg-gradient-to-r px-4 py-3 backdrop-blur-sm'>
           <div className='space-y-2'>
             {/* Small Quick Actions */}
             <div className='flex gap-1 overflow-x-auto pb-1'>
@@ -302,7 +296,7 @@ export default function AssistantSidebar({
                   variant='flat'
                   color={action.color}
                   size='sm'
-                  className='min-w-fit whitespace-nowrap h-7 px-2 text-xs transition-all duration-200 hover:scale-105 hover:shadow-small'
+                  className='hover:shadow-small h-7 min-w-fit px-2 text-xs whitespace-nowrap transition-all duration-200 hover:scale-105'
                   startContent={<Icon icon={action.icon} className='h-3 w-3' />}
                   onPress={() => handleQuickAction(action.action)}
                 >
@@ -310,7 +304,7 @@ export default function AssistantSidebar({
                 </Button>
               ))}
             </div>
-            
+
             {/* Input Field */}
             <div className='flex items-end gap-3'>
               <div className='flex-1'>
@@ -348,7 +342,7 @@ export default function AssistantSidebar({
                 size='md'
                 color='primary'
                 isIconOnly
-                className='h-12 w-12 transition-all duration-300 hover:shadow-medium hover:scale-105'
+                className='hover:shadow-medium h-12 w-12 transition-all duration-300 hover:scale-105'
                 variant={inputValue.trim() ? 'solid' : 'flat'}
                 isDisabled={!inputValue.trim()}
                 onPress={handleSendMessage}

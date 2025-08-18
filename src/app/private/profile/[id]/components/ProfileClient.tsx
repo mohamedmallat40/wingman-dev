@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardBody, CardHeader, Skeleton } from '@heroui/react';
 import { addToast } from '@heroui/toast';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
+import { type IExperience } from 'modules/profile/types';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
@@ -75,10 +76,15 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
           experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data : [],
         languages: languagesResponse.status === 'fulfilled' ? languagesResponse.value.data : [],
         education: educationResponse.status === 'fulfilled' ? educationResponse.value.data : [],
+        notes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
+        projects:
+          experiencesResponse.status === 'fulfilled'
+            ? experiencesResponse.value.data.filter((item: IExperience) => item.title)
+            : [],
         userNotes: notesResponse.status === 'fulfilled' ? notesResponse.value.data : [],
-        projects: experiencesResponse.status === 'fulfilled' ? experiencesResponse.value.data.filter((item: IExperience) => item.title) : [],
         services: servicesResponse.status === 'fulfilled' ? servicesResponse.value.data : [],
-        testimonials: testimonialsResponse.status === 'fulfilled' ? testimonialsResponse.value.data : [],
+        testimonials:
+          testimonialsResponse.status === 'fulfilled' ? testimonialsResponse.value.data : [],
         connectionStatus: isOwnProfile
           ? {
               isConnected: true, // Own profile is always "connected"
@@ -221,7 +227,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         title: 'Invitation declined',
         description: 'The invitation has been declined.',
         color: 'warning',
-        duration: 4000
+        timeout: 4000
       });
 
       // Refresh connection status
@@ -254,7 +260,7 @@ const ProfileClient: React.FC<ProfileClientProps> = ({ userId }) => {
         title: 'Failed to decline invitation',
         description: 'Something went wrong. Please try again later.',
         color: 'danger',
-        duration: 4000
+        timeout: 4000
       });
     }
   };
@@ -422,7 +428,7 @@ const ProfileSkeleton: React.FC = () => {
                 <div className='space-y-8'>
                   {[1, 2].map((i) => (
                     <div key={i} className='flex gap-6'>
-                      <Skeleton className='h-5 w-5 rounded-sm flex-shrink-0 mt-2' />
+                      <Skeleton className='mt-2 h-5 w-5 flex-shrink-0 rounded-sm' />
                       <div className='flex-1 space-y-4'>
                         <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
                           <div className='space-y-2'>
@@ -466,7 +472,7 @@ const ProfileSkeleton: React.FC = () => {
                 <div className='space-y-8'>
                   {[1, 2].map((i) => (
                     <div key={i} className='flex gap-6'>
-                      <Skeleton className='h-5 w-5 rounded-sm flex-shrink-0 mt-2' />
+                      <Skeleton className='mt-2 h-5 w-5 flex-shrink-0 rounded-sm' />
                       <div className='flex-1'>
                         <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
                           <div className='space-y-2'>
@@ -476,8 +482,8 @@ const ProfileSkeleton: React.FC = () => {
                           </div>
                           <Skeleton className='h-8 w-28 rounded-full' />
                         </div>
-                        <Skeleton className='h-4 w-4/5 mt-4 rounded-lg' />
-                        <Skeleton className='h-6 w-20 mt-4 rounded-full' />
+                        <Skeleton className='mt-4 h-4 w-4/5 rounded-lg' />
+                        <Skeleton className='mt-4 h-6 w-20 rounded-full' />
                       </div>
                     </div>
                   ))}

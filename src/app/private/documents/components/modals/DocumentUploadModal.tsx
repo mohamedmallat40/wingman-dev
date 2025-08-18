@@ -29,22 +29,22 @@ import wingManApi from '@/lib/axios';
 
 interface DocumentUploadModalProperties {
   isOpen: boolean;
-  onClose: () => void;
+  onClose: (shouldRefresh?: boolean) => void;
   onUpload?: (data: {
     name: string;
     tags: string[];
-    file: string;
-    type: { id: string; name: string };
-    status: { id: string; name: string };
+    file: File;
+    type: string;
+    status: string;
   }) => Promise<void>;
   onUpdate?: (
     documentId: string,
     data: {
       name: string;
       tags: string[];
-      file: string;
-      type: { id: string; name: string };
-      status: { id: string; name: string };
+      file?: File;
+      type: string;
+      status: string;
     }
   ) => Promise<void>;
   document?: IDocument | null; // Document to edit (null for upload mode)
@@ -53,7 +53,7 @@ interface DocumentUploadModalProperties {
 
 interface UploadResponse {
   originalname: string;
-  filename: string;
+  fileName: string; // Changed to match the service interface
   buffer: string;
 }
 
@@ -124,9 +124,12 @@ const getTagColor = (
   ];
   let hash = 0;
   for (let index = 0; index < tagName.length; index++) {
-    hash = tagName.codePointAt(index) + ((hash << 5) - hash);
+    const charCode = tagName.codePointAt(index);
+    if (charCode !== undefined) {
+      hash = charCode + ((hash << 5) - hash);
+    }
   }
-  return colors[Math.abs(hash) % colors.length];
+  return colors[Math.abs(hash) % colors.length] || 'default';
 };
 
 const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
@@ -164,13 +167,13 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
   const upload = useUpload();
   // Initialize form with document data in edit mode
   useEffect(() => {
-    if (isEditMode) {
+    if (isEditMode && document) {
       setDocumentName(document.documentName);
       setSelectedTags(document.tags.map((tag) => tag.id));
-      setDocumentStatus(document.status.id);
+      setDocumentStatus(document.status?.id || '');
 
       // Find and set document type
-      const documentType = documentTypes.find((type) => type.id === document.type?.id);
+      const documentType = documentTypes.find((type) => type.id === document.category?.id);
       if (documentType) {
         setSelectedDocumentType(documentType);
       }
@@ -217,19 +220,23 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
   }, [isOpen]);
 
   // Reset form when modal closes
-  const handleClose = useCallback(() => {
-    if (!isUploading) {
-      setDocumentName('');
-      setSelectedTags([]);
-      setSelectedFile(null);
-      setSelectedDocumentType(null);
-      setDocumentStatus('');
-      setUploadProgress(0);
-      setError('');
-      setSuccess(false);
-      onClose();
-    }
-  }, [isUploading, onClose]);
+  const handleClose = useCallback(
+    (shouldRefresh = false) => {
+      if (!isUploading) {
+        setDocumentName('');
+        setSelectedTags([]);
+        setSelectedFile(null);
+        setSelectedDocumentType(null);
+        setDocumentStatus('');
+        setUploadProgress(0);
+        setError('');
+        setSuccess(false);
+        setUploadedFileName(null);
+        onClose(shouldRefresh);
+      }
+    },
+    [isUploading, onClose]
+  );
 
   // Handle document type change
   const handleTypeChange = useCallback(
@@ -287,7 +294,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
       setIsDragOver(false);
 
       const files = [...e.dataTransfer.files];
-      if (files.length > 0) {
+      if (files.length > 0 && files[0]) {
         handleFileSelect(files[0]);
       }
     },
@@ -353,7 +360,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           formData.append('statusId', statusId);
 
           // Append each tag ID separately
-          for (const [index, tagId] of tagIds.entries()) {
+          for (const tagId of tagIds) {
             formData.append(`tags`, tagId);
           }
 
@@ -366,18 +373,25 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
             tags: tagIds,
             typeId: selectedDocumentType.id,
             statusId: selectedStatusObject.id,
-            fileName: document.fileName
+            fileName: document?.fileName || ''
           };
           // Update document
-          await wingManApi.patch(`/documents/${document.id}`, requestData);
+          await wingManApi.patch(`/documents/${document?.id}`, requestData);
 
           setUploadProgress(100);
-        } else if (!isEditMode && onUpload) {
+        } else if (!isEditMode) {
           let fileName = '';
           if (selectedFile) {
-            const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
-            fileName = uploadResponse.filename;
-            setUploadedFileName(uploadResponse.filename);
+            try {
+              const uploadResponse = (await upload.uploadeFileSingle(
+                selectedFile
+              )) as UploadResponse;
+              fileName = uploadResponse.fileName;
+              setUploadedFileName(uploadResponse.fileName);
+            } catch (uploadError) {
+              console.error('File upload failed:', uploadError);
+              throw new Error('Failed to upload file. Please try again.');
+            }
           }
 
           const formData = new FormData();
@@ -387,7 +401,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           formData.append('statusId', statusId);
 
           // Append each tag ID separately
-          for (const [index, tagId] of tagIds.entries()) {
+          for (const tagId of tagIds) {
             formData.append(`tags`, tagId);
           }
 
@@ -401,14 +415,19 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
 
           // Upload document
           setUploadProgress(60);
-          await wingManApi.post('/documents', requestData);
-          setUploadProgress(100);
+          try {
+            await wingManApi.post('/documents', requestData);
+            setUploadProgress(100);
+          } catch (docError) {
+            console.error('Document creation failed:', docError);
+            throw new Error('Failed to create document. Please try again.');
+          }
         }
 
         setSuccess(true);
 
-        // Auto close after success
-        setTimeout(handleClose, 500);
+        // Auto close after success with refresh
+        setTimeout(() => handleClose(true), 500);
       } catch (error) {
         console.error(`${isEditMode ? 'Update' : 'Upload'} failed:`, error);
         const errorMessage =
@@ -493,41 +512,52 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
         {() => (
           <>
             <ModalHeader className='via-default-50/20 to-default-50/40 dark:via-default-900/10 dark:to-default-900/20 flex flex-col gap-2 bg-gradient-to-b from-transparent px-8 pt-8 pb-6'>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className='flex items-center gap-3'
-              >
+              <div className='flex items-center justify-between'>
                 <motion.div
-                  className='from-primary/10 via-primary/5 ring-primary/20 relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent shadow-lg ring-1 backdrop-blur-sm'
-                  whileHover={{ scale: 1.08, rotate: 8 }}
-                  whileTap={{ scale: 0.92 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className='flex items-center gap-3'
                 >
-                  <div className='from-primary/5 to-primary/10 absolute inset-0 rounded-2xl bg-gradient-to-br blur-xl' />
-                  <Icon
-                    icon={
-                      success
-                        ? 'solar:check-circle-bold'
-                        : isEditMode
-                          ? 'solar:pen-linear'
-                          : 'solar:upload-linear'
-                    }
-                    className='text-primary relative z-10 h-8 w-8 drop-shadow-sm'
-                  />
+                  <motion.div
+                    className='from-primary/10 via-primary/5 ring-primary/20 relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent shadow-lg ring-1 backdrop-blur-sm'
+                    whileHover={{ scale: 1.08, rotate: 8 }}
+                    whileTap={{ scale: 0.92 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  >
+                    <div className='from-primary/5 to-primary/10 absolute inset-0 rounded-2xl bg-gradient-to-br blur-xl' />
+                    <Icon
+                      icon={
+                        success
+                          ? 'solar:check-circle-outline'
+                          : isEditMode
+                            ? 'solar:pen-outline'
+                            : 'solar:upload-outline'
+                      }
+                      className='text-primary relative z-10 h-8 w-8 drop-shadow-sm'
+                    />
+                  </motion.div>
+                  <div className='flex flex-col gap-1'>
+                    <h2 className='text-foreground from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight'>
+                      {success ? `${isEditMode ? 'Update' : 'Upload'} Successful!` : modalTitle}
+                    </h2>
+                    <p className='text-default-500 text-sm font-medium tracking-wide opacity-90'>
+                      {success
+                        ? `Document "${documentName}" ${isEditMode ? 'updated' : 'uploaded'} successfully`
+                        : modalSubtitle}
+                    </p>
+                  </div>
                 </motion.div>
-                <div className='flex flex-col gap-1'>
-                  <h2 className='text-foreground from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight'>
-                    {success ? `${isEditMode ? 'Update' : 'Upload'} Successful!` : modalTitle}
-                  </h2>
-                  <p className='text-default-500 text-sm font-medium tracking-wide opacity-90'>
-                    {success
-                      ? `Document "${documentName}" ${isEditMode ? 'updated' : 'uploaded'} successfully`
-                      : modalSubtitle}
-                  </p>
-                </div>
-              </motion.div>
+                <Button
+                  isIconOnly
+                  variant='light'
+                  onPress={() => handleClose()}
+                  disabled={isUploading}
+                  className='hover:bg-default-100 dark:hover:bg-default-800'
+                >
+                  <Icon icon='solar:close-circle-outline' className='h-5 w-5' />
+                </Button>
+              </div>
             </ModalHeader>
 
             <ModalBody className='via-default-50/20 to-default-50/40 dark:via-default-900/10 dark:to-default-900/20 gap-6 bg-gradient-to-b from-transparent px-8 py-6'>
@@ -638,7 +668,6 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                         {documentTypes.map((type) => (
                           <SelectItem
                             key={type.id}
-                            value={type.id}
                             classNames={{
                               base: 'hover:!bg-blue-100 data-[hover=true]:!bg-blue-100 data-[selected=true]:!bg-blue-200'
                             }}
@@ -688,7 +717,6 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                         {availableStatuses.map((status) => (
                           <SelectItem
                             key={status.id}
-                            value={status.id}
                             classNames={{
                               base: 'hover:!bg-blue-100 data-[hover=true]:!bg-blue-100 data-[selected=true]:!bg-blue-200'
                             }}
@@ -744,7 +772,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                         onDrop={handleDrop}
                         acceptedFileTypes='.pdf,.jpg,.jpeg,.png'
                         maxFileSize={10 * 1024 * 1024}
-                        disabled={isEditMode}
+                        disabled={Boolean(isEditMode)}
                       />
                     )}
                   </FormField>
@@ -794,7 +822,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
                 >
                   <Button
                     variant='bordered'
-                    onPress={handleClose}
+                    onPress={() => handleClose()}
                     disabled={isUploading}
                     className='border-default-300/60 hover:border-primary/60 hover:bg-primary/5 hover:shadow-primary/10 h-12 rounded-2xl font-medium tracking-wide backdrop-blur-sm transition-all duration-300 hover:shadow-lg'
                   >

@@ -115,9 +115,9 @@ export function LoginModal({
           });
 
           const parameters = new URLSearchParams({
-            oauth_email: result.user.email || '',
-            oauth_firstName: result.user.firstName || '',
-            oauth_lastName: result.user.lastName || '',
+            oauth_email: result.user?.email || '',
+            oauth_firstName: result.user?.firstName || '',
+            oauth_lastName: result.user?.lastName || '',
             oauth_token: result.token || '',
             chat_token: result.chatToken || '',
             is_oauth: 'true'
@@ -208,16 +208,16 @@ export function LoginModal({
             </div>
             <h2 className='text-foreground mb-2 text-2xl font-bold tracking-[0.02em]'>
               {showResetModal
-                ? (resetSent
+                ? resetSent
                   ? 'Check Your Email'
-                  : 'Reset Password')
+                  : 'Reset Password'
                 : 'Welcome Back'}
             </h2>
             <p className='text-default-500 font-normal tracking-[0.02em]'>
               {showResetModal
-                ? (resetSent
+                ? resetSent
                   ? "We've sent a password reset link to your email"
-                  : 'Enter your email to receive a reset link')
+                  : 'Enter your email to receive a reset link'
                 : 'Log in to your account to continue'}
             </p>
           </motion.div>

@@ -27,7 +27,7 @@ import { type IUserProfile } from '@root/modules/profile/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
-import { type IDocument } from '../../types';
+import { type IDocument, type SharedUser } from '../../types';
 
 interface DocumentShareModalProperties {
   isOpen: boolean;
@@ -66,14 +66,19 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
   const networkUsers = networkResponse?.items;
   const existingSharedUsers = useMemo(() => {
     return (
-      document?.sharedWith.map((shared: IUserProfile) => ({
-        id: shared?.id,
-        email: shared?.email,
-        firstName: shared?.firstName,
-        lastName: shared?.lastName,
-        avatar: shared?.profileImage,
-        role: shared?.kind
-      })) ?? []
+      document?.sharedWith
+        ?.map((share) => {
+          if (!share?.user) return null;
+          return {
+            id: share.user.id,
+            email: share.user.email,
+            firstName: share.user.firstName,
+            lastName: share.user.lastName,
+            avatar: share.user.profileImage || share.user.avatar || '',
+            role: share.user.role || 'FREELANCER'
+          };
+        })
+        .filter(Boolean) ?? []
     );
   }, [document]);
 
@@ -94,7 +99,8 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
   const filteredUsers = useMemo(() => {
     const existingUserIds = new Set(existingSharedUsers.map((user) => user.id));
     const selectedUserIds = new Set(selectedUsers);
-    return networkUsers?.filter((user: unknown) => {
+    return networkUsers
+      ?.filter((user: IUserProfile) => {
         if (existingUserIds.has(user.id) || selectedUserIds.has(user.id)) {
           return false;
         }
@@ -112,7 +118,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
 
         return true;
       })
-      .slice(0, 8); // Limit results
+      .slice(0, 5); // Limit results
   }, [searchQuery, selectedUsers, existingSharedUsers, networkUsers]);
 
   // Reset state on close
@@ -239,13 +245,12 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
       onClose={handleClose}
       size='2xl'
       scrollBehavior='inside'
-      backdrop='blur'
+      backdrop='opaque'
       isDismissable={!isSharing}
-      hideCloseButton
       classNames={{
-        wrapper: 'p-4 sm:p-6',
-        base: 'bg-background/95 dark:bg-content1/95 backdrop-blur-md border-0',
-        backdrop: 'bg-gradient-to-br from-black/40 via-black/30 to-black/40 backdrop-blur-lg'
+        wrapper: 'p-0',
+        base: 'border-default-200 dark:border-default-700 m-0',
+        backdrop: 'bg-black/50 backdrop-blur-sm'
       }}
       motionProps={{
         variants: {
@@ -272,52 +277,51 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
         }
       }}
     >
-      <ModalContent className='border-default-200/50 dark:border-default-700/50 w-full max-w-2xl overflow-hidden rounded-3xl border shadow-2xl ring-1 ring-white/10 backdrop-blur-xl dark:ring-white/5'>
-        {() => (
+      <ModalContent className='w-full max-w-2xl'>
+        {(onClose) => (
           <>
-            <ModalHeader className='via-default-50/20 to-default-50/40 dark:via-default-900/10 dark:to-default-900/20 flex flex-col gap-2 bg-gradient-to-b from-transparent px-8 pt-8 pb-6'>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className='flex items-center gap-3'
-              >
+            <ModalHeader className='flex flex-col gap-0 p-6'>
+              <div className='flex items-center justify-between'>
                 <motion.div
-                  className='from-primary/10 via-primary/5 ring-primary/20 relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br to-transparent shadow-lg ring-1 backdrop-blur-sm'
-                  whileHover={{ scale: 1.08, rotate: 8 }}
-                  whileTap={{ scale: 0.92 }}
-                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className='flex items-center gap-3'
                 >
-                  <div className='from-primary/5 to-primary/10 absolute inset-0 rounded-2xl bg-gradient-to-br blur-xl' />
-                  <Icon
-                    icon={success ? 'solar:check-circle-bold' : 'solar:share-linear'}
-                    className='text-primary relative z-10 h-8 w-8 drop-shadow-sm'
-                  />
+                  <div className='bg-primary/10 ring-primary/20 flex h-12 w-12 items-center justify-center rounded-xl ring-1'>
+                    <Icon
+                      icon={success ? 'solar:check-circle-outline' : 'solar:share-outline'}
+                      className='text-primary h-6 w-6'
+                    />
+                  </div>
+                  <div className='flex flex-col'>
+                    <h2 className='text-foreground text-xl font-semibold'>
+                      {success ? 'Shared Successfully!' : 'Share Document'}
+                    </h2>
+                    <p className='text-default-500 text-sm'>
+                      {success
+                        ? `Document shared with ${selectedUsers.size} ${selectedUsers.size === 1 ? 'person' : 'people'}`
+                        : `Share "${document.documentName}" with your team`}
+                    </p>
+                  </div>
                 </motion.div>
-                <div className='flex flex-col gap-1'>
-                  <h2 className='text-foreground from-foreground to-foreground/80 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight'>
-                    {success ? 'Shared Successfully!' : 'Share Document'}
-                  </h2>
-                  <p className='text-default-500 text-sm font-medium tracking-wide opacity-90'>
-                    {success
-                      ? `Document shared with ${selectedUsers.size} ${selectedUsers.size === 1 ? 'person' : 'people'}`
-                      : `Share "${document.documentName}" with your team`}
-                  </p>
-                </div>
-              </motion.div>
+              </div>
             </ModalHeader>
 
-            <ModalBody className='via-default-50/20 to-default-50/40 dark:via-default-900/10 dark:to-default-900/20 flex h-[600px] flex-col gap-6 overflow-hidden bg-gradient-to-b from-transparent px-8 py-6'>
+            <ModalBody className='max-h-[80vh] min-h-[500px] w-full overflow-y-auto px-6 py-0'>
               {success ? (
                 // Success state
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.4 }}
-                  className='bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800/30 rounded-2xl border p-6 text-center'
+                  className='bg-success-50 border-success-200 dark:bg-success-900/20 dark:border-success-800/30 rounded-xl border p-4 text-center'
                 >
-                  <Icon icon='solar:share-bold' className='text-success mx-auto mb-3 h-12 w-12' />
-                  <p className='text-success-700 dark:text-success-400 mb-4 font-medium'>
+                  <Icon
+                    icon='solar:check-circle-outline'
+                    className='text-success mx-auto mb-3 h-16 w-16'
+                  />
+                  <p className='text-success-700 dark:text-success-400 mb-4 text-lg font-medium'>
                     Document shared successfully!
                   </p>
                   <p className='text-default-600 dark:text-default-400 text-sm'>
@@ -326,9 +330,8 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                   </p>
                 </motion.div>
               ) : (
-                // Share Form
                 <Form
-                  className='flex h-full flex-col gap-6'
+                  className='w-full space-y-4'
                   validationBehavior='native'
                   onSubmit={handleShare}
                 >
@@ -339,19 +342,14 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
-                        className='bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800/30 mb-4 rounded-2xl border p-4'
+                        className='bg-danger-50 border-danger-200 dark:bg-danger-900/20 dark:border-danger-800/30 rounded-xl border p-3'
                       >
                         <div className='flex items-center gap-2'>
-                          <motion.div
-                            animate={{ rotate: [0, 10, -10, 0] }}
-                            transition={{ duration: 0.5 }}
-                          >
-                            <Icon
-                              icon='solar:danger-triangle-bold'
-                              className='text-danger h-4 w-4'
-                            />
-                          </motion.div>
-                          <p className='text-danger text-sm font-medium tracking-wide'>{error}</p>
+                          <Icon
+                            icon='solar:danger-triangle-outline'
+                            className='text-danger h-5 w-5'
+                          />
+                          <p className='text-danger text-sm font-medium'>{error}</p>
                         </div>
                       </motion.div>
                     )}
@@ -363,11 +361,11 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1, duration: 0.4 }}
-                      className='space-y-3'
+                      className='space-y-2'
                     >
                       <div className='flex items-center gap-2'>
                         <Icon
-                          icon='solar:users-group-rounded-bold'
+                          icon='solar:users-group-rounded-outline'
                           className='text-primary h-4 w-4'
                         />
                         <span className='text-foreground text-sm font-medium'>
@@ -381,22 +379,22 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                             key={user.id}
                             initial={{ opacity: 0, scale: 0.9 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className='bg-default-100/80 dark:bg-default-800/80 flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 ring-white/10 backdrop-blur-sm dark:ring-white/5'
+                            className='bg-default-100 dark:bg-default-800 flex items-center gap-2 rounded-full px-3 py-2'
                           >
                             <Avatar
-                              src={user.avatar || user.profilePicture}
+                              src={user.avatar}
                               name={`${user.firstName} ${user.lastName}`}
                               size='sm'
                               className='h-6 w-6'
                             />
-                            <span className='text-foreground text-sm font-medium'>
+                            <span className='text-foreground text-sm'>
                               {user.firstName} {user.lastName}
                             </span>
                           </motion.div>
                         ))}
                       </div>
 
-                      <Divider />
+                      <Divider className='my-3' />
                     </motion.div>
                   )}
 
@@ -405,42 +403,40 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2, duration: 0.4 }}
-                    className='space-y-4'
+                    className='w-full space-y-2'
                   >
-                    <motion.label
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      className='text-foreground flex items-center gap-2 text-sm font-medium'
-                    >
-                      <Icon icon='solar:user-plus-linear' className='text-primary h-4 w-4' />
-                      Add people
-                    </motion.label>
+                    <div className='mb-2'>
+                      <div className='flex items-center gap-2'>
+                        <Icon icon='solar:user-plus-outline' className='text-primary h-4 w-4' />
+                        <span className='text-foreground text-sm font-medium'>Add people</span>
+                      </div>
+                    </div>
 
-                    <Input
-                      value={searchQuery}
-                      onValueChange={setSearchQuery}
-                      placeholder='Search by name, email, or department...'
-                      variant='bordered'
-                      className='w-full'
-                      classNames={{
-                        base: 'w-full',
-                        mainWrapper: 'w-full',
-                        inputWrapper:
-                          'border-default-300/60 data-[hover=true]:border-primary/60 data-[hover=true]:bg-primary/5 group-data-[focus=true]:border-primary group-data-[focus=true]:bg-primary/5 group-data-[focus=true]:shadow-lg group-data-[focus=true]:shadow-primary/10 rounded-2xl h-14 bg-default-100/50 dark:bg-default-50/50 backdrop-blur-sm transition-all duration-300',
-                        input:
-                          'text-foreground font-medium tracking-wide placeholder:text-default-400 pl-2 text-base'
-                      }}
-                      startContent={
-                        isSearching ? (
-                          <Spinner size='sm' color='primary' />
-                        ) : (
-                          <Icon
-                            icon='solar:magnifer-linear'
-                            className='text-default-400 h-5 w-5 flex-shrink-0'
-                          />
-                        )
-                      }
-                    />
+                    <div className='w-full'>
+                      <Input
+                        value={searchQuery}
+                        onValueChange={setSearchQuery}
+                        placeholder='Search by name, email, or department...'
+                        variant='bordered'
+                        className='w-full'
+                        classNames={{
+                          base: 'w-full',
+                          inputWrapper:
+                            'w-full border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary',
+                          input: 'w-full'
+                        }}
+                        startContent={
+                          isSearching ? (
+                            <Spinner size='sm' color='primary' />
+                          ) : (
+                            <Icon
+                              icon='solar:magnifer-outline'
+                              className='text-default-400 h-4 w-4'
+                            />
+                          )
+                        }
+                      />
+                    </div>
                   </motion.div>
 
                   {/* User Results */}
@@ -448,7 +444,7 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3, duration: 0.4 }}
-                    className='min-h-0 flex-1 space-y-3'
+                    className='min-h-0 w-full flex-1 space-y-1'
                   >
                     <AnimatePresence mode='wait'>
                       {isSearching ? (
@@ -457,16 +453,12 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className='flex h-full items-center justify-center'
+                          className='flex h-32 items-center justify-center'
                         >
-                          <motion.div
-                            className='text-center'
-                            animate={{ scale: [0.95, 1.05, 0.95] }}
-                            transition={{ duration: 2, repeat: Infinity }}
-                          >
+                          <div className='text-center'>
                             <Spinner size='md' color='primary' />
                             <p className='text-default-500 mt-3 text-sm'>Searching users...</p>
-                          </motion.div>
+                          </div>
                         </motion.div>
                       ) : (
                         <motion.div
@@ -474,106 +466,103 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
-                          className='h-full space-y-2'
+                          className='max-h-80 w-full space-y-2 overflow-y-auto p-1'
                         >
                           {filteredUsers.length > 0 ? (
-                            <div className='h-full w-full space-y-2 overflow-y-auto'>
-                              {filteredUsers.map((user: any, index) => (
-                                <motion.div
-                                  key={user.id}
-                                  initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                                  whileHover={{ y: -2, transition: { duration: 0.2 } }}
-                                  transition={{
-                                    delay: index * 0.05,
-                                    type: 'spring',
-                                    stiffness: 300,
-                                    damping: 20
-                                  }}
-                                  className='w-full'
+                            filteredUsers.map((user: IUserProfile, index: number) => (
+                              <motion.div
+                                key={user.id}
+                                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                whileHover={{ y: -1 }}
+                                transition={{
+                                  delay: index * 0.05,
+                                  type: 'spring',
+                                  stiffness: 300,
+                                  damping: 20
+                                }}
+                              >
+                                <Card
+                                  className='border-default-200 hover:border-primary/50 hover:bg-primary/5 w-full cursor-pointer border transition-all duration-200'
+                                  isPressable
+                                  onPress={() => toggleUser(user.id)}
                                 >
-                                  <Card
-                                    className='bg-default-50/50 dark:bg-default-900/30 border-default-200/50 dark:border-default-700/50 hover:shadow-primary/10 hover:border-primary/30 hover:bg-primary/5 h-20 w-full cursor-pointer border backdrop-blur-sm transition-all duration-300 hover:shadow-lg'
-                                    isPressable
-                                    onPress={() => {
-                                      toggleUser(user.id);
-                                    }}
-                                  >
-                                    <CardBody className='h-full p-4'>
-                                      <div className='flex h-full items-center gap-4'>
-                                        {/* Avatar with online status */}
-                                        <div className='relative shrink-0'>
-                                          <Badge
-                                            content=''
-                                            color={user.isOnline ? 'success' : 'default'}
-                                            placement='bottom-right'
+                                  <CardBody className='p-3'>
+                                    <div className='flex items-center gap-3'>
+                                      {/* Avatar with online status */}
+                                      <div className='relative'>
+                                        <Badge
+                                          content=''
+                                          color={user.isOnline ? 'success' : 'default'}
+                                          placement='bottom-right'
+                                          size='sm'
+                                        >
+                                          <Avatar
+                                            src={user.avatar}
+                                            name={`${user.firstName} ${user.lastName}`}
                                             size='sm'
-                                          >
-                                            <Avatar
-                                              src={user.avatar || user.profilePicture}
-                                              name={`${user.firstName} ${user.lastName}`}
-                                              size='md'
-                                              className='h-12 w-12'
-                                            />
-                                          </Badge>
-                                        </div>
-
-                                        {/* User info - adapted to API structure */}
-                                        <div className='flex min-w-0 flex-1 flex-col justify-center'>
-                                          <div className='mb-1 flex items-center gap-2'>
-                                            <h4 className='text-foreground truncate text-sm font-semibold'>
-                                              {user.firstName} {user.lastName}
-                                            </h4>
-                                            <Chip
-                                              size='sm'
-                                              color={getRoleColor(user.role) as any}
-                                              variant='flat'
-                                              className='shrink-0 text-xs'
-                                            >
-                                              {user.role || 'User'}
-                                            </Chip>
-                                          </div>
-                                          <p className='text-default-500 truncate text-xs leading-tight'>
-                                            {user.email}
-                                          </p>
-                                          <p className='text-default-400 truncate text-xs leading-tight'>
-                                            {user.department || user.company || 'N/A'}
-                                          </p>
-                                        </div>
-
-                                        {/* Selection indicator */}
-                                        <div className='shrink-0'>
-                                          {selectedUsers.has(user.id) ? (
-                                            <motion.div
-                                              className='bg-primary ring-primary/20 flex h-6 w-6 items-center justify-center rounded-full shadow-lg ring-2'
-                                              initial={{ scale: 0 }}
-                                              animate={{ scale: 1 }}
-                                              transition={{
-                                                type: 'spring',
-                                                stiffness: 500,
-                                                damping: 15
-                                              }}
-                                            >
-                                              <Icon
-                                                icon='solar:check-linear'
-                                                className='h-4 w-4 text-white drop-shadow-sm'
-                                              />
-                                            </motion.div>
-                                          ) : (
-                                            <div className='border-default-300 hover:border-primary/60 h-6 w-6 rounded-full border-2 transition-colors duration-200'></div>
-                                          )}
-                                        </div>
+                                            className='h-8 w-8'
+                                          />
+                                        </Badge>
                                       </div>
-                                    </CardBody>
-                                  </Card>
-                                </motion.div>
-                              ))}
-                            </div>
+
+                                      {/* User info */}
+                                      <div className='min-w-0 flex-1'>
+                                        <div className='mb-1 flex items-center gap-2'>
+                                          <h4 className='text-foreground truncate text-sm font-medium'>
+                                            {user.firstName} {user.lastName}
+                                          </h4>
+                                          <Chip
+                                            size='sm'
+                                            color={getRoleColor(user.role)}
+                                            variant='flat'
+                                            className='h-5 text-xs'
+                                          >
+                                            {user.role || 'User'}
+                                          </Chip>
+                                        </div>
+                                        <p className='text-default-500 truncate text-xs'>
+                                          {user.email}
+                                        </p>
+                                        {(user.department || user.company) && (
+                                          <p className='text-default-400 truncate text-xs'>
+                                            {user.department || user.company}
+                                          </p>
+                                        )}
+                                      </div>
+
+                                      {/* Selection indicator */}
+                                      <div className='flex-shrink-0'>
+                                        {selectedUsers.has(user.id) ? (
+                                          <motion.div
+                                            className='bg-primary ring-primary/30 flex h-5 w-5 items-center justify-center rounded-full ring-2'
+                                            initial={{ scale: 0 }}
+                                            animate={{ scale: 1 }}
+                                            transition={{
+                                              type: 'spring',
+                                              stiffness: 500,
+                                              damping: 15
+                                            }}
+                                          >
+                                            <Icon
+                                              icon='solar:check-outline'
+                                              className='h-3 w-3 text-white'
+                                            />
+                                          </motion.div>
+                                        ) : (
+                                          <div className='border-default-300 hover:border-primary/60 h-5 w-5 rounded-full border-2 transition-colors duration-200'></div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </CardBody>
+                                </Card>
+                              </motion.div>
+                            ))
                           ) : (
-                            <div className='flex h-full items-center justify-center text-center'>
+                            <div className='flex h-32 items-center justify-center text-center'>
                               <div>
                                 <Icon
-                                  icon='solar:user-cross-rounded-linear'
+                                  icon='solar:user-cross-rounded-outline'
                                   className='text-default-300 mx-auto mb-3 h-12 w-12'
                                 />
                                 <p className='text-default-500 text-sm'>
@@ -600,149 +589,118 @@ const DocumentShareModal: React.FC<DocumentShareModalProperties> = ({
                     </AnimatePresence>
                   </motion.div>
 
-                  {/* Selected Users */}
-                  <div className='flex-shrink-0'>
-                    <AnimatePresence>
-                      {selectedUsers.size > 0 && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.2 }}
-                          className='space-y-3'
-                        >
-                          <Divider />
+                  {/* Selected Users Preview */}
+                  <AnimatePresence>
+                    {selectedUsers.size > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
+                        className='w-full space-y-2'
+                      >
+                        <Divider />
 
-                          <div className='flex items-center gap-2'>
-                            <Icon
-                              icon='solar:user-plus-linear'
-                              className='text-success-600 h-4 w-4'
-                            />
-                            <span className='text-foreground text-sm font-medium'>
-                              Will be shared with ({selectedUsers.size})
-                            </span>
-                          </div>
+                        <div className='flex items-center gap-2'>
+                          <Icon
+                            icon='solar:user-plus-outline'
+                            className='text-success-600 h-4 w-4'
+                          />
+                          <span className='text-foreground text-sm font-medium'>
+                            Will be shared with ({selectedUsers.size})
+                          </span>
+                        </div>
 
-                          <div className='flex flex-wrap gap-2'>
-                            {[...selectedUsers].map((userId) => {
-                              const user = networkUsers.find((u: any) => u.id === userId);
-                              if (!user) return null;
+                        <div className='flex flex-wrap gap-2'>
+                          {[...selectedUsers].map((userId) => {
+                            const user = networkUsers?.find((u: IUserProfile) => u.id === userId);
+                            if (!user) return null;
 
-                              return (
-                                <motion.div
-                                  key={userId}
-                                  initial={{ opacity: 0, scale: 0.9 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  exit={{ opacity: 0, scale: 0.9 }}
-                                  className='bg-success-50/80 dark:bg-success-900/20 ring-success/10 dark:ring-success/5 flex items-center gap-2 rounded-full px-3 py-2 shadow-sm ring-1 backdrop-blur-sm'
+                            return (
+                              <motion.div
+                                key={userId}
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.9 }}
+                                className='bg-success-50 dark:bg-success-900/20 flex items-center gap-2 rounded-full px-3 py-2'
+                              >
+                                <Avatar
+                                  src={user.avatar}
+                                  name={`${user.firstName} ${user.lastName}`}
+                                  size='sm'
+                                  className='h-5 w-5'
+                                />
+                                <span className='text-foreground text-sm'>
+                                  {user.firstName} {user.lastName}
+                                </span>
+                                <Button
+                                  isIconOnly
+                                  size='sm'
+                                  variant='light'
+                                  color='danger'
+                                  className='h-4 w-4 min-w-4'
+                                  onPress={() => toggleUser(userId)}
                                 >
-                                  <Avatar
-                                    src={user.avatar || user.profilePicture}
-                                    name={`${user.firstName} ${user.lastName}`}
-                                    size='sm'
-                                    className='h-6 w-6'
-                                  />
-                                  <span className='text-foreground text-sm font-medium'>
-                                    {user.firstName} {user.lastName}
-                                  </span>
-                                  <Button
-                                    isIconOnly
-                                    size='sm'
-                                    variant='light'
-                                    color='danger'
-                                    className='h-5 w-5 min-w-5'
-                                    onPress={() => {
-                                      toggleUser(userId);
-                                    }}
-                                  >
-                                    <Icon icon='solar:close-circle-bold' className='h-3 w-3' />
-                                  </Button>
-                                </motion.div>
-                              );
-                            })}
-                          </div>
+                                  <Icon icon='solar:close-circle-outline' className='h-3 w-3' />
+                                </Button>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
-                          <div className='space-y-3 pt-2'>
-                            <Textarea
-                              value={message}
-                              onValueChange={setMessage}
-                              label='Message (optional)'
-                              placeholder='Add a personal message...'
-                              variant='bordered'
-                              maxRows={3}
-                              className='w-full'
-                              classNames={{
-                                base: 'w-full',
-                                mainWrapper: 'w-full',
-                                inputWrapper:
-                                  'border-default-300/60 data-[hover=true]:border-primary/60 data-[hover=true]:bg-primary/5 group-data-[focus=true]:border-primary group-data-[focus=true]:bg-primary/5 group-data-[focus=true]:shadow-lg group-data-[focus=true]:shadow-primary/10 rounded-2xl bg-default-100/50 dark:bg-default-50/50 backdrop-blur-sm transition-all duration-300 p-4',
-                                input:
-                                  'text-foreground font-medium tracking-wide placeholder:text-default-400 text-base resize-none'
-                              }}
-                            />
+                  {/* Message and notification settings - always visible */}
+                  <div className='mt-4 w-full space-y-3'>
+                    <div className='w-full'>
+                      <Textarea
+                        value={message}
+                        onValueChange={setMessage}
+                        label='Message (optional)'
+                        placeholder='Add a personal message...'
+                        variant='bordered'
+                        maxRows={3}
+                        className='w-full'
+                        classNames={{
+                          base: 'w-full',
+                          inputWrapper:
+                            'w-full border-default-300 data-[hover=true]:border-primary group-data-[focus=true]:border-primary',
+                          input: 'w-full'
+                        }}
+                      />
+                    </div>
 
-                            <div className='flex items-center gap-2'>
-                              <Switch
-                                size='sm'
-                                isSelected={notifyUsers}
-                                onValueChange={setNotifyUsers}
-                              />
-                              <span className='text-foreground text-sm'>
-                                Notify users via email
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Submit Button */}
-                          <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1, duration: 0.4 }}
-                            className='pt-4'
-                          >
-                            <Button
-                              type='submit'
-                              color='primary'
-                              size='lg'
-                              fullWidth
-                              isDisabled={selectedUsers.size === 0}
-                              isLoading={isSharing}
-                              startContent={
-                                isSharing ? undefined : (
-                                  <Icon icon='solar:share-linear' className='h-4 w-4' />
-                                )
-                              }
-                              className='from-primary to-primary-600 shadow-primary/20 hover:shadow-primary/30 h-14 rounded-2xl bg-gradient-to-r text-lg font-bold tracking-wide shadow-lg backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-xl'
-                            >
-                              {isSharing
-                                ? 'Sharing...'
-                                : `Share with ${selectedUsers.size} ${selectedUsers.size === 1 ? 'person' : 'people'}`}
-                            </Button>
-                          </motion.div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    <div className='flex items-center gap-2'>
+                      <Switch size='sm' isSelected={notifyUsers} onValueChange={setNotifyUsers} />
+                      <span className='text-foreground text-sm'>Notify users via email</span>
+                    </div>
                   </div>
                 </Form>
               )}
             </ModalBody>
 
-            <ModalFooter className='from-background/70 to-background/90 dark:from-content1/70 dark:to-content1/90 border-divider/30 justify-center border-t bg-gradient-to-r px-8 pt-6 pb-8 backdrop-blur-sm'>
-              {!success && selectedUsers.size === 0 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.7, duration: 0.4 }}
+            <ModalFooter className='justify-end p-6 pt-4'>
+              {!success && selectedUsers.size > 0 && (
+                <Button
+                  type='submit'
+                  color='primary'
+                  isDisabled={selectedUsers.size === 0}
+                  isLoading={isSharing}
+                  startContent={
+                    isSharing ? undefined : <Icon icon='solar:share-outline' className='h-4 w-4' />
+                  }
+                  onPress={() => {
+                    const form = window.document.querySelector('form');
+                    if (form) {
+                      form.requestSubmit();
+                    }
+                  }}
                 >
-                  <Button
-                    variant='bordered'
-                    onPress={handleClose}
-                    disabled={isSharing}
-                    className='border-default-300/60 hover:border-primary/60 hover:bg-primary/5 hover:shadow-primary/10 h-12 rounded-2xl font-medium tracking-wide backdrop-blur-sm transition-all duration-300 hover:shadow-lg'
-                  >
-                    Cancel
-                  </Button>
-                </motion.div>
+                  {isSharing
+                    ? 'Sharing...'
+                    : `Share with ${selectedUsers.size} ${selectedUsers.size === 1 ? 'person' : 'people'}`}
+                </Button>
               )}
             </ModalFooter>
           </>

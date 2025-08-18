@@ -1,6 +1,18 @@
 export interface SocialAccount {
   id: string;
-  platform: 'linkedin' | 'github' | 'twitter' | 'instagram' | 'facebook' | 'youtube' | 'tiktok' | 'behance' | 'dribbble' | 'medium' | 'portfolio' | 'other';
+  platform:
+    | 'linkedin'
+    | 'github'
+    | 'twitter'
+    | 'instagram'
+    | 'facebook'
+    | 'youtube'
+    | 'tiktok'
+    | 'behance'
+    | 'dribbble'
+    | 'medium'
+    | 'portfolio'
+    | 'other';
   username: string;
   url: string;
   isPublic: boolean;
@@ -49,17 +61,25 @@ export interface Experience {
   skills?: string[];
 }
 
-export type LanguageProficiencyLevel = 
-  | 'NATIVE' 
-  | 'FLUENT' 
-  | 'PROFESSIONAL' 
-  | 'CONVERSATIONAL' 
-  | 'INTERMEDIATE' 
-  | 'BEGINNER' 
+export type LanguageProficiencyLevel =
+  | 'NATIVE'
+  | 'FLUENT'
+  | 'PROFESSIONAL'
+  | 'CONVERSATIONAL'
+  | 'INTERMEDIATE'
+  | 'BEGINNER'
   | 'ELEMENTARY';
 
-export type CertificationLevel = 
-  | 'C2' | 'C1' | 'B2' | 'B1' | 'A2' | 'A1' | 'NATIVE';
+export type CertificationLevel = 'C2' | 'C1' | 'B2' | 'B1' | 'A2' | 'A1' | 'NATIVE';
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  issueDate: string;
+  expiryDate: string;
+  credentialId: string;
+}
 
 export interface Language {
   id: string;
@@ -116,5 +136,9 @@ export interface ProfileData {
   languages: Language[];
   education: Education[];
   notes: UserNote[];
+  userNotes: any[];
+  projects: Experience[];
+  services: any[];
+  testimonials: any[];
   connectionStatus: ConnectionStatus;
 }

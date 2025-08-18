@@ -3,6 +3,7 @@
 // ============================================================================
 
 import type { DocumentFilters, IDocument } from '../types';
+
 import { getBaseUrl } from '@/lib/utils/utilities';
 
 /**
@@ -23,7 +24,7 @@ export const formatFileSize = (bytes: number): string => {
  */
 export const getFileIcon = (file: File | { name: string; type?: string }): string => {
   const fileName = file.name.toLowerCase();
-  const fileType = 'type' in file ? file.type?.toLowerCase() : '';
+  const fileType = ('type' in file ? file.type?.toLowerCase() : '') || '';
 
   // PDF files
   if (fileName.endsWith('.pdf') || fileType.includes('pdf')) {
@@ -160,7 +161,7 @@ export const filterDocuments = (
   });
 };
 
-export const debounce = <T extends (...arguments_: any[]) => any>(
+export const debounce = <T extends (...arguments_: readonly unknown[]) => unknown>(
   function_: T,
   wait: number
 ): ((...arguments_: Parameters<T>) => void) => {
@@ -192,11 +193,15 @@ export const sortDocuments = (
         break;
       }
       case 'type': {
-        comparison = a.type.name.localeCompare(b.type.name);
+        const aType = a.category?.name || '';
+        const bType = b.category?.name || '';
+        comparison = aType.localeCompare(bType);
         break;
       }
       case 'status': {
-        comparison = a.status.name.localeCompare(b.status.name);
+        const aStatus = a.status?.name || '';
+        const bStatus = b.status?.name || '';
+        comparison = aStatus.localeCompare(bStatus);
         break;
       }
       default: {
@@ -221,23 +226,25 @@ export const getActiveFiltersCount = (filters: DocumentFilters): number => {
 };
 
 /**
- * Generate document preview URL - same as profile images
+ * Generate document preview URL - use private upload endpoint
  */
 export const getDocumentPreviewUrl = (document: IDocument): string => {
   if (!document.fileName) return '';
-  
-  // Use the same pattern as profile images: ${getBaseUrl()}/upload/${fileName}
-  return `${getBaseUrl()}/upload/${document.fileName}`;
+
+  // Use private upload endpoint for documents
+  const url = `${getBaseUrl()}/upload/private/${document.fileName}`;
+  console.log('Generated preview URL:', url, 'for fileName:', document.fileName);
+  return url;
 };
 
 /**
- * Generate document download URL - same as profile images
+ * Generate document download URL - use private upload endpoint
  */
 export const getDocumentDownloadUrl = (document: IDocument): string => {
   if (!document.fileName) return '';
-  
-  // Use the same pattern as profile images: ${getBaseUrl()}/upload/${fileName}
-  return `${getBaseUrl()}/upload/${document.fileName}`;
+
+  // Use private upload endpoint for documents
+  return `${getBaseUrl()}/upload/private/${document.fileName}`;
 };
 
 /**
@@ -248,7 +255,9 @@ export const canEditDocument = (document: IDocument, userId?: string): boolean =
   // For now, return true if user ID matches creator or if user is in shared list
   if (!userId) return false;
 
-  return document.createdBy === userId || document.sharedWith.some((user) => user.id === userId);
+  return (
+    document.ownerId === userId || document.sharedWith.some((share) => share.userId === userId)
+  );
 };
 
 /**
@@ -259,7 +268,7 @@ export const canShareDocument = (document: IDocument, userId?: string): boolean 
   // For now, return true if user ID matches creator
   if (!userId) return false;
 
-  return document.createdBy === userId;
+  return document.ownerId === userId;
 };
 
 /**

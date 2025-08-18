@@ -33,11 +33,12 @@ import {
 import { FileUpload } from '@/components/ui/file-upload';
 
 import { CVService } from '../services/cv-service';
+import { type Language } from '../types';
 import {
   CertificationsForm,
   EducationForm,
-  ExperienceForm,
   EnhancedLanguagesForm,
+  ExperienceForm,
   PersonalInfoForm,
   SkillsForm
 } from './forms';
@@ -56,7 +57,7 @@ interface ReviewData {
   skills: Skill[];
   experience: IExperience[];
   education: IEducation[];
-  languages: ILanguage[];
+  languages: Language[];
   portfolio: string[];
   certifications: Array<{
     id: string;
@@ -167,7 +168,14 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
       languages: data.languages.map((lang, index) => ({
         id: `lang_${index}`,
         key: lang.name,
-        level: lang.level.toUpperCase() as 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE'
+        name: lang.name,
+        code: lang.name.toLowerCase().substring(0, 2),
+        level: lang.level.toUpperCase() as 'BEGINNER' | 'INTERMEDIATE' | 'PROFESSIONAL' | 'NATIVE',
+        isNative: lang.level.toUpperCase() === 'NATIVE',
+        canRead: true,
+        canWrite: true,
+        canSpeak: true,
+        canUnderstand: true
       })),
       portfolio: data.projects.map((project) => project.url).filter(Boolean) as string[],
       certifications: data.certifications.map((cert, index) => ({
@@ -328,7 +336,18 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
 
   const handleLanguageAdd = () => {
     if (!reviewData) return;
-    const newLang: ILanguage = { id: `lang_${Date.now()}`, key: '', level: 'BEGINNER' };
+    const newLang: Language = {
+      id: `lang_${Date.now()}`,
+      key: '',
+      name: '',
+      code: '',
+      level: 'BEGINNER',
+      isNative: false,
+      canRead: true,
+      canWrite: true,
+      canSpeak: true,
+      canUnderstand: true
+    };
     setReviewData({
       ...reviewData,
       languages: [...reviewData.languages, newLang]
@@ -342,7 +361,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
     setReviewData({ ...reviewData, languages: newLanguages });
   };
 
-  const handleLanguageUpdate = (index: number, data: ILanguage) => {
+  const handleLanguageUpdate = (index: number, data: Language) => {
     if (!reviewData) return;
     const newLanguages = [...reviewData.languages];
     newLanguages[index] = data;
@@ -469,7 +488,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           <div className='relative'>
             {/* Central AI brain icon */}
             <motion.div
-              className='relative flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 backdrop-blur-sm border border-primary/20'
+              className='from-primary/10 to-secondary/10 border-primary/20 relative flex h-24 w-24 items-center justify-center rounded-full border bg-gradient-to-br backdrop-blur-sm'
               animate={{ scale: [1, 1.05, 1] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             >
@@ -480,7 +499,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
             {[...Array(8)].map((_, i) => (
               <motion.div
                 key={i}
-                className='absolute h-2 w-2 bg-primary/40 rounded-full'
+                className='bg-primary/40 absolute h-2 w-2 rounded-full'
                 style={{
                   top: '50%',
                   left: '50%',
@@ -502,12 +521,12 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
 
             {/* Pulsing rings */}
             <motion.div
-              className='absolute inset-0 rounded-full border-2 border-primary/20'
+              className='border-primary/20 absolute inset-0 rounded-full border-2'
               animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
             />
             <motion.div
-              className='absolute inset-0 rounded-full border-2 border-secondary/20'
+              className='border-secondary/20 absolute inset-0 rounded-full border-2'
               animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
               transition={{ duration: 2, repeat: Infinity, delay: 0.5, ease: 'easeOut' }}
             />
@@ -517,7 +536,8 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
         <div className='space-y-3'>
           <h3 className='text-foreground text-xl font-semibold'>AI Analysis in Progress</h3>
           <p className='text-default-600 text-sm leading-relaxed'>
-            Our intelligent system is carefully extracting and structuring your professional information
+            Our intelligent system is carefully extracting and structuring your professional
+            information
           </p>
         </div>
 
@@ -630,7 +650,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
 
         <div className='flex min-h-0 flex-1 flex-col'>
           <Tabs
-            value={activeTab}
+            selectedKey={activeTab}
             onSelectionChange={(key) => setActiveTab(key as string)}
             variant='underlined'
             classNames={{
@@ -647,7 +667,9 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
                   <div className='flex items-center space-x-3'>
                     <Icon icon={section.icon} className='h-4 w-4' />
                     <span>{section.title}</span>
-                    <Badge content={section.badge} color='primary' size='sm' variant='flat' />
+                    <Badge color='primary' size='sm' variant='flat'>
+                      {section.badge}
+                    </Badge>
                   </div>
                 }
               >
@@ -735,7 +757,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
           <div className='relative'>
             {/* Central update icon */}
             <motion.div
-              className='relative flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-success/10 to-primary/10 backdrop-blur-sm border border-success/20'
+              className='from-success/10 to-primary/10 border-success/20 relative flex h-20 w-20 items-center justify-center rounded-2xl border bg-gradient-to-br backdrop-blur-sm'
               animate={{
                 rotateY: [0, 180, 360],
                 scale: [1, 1.05, 1]
@@ -749,7 +771,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
             {[...Array(6)].map((_, i) => (
               <motion.div
                 key={i}
-                className='absolute h-1 w-8 bg-gradient-to-r from-success/60 to-transparent rounded-full'
+                className='from-success/60 absolute h-1 w-8 rounded-full bg-gradient-to-r to-transparent'
                 style={{
                   top: '50%',
                   left: '50%',
@@ -771,7 +793,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
 
             {/* Success pulse ring */}
             <motion.div
-              className='absolute inset-0 rounded-2xl border-2 border-success/30'
+              className='border-success/30 absolute inset-0 rounded-2xl border-2'
               animate={{ scale: [1, 1.4], opacity: [0.6, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
             />
@@ -837,7 +859,7 @@ const CVUploadDrawer: React.FC<CVUploadDrawerProps> = ({ isOpen, onOpenChange, o
             transition={{ type: 'spring', stiffness: 200, damping: 15 }}
             className='relative'
           >
-            <div className='flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-success/10 to-primary/10 backdrop-blur-sm border border-success/20'>
+            <div className='from-success/10 to-primary/10 border-success/20 flex h-16 w-16 items-center justify-center rounded-2xl border bg-gradient-to-br backdrop-blur-sm'>
               <Icon icon='solar:check-circle-bold' className='text-success h-8 w-8' />
             </div>
             <motion.div

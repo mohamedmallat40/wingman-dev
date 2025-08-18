@@ -24,7 +24,17 @@ interface IFormInput {
   firstName: string;
   lastName: string;
   kind: 'FREELANCER' | 'COMPANY' | 'AGENCY';
-  addressDetails: AddressDetails;
+  addressDetails: {
+    street: string;
+    city: string;
+    postalCode: string;
+    country: string;
+    countryCode?: string;
+    houseNumber?: string;
+    VATNumber?: string;
+    companyName?: string;
+    type?: string;
+  };
 }
 
 const formatErrorMessage = (message: unknown): string => {

@@ -1,40 +1,54 @@
-export interface IDocument {
-  id: string;
-  documentName: string;
-  fileName: string;
-  createdAt: string;
-  createdBy?: string;
-  sharedWith: Array<{
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    profileImage: string | null;
-  }>;
-  tags: Array<{
-    id: string;
-    name: string;
-  }>;
-  type: {
-    id: string;
-    name: string;
-  } | null;
-  status: {
-    id: string;
-    name: string;
-  } | null;
-}
+// Import types for legacy aliases
+import type { Category, Status, Tag, UserSummary } from '@/types';
+import type {
+  CreateDocumentPayload,
+  Document,
+  DocumentFilters,
+  DocumentListResponse,
+  DocumentType,
+  ShareDocumentPayload,
+  ViewMode
+} from './types/index';
 
-export type DocumentType = 'all-documents' | 'shared-with-me';
+/**
+ * @deprecated Use types from ./types/index.ts instead
+ * This file is kept for backward compatibility and will be removed in a future version
+ */
 
-export type ViewMode = 'list' | 'grid';
+// Re-export new types for backward compatibility
+export * from './types/index';
 
-export interface DocumentFilters {
-  search?: string;
-  name?: string;
-  tags?: string[];
-  type?: string;
-  status?: string;
-  dateFrom?: string;
-  dateTo?: string;
+// Legacy type aliases - will be removed
+/** @deprecated Use Document instead */
+export type IDocument = Document;
+
+/** @deprecated Use UserSummary instead */
+export type SharedUser = UserSummary;
+
+/** @deprecated Use Tag instead */
+export type DocumentTag = Tag;
+
+/** @deprecated Use Category instead */
+export type DocumentCategory = Category;
+
+/** @deprecated Use Status instead */
+export type DocumentStatus = Status;
+
+/** @deprecated Use ShareDocumentPayload instead */
+export type DocumentShareData = ShareDocumentPayload;
+
+/** @deprecated Use CreateDocumentPayload instead */
+export type DocumentUploadData = CreateDocumentPayload;
+
+/** @deprecated Use DocumentFilters instead */
+export type DocumentFiltersState = DocumentFilters;
+
+/** @deprecated Use DocumentListResponse instead */
+export type DocumentApiResponse = DocumentListResponse;
+
+/** @deprecated Use ApiResponse<Document> instead */
+export interface DocumentShareResponse {
+  success: boolean;
+  message: string;
+  data?: Document;
 }

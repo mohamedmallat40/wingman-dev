@@ -10,7 +10,10 @@ export const env = createEnv({
    */
   client: {
     NEXT_PUBLIC_API_BASE_URL: z.string().url().default('https://dev.extraexpertise.be/api'),
-    NEXT_PUBLIC_S3_BASE_URL: z.string().url().default('https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public')
+    NEXT_PUBLIC_S3_BASE_URL: z
+      .string()
+      .url()
+      .default('https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public')
   },
 
   /**

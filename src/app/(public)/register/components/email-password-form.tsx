@@ -143,11 +143,10 @@ export default function EmailPasswordForm({
   const handleGoogleLogin = async () => {
     try {
       const result = await loginWithGoogle();
-      if (!result.isCompleted && onOAuthComplete) {
+      if (!result.isCompleted && onOAuthComplete && result.user) {
         onOAuthComplete({
           isCompleted: result.isCompleted,
-          user: result.user,
-          token: result.token // Pass the token
+          user: result.user
         });
       }
     } catch (error) {
@@ -164,7 +163,7 @@ export default function EmailPasswordForm({
         setFirstName(result.user?.firstName ?? '');
         setLastName(result.user?.lastName ?? '');
       }
-      if (onOAuthComplete) {
+      if (onOAuthComplete && result.user) {
         onOAuthComplete(result);
       }
     } catch (error) {

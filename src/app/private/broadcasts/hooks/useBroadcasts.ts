@@ -1,41 +1,18 @@
-import type {
-  CommentData,
-  CreatePostData,
-  FeedParams,
-  SearchParams,
-  UpdatePostData
-} from '../services/broadcast.service';
+import type { CreatePostData, FeedParams } from '../types';
 
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
-  addComment,
-  createPost,
-  deleteComment,
-  deleteDraft,
   deletePost,
+  followTopic,
   getBroadcastFeed,
-  getDrafts,
-  getPostAnalytics,
-  getPostById,
-  getPostComments,
-  getTopicById,
   getTopics,
-  getTrendingPosts,
-  getUserAnalytics,
-  saveDraft,
-  searchPosts,
-  sharePost,
-  subscribeToTopic,
   togglePostBookmark,
   togglePostLike,
   trackPostView,
-  unsubscribeFromTopic,
-  updateComment,
-  updatePost,
-  voteComment
+  unfollowTopic,
+  updatePost
 } from '../services/broadcast.service';
-import { type BroadcastPost } from '../types';
 
 // ===== FEED HOOKS =====
 
@@ -45,9 +22,10 @@ import { type BroadcastPost } from '../types';
 export const useBroadcastFeed = (params: Omit<FeedParams, 'page'> = {}) => {
   return useInfiniteQuery({
     queryKey: ['broadcasts', 'feed', params],
-    queryFn: ({ pageParam = 1 }) => getBroadcastFeed({ ...params, page: pageParam }),
-    getNextPageParam: (lastPage) => {
-      if (lastPage.hasNextPage) {
+    queryFn: ({ pageParam = 1 }) => getBroadcastFeed({ ...params, page: pageParam as number }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage?.hasNextPage) {
         return lastPage.currentPage + 1;
       }
       return undefined;
@@ -56,112 +34,6 @@ export const useBroadcastFeed = (params: Omit<FeedParams, 'page'> = {}) => {
     gcTime: 1000 * 60 * 15, // 15 minutes
     refetchOnWindowFocus: false,
     retry: false
-  });
-};
-
-/**
- * Hook for fetching trending posts
- */
-export const useTrendingPosts = (limit = 10) => {
-  return useQuery({
-    queryKey: ['broadcasts', 'trending', limit],
-    queryFn: () => getTrendingPosts(limit),
-    staleTime: 1000 * 60 * 2, // 2 minutes
-    gcTime: 1000 * 60 * 10 // 10 minutes
-  });
-};
-
-/**
- * Hook for fetching a specific post
- */
-export const usePost = (postId: string) => {
-  return useQuery({
-    queryKey: ['broadcasts', 'post', postId],
-    queryFn: () => getPostById(postId),
-    enabled: !!postId,
-    staleTime: 1000 * 60 * 10 // 10 minutes
-  });
-};
-
-/**
- * Hook for searching posts
- */
-export const useSearchPosts = (searchParams: SearchParams) => {
-  return useQuery({
-    queryKey: ['broadcasts', 'search', searchParams],
-    queryFn: () => searchPosts(searchParams),
-    enabled: !!searchParams.query.trim(),
-    staleTime: 1000 * 60 * 5 // 5 minutes
-  });
-};
-
-// ===== POST MANAGEMENT HOOKS =====
-
-/**
- * Hook for creating a new post
- */
-export const useCreatePost = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (postData: CreatePostData) => createPost(postData),
-    onSuccess: (newPost) => {
-      // Invalidate and refetch feed queries
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'trending'] });
-
-      // Add the new post to existing cache
-      queryClient.setQueryData(['broadcasts', 'post', newPost.id], newPost);
-    },
-    onError: (error) => {
-      // Error is handled by UI error state
-    },
-    retry: false
-  });
-};
-
-/**
- * Hook for updating a post
- */
-export const useUpdatePost = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ postId, updateData }: { postId: string; updateData: UpdatePostData }) =>
-      updatePost(postId, updateData),
-    onSuccess: (updatedPost) => {
-      // Update specific post in cache
-      queryClient.setQueryData(['broadcasts', 'post', updatedPost.id], updatedPost);
-
-      // Invalidate feed queries
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'trending'] });
-    },
-    onError: (error) => {
-      // Error is handled by UI error state
-    }
-  });
-};
-
-/**
- * Hook for deleting a post
- */
-export const useDeletePost = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (postId: string) => deletePost(postId),
-    onSuccess: (_, postId) => {
-      // Remove post from cache
-      queryClient.removeQueries({ queryKey: ['broadcasts', 'post', postId] });
-
-      // Invalidate feed queries
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'trending'] });
-    },
-    onError: (error) => {
-      // Error is handled by UI error state
-    }
   });
 };
 
@@ -175,42 +47,15 @@ export const useLikePost = () => {
 
   return useMutation({
     mutationFn: (postId: string) => togglePostLike(postId),
-    onMutate: async (postId) => {
-      // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['broadcasts', 'post', postId] });
-
-      // Snapshot previous value
-      const previousPost = queryClient.getQueryData<BroadcastPost>(['broadcasts', 'post', postId]);
-
-      // Optimistically update the cache
-      if (previousPost) {
-        const updatedPost = {
-          ...previousPost,
-          isLiked: !previousPost.isLiked,
-          engagement: {
-            ...previousPost.engagement,
-            likes: previousPost.isLiked
-              ? previousPost.engagement.likes - 1
-              : previousPost.engagement.likes + 1
-          }
-        };
-
-        queryClient.setQueryData(['broadcasts', 'post', postId], updatedPost);
-      }
-
-      return { previousPost };
+    onSuccess: (response, postId) => {
+      // Invalidate feed queries to refetch with updated like status
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
-    onError: (error, postId, context) => {
-      // Revert optimistic update on error
-      if (context?.previousPost) {
-        queryClient.setQueryData(['broadcasts', 'post', postId], context.previousPost);
-      }
+    onError: (error) => {
       // Error is handled by UI error state
     },
-    onSettled: (_, __, postId) => {
-      // Refetch to ensure consistency
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
-    }
+    retry: false
   });
 };
 
@@ -222,70 +67,16 @@ export const useBookmarkPost = () => {
 
   return useMutation({
     mutationFn: (postId: string) => togglePostBookmark(postId),
-    onMutate: async (postId) => {
-      await queryClient.cancelQueries({ queryKey: ['broadcasts', 'post', postId] });
-
-      const previousPost = queryClient.getQueryData<BroadcastPost>(['broadcasts', 'post', postId]);
-
-      if (previousPost) {
-        const updatedPost = {
-          ...previousPost,
-          isBookmarked: !previousPost.isBookmarked,
-          engagement: {
-            ...previousPost.engagement,
-            bookmarks: previousPost.isBookmarked
-              ? previousPost.engagement.bookmarks - 1
-              : previousPost.engagement.bookmarks + 1
-          }
-        };
-
-        queryClient.setQueryData(['broadcasts', 'post', postId], updatedPost);
-      }
-
-      return { previousPost };
-    },
-    onError: (error, postId, context) => {
-      if (context?.previousPost) {
-        queryClient.setQueryData(['broadcasts', 'post', postId], context.previousPost);
-      }
-      // Error is handled by UI error state
-    },
-    onSettled: (_, __, postId) => {
+    onSuccess: (response, postId) => {
+      // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
-    }
-  });
-};
-
-/**
- * Hook for sharing posts
- */
-export const useSharePost = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({
-      postId,
-      shareData
-    }: {
-      postId: string;
-      shareData?: { message?: string; platform?: string };
-    }) => sharePost(postId, shareData),
-    onSuccess: (_, { postId }) => {
-      // Update share count optimistically
-      const post = queryClient.getQueryData<BroadcastPost>(['broadcasts', 'post', postId]);
-      if (post) {
-        queryClient.setQueryData(['broadcasts', 'post', postId], {
-          ...post,
-          engagement: {
-            ...post.engagement,
-            shares: post.engagement.shares + 1
-          }
-        });
-      }
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'bookmarks'] });
     },
     onError: (error) => {
       // Error is handled by UI error state
-    }
+    },
+    retry: false
   });
 };
 
@@ -296,111 +87,49 @@ export const useTrackPostView = () => {
   return useMutation({
     mutationFn: (postId: string) => trackPostView(postId),
     onError: (error) => {
-      // Error tracking failure is non-critical
-    }
-  });
-};
-
-// ===== COMMENTS HOOKS =====
-
-/**
- * Hook for fetching post comments
- */
-export const usePostComments = (postId: string) => {
-  return useInfiniteQuery({
-    queryKey: ['broadcasts', 'comments', postId],
-    queryFn: ({ pageParam = 1 }) => getPostComments(postId, pageParam),
-    getNextPageParam: (lastPage) => {
-      if (lastPage.hasNextPage) {
-        return lastPage.currentPage + 1;
-      }
-      return undefined;
+      // Silently fail view tracking
     },
-    enabled: !!postId,
-    staleTime: 1000 * 60 * 5
+    retry: false
   });
 };
 
 /**
- * Hook for adding comments
+ * Hook for updating a post
  */
-export const useAddComment = () => {
+export const useUpdatePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ postId, commentData }: { postId: string; commentData: CommentData }) =>
-      addComment(postId, commentData),
-    onSuccess: (_, { postId }) => {
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'comments', postId] });
-
-      // Update comment count
-      const post = queryClient.getQueryData<BroadcastPost>(['broadcasts', 'post', postId]);
-      if (post) {
-        queryClient.setQueryData(['broadcasts', 'post', postId], {
-          ...post,
-          engagement: {
-            ...post.engagement,
-            comments: post.engagement.comments + 1
-          }
-        });
-      }
+    mutationFn: ({ postId, postData }: { postId: string; postData: CreatePostData }) =>
+      updatePost(postId, postData),
+    onSuccess: (response, { postId }) => {
+      // Only invalidate feed queries - no need to invalidate individual post query
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
     },
     onError: (error) => {
-      // Error is handled by UI error state
-    }
+      console.error('Failed to update post:', error);
+    },
+    retry: 1
   });
 };
 
 /**
- * Hook for updating comments
+ * Hook for deleting a post
  */
-export const useUpdateComment = () => {
+export const useDeletePost = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ commentId, content }: { commentId: string; content: string }) =>
-      updateComment(commentId, content),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'comments'] });
+    mutationFn: (postId: string) => deletePost(postId),
+    onSuccess: (response, postId) => {
+      // Invalidate feed queries to remove the deleted post
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
     onError: (error) => {
-      // Error is handled by UI error state
-    }
-  });
-};
-
-/**
- * Hook for deleting comments
- */
-export const useDeleteComment = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (commentId: string) => deleteComment(commentId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'comments'] });
+      console.error('Failed to delete post:', error);
     },
-    onError: (error) => {
-      // Error is handled by UI error state
-    }
-  });
-};
-
-/**
- * Hook for voting on comments
- */
-export const useVoteComment = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: ({ commentId, voteType }: { commentId: string; voteType: 'up' | 'down' }) =>
-      voteComment(commentId, voteType),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'comments'] });
-    },
-    onError: (error) => {
-      // Error is handled by UI error state
-    }
+    retry: false
   });
 };
 
@@ -412,130 +141,74 @@ export const useVoteComment = () => {
 export const useTopics = () => {
   return useQuery({
     queryKey: ['broadcasts', 'topics'],
-    queryFn: async () => {
-      const result = await getTopics();
-      return result;
-    },
-    staleTime: 1000 * 60 * 15, // 15 minutes
-    retry: false
+    queryFn: () => getTopics(),
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnWindowFocus: false,
+    retry: 1
   });
 };
 
 /**
- * Hook for fetching specific topic
+ * Hook for following a topic
  */
-export const useTopic = (topicId: string) => {
-  return useQuery({
-    queryKey: ['broadcasts', 'topic', topicId],
-    queryFn: () => getTopicById(topicId),
-    enabled: !!topicId,
-    staleTime: 1000 * 60 * 10
-  });
-};
-
-/**
- * Hook for subscribing to topics
- */
-export const useSubscribeToTopic = () => {
+export const useFollowTopic = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (topicId: string) => subscribeToTopic(topicId),
-    onSuccess: () => {
+    mutationFn: (topicId: string) => followTopic(topicId),
+    onSuccess: (response, topicId) => {
+      // Update the topics cache to reflect the new follow status
+      queryClient.setQueryData(['broadcasts', 'topics'], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        return oldData.map((topic: any) =>
+          topic.id === topicId
+            ? { ...topic, isFollowed: true, followerCount: topic.followerCount + 1 }
+            : topic
+        );
+      });
+
+      // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'topics'] });
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
     },
     onError: (error) => {
-      // Error is handled by UI error state
-    }
+      // Error handling can be done in the UI
+      console.error('Failed to follow topic:', error);
+    },
+    retry: 1
   });
 };
 
 /**
- * Hook for unsubscribing from topics
+ * Hook for unfollowing a topic
  */
-export const useUnsubscribeFromTopic = () => {
+export const useUnfollowTopic = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (topicId: string) => unsubscribeFromTopic(topicId),
-    onSuccess: () => {
+    mutationFn: (topicId: string) => unfollowTopic(topicId),
+    onSuccess: (response, topicId) => {
+      // Update the topics cache to reflect the new follow status
+      queryClient.setQueryData(['broadcasts', 'topics'], (oldData: any) => {
+        if (!oldData) return oldData;
+
+        return oldData.map((topic: any) =>
+          topic.id === topicId
+            ? { ...topic, isFollowed: false, followerCount: Math.max(0, topic.followerCount - 1) }
+            : topic
+        );
+      });
+
+      // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'topics'] });
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
     },
     onError: (error) => {
-      // Error is handled by UI error state
-    }
-  });
-};
-
-// ===== DRAFTS HOOKS =====
-
-/**
- * Hook for fetching user drafts
- */
-export const useDrafts = () => {
-  return useQuery({
-    queryKey: ['broadcasts', 'drafts'],
-    queryFn: getDrafts,
-    staleTime: 1000 * 60 * 5
-  });
-};
-
-/**
- * Hook for saving drafts
- */
-export const useSaveDraft = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (draftData: Parameters<typeof saveDraft>[0]) => saveDraft(draftData),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'drafts'] });
+      // Error handling can be done in the UI
+      console.error('Failed to unfollow topic:', error);
     },
-    onError: (error) => {
-      // Error is handled by UI error state
-    },
-    retry: false
-  });
-};
-
-/**
- * Hook for deleting drafts
- */
-export const useDeleteDraft = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (draftId: string) => deleteDraft(draftId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'drafts'] });
-    },
-    onError: (error) => {
-      // Error is handled by UI error state
-    }
-  });
-};
-
-// ===== ANALYTICS HOOKS =====
-
-/**
- * Hook for fetching user analytics
- */
-export const useUserAnalytics = (timeRange = '30d') => {
-  return useQuery({
-    queryKey: ['broadcasts', 'analytics', 'user', timeRange],
-    queryFn: () => getUserAnalytics(timeRange),
-    staleTime: 1000 * 60 * 10
-  });
-};
-
-/**
- * Hook for fetching post analytics
- */
-export const usePostAnalytics = (postId: string) => {
-  return useQuery({
-    queryKey: ['broadcasts', 'analytics', 'post', postId],
-    queryFn: () => getPostAnalytics(postId),
-    enabled: !!postId,
-    staleTime: 1000 * 60 * 5
+    retry: 1
   });
 };

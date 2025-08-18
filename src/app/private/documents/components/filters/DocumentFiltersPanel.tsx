@@ -75,7 +75,7 @@ const DocumentFiltersPanel: React.FC<DocumentFiltersPanelProperties> = ({
   // Remove specific tag from tags filter
   const removeTagFromFilter = (tagIdToRemove: string) => {
     if (filters.tags) {
-      const updatedTags = filters.tags.filter(tagId => tagId !== tagIdToRemove);
+      const updatedTags = filters.tags.filter((tagId) => tagId !== tagIdToRemove);
       onFiltersChange({
         ...filters,
         tags: updatedTags.length > 0 ? updatedTags : undefined
@@ -228,10 +228,7 @@ const DocumentFiltersPanel: React.FC<DocumentFiltersPanelProperties> = ({
                 </div>
 
                 {/* Search Bar */}
-                <div
-                  
-                  className='mb-6'
-                >
+                <div className='mb-6'>
                   <label className='text-foreground mb-2 block text-sm font-medium'>
                     Search Documents
                   </label>
@@ -298,15 +295,18 @@ const DocumentFiltersPanel: React.FC<DocumentFiltersPanelProperties> = ({
                     }
                     renderValue={(items) => {
                       if (items.length === 0) return null;
-                      
+
                       return (
                         <div className='flex flex-wrap gap-1'>
                           {Array.from(items).map((item) => {
-                            const tagName = uniqueTags.find(tag => tag.id === item.key)?.name || item.textValue || item.key;
+                            const tagName =
+                              uniqueTags.find((tag) => tag.id === item.key)?.name ||
+                              item.textValue ||
+                              item.key;
                             return (
-                              <Chip 
-                                key={item.key} 
-                                size='sm' 
+                              <Chip
+                                key={item.key}
+                                size='sm'
                                 variant='flat'
                                 onClose={() => removeTagFromFilter(item.key as string)}
                               >
@@ -319,7 +319,7 @@ const DocumentFiltersPanel: React.FC<DocumentFiltersPanelProperties> = ({
                     }}
                   >
                     {uniqueTags.map((tag) => (
-                      <SelectItem key={tag.id} value={tag.id} textValue={tag.name}>
+                      <SelectItem key={tag.id} textValue={tag.name}>
                         {tag.name}
                       </SelectItem>
                     ))}

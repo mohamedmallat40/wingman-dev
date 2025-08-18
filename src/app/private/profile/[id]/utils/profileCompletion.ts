@@ -1,4 +1,4 @@
-import { type ProfileUser, type Experience, type Education, type Language } from '../types';
+import { type Education, type Experience, type Language, type ProfileUser } from '../types';
 
 interface ProfileCompletionData {
   user: ProfileUser;
@@ -9,7 +9,7 @@ interface ProfileCompletionData {
 
 export const calculateProfileCompletion = (data: ProfileCompletionData): number => {
   const { user, experiences = [], education = [], languages = [] } = data;
-  
+
   let completedFields = 0;
   let totalFields = 0;
 
@@ -21,7 +21,7 @@ export const calculateProfileCompletion = (data: ProfileCompletionData): number 
     { field: user.aboutMe, weight: 5 },
     { field: user.profileImage, weight: 3 },
     { field: user.phoneNumber, weight: 2 },
-    { field: user.country, weight: 2 },
+    { field: user.region, weight: 2 },
     { field: user.city, weight: 2 },
     { field: user.profession, weight: 3 }
   ];

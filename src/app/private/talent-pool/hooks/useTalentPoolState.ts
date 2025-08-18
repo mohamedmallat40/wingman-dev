@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+
 import { TalentPoolFilters, TalentType } from '../types';
 
 interface TalentPoolState {
@@ -23,8 +24,8 @@ const initialState: TalentPoolState = {
   tabCounts: {
     freelancers: 0,
     agencies: 0,
-    teams: 0,
-  },
+    teams: 0
+  }
 };
 
 export const useTalentPoolState = () => {
@@ -32,32 +33,32 @@ export const useTalentPoolState = () => {
 
   // Tab management
   const setActiveTab = useCallback((tab: TalentType) => {
-    setState(prev => ({ ...prev, activeTab: tab }));
+    setState((prev) => ({ ...prev, activeTab: tab }));
   }, []);
 
   // Search management
   const setSearchQuery = useCallback((query: string) => {
-    setState(prev => ({ ...prev, searchQuery: query }));
+    setState((prev) => ({ ...prev, searchQuery: query }));
   }, []);
 
   const handleSearch = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       filters: {
         ...prev.filters,
         search: prev.searchQuery.trim() || undefined,
-        name: prev.searchQuery.trim() || undefined,
-      },
+        name: prev.searchQuery.trim() || undefined
+      }
     }));
   }, []);
 
   // Filter management
   const setFilters = useCallback((newFilters: TalentPoolFilters) => {
-    setState(prev => ({ ...prev, filters: newFilters }));
+    setState((prev) => ({ ...prev, filters: newFilters }));
   }, []);
 
   const removeFilter = useCallback((filterKey: keyof TalentPoolFilters) => {
-    setState(prev => {
+    setState((prev) => {
       const newFilters = { ...prev.filters };
       delete newFilters[filterKey];
       return { ...prev, filters: newFilters };
@@ -65,30 +66,30 @@ export const useTalentPoolState = () => {
   }, []);
 
   const clearAllFilters = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       searchQuery: '',
-      filters: {},
+      filters: {}
     }));
   }, []);
 
   // Filters panel management
   const toggleFilters = useCallback(() => {
-    setState(prev => ({ ...prev, showFilters: !prev.showFilters }));
+    setState((prev) => ({ ...prev, showFilters: !prev.showFilters }));
   }, []);
 
   // Tab counts management
   const updateTabCount = useCallback((tab: TalentType, count: number) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
-      tabCounts: { ...prev.tabCounts, [tab]: count },
+      tabCounts: { ...prev.tabCounts, [tab]: count }
     }));
   }, []);
 
   return {
     // State
     ...state,
-    
+
     // Actions
     setActiveTab,
     setSearchQuery,
@@ -97,6 +98,6 @@ export const useTalentPoolState = () => {
     removeFilter,
     clearAllFilters,
     toggleFilters,
-    updateTabCount,
+    updateTabCount
   };
 };

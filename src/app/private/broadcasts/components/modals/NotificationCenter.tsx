@@ -19,6 +19,7 @@ import {
 } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 interface Notification {
   id: string;
@@ -178,6 +179,7 @@ export default function NotificationCenter({
   onClose,
   className = ''
 }: NotificationCenterProps) {
+  const t = useTranslations('broadcasts');
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
   const [liveUpdates, setLiveUpdates] = useState<LiveUpdate[]>(MOCK_LIVE_UPDATES);
   const [trending, setTrending] = useState<TrendingItem[]>(MOCK_TRENDING);
@@ -209,7 +211,7 @@ export default function NotificationCenter({
       ];
 
       const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
-      setLiveUpdates((prev) => [randomUpdate, ...prev.slice(0, 9)]);
+      setLiveUpdates((prev) => [randomUpdate, ...prev.slice(0, 9)].filter(Boolean));
     }, 10000);
 
     return () => clearInterval(interval);
@@ -321,16 +323,15 @@ export default function NotificationCenter({
                 <div className='relative'>
                   <Icon icon='solar:bell-bold' className='text-primary h-6 w-6' />
                   {unreadCount > 0 && (
-                    <Badge
-                      content={unreadCount > 99 ? '99+' : unreadCount}
-                      color='danger'
-                      size='sm'
-                      className='absolute -top-1 -right-1'
-                    />
+                    <Badge color='danger' size='sm' className='absolute -top-1 -right-1'>
+                      {unreadCount > 99 ? '99+' : unreadCount.toString()}
+                    </Badge>
                   )}
                 </div>
                 <div>
-                  <h2 className='text-foreground text-lg font-semibold'>Notifications</h2>
+                  <h2 className='text-foreground text-lg font-semibold'>
+                    {t('modals.notifications.title')}
+                  </h2>
                   <p className='text-foreground-500 text-sm'>{unreadCount} unread updates</p>
                 </div>
               </div>
@@ -389,7 +390,7 @@ export default function NotificationCenter({
                         selectedKeys={[filter]}
                         onSelectionChange={(keys) => setFilter(Array.from(keys)[0] as string)}
                         classNames={{
-                          content: 'bg-background text-foreground border border-default-200'
+                          base: 'bg-background text-foreground border border-default-200'
                         }}
                       >
                         <DropdownItem key='all' className='text-foreground hover:bg-default-100'>
@@ -526,7 +527,9 @@ export default function NotificationCenter({
                           icon='solar:bell-off-linear'
                           className='text-default-400 mb-3 h-12 w-12'
                         />
-                        <p className='text-foreground-500'>No notifications found</p>
+                        <p className='text-foreground-500'>
+                          {t('modals.notifications.noNotifications')}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -538,7 +541,9 @@ export default function NotificationCenter({
                   <div className='border-default-200 border-b p-4'>
                     <div className='mb-2 flex items-center gap-2'>
                       <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
-                      <span className='text-success text-sm font-medium'>Live Updates</span>
+                      <span className='text-success text-sm font-medium'>
+                        {t('modals.notifications.liveUpdates')}
+                      </span>
                     </div>
                     <p className='text-foreground-500 text-xs'>
                       Real-time activity from your followed subcasts
@@ -592,7 +597,9 @@ export default function NotificationCenter({
                   <div className='border-default-200 border-b p-4'>
                     <div className='mb-2 flex items-center gap-2'>
                       <Icon icon='solar:fire-bold' className='text-warning h-4 w-4' />
-                      <span className='text-foreground text-sm font-medium'>Trending Now</span>
+                      <span className='text-foreground text-sm font-medium'>
+                        {t('modals.notifications.trendingNow')}
+                      </span>
                     </div>
                     <p className='text-foreground-500 text-xs'>
                       Popular topics and trending content

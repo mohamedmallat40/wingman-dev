@@ -12,7 +12,6 @@ import enLocale from 'i18n-iso-countries/langs/en.json';
 import frLocale from 'i18n-iso-countries/langs/fr.json';
 import nlLocale from 'i18n-iso-countries/langs/nl.json';
 import { useLocale, useTranslations } from 'next-intl';
-import Image from 'next/image';
 
 import { type TalentPoolFilters, type TalentType } from '../../types';
 import AvailabilityFilter from './AvailabilityFilter';
@@ -82,9 +81,9 @@ const SearchAndFilters: React.FC<SearchAndFiltersProperties> = ({
   };
 
   const handleAvailabilityChange = (
-    statusAviability: 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | null
+    statusAviability: 'OPEN_FOR_PROJECT' | 'OPEN_FOR_PART_TIME' | 'NOT_AVAILABLE' | undefined
   ) => {
-    onFiltersChange({ ...filters, statusAviability: statusAviability ?? 'OPEN_FOR_PROJECT' });
+    onFiltersChange({ ...filters, statusAviability: statusAviability });
   };
 
   const handleCountriesChange = (selectedCountries: string[]) => {
@@ -167,6 +166,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProperties> = ({
 
     return countries[locale].map((country) => ({
       ...country,
+      continent: 'Unknown', // Add default continent for fallback countries
       flag: `https://flagcdn.com/w40/${country.code.toLowerCase()}.png`
     }));
   };
@@ -183,6 +183,7 @@ const SearchAndFilters: React.FC<SearchAndFiltersProperties> = ({
         .map(([code, name]) => ({
           code,
           name,
+          continent: 'Unknown', // Add default continent
           flag: `https://flagcdn.com/w40/${code.toLowerCase()}.png`
         }))
         .sort((a, b) => a.name.localeCompare(b.name));

@@ -20,7 +20,6 @@ export * from './navigation';
 // State Components
 export * from './states';
 
-
 // List container exports with old names
 export {
   FreelancerListContainer as OptimizedFreelancerList,
@@ -34,8 +33,8 @@ export type {
   Group,
   TalentType,
   TalentPoolFilters,
-  TalentCardProps,
-  TeamCardProps,
+  TalentCardProperties,
+  TeamCardProperties,
   UserResponse,
   TeamResponse,
   PaginationMeta,
@@ -45,6 +44,10 @@ export type {
   AvailabilityStatus,
   Currency
 } from '../types';
+
+// Export aliases for backward compatibility
+export type { TalentCardProperties as TalentCardProps } from '../types';
+export type { TeamCardProperties as TeamCardProps } from '../types';
 
 // Re-export utilities
 export * from '../utils/talent-utilities';

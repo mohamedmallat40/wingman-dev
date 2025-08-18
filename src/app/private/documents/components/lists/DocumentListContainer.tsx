@@ -87,7 +87,7 @@ const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
 
   // Empty state
   if (documents.length === 0) {
-    return <DocumentEmptyState onUpload={onUpload} />;
+    return <DocumentEmptyState onAction={onUpload} />;
   }
 
   // Document list
@@ -112,7 +112,12 @@ const DocumentListContainer: React.FC<DocumentListContainerProps> = ({
               delay: index * 0.05 // Stagger animation
             }}
           >
-            <DocumentCard document={document} viewMode={viewMode} onEdit={handleOnEdit} onView={handleOnView} />
+            <DocumentCard
+              document={document}
+              viewMode={viewMode}
+              onEdit={handleOnEdit}
+              onView={handleOnView}
+            />
           </motion.div>
         ))}
       </AnimatePresence>

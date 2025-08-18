@@ -3,18 +3,8 @@ import React from 'react';
 import { Button, Card, CardBody, CardHeader } from '@heroui/react';
 import { Icon } from '@iconify/react';
 
+import { Experience } from '../../types';
 import { ActionButtons } from '../ActionButtons';
-
-interface Experience {
-  id?: string;
-  title?: string;
-  company: string;
-  position: string;
-  startDate: string;
-  endDate?: string;
-  description?: string;
-  location?: string;
-}
 
 interface ProjectsSectionProps {
   projects: Experience[];
@@ -94,15 +84,17 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({
                       <div className='flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between'>
                         <div className='space-y-2'>
                           <div className='flex items-center gap-2'>
-                            <h3 className='text-foreground text-lg font-bold'>{project.title}</h3>
+                            <h3 className='text-foreground text-lg font-bold'>
+                              {project.position}
+                            </h3>
                             {isOwnProfile && (
                               <ActionButtons
                                 showEdit
                                 showDelete
                                 onEdit={() => onEdit(project)}
                                 onDelete={() => onDelete(project)}
-                                editTooltip={`Edit ${project.title} project`}
-                                deleteTooltip={`Delete ${project.title} project`}
+                                editTooltip={`Edit ${project.position} project`}
+                                deleteTooltip={`Delete ${project.position} project`}
                               />
                             )}
                           </div>

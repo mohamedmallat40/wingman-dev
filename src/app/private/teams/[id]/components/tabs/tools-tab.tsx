@@ -137,8 +137,13 @@ export const TeamToolsTab: React.FC<TeamToolsTabProperties> = ({ team, isOwner, 
     }
   };
 
-  const getTagColor = (tag: string) => {
-    const colors: Record<string, string> = {
+  const getTagColor = (
+    tag: string
+  ): 'primary' | 'default' | 'secondary' | 'success' | 'warning' | 'danger' => {
+    const colors: Record<
+      string,
+      'primary' | 'default' | 'secondary' | 'success' | 'warning' | 'danger'
+    > = {
       Frontend: 'primary',
       Backend: 'secondary',
       Database: 'success',
@@ -146,7 +151,7 @@ export const TeamToolsTab: React.FC<TeamToolsTabProperties> = ({ team, isOwner, 
       DevOps: 'danger',
       Design: 'default'
     };
-    return colors[tag];
+    return colors[tag] || 'default';
   };
 
   if (team.tools.length === 0) {

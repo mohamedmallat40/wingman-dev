@@ -7,6 +7,9 @@ export interface Topic {
   icon: string;
   color: string;
   background: string | null;
+  followerCount: number;
+  broadcastCount: number;
+  isFollowed: boolean;
 }
 
 // Skill interface matching API response
@@ -72,11 +75,25 @@ export interface BroadcastPost {
   id: string;
   title: string;
   description: string;
+  link?: string; // Optional dedicated link field
   createdAt: string;
   topics: Topic[];
   skills: Skill[];
   owner: BroadcastOwner;
-  media?: string[]; // Array of filenames
+  attachments?: string[]; // Array of filenames (images, videos, files)
+  media?: string[]; // Array of filenames (legacy field)
+  linkPreviews?: {
+    url: string;
+    title: string;
+    description: string;
+    image?: string;
+    siteName?: string;
+    favicon?: string;
+  }[]; // Array of link preview metadata
+  commentsCount?: number; // Number of comments on this post (legacy)
+  replyCount?: number; // Number of comments/replies on this post (from API)
+  upvotes: number; // Number of upvotes on this post (from API)
+  isUpvoted?: boolean; // Whether current user has upvoted this post
 }
 
 export interface Comment {
@@ -108,3 +125,18 @@ export interface PostInteraction {
   timestamp: string;
 }
 
+// API-related types
+export interface CreatePostData {
+  title: string;
+  description: string;
+  link?: string; // Optional dedicated link field
+  topics: string[]; // Array of topic UUIDs
+  skills: string[]; // Array of skill UUIDs
+  attachments: string[]; // Array of filenames from successful uploads
+}
+
+export interface FeedParams {
+  page?: number;
+  limit?: number;
+  topics?: string[]; // Array of topic IDs for filtering
+}

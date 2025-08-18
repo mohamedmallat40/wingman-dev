@@ -22,6 +22,9 @@ import { TeamToolsTab } from './components/tabs/tools-tab';
 import { TeamDetailsHeader } from './components/teams-header';
 import { TeamDetailsTabs } from './components/teams-navigation';
 import { useTeamDetails } from './hooks/useTeamsDetails';
+import { TeamDetailsHeader } from './components/teams-header';
+import { TeamDetailsTabs } from './components/teams-navigation';
+import { useTeamDetails } from './hooks/useTeamsDetails';
 // Import constants
 // Import hooks
 import { type TeamDetailsTab as TabType } from './types';
