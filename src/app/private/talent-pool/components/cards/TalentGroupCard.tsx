@@ -104,15 +104,15 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
             </h3>
             <div className='flex items-center gap-3'>
               <Avatar
-                src={owner.profileImage ? getImageUrl(owner.profileImage) : undefined}
+                src={owner?.profileImage ? getImageUrl(owner?.profileImage) : undefined}
                 className='ring-primary-100 h-12 w-12 ring-4 ring-offset-2'
-                name={`${owner.firstName} ${owner.lastName}`}
+                name={`${owner?.firstName} ${owner?.lastName}`}
               />
               <div className='flex flex-col'>
                 <p className='text-medium text-foreground font-bold'>
-                  {owner.firstName} {owner.lastName}
+                  {owner?.firstName} {owner?.lastName}
                 </p>
-                <p className='text-small text-default-500'>{mapUserType(owner.profession, t)}</p>
+                <p className='text-small text-default-500'>{mapUserType(owner?.profession, t)}</p>
               </div>
             </div>
           </div>

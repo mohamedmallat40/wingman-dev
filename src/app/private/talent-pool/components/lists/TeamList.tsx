@@ -96,9 +96,9 @@ const TeamList: React.FC<TeamListProperties> = ({
         setIsInitialLoad(false);
       } else {
         setPreviousCount(0);
-        setTeams(data.items);
-        // Only notify parent of count change on initial load
-        onCountChange?.(data.meta?.totalItems ?? 0);
+        console.log(data);
+        setTeams(data.items || data);
+        //onCountChange?.(data.meta?.totalItems ?? 0);
       }
 
       setTotalItems(data.meta?.totalItems ?? 0);
@@ -267,7 +267,7 @@ const TeamList: React.FC<TeamListProperties> = ({
         <>
           {/* Teams Grid */}
           <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3'>
-            {filteredTeams.map((team, index) => (
+            {filteredTeams?.map((team, index) => (
               <motion.div
                 key={`team-${team.id}-${index}`}
                 initial={isInitialLoad || index >= previousCount ? { opacity: 0, y: 10 } : false}
