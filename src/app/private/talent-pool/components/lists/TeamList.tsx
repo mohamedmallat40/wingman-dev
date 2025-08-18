@@ -96,8 +96,7 @@ const TeamList: React.FC<TeamListProperties> = ({
         setIsInitialLoad(false);
       } else {
         setPreviousCount(0);
-        console.log(data);
-        setTeams(data.items || data);
+        setTeams(data.items ?? data);
         //onCountChange?.(data.meta?.totalItems ?? 0);
       }
 
@@ -285,6 +284,7 @@ const TeamList: React.FC<TeamListProperties> = ({
                   group={team}
                   onViewTeam={handleViewTeam}
                   onJoinTeam={handleJoinTeam}
+                  activeTab={activeTab}
                 />
               </motion.div>
             ))}

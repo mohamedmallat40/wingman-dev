@@ -65,6 +65,7 @@ export interface Group {
   tools: Tool[];
   owner: User;
   connections: Connection[];
+  type: 'public' | 'private';
 }
 
 export interface PaginationMeta {
