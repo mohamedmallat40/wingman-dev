@@ -17,6 +17,7 @@ import {
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 import { getImageUrl } from '@/lib/utils/utilities';
 
@@ -59,16 +60,14 @@ const TalentCard: React.FC<TalentCardProperties> = ({
     workingTime,
     amount,
     currency,
-    paymentType,
-    reviewCount
+    paymentType
   } = user;
 
   const availabilityConfig = getAvailabilityConfig(statusAviability);
-  const workTypeConfig = getWorkTypeConfig(workType || 'REMOTE');
+  const workTypeConfig = getWorkTypeConfig(workType ?? 'REMOTE');
   const displaySkills = skills.slice(0, 4);
   const hasMoreSkills = skills.length > 4;
-  const rate = formatRate(amount || 0, currency || 'EUR', paymentType || 'DAILY_BASED', t);
-  const hasReviews = reviewCount && parseInt(reviewCount) > 0;
+  const rate = formatRate(amount ?? 0, currency ?? 'EUR', paymentType ?? 'DAILY_BASED', t);
 
   return (
     <motion.div
@@ -76,22 +75,26 @@ const TalentCard: React.FC<TalentCardProperties> = ({
       transition={{ duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
       className='h-full w-full'
     >
-      <Card className='shadow-soft hover:shadow-medium border-default-200 from-background via-background/95 to-background group relative h-full w-full overflow-hidden border bg-gradient-to-br transition-all duration-300'>
+      <Card
+        className={`shadow-soft hover:shadow-medium border-default-200 from-background via-background/95 to-background group relative h-full w-full overflow-hidden border bg-gradient-to-br transition-all duration-300`}
+      >
+        {' '}
         <div className='bg-primary/5 group-hover:bg-primary/10 absolute top-0 right-0 h-24 w-24 translate-x-1/2 -translate-y-1/2 transform rounded-full blur-xl filter transition-colors duration-300'></div>
         <div className='bg-secondary/5 group-hover:bg-secondary/10 absolute bottom-0 left-0 h-24 w-24 -translate-x-1/2 translate-y-1/2 transform rounded-full blur-xl filter transition-colors duration-300'></div>
-
         <CardHeader className='relative pb-0'>
           <div className='flex w-full items-start gap-4'>
             <div className='relative'>
-              {profileImage && profileImage.trim() ? (
+              {profileImage?.trim() ? (
                 <div className='ring-primary/10 shadow-medium from-primary-200 to-secondary-200 h-20 w-20 overflow-hidden rounded-full bg-gradient-to-br ring-2'>
-                  <img
+                  <Image
+                  width={20}
+                  height={20}
                     src={getImageUrl(profileImage)}
                     alt={`${firstName} ${lastName}`}
                     className='h-full w-full object-cover'
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      const parent = e.currentTarget.parentElement;
+                    onError={(event) => {
+                      event.currentTarget.style.display = 'none';
+                      const parent = event.currentTarget.parentElement;
                       if (parent) {
                         parent.innerHTML = `<div class="w-full h-full flex items-center justify-center text-xl font-bold text-primary-800">${getUserInitials(firstName, lastName)}</div>`;
                       }
@@ -124,7 +127,7 @@ const TalentCard: React.FC<TalentCardProperties> = ({
               <div className='flex items-start justify-between'>
                 <div className='min-w-0 flex-grow'>
                   <h2 className='text-foreground truncate text-xl font-bold tracking-tight'>
-                    {firstName} {lastName}
+                    {firstName} {lastName.charAt(0).toUpperCase()}.
                   </h2>
                   <div className='flex flex-wrap items-center gap-2'>
                     <p className='text-medium text-foreground-600 truncate font-medium'>
@@ -143,6 +146,13 @@ const TalentCard: React.FC<TalentCardProperties> = ({
                 </div>
 
                 <div className='ml-2 flex items-center gap-1'>
+                  {isConnected && (
+                    <Tooltip content={t('talentPool.cards.actions.connected')} placement='bottom'>
+                      <div className='bg-success/10 flex items-center gap-1 rounded-full px-2 py-1'>
+                        <Icon icon='solar:user-check-bold' className='text-success h-5 w-5' />
+                      </div>
+                    </Tooltip>
+                  )}
                   <Tooltip content={t('talentPool.cards.viewProfile')} placement='bottom'>
                     <Button
                       isIconOnly
@@ -231,7 +241,9 @@ const TalentCard: React.FC<TalentCardProperties> = ({
                     <span className='text-small text-foreground-500 flex items-center gap-2 font-medium'>
                       {city}
                       {region && (
-                        <img
+                        <Image
+                        width={3.5}
+                        height={3.5}
                           src={getCountryFlag(region)}
                           alt={`${getCountryName(region)} flag`}
                           className='h-3 w-4 rounded-sm shadow-sm'
@@ -285,7 +297,6 @@ const TalentCard: React.FC<TalentCardProperties> = ({
             </div>
           </div>
         </CardHeader>
-
         <CardBody className='relative z-10 gap-4 px-6 pt-2 pb-6'>
           {/* About Section - Always visible for consistency */}
           <div className='bg-background/80 rounded-large shadow-small border-default-200/50 border p-4 backdrop-blur-sm'>

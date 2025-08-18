@@ -211,7 +211,11 @@
         "freelancers": "Individuele professionals",
         "agencies": "Professionele bureaus",
         "teams": "Samenwerkingsgroepen"
-      }
+      },
+      "allGroups": "Alle Teams",
+      "publicGroups": "Openbare Teams",
+      "privateGroups": "Privé Teams",
+      "sharedWithMe": "Teams Gedeeld Met Mij"
     },
     "search": {
       "button": "Zoeken",
