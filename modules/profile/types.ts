@@ -18,7 +18,7 @@ export interface IUserProfile {
   aboutMe: string;
   profileImage: string;
   profileCover: string | null;
-  statusAviability: 'OPEN_FOR_PROJECT' | 'AVAILABLE' | 'NOT_AVAILABLE';
+  statusAviability: 'OPEN_FOR_PROJECTS' | 'OPEN_FOR_PART_TIME' | 'NOT_AVAILABLE';
   phoneNumber: string;
   birthDate: string | null;
   lastUpdatedDateStatus: string | null;

@@ -22,8 +22,15 @@ export interface EnhancedUploadResponse extends DocumentUploadResponse {
 export const uploadFile = async (file: File) => {
   const formData = new FormData();
   formData.append('file', file); // Changed from 'image' to 'file' to match broadcast pattern
-  return await wingManApi.post<UploadResponse>(API_ROUTES.upload.private, formData, {
+  return await wingManApi.post<UploadResponse>(API_ROUTES.upload.single, formData, {
     // Use private endpoint for documents
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
+};
+export const uploadPublic = (file: File) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  return wingManApi.post<UploadResponse>(API_ROUTES.upload.public, formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
 };

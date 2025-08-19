@@ -30,6 +30,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https' as const,
         hostname: 'nextuipro.nyc3.cdn.digitaloceanspaces.com'
+      },
+      {
+        protocol: 'https' as const,
+        hostname: 'eu2.contabostorage.com'
       }
     ]
   }

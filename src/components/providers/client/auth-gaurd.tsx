@@ -2,12 +2,12 @@
 
 import { useEffect } from 'react';
 
-import { useQueryClient } from '@tanstack/react-query';
+import { QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
 import { getSkills } from '@/app/private/skills/services/skills.service';
 
-export default function AuthGuard({ children }: { children: React.ReactNode }) {
+export default function AuthGuard({ children }: Readonly<{ children: React.ReactNode }>) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -18,13 +18,16 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // Prefetch skills data for the authenticated user
-    queryClient.prefetchQuery({
-      queryKey: ['skills'],
-      queryFn: getSkills,
-      staleTime: 1000 * 60 * 15 // 15 minutes
-    });
+    queryClient
+      .prefetchQuery({
+        queryKey: ['skills'],
+        queryFn: getSkills,
+        staleTime: 1000 * 60 * 15
+      })
+      .catch((error) => {
+        console.error('Failed to prefetch skills:', error);
+      });
   }, [router, queryClient]);
 
-  return <>{children}</>;
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
 }
