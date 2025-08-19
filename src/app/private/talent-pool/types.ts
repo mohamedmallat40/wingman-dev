@@ -65,6 +65,7 @@ export interface Group {
   tools: Tool[];
   owner: User;
   connections: Connection[];
+  type: 'public' | 'private';
 }
 
 export interface PaginationMeta {
@@ -82,7 +83,7 @@ export interface UserResponse {
 
 export interface TeamResponse {
   items: Group[];
-  meta: PaginationMeta;
+  meta?: PaginationMeta;
 }
 
 export type TalentType = 'freelancers' | 'agencies' | 'teams';

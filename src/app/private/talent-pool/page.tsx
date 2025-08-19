@@ -188,7 +188,12 @@ const TalentPoolPage: React.FC = () => {
   };
 
   // Action items with handlers
-  const actionItems = ACTION_ITEMS.map((item) => ({
+  const actionItems = ACTION_ITEMS.filter((item) => {
+    if (item.key === 'create-team') {
+      return activeTab === 'teams';
+    }
+    return true;
+  }).map((item) => ({
     ...item,
     onClick:
       item.key === 'create-team'
@@ -216,7 +221,7 @@ const TalentPoolPage: React.FC = () => {
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
               onPress={() => {
-                action.onClick?.();
+                action.onClick();
               }}
               className='transition-all duration-200 hover:shadow-md'
             >
