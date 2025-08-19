@@ -6,7 +6,7 @@ import type { Comment, CommentAction, CommentSectionProps } from '../../types/co
 
 import { Button, Card, CardBody, Divider, Skeleton, Spinner } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { AnimatePresence, motion } from 'framer-motion';
+// Removed framer-motion for better performance
 import { useTranslations } from 'next-intl';
 
 import { useComments } from '../../hooks/useComments';
@@ -51,13 +51,16 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   // Track if we've loaded comments for this post to prevent duplicates
   const loadedPostRef = useRef<string | null>(null);
 
-  // Load comments when component mounts - only once per post
+  // Load comments when component mounts - only once per post and only if no initial comments
   useEffect(() => {
-    if (loadedPostRef.current !== postId) {
+    if (loadedPostRef.current !== postId && initialComments.length === 0) {
       loadedPostRef.current = postId;
       loadInitialComments();
+    } else if (loadedPostRef.current !== postId) {
+      // If we have initial comments, just mark as loaded to prevent duplicate fetching
+      loadedPostRef.current = postId;
     }
-  }, [postId, loadInitialComments]);
+  }, [postId, loadInitialComments, initialComments.length]);
 
   // UI state management
   const { uiState, actions: uiActions } = useCommentUI();
@@ -228,10 +231,17 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         )}
 
         {/* Comments */}
-        <AnimatePresence mode='popLayout'>
-          {comments.map((comment) => (
-            <CommentItem
+        <div>
+          {comments.map((comment, index) => (
+            <div
               key={comment.id}
+              className="opacity-0 animate-in fade-in duration-300"
+              style={{
+                animationDelay: `${index * 100}ms`,
+                animationFillMode: 'forwards'
+              }}
+            >
+              <CommentItem
               comment={comment}
               onAction={handleCommentAction}
               onReply={handleReply}
@@ -240,9 +250,10 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               currentDepth={0}
               enableMentions={enableMentions}
               enableRichText={enableRichText}
-            />
+              />
+            </div>
           ))}
-        </AnimatePresence>
+        </div>
 
         {/* Load more trigger */}
         {hasMore && (

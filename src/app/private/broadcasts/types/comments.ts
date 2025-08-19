@@ -53,11 +53,17 @@ export interface CreateCommentPayload {
   readonly mentions?: readonly string[]; // User IDs
 }
 
+// Legacy alias for service compatibility
+export interface CreateCommentData extends CreateCommentPayload {}
+
 // Comment update payload
 export interface UpdateCommentPayload {
   readonly content: string;
   readonly mentions?: readonly string[]; // User IDs
 }
+
+// Legacy alias for service compatibility
+export interface UpdateCommentData extends UpdateCommentPayload {}
 
 // Comment filters for API
 export interface CommentFilters {

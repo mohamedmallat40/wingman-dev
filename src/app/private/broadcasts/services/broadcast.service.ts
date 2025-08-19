@@ -11,10 +11,7 @@ import wingManApi from '@/lib/axios';
 export const getBroadcastFeed = async (params: FeedParams = {}) => {
   const { page = 1, limit = 10, topics } = params;
 
-  const queryParams = new URLSearchParams({
-    page: page.toString(),
-    limit: limit.toString()
-  });
+  const queryParams = new URLSearchParams();
 
   // Add multiple topics as separate query parameters
   if (topics && topics.length > 0) {
@@ -23,7 +20,8 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
     });
   }
 
-  const response = await wingManApi.get(`${API_ROUTES.broadcasts.feed}?${queryParams}`);
+  const url = `${API_ROUTES.broadcasts.feed}?${queryParams}`;
+  const response = await wingManApi.get(url);
 
   // Handle different response structures
   const responseData = response.data;

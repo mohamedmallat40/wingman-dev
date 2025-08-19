@@ -54,5 +54,13 @@ export const API_ROUTES = {
     trending: '/broadcasts/trending',
     search: '/broadcasts/search',
     topics: '/broadcast/topics'
+  },
+  comments: {
+    byPost: (postId: string) => `/broadcast/${postId}/comments`,
+    create: '/comments',
+    update: (commentId: string) => `/comments/${commentId}`,
+    delete: (commentId: string) => `/comments/${commentId}`,
+    like: (commentId: string) => `/comments/${commentId}/like`,
+    replies: (commentId: string) => `/comments/${commentId}/replies`
   }
 };

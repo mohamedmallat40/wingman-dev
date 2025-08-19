@@ -9,13 +9,16 @@ import { useTranslations } from 'next-intl';
 
 interface Topic {
   id: string;
-  title: string;
+  title?: string;
+  name?: string;
   description: string;
   icon: string;
   color: string;
-  followerCount: number;
-  broadcastCount: number;
-  isFollowed: boolean;
+  followerCount?: number;
+  postCount?: number;
+  broadcastCount?: number;
+  isFollowed?: boolean;
+  isFollowing?: boolean;
 }
 
 interface TopicFeedHeaderProps {
@@ -76,7 +79,7 @@ export const TopicFeedHeader: React.FC<TopicFeedHeaderProps> = ({
               {/* Topic Info */}
               <div className='min-w-0 flex-1'>
                 <div className='mb-2 flex items-center gap-3'>
-                  <h1 className='text-foreground truncate text-2xl font-bold'>{topic.title}</h1>
+                  <h1 className='text-foreground truncate text-2xl font-bold'>{topic.title || topic.name}</h1>
                   <Chip
                     size='sm'
                     variant='flat'
@@ -99,7 +102,7 @@ export const TopicFeedHeader: React.FC<TopicFeedHeaderProps> = ({
                       className='text-foreground-400 h-4 w-4'
                     />
                     <span className='text-foreground text-sm font-medium'>
-                      {formatCount(topic.followerCount)} followers
+                      {formatCount(topic.followerCount || 0)} followers
                     </span>
                   </div>
 
@@ -109,7 +112,7 @@ export const TopicFeedHeader: React.FC<TopicFeedHeaderProps> = ({
                       className='text-foreground-400 h-4 w-4'
                     />
                     <span className='text-foreground text-sm font-medium'>
-                      {formatCount(topic.broadcastCount)} posts
+                      {formatCount(topic.broadcastCount || topic.postCount || 0)} posts
                     </span>
                   </div>
                 </div>
@@ -130,22 +133,22 @@ export const TopicFeedHeader: React.FC<TopicFeedHeaderProps> = ({
               </Button>
 
               <Button
-                color={topic.isFollowed ? 'success' : 'primary'}
-                variant={topic.isFollowed ? 'flat' : 'solid'}
+                color={(topic.isFollowed || topic.isFollowing) ? 'success' : 'primary'}
+                variant={(topic.isFollowed || topic.isFollowing) ? 'flat' : 'solid'}
                 size='sm'
                 isLoading={isLoading}
                 startContent={
                   !isLoading && (
                     <Icon
-                      icon={topic.isFollowed ? 'solar:check-circle-bold' : 'solar:user-plus-linear'}
+                      icon={(topic.isFollowed || topic.isFollowing) ? 'solar:check-circle-bold' : 'solar:user-plus-linear'}
                       className='h-4 w-4'
                     />
                   )
                 }
-                onPress={topic.isFollowed ? onUnfollow : onFollow}
+                onPress={(topic.isFollowed || topic.isFollowing) ? onUnfollow : onFollow}
                 className='min-w-24 transition-all duration-200 hover:scale-105'
               >
-                {topic.isFollowed ? t('topics.following') : t('topics.follow')}
+                {(topic.isFollowed || topic.isFollowing) ? t('topics.following') : t('topics.follow')}
               </Button>
             </div>
           </div>
@@ -154,7 +157,7 @@ export const TopicFeedHeader: React.FC<TopicFeedHeaderProps> = ({
           <div className='border-divider/50 mt-6 border-t pt-4'>
             <div className='text-foreground-500 flex items-center gap-2 text-sm'>
               <Icon icon='solar:filter-linear' className='h-4 w-4' />
-              <span>{t('topics.feedHeader.showingPostsFrom', { topic: topic.title })}</span>
+              <span>{t('topics.feedHeader.showingPostsFrom', { topic: topic.title || topic.name || 'this topic' })}</span>
             </div>
           </div>
         </CardBody>

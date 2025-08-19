@@ -17,13 +17,13 @@ export const useUpvote = () => {
       setIsOptimisticUpdate(true);
 
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['broadcasts'] });
+      await queryClient.cancelQueries({ queryKey: ['broadcasts', 'feed'] });
 
       // Snapshot the previous value
-      const previousData = queryClient.getQueriesData({ queryKey: ['broadcasts'] });
+      const previousData = queryClient.getQueriesData({ queryKey: ['broadcasts', 'feed'] });
 
       // Optimistically update all broadcast queries
-      queryClient.setQueriesData({ queryKey: ['broadcasts'] }, (old: any) => {
+      queryClient.setQueriesData({ queryKey: ['broadcasts', 'feed'] }, (old: any) => {
         if (!old) return old;
 
         // Handle paginated response structure
@@ -77,8 +77,7 @@ export const useUpvote = () => {
     },
     onSettled: () => {
       setIsOptimisticUpdate(false);
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ['broadcasts'] });
+      // Only invalidate if optimistic update failed
     }
   });
 
@@ -89,13 +88,13 @@ export const useUpvote = () => {
       setIsOptimisticUpdate(true);
 
       // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['broadcasts'] });
+      await queryClient.cancelQueries({ queryKey: ['broadcasts', 'feed'] });
 
       // Snapshot the previous value
-      const previousData = queryClient.getQueriesData({ queryKey: ['broadcasts'] });
+      const previousData = queryClient.getQueriesData({ queryKey: ['broadcasts', 'feed'] });
 
       // Optimistically update all broadcast queries
-      queryClient.setQueriesData({ queryKey: ['broadcasts'] }, (old: any) => {
+      queryClient.setQueriesData({ queryKey: ['broadcasts', 'feed'] }, (old: any) => {
         if (!old) return old;
 
         // Handle paginated response structure
@@ -149,8 +148,7 @@ export const useUpvote = () => {
     },
     onSettled: () => {
       setIsOptimisticUpdate(false);
-      // Invalidate and refetch
-      queryClient.invalidateQueries({ queryKey: ['broadcasts'] });
+      // Only invalidate if optimistic update failed
     }
   });
 

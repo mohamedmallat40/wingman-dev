@@ -127,7 +127,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
                   src={metadata.image}
                   alt={metadata.title}
                   className='max-h-full max-w-full object-contain'
-                  fallbackSrc='/api/placeholder/160/112'
+                  fallbackSrc='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYwIiBoZWlnaHQ9IjExMiIgdmlld0JveD0iMCAwIDE2MCAxMTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNjAiIGhlaWdodD0iMTEyIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik04MCA0NEw5NiA2NEg2NEw4MCA0NFoiIGZpbGw9IiNEMkQyRDIiLz4KPC9zdmc+'
                 />
                 <div className='to-background/10 absolute inset-0 bg-gradient-to-r from-transparent' />
               </div>

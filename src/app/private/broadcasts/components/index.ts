@@ -1,9 +1,6 @@
 // Card components
 export * from './cards';
 
-// Filter components
-export * from './filters';
-
 // List components
 export * from './lists';
 

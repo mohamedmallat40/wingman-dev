@@ -48,8 +48,8 @@ export const useLikePost = () => {
   return useMutation({
     mutationFn: (postId: string) => togglePostLike(postId),
     onSuccess: (response, postId) => {
-      // Invalidate feed queries to refetch with updated like status
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
+      // Use optimistic updates instead of invalidation for better performance
+      // Only invalidate the specific post if needed
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
     onError: (error) => {
@@ -103,8 +103,9 @@ export const useUpdatePost = () => {
     mutationFn: ({ postId, postData }: { postId: string; postData: CreatePostData }) =>
       updatePost(postId, postData),
     onSuccess: (response, { postId }) => {
-      // Only invalidate feed queries - no need to invalidate individual post query
+      // Invalidate both feed and specific post for content updates
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
     onError: (error) => {
       console.error('Failed to update post:', error);
@@ -169,9 +170,9 @@ export const useFollowTopic = () => {
         );
       });
 
-      // Invalidate related queries
+      // Only invalidate topics query since we updated the cache optimistically
+      // Feed will automatically reflect changes due to the cache update
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'topics'] });
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
     },
     onError: (error) => {
       // Error handling can be done in the UI
@@ -201,9 +202,9 @@ export const useUnfollowTopic = () => {
         );
       });
 
-      // Invalidate related queries
+      // Only invalidate topics query since we updated the cache optimistically
+      // Feed will automatically reflect changes due to the cache update
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'topics'] });
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
     },
     onError: (error) => {
       // Error handling can be done in the UI

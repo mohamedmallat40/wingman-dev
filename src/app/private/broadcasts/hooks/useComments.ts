@@ -8,7 +8,14 @@ import type {
   UseCommentsReturn
 } from '../types/comments';
 
-import { commentService } from '../services/commentService';
+import { 
+  getComments as getCommentsService, 
+  createComment as createCommentService, 
+  updateComment as updateCommentService, 
+  deleteComment as deleteCommentService, 
+  likeComment as likeCommentService, 
+  unlikeComment as unlikeCommentService 
+} from '../services/commentService';
 import { useBroadcastUpdates } from './useBroadcastUpdates';
 
 interface UseCommentsProps {
@@ -31,7 +38,7 @@ export const useComments = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  const [hasMore, setHasMore] = useState(safeInitialComments.length === 0);
+  const [hasMore, setHasMore] = useState(true);
   const [total, setTotal] = useState(safeInitialComments.length);
   const [offset, setOffset] = useState(safeInitialComments.length);
 
@@ -54,7 +61,11 @@ export const useComments = ({
           sortBy
         };
 
-        const response = await commentService.getComments(filters);
+        const response = await getCommentsService(filters.postId, { 
+          page: Math.floor((filters.offset || 0) / (filters.limit || 20)) + 1,
+          limit: filters.limit || 20,
+          sortBy: filters.sortBy || 'newest'
+        });
 
         // Handle different response structures and edge cases
         const responseComments = Array.isArray(response?.comments)
@@ -70,9 +81,12 @@ export const useComments = ({
           setComments(responseComments);
           setOffset(responseComments.length);
         } else {
+          // For non-refresh loads, only add new comments that don't already exist
           setComments((prev) => {
             const prevArray = Array.isArray(prev) ? prev : [];
-            return [...prevArray, ...responseComments] as readonly Comment[];
+            const existingIds = new Set(prevArray.map(c => c.id));
+            const newComments = responseComments.filter(c => !existingIds.has(c.id));
+            return [...prevArray, ...newComments] as readonly Comment[];
           });
           setOffset((prev) => prev + responseComments.length);
         }
@@ -114,7 +128,11 @@ export const useComments = ({
         sortBy
       };
 
-      const response = await commentService.getComments(filters);
+      const response = await getCommentsService(filters.postId, { 
+        page: Math.floor((filters.offset || 0) / (filters.limit || 20)) + 1,
+        limit: filters.limit || 20,
+        sortBy: filters.sortBy || 'newest'
+      });
 
       // Handle different response structures and edge cases
       const responseComments = Array.isArray(response?.comments)
@@ -124,9 +142,12 @@ export const useComments = ({
           : [];
       const responseHasMore = typeof response?.hasMore === 'boolean' ? response.hasMore : false;
 
+      // Only add new comments that don't already exist
       setComments((prev) => {
         const prevArray = Array.isArray(prev) ? prev : [];
-        return [...prevArray, ...responseComments] as readonly Comment[];
+        const existingIds = new Set(prevArray.map(c => c.id));
+        const newComments = responseComments.filter(c => !existingIds.has(c.id));
+        return [...prevArray, ...newComments] as readonly Comment[];
       });
       setOffset((prev) => prev + responseComments.length);
       setHasMore(responseHasMore);
@@ -156,7 +177,7 @@ export const useComments = ({
   // Create comment - simple approach without optimistic updates
   const createComment = useCallback(async (payload: CreateCommentPayload): Promise<Comment> => {
     try {
-      const newComment = await commentService.createComment(payload);
+      const newComment = await createCommentService(payload);
 
       if (payload.parentId) {
         // Add as reply to existing comment (recursively search)
@@ -200,7 +221,7 @@ export const useComments = ({
   const updateComment = useCallback(
     async (id: string, payload: UpdateCommentPayload): Promise<Comment> => {
       try {
-        const updatedComment = await commentService.updateComment(id, payload);
+        const updatedComment = await updateCommentService(id, payload);
 
         // Update comment in state
         const updateCommentRecursive = (comments: readonly Comment[]): readonly Comment[] => {
@@ -230,7 +251,7 @@ export const useComments = ({
   // Delete comment
   const deleteComment = useCallback(async (id: string): Promise<void> => {
     try {
-      await commentService.deleteComment(id);
+      await deleteCommentService(id);
 
       // Remove comment from state
       const removeCommentRecursive = (comments: readonly Comment[]): readonly Comment[] => {
@@ -277,7 +298,7 @@ export const useComments = ({
     setComments((prev) => updateLikeRecursive(prev));
 
     try {
-      await commentService.likeComment(id);
+      await likeCommentService(id);
     } catch (err) {
       // Revert optimistic update
       const revertLikeRecursive = (comments: readonly Comment[]): readonly Comment[] => {
@@ -329,7 +350,7 @@ export const useComments = ({
     setComments((prev) => updateUnlikeRecursive(prev));
 
     try {
-      await commentService.unlikeComment(id);
+      await unlikeCommentService(id);
     } catch (err) {
       // Revert optimistic update
       const revertUnlikeRecursive = (comments: readonly Comment[]): readonly Comment[] => {
@@ -360,6 +381,11 @@ export const useComments = ({
   const loadInitialComments = useCallback(async () => {
     if (isLoading) return; // Prevent multiple simultaneous requests
 
+    // If we already have initial comments, don't fetch again
+    if (safeInitialComments.length > 0 && comments.length > 0) {
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
@@ -371,7 +397,11 @@ export const useComments = ({
         sortBy
       };
 
-      const response = await commentService.getComments(filters);
+      const response = await getCommentsService(filters.postId, { 
+        page: Math.floor((filters.offset || 0) / (filters.limit || 20)) + 1,
+        limit: filters.limit || 20,
+        sortBy: filters.sortBy || 'newest'
+      });
 
       // Handle different response structures and edge cases
       const responseComments = Array.isArray(response?.comments)
@@ -404,7 +434,7 @@ export const useComments = ({
     } finally {
       setIsLoading(false);
     }
-  }, [postId, limit, sortBy, isLoading]);
+  }, [postId, limit, sortBy, isLoading, safeInitialComments.length, comments.length]);
 
   return {
     comments,
@@ -415,7 +445,7 @@ export const useComments = ({
     total,
     actions: {
       loadMore,
-      refresh: loadInitialComments, // Use the manual load function as refresh
+      refresh, // Use the proper refresh function
       createComment,
       updateComment,
       deleteComment,
