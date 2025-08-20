@@ -32,38 +32,41 @@ export const useLinkPreview = (content: string): UseLinkPreviewReturn => {
 
       // Remove duplicates and filter out already processed URLs
       const uniqueUrls = [...new Set(urls)];
-      const currentUrls = linkPreviews.map((preview) => preview.url);
-      const newUrls = uniqueUrls.filter((url) => !currentUrls.includes(url));
 
-      if (newUrls.length === 0) {
-        // Remove previews for URLs that are no longer in the content
-        const validPreviews = linkPreviews.filter((preview) => uniqueUrls.includes(preview.url));
-        if (validPreviews.length !== linkPreviews.length) {
-          setLinkPreviews(validPreviews);
+      setLinkPreviews((currentPreviews) => {
+        const currentUrls = currentPreviews.map((preview) => preview.url);
+        const newUrls = uniqueUrls.filter((url) => !currentUrls.includes(url));
+
+        if (newUrls.length === 0) {
+          // Remove previews for URLs that are no longer in the content
+          const validPreviews = currentPreviews.filter((preview) => uniqueUrls.includes(preview.url));
+          return validPreviews.length !== currentPreviews.length ? validPreviews : currentPreviews;
         }
-        return;
-      }
 
-      setIsLoading(true);
+        // Process new URLs asynchronously
+        setIsLoading(true);
 
-      try {
-        const metadataPromises = newUrls.map((url) => fetchMetadata(url));
-        const metadataResults = await Promise.all(metadataPromises);
+        Promise.all(newUrls.map((url) => fetchMetadata(url)))
+          .then((metadataResults) => {
+            const validMetadata = metadataResults.filter(Boolean) as LinkMetadata[];
 
-        const validMetadata = metadataResults.filter(Boolean) as LinkMetadata[];
+            setLinkPreviews((prev) => {
+              const filtered = prev.filter((preview) => uniqueUrls.includes(preview.url));
+              return [...filtered, ...validMetadata];
+            });
+          })
+          .catch((error) => {
+            console.error('Error processing URLs:', error);
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
 
-        // Update previews: keep existing + add new ones
-        setLinkPreviews((prev) => {
-          const filtered = prev.filter((preview) => uniqueUrls.includes(preview.url));
-          return [...filtered, ...validMetadata];
-        });
-      } catch (error) {
-        console.error('Error processing URLs:', error);
-      } finally {
-        setIsLoading(false);
-      }
+        // Return current previews while processing new ones
+        return currentPreviews.filter((preview) => uniqueUrls.includes(preview.url));
+      });
     },
-    [linkPreviews]
+    [] // Remove linkPreviews dependency to prevent infinite loop
   );
 
   // Debounced effect to process URLs when content changes
