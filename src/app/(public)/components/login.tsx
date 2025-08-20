@@ -178,10 +178,10 @@ export function LoginModal({
 
   return (
     <Modal
-      backdrop='blur'
+      backdrop='opaque'
       classNames={{
         base: 'bg-background dark:bg-content1',
-        backdrop: 'bg-black/50 backdrop-blur-sm'
+        backdrop: 'bg-black/50'
       }}
       isOpen={isOpen}
       placement='center'
