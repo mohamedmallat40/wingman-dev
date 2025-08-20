@@ -139,9 +139,9 @@ export default function BroadcastsPage() {
                 color={currentView === 'all' ? 'primary' : 'default'}
                 onPress={() => handleViewChange('all')}
                 startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
-                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 ${
-                  currentView === 'all' 
-                    ? 'shadow-sm' 
+                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  currentView === 'all'
+                    ? 'shadow-sm'
                     : 'hover:bg-default-200/50'
                 }`}
               >
