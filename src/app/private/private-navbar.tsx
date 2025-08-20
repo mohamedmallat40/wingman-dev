@@ -17,7 +17,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Tooltip } from '@heroui/tooltip';
 import { Icon } from '@iconify/react';
-import { AnimatePresence, motion } from 'framer-motion';
+// import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { LoginModal } from '@/app/(public)/components/login';
