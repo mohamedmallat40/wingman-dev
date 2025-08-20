@@ -228,7 +228,7 @@ export default function PrivateNavBar() {
       {/* Right Side Actions - Enhanced Spacing */}
       <NavbarContent as='div' className='flex items-center gap-3 sm:gap-4' justify='end'>
         {/* Theme & Language Group - Reduced Height to Match Navigation */}
-        <div className='from-default-100/40 to-default-50/25 border-divider/25 shadow-small hidden h-11 items-center gap-1 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-sm sm:flex'>
+        <div className='bg-default-100/30 border-divider/30 hidden h-11 items-center gap-1 rounded-xl border px-3 sm:flex'>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
