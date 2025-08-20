@@ -460,8 +460,8 @@ export default function TopicSidebar({
                                     <Icon
                                       icon={
                                         subcast.isFollowing
-                                          ? 'solar:check-circle-bold'
-                                          : 'solar:add-circle-linear'
+                                          ? 'solar:heart-bold'
+                                          : 'solar:heart-linear'
                                       }
                                       className='h-4 w-4'
                                     />
