@@ -14,60 +14,41 @@ export const useBroadcastUpdates = () => {
   // Update comment count for a specific post
   const updateCommentCount = useCallback(
     (postId: string, increment: number = 1) => {
-      queryClient.setQueriesData({ queryKey: ['broadcasts'] }, (old: any) => {
-        if (!old) return old;
+      // Only update specific feed queries to reduce performance impact
+      queryClient.setQueriesData({ queryKey: ['broadcasts', 'feed'] }, (old: any) => {
+        if (!old?.pages) return old;
 
-        // Handle paginated response structure
-        if (old.pages) {
-          return {
-            ...old,
-            pages: old.pages.map((page: any) => ({
-              ...page,
-              data: page.data?.map((post: BroadcastPost) =>
-                post.id === postId
-                  ? {
-                      ...post,
-                      replyCount: Math.max(0, (post.replyCount || 0) + increment),
-                      commentsCount: Math.max(0, (post.commentsCount || 0) + increment)
-                    }
-                  : post
-              )
-            }))
-          };
-        }
+        let hasChanges = false;
+        const updatedPages = old.pages.map((page: any) => {
+          if (!page.data) return page;
 
-        // Handle direct data array
-        if (old.data && Array.isArray(old.data)) {
-          return {
-            ...old,
-            data: old.data.map((post: BroadcastPost) =>
-              post.id === postId
-                ? {
-                    ...post,
-                    replyCount: Math.max(0, (post.replyCount || 0) + increment),
-                    commentsCount: Math.max(0, (post.commentsCount || 0) + increment)
-                  }
-                : post
-            )
-          };
-        }
+          const updatedData = page.data.map((post: BroadcastPost) => {
+            if (post.id === postId) {
+              hasChanges = true;
+              return {
+                ...post,
+                replyCount: Math.max(0, (post.replyCount || 0) + increment),
+                commentsCount: Math.max(0, (post.commentsCount || 0) + increment)
+              };
+            }
+            return post;
+          });
 
-        return old;
+          return { ...page, data: updatedData };
+        });
+
+        return hasChanges ? { ...old, pages: updatedPages } : old;
       });
 
-      // Also update single post queries
-      queryClient.setQueriesData(
-        { queryKey: ['broadcast', postId] },
-        (old: BroadcastPost | undefined) => {
-          if (!old) return old;
-
-          return {
-            ...old,
-            replyCount: Math.max(0, (old.replyCount || 0) + increment),
-            commentsCount: Math.max(0, (old.commentsCount || 0) + increment)
-          };
-        }
-      );
+      // Update single post query more specifically
+      queryClient.setQueryData(['broadcasts', 'post', postId], (old: BroadcastPost | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          replyCount: Math.max(0, (old.replyCount || 0) + increment),
+          commentsCount: Math.max(0, (old.commentsCount || 0) + increment)
+        };
+      });
     },
     [queryClient]
   );
