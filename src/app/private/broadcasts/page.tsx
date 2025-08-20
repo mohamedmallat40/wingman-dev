@@ -153,7 +153,7 @@ export default function BroadcastsPage() {
                 color={currentView === 'saved' ? 'primary' : 'default'}
                 onPress={() => handleViewChange('saved')}
                 startContent={<Icon icon='solar:archive-linear' className='h-4 w-4' />}
-                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
+                className={`h-8 sm:h-9 min-w-0 px-2 sm:px-4 font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
                   currentView === 'saved'
                     ? 'shadow-sm'
                     : 'hover:bg-default-200/50'
