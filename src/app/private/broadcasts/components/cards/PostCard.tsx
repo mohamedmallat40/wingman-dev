@@ -590,7 +590,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     <Icon icon='solar:export-linear' className='h-4 w-4' aria-hidden='true' />
                   }
                   onPress={() => setShareModalOpen(true)}
-                  className='h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:bg-default-100'
+                  className='h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:bg-default-100 hover:shadow-sm hover:scale-105 active:scale-95'
                   aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {t('post.actions.share')}
