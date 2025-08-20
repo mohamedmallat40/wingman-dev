@@ -80,14 +80,17 @@ export default function PrivateNavBar() {
       maxWidth='full'
       position='sticky'
       onMenuOpenChange={setIsMenuOpen}
-      height='4.5rem'
+      height='3.5rem'
+      classNames={{
+        wrapper: 'px-2 sm:px-4 md:px-6'
+      }}
     >
       <NavbarContent justify='start' className='gap-0'>
         {/* Brand Section with Enhanced Spacing */}
         <NavbarBrand className='mr-8 grow-0 gap-3 lg:mr-12'>
           {/* Mobile Menu Toggle */}
           <NavbarMenuToggle
-            className='text-foreground hover:text-primary mr-3 h-8 w-8 transition-colors xl:hidden'
+            className='text-foreground hover:text-primary mr-1 h-6 w-6 transition-colors sm:mr-3 sm:h-8 sm:w-8 xl:hidden'
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           />
 
@@ -227,8 +230,8 @@ export default function PrivateNavBar() {
 
       {/* Right Side Actions - Enhanced Spacing */}
       <NavbarContent as='div' className='flex items-center gap-3 sm:gap-4' justify='end'>
-        {/* Theme & Language Group - Reduced Height to Match Navigation */}
-        <div className='bg-default-100/30 border-divider/30 hidden h-11 items-center gap-1 rounded-xl border px-3 sm:flex'>
+        {/* Theme & Language Group - Mobile Hidden */}
+        <div className='bg-default-100/30 border-divider/30 hidden h-8 items-center gap-1 rounded-lg border px-2 lg:flex lg:h-11 lg:px-3'>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -256,7 +259,7 @@ export default function PrivateNavBar() {
               <Button
                 disableRipple
                 isIconOnly
-                className='hover:bg-primary/10 hover:shadow-medium h-10 w-10 overflow-visible transition-all duration-200 sm:h-11 sm:w-11'
+                className='hover:bg-primary/10 hover:shadow-medium h-8 w-8 overflow-visible transition-all duration-200 sm:h-10 sm:w-10 lg:h-11 lg:w-11'
                 radius='full'
                 variant='light'
                 aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
