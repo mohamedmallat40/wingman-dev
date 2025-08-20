@@ -213,16 +213,10 @@ export default function PageHeader({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`border-divider/50 bg-background/97 relative z-20 w-full border-b backdrop-blur-xl ${className}`}
+      className={`border-divider/50 bg-background relative z-20 w-full border-b ${className}`}
     >
-      {/* Enhanced Background Gradient */}
-      <div className='from-primary/6 via-primary/3 to-secondary/6 absolute inset-0 bg-gradient-to-r opacity-70' />
-
-      {/* Subtle Pattern Overlay */}
-      <div className='absolute inset-0 opacity-40'>
-        <div className='bg-primary/5 absolute top-0 left-1/4 h-20 w-20 rounded-full blur-2xl' />
-        <div className='bg-secondary/5 absolute top-0 right-1/3 h-16 w-16 rounded-full blur-2xl' />
-      </div>
+      {/* Simplified Background */}
+      <div className='bg-primary/3 absolute inset-0 opacity-50' />
 
       <div className='relative py-8 sm:py-10 lg:py-12'>
         <div className='mx-auto w-full px-4 sm:px-6 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
@@ -266,7 +260,7 @@ export default function PageHeader({
               >
                 {/* Enhanced Icon */}
                 {icon && (
-                  <div className='bg-primary/15 ring-primary/25 ring-offset-background/50 flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg ring-2 ring-offset-2 lg:h-16 lg:w-16'>
+                  <div className='bg-primary/15 border-primary/25 flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg border-2 lg:h-16 lg:w-16'>
                     <Icon icon={icon} className='text-primary h-7 w-7 lg:h-8 lg:w-8' />
                   </div>
                 )}

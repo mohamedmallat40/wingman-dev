@@ -75,7 +75,7 @@ export default function PrivateNavBar() {
 
   return (
     <Navbar
-      className='border-divider/40 shadow-small bg-background/95 supports-[backdrop-filter]:bg-background/80 w-full max-w-full border-b backdrop-blur-sm'
+      className='border-divider/40 shadow-small bg-background w-full max-w-full border-b'
       isBordered
       maxWidth='full'
       position='sticky'
@@ -117,7 +117,7 @@ export default function PrivateNavBar() {
 
         {/* Desktop Navigation - Enhanced Layout */}
         <NavbarContent className='hidden w-full max-w-none gap-2 xl:flex' justify='start'>
-          <div className='from-default-100/40 to-default-50/25 border-divider/25 shadow-small flex h-11 items-center gap-2 rounded-2xl border bg-gradient-to-r px-3 backdrop-blur-md'>
+          <div className='bg-default-100/30 border-divider/30 flex h-11 items-center gap-2 rounded-2xl border px-3'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -175,7 +175,7 @@ export default function PrivateNavBar() {
 
         {/* Tablet Navigation - Icon Only with Enhanced Spacing */}
         <NavbarContent className='hidden w-full max-w-none gap-2 lg:flex xl:hidden' justify='start'>
-          <div className='from-default-100/30 to-default-50/20 border-divider/20 shadow-small flex h-11 items-center gap-2 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-md'>
+          <div className='bg-default-100/30 border-divider/30 flex h-11 items-center gap-2 rounded-xl border px-3'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -228,7 +228,7 @@ export default function PrivateNavBar() {
       {/* Right Side Actions - Enhanced Spacing */}
       <NavbarContent as='div' className='flex items-center gap-3 sm:gap-4' justify='end'>
         {/* Theme & Language Group - Reduced Height to Match Navigation */}
-        <div className='from-default-100/40 to-default-50/25 border-divider/25 shadow-small hidden h-11 items-center gap-1 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-sm sm:flex'>
+        <div className='bg-default-100/30 border-divider/30 hidden h-11 items-center gap-1 rounded-xl border px-3 sm:flex'>
           <motion.div
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -264,38 +264,22 @@ export default function PrivateNavBar() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <motion.div
-                  animate={{
-                    rotate: notificationCount > 0 ? [0, -8, 8, -4, 4, 0] : 0
-                  }}
-                  transition={{
-                    duration: 0.5,
-                    repeat: notificationCount > 0 ? Number.POSITIVE_INFINITY : 0,
-                    repeatDelay: 4
-                  }}
+                <Badge
+                  color='danger'
+                  content={
+                    notificationCount > 0 ? (notificationCount > 9 ? '9+' : notificationCount) : ''
+                  }
+                  showOutline={false}
+                  size='sm'
                 >
-                  <Badge
-                    color='danger'
-                    content={
-                      notificationCount > 0
-                        ? notificationCount > 9
-                          ? '9+'
-                          : notificationCount
-                        : ''
-                    }
-                    showOutline={false}
-                    size='sm'
-                    className={notificationCount > 0 ? 'animate-pulse' : ''}
-                  >
-                    <Icon
-                      className={`transition-colors ${
-                        notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
-                      }`}
-                      icon='solar:bell-linear'
-                      width={22}
-                    />
-                  </Badge>
-                </motion.div>
+                  <Icon
+                    className={`transition-colors ${
+                      notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
+                    }`}
+                    icon='solar:bell-linear'
+                    width={22}
+                  />
+                </Badge>
               </Button>
             </PopoverTrigger>
             <PopoverContent className='max-w-[95vw] p-0 sm:max-w-[420px]'>
@@ -323,7 +307,7 @@ export default function PrivateNavBar() {
       </NavbarContent>
 
       {/* Enhanced Mobile Menu with Professional Spacing */}
-      <NavbarMenu className='bg-background/96 border-divider/40 border-r pt-6 shadow-2xl backdrop-blur-sm'>
+      <NavbarMenu className='bg-background border-divider/40 border-r pt-6 shadow-2xl'>
         <div className='flex h-full flex-col px-4'>
           {/* Navigation Section */}
           <div className='flex-1'>
@@ -413,7 +397,7 @@ export default function PrivateNavBar() {
           >
             {/* Preferences Card */}
             <div className='mb-6'>
-              <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-medium rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
+              <div className='bg-default-100/40 border-divider/30 shadow-medium rounded-xl border p-4'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <div className='bg-primary/20 shadow-small flex h-8 w-8 items-center justify-center rounded-xl'>
@@ -443,7 +427,7 @@ export default function PrivateNavBar() {
 
             {/* User Profile Card */}
             <div className='pb-6'>
-              <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-medium rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
+              <div className='bg-default-100/40 border-divider/30 shadow-medium rounded-xl border p-4'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <div className='bg-primary/20 shadow-small flex h-8 w-8 items-center justify-center rounded-xl'>
