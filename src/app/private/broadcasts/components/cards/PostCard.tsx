@@ -597,11 +597,33 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                 </Button>
               </div>
 
-              <div className='text-foreground-400 flex items-center gap-4 text-sm'>
-                <span className='flex items-center gap-1'>
-                  <Icon icon='solar:calendar-linear' className='h-4 w-4' />
-                  {new Date(safeCreatedAt).toLocaleDateString()}
-                </span>
+              <div className='flex items-center gap-2'>
+                <Button
+                  size='sm'
+                  variant='light'
+                  isIconOnly
+                  startContent={
+                    <Icon
+                      icon={localIsSaved ? 'solar:bookmark-bold' : 'solar:bookmark-linear'}
+                      className={`h-4 w-4 ${localIsSaved ? 'text-warning' : ''}`}
+                      aria-hidden='true'
+                    />
+                  }
+                  onPress={() => onSave(post.id, localIsSaved)}
+                  className={`h-9 w-9 rounded-[12px] transition-all duration-200 ${
+                    localIsSaved
+                      ? 'bg-warning/10 text-warning border-warning/20 hover:bg-warning/20'
+                      : 'hover:bg-default-100'
+                  }`}
+                  aria-label={`${localIsSaved ? 'Remove from saved' : 'Save'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
+                />
+
+                <div className='text-foreground-400 flex items-center gap-1 text-sm'>
+                  <Icon icon='solar:calendar-minimalistic-linear' className='h-4 w-4' />
+                  <time dateTime={safeCreatedAt} title={new Date(safeCreatedAt).toLocaleString()}>
+                    {new Date(safeCreatedAt).toLocaleDateString()}
+                  </time>
+                </div>
               </div>
             </div>
 
