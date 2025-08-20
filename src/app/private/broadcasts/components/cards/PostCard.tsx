@@ -568,10 +568,10 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
-                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 ${
+                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
                     showComments
-                      ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
-                      : 'hover:bg-default-100'
+                      ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:shadow-sm'
+                      : 'hover:bg-default-100 hover:shadow-sm'
                   }`}
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
