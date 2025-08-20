@@ -174,7 +174,8 @@ export default function BroadcastsPage() {
                 isLoading={false}
                 className='h-8 sm:h-9 px-2 sm:px-4 font-medium shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200'
               >
-                {t('feed.createPost')}
+                <span className='hidden sm:inline'>{t('feed.createPost')}</span>
+                <span className='sm:hidden'>Post</span>
               </Button>
             )}
           </div>
