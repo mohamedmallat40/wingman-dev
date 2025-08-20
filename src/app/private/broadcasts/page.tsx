@@ -208,7 +208,7 @@ export default function BroadcastsPage() {
             <div className='sticky top-6 space-y-4'>
               {/* Quick Actions */}
               <div className='bg-content1 border-default-200 rounded-xl border p-4 shadow-sm'>
-                <h3 className='text-foreground mb-4 flex items-center gap-2 text-sm font-semibold'>
+                <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
                   <Icon icon='solar:widget-4-linear' className='h-4 w-4 text-primary' />
                   {t('sidebar.quickActions')}
                 </h3>
