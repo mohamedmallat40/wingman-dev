@@ -46,10 +46,11 @@ export default function Hero() {
 
       {/* Call to Action Buttons */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
+        transition={{ delay: 0.25, duration: 0.4 }}
         className='flex flex-col items-center justify-center gap-4 sm:flex-row'
+        style={{ willChange: 'transform' }}
       >
         <Button
           color='primary'
