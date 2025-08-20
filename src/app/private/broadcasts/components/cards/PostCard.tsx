@@ -327,7 +327,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                         variant='light'
                         color='primary'
                         onPress={handleEditPost}
-                        className='min-w-unit-8 h-unit-8'
+                        className='min-w-unit-6 h-unit-6 sm:min-w-unit-8 sm:h-unit-8'
                       >
                         <Icon icon='solar:pen-linear' className='h-4 w-4' />
                       </Button>
@@ -339,7 +339,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                         variant='light'
                         color='danger'
                         onPress={handleDeletePost}
-                        className='min-w-unit-8 h-unit-8'
+                        className='min-w-unit-6 h-unit-6 sm:min-w-unit-8 sm:h-unit-8'
                       >
                         <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
                       </Button>
@@ -359,7 +359,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                         // Call the save function
                         onSave(post.id, localIsSaved);
                       }}
-                      className='min-w-unit-8 h-unit-8'
+                      className='min-w-unit-6 h-unit-6 sm:min-w-unit-8 sm:h-unit-8'
                     >
                       <Icon 
                         icon={localIsSaved ? 'solar:archive-bold' : 'solar:archive-linear'} 
