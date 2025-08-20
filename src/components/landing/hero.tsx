@@ -51,7 +51,7 @@ export default function Hero() {
       >
         <Button
           color='primary'
-          className='h-14 min-w-[240px] rounded-[16px] px-8 text-lg font-semibold tracking-[0.02em] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] transition-all duration-300 hover:shadow-[0px_12px_24px_rgba(59,130,246,0.2)]'
+          className='h-14 min-w-[240px] rounded-[16px] px-8 text-lg font-semibold tracking-[0.02em] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] transition-shadow duration-300 hover:shadow-[0px_12px_24px_rgba(59,130,246,0.2)]'
           startContent={<Icon icon='solar:calendar-outline' className='h-5 w-5' />}
           onPress={() => router.push('#contact')}
         >
@@ -60,7 +60,7 @@ export default function Hero() {
         <SmartButton
           variant='bordered'
           color='primary'
-          className='border-primary/20 hover:border-primary hover:bg-primary/5 h-14 min-w-[240px] rounded-[16px] px-8 text-lg font-medium tracking-[0.02em] transition-all duration-300'
+          className='border-primary/20 hover:border-primary hover:bg-primary/5 h-14 min-w-[240px] rounded-[16px] px-8 text-lg font-medium tracking-[0.02em] transition-colors duration-300'
           endContent={<Icon icon='solar:alt-arrow-right-outline' className='h-5 w-5' />}
           href='/private/talent-pool'
           requiresAuth={true}
