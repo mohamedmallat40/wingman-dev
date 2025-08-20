@@ -261,17 +261,21 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         {hasMore && (
           <div ref={loadMoreTriggerRef} className='py-4'>
             {isLoadingMore ? (
-              <div className='flex items-center justify-center gap-2'>
+              <div className='flex items-center justify-center gap-3'>
                 <div className='border-default-300 border-t-primary h-4 w-4 animate-spin rounded-full border-2'></div>
-                <span className='text-default-500 text-sm'>Loading more comments...</span>
+                <span className='text-foreground-500 text-sm font-medium'>Loading more comments...</span>
               </div>
             ) : (
-              <button
+              <Button
                 onClick={loadMore}
-                className='text-default-500 hover:text-default-700 w-full py-3 text-sm font-medium transition-colors'
+                variant='flat'
+                color='primary'
+                size='sm'
+                startContent={<Icon icon='solar:arrow-down-linear' className='h-4 w-4' />}
+                className='w-full rounded-[12px] font-medium'
               >
                 Load more comments
-              </button>
+              </Button>
             )}
           </div>
         )}
