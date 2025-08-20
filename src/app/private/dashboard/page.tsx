@@ -214,7 +214,7 @@ const DashboardPage = () => {
                 transition={{ delay: 0.4 + index * 0.1, duration: 0.4 }}
                 whileHover={{ y: -8, scale: 1.02 }}
               >
-                <Card className='dark:bg-background/90 border-default-200/50 rounded-[20px] border bg-white/90 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl transition-all duration-300 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)]'>
+                <Card className='dark:bg-background/90 border-default-200/50 rounded-[20px] border bg-white/90 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)]'>
                   <CardBody className='p-6'>
                     <div className='mb-4 flex items-center justify-between'>
                       <div

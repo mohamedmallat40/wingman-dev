@@ -75,7 +75,7 @@ export default function PrivateNavBar() {
 
   return (
     <Navbar
-      className='border-divider/40 shadow-small bg-background/95 supports-[backdrop-filter]:bg-background/70 w-full max-w-full border-b backdrop-blur-xl'
+      className='border-divider/40 shadow-small bg-background/95 supports-[backdrop-filter]:bg-background/80 w-full max-w-full border-b backdrop-blur-sm'
       isBordered
       maxWidth='full'
       position='sticky'
@@ -323,7 +323,7 @@ export default function PrivateNavBar() {
       </NavbarContent>
 
       {/* Enhanced Mobile Menu with Professional Spacing */}
-      <NavbarMenu className='bg-background/96 border-divider/40 border-r pt-6 shadow-2xl backdrop-blur-2xl'>
+      <NavbarMenu className='bg-background/96 border-divider/40 border-r pt-6 shadow-2xl backdrop-blur-sm'>
         <div className='flex h-full flex-col px-4'>
           {/* Navigation Section */}
           <div className='flex-1'>
