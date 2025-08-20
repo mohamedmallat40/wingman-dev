@@ -20,7 +20,6 @@ interface FilterState {
 interface UIState {
   sidebarOpen: boolean;
   contentCreatorOpen: boolean;
-  notificationCenterOpen: boolean;
   selectedPost: string | null;
   viewMode: 'feed' | 'grid' | 'compact';
   theme: 'light' | 'dark' | 'auto';
@@ -86,8 +85,6 @@ interface BroadcastStore {
   toggleSidebar: () => void;
   openContentCreator: () => void;
   closeContentCreator: () => void;
-  openNotificationCenter: () => void;
-  closeNotificationCenter: () => void;
   setSelectedPost: (postId: string | null) => void;
   setViewMode: (mode: UIState['viewMode']) => void;
   setTheme: (theme: UIState['theme']) => void;
@@ -139,7 +136,6 @@ const initialFilterState: FilterState = {
 const initialUIState: UIState = {
   sidebarOpen: true,
   contentCreatorOpen: false,
-  notificationCenterOpen: false,
   selectedPost: null,
   viewMode: 'feed',
   theme: 'auto'
@@ -308,23 +304,6 @@ export const useBroadcastStore = create<BroadcastStore>()(
           'closeContentCreator'
         ),
 
-      openNotificationCenter: () =>
-        set(
-          (state) => ({
-            ui: { ...state.ui, notificationCenterOpen: true }
-          }),
-          false,
-          'openNotificationCenter'
-        ),
-
-      closeNotificationCenter: () =>
-        set(
-          (state) => ({
-            ui: { ...state.ui, notificationCenterOpen: false }
-          }),
-          false,
-          'closeNotificationCenter'
-        ),
 
       setSelectedPost: (selectedPost) =>
         set(
@@ -532,27 +511,33 @@ export const useBroadcastStore = create<BroadcastStore>()(
 );
 
 // ===== SELECTORS =====
-export const useBroadcastFilters = () => useBroadcastStore((state) => state.filters);
 
-// Helper selector to get active filters count
-export const useActiveFiltersCount = () => {
-  return useBroadcastStore((state) => {
-    const filters = state.filters;
-    let count = 0;
+// Optimized selectors to prevent unnecessary re-renders
+export const useFiltersSelector = () => useBroadcastStore((state) => state.filters);
+export const useUISelector = () => useBroadcastStore((state) => state.ui);
+export const useDraftsSelector = () => useBroadcastStore((state) => state.drafts);
+export const useRealtimeSelector = () => useBroadcastStore((state) => state.realtime);
+export const usePreferencesSelector = () => useBroadcastStore((state) => state.preferences);
 
-    if (filters.category) count++;
-    if (filters.topicId) count++;
-    if (filters.searchQuery) count++;
-    if (filters.dateRange) count++;
-    if (filters.postTypes.length > 0) count++;
-    if (filters.authors.length > 0) count++;
-    if (filters.tags.length > 0) count++;
+// Specific UI selectors for better performance
+export const useSidebarOpen = () => useBroadcastStore((state) => state.ui.sidebarOpen);
+export const useContentCreatorOpen = () => useBroadcastStore((state) => state.ui.contentCreatorOpen);
+export const useSelectedPost = () => useBroadcastStore((state) => state.ui.selectedPost);
+export const useViewMode = () => useBroadcastStore((state) => state.ui.viewMode);
 
-    return count;
-  });
-};
-
-// Helper selector for unread notifications count
-export const useUnreadNotificationsCount = () => {
-  return useBroadcastStore((state) => state.realtime.notifications.filter((n) => !n.read).length);
-};
+// Filter selectors
+export const useSelectedTopic = () => useBroadcastStore((state) => state.filters.topicId);
+export const useSearchQuery = () => useBroadcastStore((state) => state.filters.searchQuery);
+export const useActiveFilters = () => useBroadcastStore((state) => {
+  const { category, topicId, searchQuery, dateRange, postTypes, authors, tags } = state.filters;
+  return {
+    hasActiveFilters: !!(category || topicId || searchQuery || dateRange || postTypes.length || authors.length || tags.length),
+    category,
+    topicId,
+    searchQuery,
+    dateRange,
+    postTypes,
+    authors,
+    tags
+  };
+});

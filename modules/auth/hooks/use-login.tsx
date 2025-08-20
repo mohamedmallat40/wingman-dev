@@ -6,8 +6,8 @@ import type { SubmitHandler } from 'react-hook-form';
 
 import { useDisclosure } from '@heroui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { login } from '@root/modules/auth/services/auth.service';
-import useUserStore from '@root/modules/auth/store/use-user-store';
+import { login } from '../services/auth.service';
+import useUserStore from '../store/use-user-store';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';

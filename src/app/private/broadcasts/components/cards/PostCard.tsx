@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-import { Avatar, Button, Card, CardBody, CardHeader, Chip, Divider, Tooltip } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Chip, Divider, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { useTranslations } from 'next-intl';
@@ -12,31 +12,15 @@ import { getImageUrl } from '@/lib/utils/utilities';
 import { useDeletePost } from '../../hooks/useBroadcasts';
 import { useLinkPreviewForPost } from '../../hooks/useLinkPreviewForPost';
 import { type BroadcastPost } from '../../types';
-import { useSmartCountFormat } from '../../utils/timeFormatting';
+import { useSmartCountFormat, useSmartTimeFormat } from '../../utils/timeFormatting';
 import { CommentSection } from '../comments';
 import { DeleteConfirmationModal } from '../modals/DeleteConfirmationModal';
 import { PostAttachmentModal } from '../modals/PostAttachmentModal';
 import { ShareModal } from '../modals/ShareModal';
 import { LinkPreview } from '../ui/LinkPreview';
+import OptimizedImage from '../ui/OptimizedImage';
+import OptimizedVideo from '../ui/OptimizedVideo';
 
-// Utility functions
-const formatTimeAgo = (timestamp: string, t: any): string => {
-  const now = new Date();
-  const postTime = new Date(timestamp);
-  const diffInSeconds = Math.floor((now.getTime() - postTime.getTime()) / 1000);
-
-  if (diffInSeconds < 60) return t('post.time.now');
-  if (diffInSeconds < 3600) {
-    const minutes = Math.floor(diffInSeconds / 60);
-    return t('post.time.minutesAgo', { minutes });
-  }
-  if (diffInSeconds < 86400) {
-    const hours = Math.floor(diffInSeconds / 3600);
-    return t('post.time.hoursAgo', { hours });
-  }
-  const days = Math.floor(diffInSeconds / 86400);
-  return t('post.time.daysAgo', { days });
-};
 
 const getFileType = (filename: string): 'image' | 'video' | 'file' => {
   const extension = filename.toLowerCase().split('.').pop() || '';
@@ -69,10 +53,10 @@ const getFileIcon = (filename: string): string => {
 
 interface PostCardProps {
   post: BroadcastPost;
-  onBookmark: (postId: string) => void;
   onComment: (postId: string) => void;
   onShare: (postId: string) => void;
   onUpvote: (postId: string, isCurrentlyUpvoted: boolean) => void;
+  onSave: (postId: string, isCurrentlySaved: boolean) => void;
   onClick?: (postId: string) => void;
   onEdit?: (post: BroadcastPost) => void;
   isLoading?: boolean;
@@ -82,10 +66,10 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = React.memo(
   ({
     post,
-    onBookmark,
     onComment,
     onShare,
     onUpvote,
+    onSave,
     onClick,
     onEdit,
     isLoading = false,
@@ -94,12 +78,19 @@ const PostCard: React.FC<PostCardProps> = React.memo(
     const t = useTranslations('broadcasts');
     const tComments = useTranslations('comments.stats');
     const { formatCount } = useSmartCountFormat();
+    const { formatTimeAgo } = useSmartTimeFormat();
     const [isExpanded, setIsExpanded] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [modalIndex, setModalIndex] = useState(0);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [shareModalOpen, setShareModalOpen] = useState(false);
+    const [localIsSaved, setLocalIsSaved] = useState(post.isSaved || false);
     const [showComments, setShowComments] = useState(false);
+
+    // Update local state when post.isSaved changes
+    useEffect(() => {
+      setLocalIsSaved(post.isSaved || false);
+    }, [post.isSaved]);
 
     // Get current user profile
     const { profile: currentUser } = useBasicProfile();
@@ -169,11 +160,18 @@ const PostCard: React.FC<PostCardProps> = React.memo(
       setModalOpen(true);
     };
 
-    // Get only images for the modal
-    const imageAttachments = React.useMemo(
-      () => safeAttachments.filter((file) => getFileType(file) === 'image'),
-      [safeAttachments]
-    );
+    // Memoize file type filtering for better performance
+    const { imageAttachments, videoAttachments, fileAttachments } = React.useMemo(() => {
+      const images = safeAttachments.filter((file) => getFileType(file) === 'image');
+      const videos = safeAttachments.filter((file) => getFileType(file) === 'video');
+      const files = safeAttachments.filter((file) => getFileType(file) === 'file');
+      
+      return {
+        imageAttachments: images,
+        videoAttachments: videos,
+        fileAttachments: files
+      };
+    }, [safeAttachments]);
 
     // Check if current user owns this post
     const isOwnPost = React.useMemo(() => {
@@ -225,20 +223,30 @@ const PostCard: React.FC<PostCardProps> = React.memo(
         <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
 
         <Card
-          className={`border-divider/50 shadow-sm transition-all duration-200 hover:shadow-md ${className}`}
+          className={`border-divider/30 shadow-sm transition-shadow duration-200 hover:shadow-md ${className}`}
           role='article'
           aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
         >
-          <CardHeader className='pb-3'>
-            <div className='flex w-full items-start gap-3'>
+          <CardHeader className='pb-4'>
+            <div className='flex w-full items-start gap-4'>
               {/* Author Avatar */}
               <div className='relative'>
-                <Avatar
-                  src={safeOwner.profileImage ? getImageUrl(safeOwner.profileImage) : undefined}
-                  name={`${safeOwner.firstName} ${safeOwner.lastName}`}
-                  size='md'
-                  className='ring-primary/20 ring-offset-background ring-2 ring-offset-2'
-                />
+                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/15 ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/30">
+                  {safeOwner.profileImage ? (
+                    <OptimizedImage
+                      src={getImageUrl(safeOwner.profileImage)}
+                      alt={`${safeOwner.firstName} ${safeOwner.lastName}`}
+                      fill
+                      className="object-cover"
+                      sizes="40px"
+                      priority={true}
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
+                      {`${safeOwner.firstName[0]}${safeOwner.lastName[0]}`}
+                    </div>
+                  )}
+                </div>
                 {safeOwner.isMailVerified && (
                   <div className='bg-primary absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white'>
                     <Icon icon='solar:verified-check-bold' className='h-3 w-3 text-white' />
@@ -248,29 +256,30 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
               {/* Author Info & Post Metadata */}
               <div className='min-w-0 flex-1'>
-                <div className='flex flex-wrap items-center gap-2'>
-                  <h3 className='text-foreground truncate font-semibold'>
+                <div className='flex flex-wrap items-center gap-2 mb-1'>
+                  <h3 className='text-foreground truncate font-semibold text-base'>
                     {safeOwner.firstName} {safeOwner.lastName}
                   </h3>
                   {safeOwner.userName && (
-                    <span className='text-foreground-500'>@{safeOwner.userName}</span>
+                    <span className='text-foreground-500 text-sm'>@{safeOwner.userName}</span>
                   )}
-                  <span className='text-foreground-400'>·</span>
+                  <span className='text-foreground-400 text-sm'>·</span>
                   <time
                     className='text-foreground-500 text-sm'
                     dateTime={safeCreatedAt}
                     title={new Date(safeCreatedAt).toLocaleString()}
                   >
-                    {formatTimeAgo(safeCreatedAt, t)}
+                    {formatTimeAgo(safeCreatedAt)}
                   </time>
                 </div>
 
-                <div className='mt-1 flex flex-wrap items-center gap-2'>
+                <div className='flex flex-wrap items-center gap-2'>
                   <Chip
                     size='sm'
                     color={postTypeColor as any}
                     variant='flat'
                     startContent={<Icon icon={postIcon} className='h-3 w-3' />}
+                    className='font-medium'
                   >
                     {t('post.actions.broadcast')}
                   </Chip>
@@ -291,7 +300,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                             backgroundColor: topic.color || '#6366f1',
                             color: 'white'
                           }}
-                          className='font-medium text-white'
+                          className='font-medium text-white shadow-sm'
                         >
                           {topic.title || t('fallbacks.untitledTopic')}
                         </Chip>
@@ -337,17 +346,25 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     </Tooltip>
                   </>
                 ) : (
-                  // Bookmark action for other posts
-                  <Tooltip content={t('tooltips.bookmark')}>
+                  // Save action for other posts
+                  <Tooltip content={localIsSaved ? t('tooltips.unsave') : t('tooltips.save')}>
                     <Button
                       isIconOnly
                       size='sm'
                       variant='light'
-                      color='default'
-                      onPress={() => onBookmark(post.id)}
+                      color={localIsSaved ? 'primary' : 'default'}
+                      onPress={() => {
+                        // Toggle local state immediately
+                        setLocalIsSaved(!localIsSaved);
+                        // Call the save function
+                        onSave(post.id, localIsSaved);
+                      }}
                       className='min-w-unit-8 h-unit-8'
                     >
-                      <Icon icon='solar:bookmark-linear' className='h-4 w-4' />
+                      <Icon 
+                        icon={localIsSaved ? 'solar:archive-bold' : 'solar:archive-linear'} 
+                        className='h-4 w-4' 
+                      />
                     </Button>
                   </Tooltip>
                 )}
@@ -355,11 +372,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             </div>
           </CardHeader>
 
-          <CardBody className='pt-0'>
+          <CardBody className='pt-0 pb-6'>
             {/* Post Title */}
             {safeTitle && (
               <h2
-                className='text-foreground mb-3 text-lg leading-tight font-bold'
+                className='text-foreground mb-4 text-xl leading-tight font-bold tracking-tight'
                 id={`post-title-${post.id}`}
               >
                 {safeTitle}
@@ -367,14 +384,14 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             )}
 
             {/* Post Content */}
-            <div className='text-foreground-700 mb-4 leading-relaxed'>
+            <div className='text-foreground-700 mb-5 leading-relaxed text-base'>
               {displayContent}
               {shouldTruncate && (
                 <Button
                   size='sm'
                   variant='light'
                   onPress={() => setIsExpanded(!isExpanded)}
-                  className='text-primary ml-2 h-auto min-w-0 p-0 font-medium'
+                  className='text-primary ml-2 h-auto min-w-0 p-0 font-medium hover:text-primary-600 transition-colors'
                 >
                   {isExpanded ? t('content.expandText.showLess') : t('content.expandText.showMore')}
                 </Button>
@@ -383,7 +400,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Link Previews */}
             {linkPreviews.length > 0 && (
-              <div className='mb-4 w-full space-y-3'>
+              <div className='mb-5 w-full space-y-3'>
                 {linkPreviews.map((linkMetadata) => (
                   <LinkPreview
                     key={linkMetadata.url}
@@ -397,120 +414,46 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Attachments Content */}
             {safeAttachments.length > 0 && (
-              <div className='mb-4 overflow-hidden rounded-lg'>
+              <div className='mb-5'>
                 {(() => {
-                  const images = safeAttachments.filter((file) => getFileType(file) === 'image');
-                  const videos = safeAttachments.filter((file) => getFileType(file) === 'video');
-                  const files = safeAttachments.filter((file) => getFileType(file) === 'file');
+                  const images = imageAttachments;
+                  const videos = videoAttachments;
+                  const files = fileAttachments;
 
                   return (
                     <div className='space-y-3'>
-                      {/* Images */}
+                      {/* Images - Simplified for now */}
                       {images.length > 0 && (
-                        <div>
-                          {images.length === 1 && (
-                            <div
-                              className='group relative w-full cursor-pointer'
-                              onClick={() => handleImageClick(0)}
-                            >
-                              <img
-                                src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${images[0]}`}
-                                alt={safeTitle}
-                                className='w-full rounded-lg object-cover transition-transform group-hover:scale-[1.02]'
-                                style={{
-                                  aspectRatio: 'auto',
-                                  maxHeight: '360px',
-                                  height: 'auto'
-                                }}
-                                loading='lazy'
-                                onError={(e) => {
-                                  const img = e.target as HTMLImageElement;
-                                  img.style.display = 'none';
-                                }}
-                                onLoad={(e) => {
-                                  const img = e.target as HTMLImageElement;
-                                  const aspectRatio = img.naturalWidth / img.naturalHeight;
-
-                                  if (aspectRatio > 2.5) {
-                                    img.style.aspectRatio = '2.5';
-                                    img.style.objectFit = 'cover';
-                                  } else if (aspectRatio < 0.5) {
-                                    img.style.aspectRatio = '0.6';
-                                    img.style.objectFit = 'cover';
-                                  } else {
-                                    img.style.aspectRatio = `${aspectRatio}`;
-                                    img.style.objectFit = 'contain';
-                                  }
-                                }}
+                        <div className="space-y-2">
+                          {images.slice(0, 4).map((filename, index) => (
+                            <div key={filename} className="relative w-full h-64 overflow-hidden rounded-lg">
+                              <OptimizedImage
+                                src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
+                                alt={`${safeTitle} - Image ${index + 1}`}
+                                className="cursor-pointer hover:scale-[1.02] transition-transform object-cover"
+                                fill={true}
+                                onClick={() => handleImageClick(index)}
+                                priority={false}
+                              loading="lazy"
                               />
-                              {/* Hover overlay */}
-                              <div className='absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 transition-colors group-hover:bg-black/10'>
-                                <div className='rounded-full bg-black/50 p-2 opacity-0 transition-opacity group-hover:opacity-100'>
-                                  <Icon icon='solar:eye-bold' className='h-4 w-4 text-white' />
-                                </div>
-                              </div>
                             </div>
-                          )}
-                          {images.length > 1 && (
-                            <div className='grid grid-cols-2 gap-2'>
-                              {images.slice(0, 4).map((filename, index) => (
-                                <div
-                                  key={index}
-                                  className='group relative aspect-square cursor-pointer'
-                                  onClick={() => handleImageClick(index)}
-                                >
-                                  <img
-                                    src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
-                                    alt={`${safeTitle} - Image ${index + 1}`}
-                                    className='h-full w-full rounded-lg object-cover transition-transform group-hover:scale-[1.02]'
-                                    loading='lazy'
-                                    onError={(e) => {
-                                      const img = e.target as HTMLImageElement;
-                                      img.parentElement?.remove();
-                                    }}
-                                  />
-                                  {/* Hover overlay */}
-                                  <div className='absolute inset-0 flex items-center justify-center rounded-lg bg-black/0 transition-colors group-hover:bg-black/20'>
-                                    <div className='rounded-full bg-black/50 p-2 opacity-0 transition-opacity group-hover:opacity-100'>
-                                      <Icon icon='solar:eye-bold' className='h-3 w-3 text-white' />
-                                    </div>
-                                  </div>
-                                  {index === 3 && images.length > 4 && (
-                                    <div className='absolute inset-0 flex items-center justify-center rounded-lg bg-black/50'>
-                                      <span className='font-semibold text-white'>
-                                        +{images.length - 4}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          )}
+                          ))}
                         </div>
                       )}
 
-                      {/* Videos */}
+                      {/* Optimized Videos */}
                       {videos.length > 0 && (
                         <div className='space-y-2'>
                           {videos.map((filename, index) => (
-                            <div key={index} className='relative w-full'>
-                              <video
-                                src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
-                                className='w-full rounded-lg'
-                                controls
-                                preload='metadata'
-                                style={{
-                                  maxHeight: '360px',
-                                  height: 'auto'
-                                }}
-                                onError={(e) => {
-                                  const video = e.target as HTMLVideoElement;
-                                  video.style.display = 'none';
-                                }}
-                              >
-                                Your browser does not support the video tag.
-                              </video>
-                            </div>
+                            <OptimizedVideo
+                              key={filename}
+                              src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
+                              className="w-full"
+                              style={{ maxHeight: '360px' }}
+                              controls={true}
+                              preload="metadata"
+                              muted={true}
+                            />
                           ))}
                         </div>
                       )}
@@ -560,7 +503,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Skills */}
             {safeSkills.length > 0 && (
-              <div className='mb-4 flex flex-wrap gap-2'>
+              <div className='mb-5 flex flex-wrap gap-2'>
                 {safeSkills.slice(0, 5).map((skill) => (
                   <Chip
                     key={skill.id}
@@ -579,11 +522,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(
               </div>
             )}
 
-            <Divider className='mb-4' />
+            <Divider className='mb-5' />
 
             {/* Engagement Actions */}
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-1'>
+            <div className='flex items-center justify-between pt-1'>
+              <div className='flex items-center gap-2'>
                 <Button
                   size='sm'
                   variant={post.isUpvoted === true ? 'flat' : 'light'}
@@ -598,7 +541,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => onUpvote(post.id, post.isUpvoted === true)}
-                  className='h-auto min-w-0 px-3 py-2 transition-all duration-200'
+                  className='h-9 min-w-0 px-4 py-2 font-medium'
                   aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
@@ -621,7 +564,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
-                  className='h-auto min-w-0 px-3 py-2 transition-all duration-200'
+                  className='h-9 min-w-0 px-4 py-2 font-medium'
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
@@ -639,7 +582,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     <Icon icon='solar:share-linear' className='h-4 w-4' aria-hidden='true' />
                   }
                   onPress={() => setShareModalOpen(true)}
-                  className='h-auto min-w-0 px-3 py-2'
+                  className='h-9 min-w-0 px-4 py-2 font-medium'
                   aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {t('post.actions.share')}
@@ -673,13 +616,23 @@ const PostCard: React.FC<PostCardProps> = React.memo(
     );
   },
   (prevProps, nextProps) => {
-    // Custom comparison for memo optimization
+    // Optimized comparison - check only fields that affect rendering
+    const prevPost = prevProps.post;
+    const nextPost = nextProps.post;
+    
     return (
-      prevProps.post.id === nextProps.post.id &&
+      prevPost.id === nextPost.id &&
+      prevPost.upvotes === nextPost.upvotes &&
+      prevPost.isUpvoted === nextPost.isUpvoted &&
+      prevPost.isSaved === nextPost.isSaved &&
+      prevPost.replyCount === nextPost.replyCount &&
+      prevPost.commentsCount === nextPost.commentsCount &&
+      prevPost.title === nextPost.title &&
+      prevPost.description === nextPost.description &&
+      prevPost.createdAt === nextPost.createdAt &&
+      prevPost.attachments?.length === nextPost.attachments?.length &&
       prevProps.isLoading === nextProps.isLoading &&
-      prevProps.className === nextProps.className &&
-      // Check if post content has changed
-      JSON.stringify(prevProps.post) === JSON.stringify(nextProps.post)
+      prevProps.className === nextProps.className
     );
   }
 );

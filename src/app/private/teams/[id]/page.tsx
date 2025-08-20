@@ -268,7 +268,7 @@ const TeamDetailsPage: React.FC = () => {
       breadcrumbs={getBreadcrumbs()}
       headerActions={getHeaderActions()}
     >
-      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[90%] xl:px-0'>
+      <div className='mx-auto w-full space-y-8 px-4 py-6 sm:px-6 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
         {/* Team Header */}
         {/* <TeamDetailsHeader
           team={team}

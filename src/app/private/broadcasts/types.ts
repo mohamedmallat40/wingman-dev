@@ -93,7 +93,9 @@ export interface BroadcastPost {
   commentsCount?: number; // Number of comments on this post (legacy)
   replyCount?: number; // Number of comments/replies on this post (from API)
   upvotes: number; // Number of upvotes on this post (from API)
+  views?: number; // Number of views on this post (from API)
   isUpvoted?: boolean; // Whether current user has upvoted this post
+  isSaved?: boolean; // Whether current user has saved this post
 }
 
 export interface Comment {

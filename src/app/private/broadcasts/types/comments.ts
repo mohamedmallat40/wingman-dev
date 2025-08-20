@@ -47,17 +47,23 @@ export interface Comment {
 
 // Comment creation payload
 export interface CreateCommentPayload {
-  readonly content: string;
+  readonly response: string; // API expects 'response' not 'content'
   readonly postId: string;
   readonly parentId?: string;
-  readonly mentions?: readonly string[]; // User IDs
+  readonly taggedUsers?: readonly string[]; // User IDs for mentioned users
 }
+
+// Legacy alias for service compatibility
+export interface CreateCommentData extends CreateCommentPayload {}
 
 // Comment update payload
 export interface UpdateCommentPayload {
-  readonly content: string;
-  readonly mentions?: readonly string[]; // User IDs
+  readonly response: string; // API expects 'response' not 'content'
+  readonly taggedUsers?: readonly string[]; // User IDs for mentioned users
 }
+
+// Legacy alias for service compatibility
+export interface UpdateCommentData extends UpdateCommentPayload {}
 
 // Comment filters for API
 export interface CommentFilters {
