@@ -264,38 +264,26 @@ export default function PrivateNavBar() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <motion.div
-                  animate={{
-                    rotate: notificationCount > 0 ? [0, -8, 8, -4, 4, 0] : 0
-                  }}
-                  transition={{
-                    duration: 0.5,
-                    repeat: notificationCount > 0 ? Number.POSITIVE_INFINITY : 0,
-                    repeatDelay: 4
-                  }}
+                <Badge
+                  color='danger'
+                  content={
+                    notificationCount > 0
+                      ? notificationCount > 9
+                        ? '9+'
+                        : notificationCount
+                      : ''
+                  }
+                  showOutline={false}
+                  size='sm'
                 >
-                  <Badge
-                    color='danger'
-                    content={
-                      notificationCount > 0
-                        ? notificationCount > 9
-                          ? '9+'
-                          : notificationCount
-                        : ''
-                    }
-                    showOutline={false}
-                    size='sm'
-                    className={notificationCount > 0 ? 'animate-pulse' : ''}
-                  >
-                    <Icon
-                      className={`transition-colors ${
-                        notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
-                      }`}
-                      icon='solar:bell-linear'
-                      width={22}
-                    />
-                  </Badge>
-                </motion.div>
+                  <Icon
+                    className={`transition-colors ${
+                      notificationCount > 0 ? 'text-primary-500' : 'text-default-500'
+                    }`}
+                    icon='solar:bell-linear'
+                    width={22}
+                  />
+                </Badge>
               </Button>
             </PopoverTrigger>
             <PopoverContent className='max-w-[95vw] p-0 sm:max-w-[420px]'>
