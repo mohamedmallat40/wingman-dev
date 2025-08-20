@@ -148,37 +148,37 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
   if (posts.length === 0) {
     return (
       <div className={`flex flex-col items-center justify-center py-20 text-center ${className}`}>
-        <div className={`mb-8 flex h-24 w-24 items-center justify-center rounded-full shadow-lg ${
-          currentView === 'saved' ? 'bg-default-100' : 'bg-primary/10'
+        <div className={`mb-8 flex h-24 w-24 items-center justify-center rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl border border-default-200/50 ${
+          currentView === 'saved' ? 'bg-warning/10' : 'bg-primary/10'
         }`}>
-          <Icon 
-            icon={currentView === 'saved' ? 'solar:archive-linear' : 'solar:satellite-linear'} 
+          <Icon
+            icon={currentView === 'saved' ? 'solar:bookmark-opened-linear' : 'solar:chat-dots-linear'}
             className={`h-10 w-10 ${
-              currentView === 'saved' ? 'text-default-400' : 'text-primary'
-            }`} 
+              currentView === 'saved' ? 'text-warning' : 'text-primary'
+            }`}
           />
         </div>
-        <h3 className='text-foreground mb-3 text-2xl font-bold'>
+        <h3 className='text-foreground mb-3 text-2xl font-bold tracking-tight'>
           {currentView === 'saved' ? 'No saved posts yet' : t('feed.emptyFeed.title')}
         </h3>
         <p className='text-foreground-500 mb-8 max-w-md text-base leading-relaxed'>
-          {currentView === 'saved' 
-            ? 'Save broadcasts to read them later. Look for the archive button on any post.'
+          {currentView === 'saved'
+            ? 'Save broadcasts to read them later. Look for the bookmark button on any post.'
             : t('feed.emptyFeed.description')
           }
         </p>
         <Button
           color='primary'
           size='lg'
-          startContent={<Icon 
-            icon={currentView === 'saved' ? 'solar:satellite-linear' : 'solar:refresh-linear'} 
-            className='h-5 w-5' 
+          startContent={<Icon
+            icon={currentView === 'saved' ? 'solar:chat-dots-linear' : 'solar:refresh-circle-linear'}
+            className='h-5 w-5'
           />}
-          onPress={() => currentView === 'saved' 
+          onPress={() => currentView === 'saved'
             ? onViewChange?.('all')
             : window.location.reload()
           }
-          className='h-12 px-8 font-semibold shadow-md hover:shadow-lg transition-all duration-300'
+          className='h-12 px-8 font-semibold rounded-[16px] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] hover:shadow-[0px_12px_24px_rgba(59,130,246,0.25)] transition-all duration-300'
         >
           {currentView === 'saved' ? 'Browse Broadcasts' : t('feed.refreshFeed')}
         </Button>
