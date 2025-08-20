@@ -54,7 +54,9 @@ export const API_ROUTES = {
     feed: '/broadcast',
     trending: '/broadcasts/trending',
     search: '/broadcasts/search',
-    topics: '/broadcast/topics'
+    topics: '/broadcast/topics',
+    saved: '/broadcast/saved',
+    save: (id: string) => `/broadcast/${id}/save`
   },
   comments: {
     byPost: (postId: string) => `/broadcast/${postId}/reply`,

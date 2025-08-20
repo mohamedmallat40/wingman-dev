@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Avatar, Button, Card, CardBody, CardHeader, Chip, Divider, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
@@ -54,10 +54,10 @@ const getFileIcon = (filename: string): string => {
 
 interface PostCardProps {
   post: BroadcastPost;
-  onBookmark: (postId: string) => void;
   onComment: (postId: string) => void;
   onShare: (postId: string) => void;
   onUpvote: (postId: string, isCurrentlyUpvoted: boolean) => void;
+  onSave: (postId: string, isCurrentlySaved: boolean) => void;
   onClick?: (postId: string) => void;
   onEdit?: (post: BroadcastPost) => void;
   isLoading?: boolean;
@@ -67,10 +67,10 @@ interface PostCardProps {
 const PostCard: React.FC<PostCardProps> = React.memo(
   ({
     post,
-    onBookmark,
     onComment,
     onShare,
     onUpvote,
+    onSave,
     onClick,
     onEdit,
     isLoading = false,
@@ -85,7 +85,13 @@ const PostCard: React.FC<PostCardProps> = React.memo(
     const [modalIndex, setModalIndex] = useState(0);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [shareModalOpen, setShareModalOpen] = useState(false);
+    const [localIsSaved, setLocalIsSaved] = useState(post.isSaved || false);
     const [showComments, setShowComments] = useState(false);
+
+    // Update local state when post.isSaved changes
+    useEffect(() => {
+      setLocalIsSaved(post.isSaved || false);
+    }, [post.isSaved]);
 
     // Get current user profile
     const { profile: currentUser } = useBasicProfile();
@@ -340,17 +346,25 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     </Tooltip>
                   </>
                 ) : (
-                  // Bookmark action for other posts
-                  <Tooltip content={t('tooltips.bookmark')}>
+                  // Save action for other posts
+                  <Tooltip content={localIsSaved ? t('tooltips.unsave') : t('tooltips.save')}>
                     <Button
                       isIconOnly
                       size='sm'
                       variant='light'
-                      color='default'
-                      onPress={() => onBookmark(post.id)}
+                      color={localIsSaved ? 'primary' : 'default'}
+                      onPress={() => {
+                        // Toggle local state immediately
+                        setLocalIsSaved(!localIsSaved);
+                        // Call the save function
+                        onSave(post.id, localIsSaved);
+                      }}
                       className='min-w-unit-8 h-unit-8'
                     >
-                      <Icon icon='solar:bookmark-linear' className='h-4 w-4' />
+                      <Icon 
+                        icon={localIsSaved ? 'solar:archive-bold' : 'solar:archive-linear'} 
+                        className='h-4 w-4' 
+                      />
                     </Button>
                   </Tooltip>
                 )}

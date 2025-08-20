@@ -34,6 +34,7 @@ export default function BroadcastsPage() {
   const [selectedTopicData, setSelectedTopicData] = useState<any>(null);
   const [sidebarView, setSidebarView] = useState<'topics'>('topics');
   const [editingPost, setEditingPost] = useState<BroadcastPost | null>(null);
+  const [currentView, setCurrentView] = useState<'all' | 'saved'>('all');
 
   // Get the selected topic object (prefer selectedTopicData from sidebar, fallback to API topics)
   const selectedTopicObject = useMemo(() => {
@@ -83,11 +84,38 @@ export default function BroadcastsPage() {
     setTopic(null);
   };
 
+  const handleViewChange = (view: 'all' | 'saved') => {
+    setCurrentView(view);
+    // Clear topic filter when switching to saved view
+    if (view === 'saved') {
+      handleClearTopicFilter();
+    }
+  };
+
+  // Dynamic page title and description based on current view
+  const pageTitle = useMemo(() => {
+    if (currentView === 'saved') return 'Saved Posts';
+    if (selectedTopicObject) return selectedTopicObject.title || selectedTopicObject.name;
+    return t('title');
+  }, [currentView, selectedTopicObject, t]);
+
+  const pageDescription = useMemo(() => {
+    if (currentView === 'saved') return 'Your saved broadcasts for later reading';
+    if (selectedTopicObject) return selectedTopicObject.description;
+    return t('description');
+  }, [currentView, selectedTopicObject, t]);
+
+  const pageIcon = useMemo(() => {
+    if (currentView === 'saved') return 'solar:archive-bold';
+    if (selectedTopicObject) return selectedTopicObject.icon;
+    return 'solar:satellite-linear';
+  }, [currentView, selectedTopicObject]);
+
   return (
     <>
       <DashboardLayout
-        pageTitle={selectedTopicObject ? (selectedTopicObject.title || selectedTopicObject.name) : t('title')}
-        pageIcon={selectedTopicObject ? selectedTopicObject.icon : 'solar:satellite-linear'}
+        pageTitle={pageTitle}
+        pageIcon={pageIcon}
         breadcrumbs={[
           { label: tNav('home'), href: '/private/dashboard', icon: 'solar:home-linear' },
           {
@@ -95,27 +123,56 @@ export default function BroadcastsPage() {
             href: '/private/broadcasts',
             icon: 'solar:satellite-linear'
           },
-          ...(selectedTopicObject
+          ...(currentView === 'saved'
+            ? [{ label: 'Saved Posts', icon: 'solar:archive-bold' }]
+            : selectedTopicObject
             ? [{ label: selectedTopicObject.title || selectedTopicObject.name, icon: selectedTopicObject.icon }]
             : [])
         ]}
-        pageDescription={selectedTopicObject ? selectedTopicObject.description : t('description')}
+        pageDescription={pageDescription}
         headerActions={
           <div className='flex items-center gap-2'>
-            {/* Create Post Button */}
-            <Button
-              color='primary'
-              size='sm'
-              startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
-              onPress={handleCreatePost}
-              isLoading={false}
-            >
-              {t('feed.createPost')}
-            </Button>
+            {/* View Toggle Buttons */}
+            <div className='flex items-center gap-1 rounded-lg bg-default-100 p-1'>
+              <Button
+                size='sm'
+                variant={currentView === 'all' ? 'solid' : 'light'}
+                color={currentView === 'all' ? 'primary' : 'default'}
+                onPress={() => handleViewChange('all')}
+                startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
+                className='h-8 min-w-0 px-3'
+              >
+                All Posts
+              </Button>
+              <Button
+                size='sm'
+                variant={currentView === 'saved' ? 'solid' : 'light'}
+                color={currentView === 'saved' ? 'primary' : 'default'}
+                onPress={() => handleViewChange('saved')}
+                startContent={<Icon icon='solar:archive-linear' className='h-4 w-4' />}
+                className='h-8 min-w-0 px-3'
+              >
+                Saved
+              </Button>
+            </div>
+
+            {/* Create Post Button - only show in all posts view */}
+            {currentView === 'all' && (
+              <Button
+                color='primary'
+                size='sm'
+                startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
+                onPress={handleCreatePost}
+                isLoading={false}
+              >
+                {t('feed.createPost')}
+              </Button>
+            )}
           </div>
         }
       >
         <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
+          {/* Sidebar */}
           <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
             <div className='sticky top-4 space-y-4 overflow-visible'>
               <TopicSidebar
@@ -128,7 +185,12 @@ export default function BroadcastsPage() {
 
           <div className='min-w-0 flex-1'>
             <div className='space-y-6 py-6'>
-              <BroadcastFeed selectedTopic={activeTopic} onEditPost={handleEditPost} />
+              <BroadcastFeed 
+                selectedTopic={currentView === 'all' ? activeTopic : null}
+                currentView={currentView}
+                onEditPost={handleEditPost}
+                onViewChange={handleViewChange}
+              />
             </div>
           </div>
 

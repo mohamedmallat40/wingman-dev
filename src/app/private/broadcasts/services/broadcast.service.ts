@@ -140,6 +140,64 @@ export const removeUpvote = async (postId: string) => {
   return response.data;
 };
 
+/**
+ * Save a broadcast post
+ */
+export const savePost = async (postId: string) => {
+  const response = await wingManApi.post(API_ROUTES.broadcasts.save(postId));
+  return response.data;
+};
+
+/**
+ * Unsave a broadcast post
+ */
+export const unsavePost = async (postId: string) => {
+  const response = await wingManApi.delete(API_ROUTES.broadcasts.save(postId));
+  return response.data;
+};
+
+/**
+ * Get saved broadcasts
+ */
+export const getSavedPosts = async (params: { page?: number; limit?: number } = {}) => {
+  const { page = 1, limit = 10 } = params;
+  
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString()
+  });
+
+  const url = `${API_ROUTES.broadcasts.saved}?${queryParams}`;
+  const response = await wingManApi.get(url);
+  
+  const responseData = response.data;
+
+  // If response is directly an array, wrap it in pagination structure
+  if (Array.isArray(responseData)) {
+    return {
+      data: responseData,
+      currentPage: page,
+      hasNextPage: responseData.length === limit, // Assume more pages if we got full limit
+      totalPages: Math.ceil((responseData.length + (page - 1) * limit) / limit),
+      totalItems: responseData.length + (page - 1) * limit
+    };
+  }
+
+  // If response has data property, use it
+  if (responseData.data && Array.isArray(responseData.data)) {
+    return {
+      data: responseData.data,
+      currentPage: responseData.currentPage || page,
+      hasNextPage: responseData.hasNextPage || responseData.data.length === limit,
+      totalPages: responseData.totalPages || Math.ceil((responseData.data.length + (page - 1) * limit) / limit),
+      totalItems: responseData.totalItems || responseData.data.length + (page - 1) * limit
+    };
+  }
+
+  // Fallback: assume it's in the right format
+  return responseData;
+};
+
 // ===== TOPICS API =====
 
 /**

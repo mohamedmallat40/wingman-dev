@@ -13,7 +13,7 @@ import DashboardLayout from '@/components/layouts/dashboard-layout';
 import PostCard from '../components/cards/PostCard';
 import { ShareModal } from '../components/modals/ShareModal';
 import { usePostById } from '../hooks/usePostById';
-import { useUpvote } from '../hooks/useUpvote';
+import { useSavePost, useUnsavePost, useUpvote } from '../hooks';
 
 const PostDetailPage: React.FC = () => {
   const t = useTranslations('broadcasts');
@@ -21,19 +21,14 @@ const PostDetailPage: React.FC = () => {
   const router = useRouter();
   const postId = params.id as string;
   const { toggleUpvote } = useUpvote();
+  const savePost = useSavePost();
+  const unsavePost = useUnsavePost();
 
   const [shareModalOpen, setShareModalOpen] = useState(false);
 
   const { data: post, isLoading, error, refetch } = usePostById(postId);
 
   // Handle post interactions
-  const handleBookmark = (postId: string) => {
-    addToast({
-      title: 'Bookmark',
-      description: 'Bookmark functionality coming soon',
-      color: 'primary'
-    });
-  };
 
   const handleComment = (postId: string) => {
     // Comments are handled within the PostCard component
@@ -45,6 +40,44 @@ const PostDetailPage: React.FC = () => {
 
   const handleUpvote = (postId: string, isCurrentlyUpvoted: boolean) => {
     toggleUpvote(postId, isCurrentlyUpvoted);
+  };
+
+  const handleSave = (postId: string, isCurrentlySaved: boolean) => {
+    if (isCurrentlySaved) {
+      unsavePost.mutate(postId, {
+        onSuccess: () => {
+          addToast({
+            title: t('post.actions.unsave'),
+            description: 'Post removed from saved',
+            color: 'default'
+          });
+        },
+        onError: () => {
+          addToast({
+            title: 'Error',
+            description: 'Failed to unsave post',
+            color: 'danger'
+          });
+        }
+      });
+    } else {
+      savePost.mutate(postId, {
+        onSuccess: () => {
+          addToast({
+            title: t('post.actions.save'),
+            description: 'Post saved for later',
+            color: 'success'
+          });
+        },
+        onError: () => {
+          addToast({
+            title: 'Error',
+            description: 'Failed to save post',
+            color: 'danger'
+          });
+        }
+      });
+    }
   };
 
   const handleBackToFeed = () => {
@@ -179,10 +212,10 @@ const PostDetailPage: React.FC = () => {
           <CardBody className='p-0'>
             <PostCard
               post={post}
-              onBookmark={handleBookmark}
               onComment={handleComment}
               onShare={handleShare}
               onUpvote={handleUpvote}
+              onSave={handleSave}
               className='border-0 shadow-none'
             />
           </CardBody>

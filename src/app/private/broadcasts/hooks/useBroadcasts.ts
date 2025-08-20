@@ -6,11 +6,14 @@ import {
   deletePost,
   followTopic,
   getBroadcastFeed,
+  getSavedPosts,
   getTopics,
+  savePost,
   togglePostBookmark,
   togglePostLike,
   trackPostView,
   unfollowTopic,
+  unsavePost,
   updatePost
 } from '../services/broadcast.service';
 
@@ -76,6 +79,135 @@ export const useBookmarkPost = () => {
     onError: (error) => {
       // Error is handled by UI error state
     },
+    retry: false
+  });
+};
+
+/**
+ * Hook for saving posts
+ */
+export const useSavePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => savePost(postId),
+    onMutate: async (postId) => {
+      // Optimistically update to saved state immediately
+      queryClient.setQueriesData(
+        { queryKey: ['broadcasts', 'feed'] },
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((post: any) => 
+                post.id === postId ? { ...post, isSaved: true } : post
+              ) || []
+            }))
+          };
+        }
+      );
+    },
+    onSuccess: (response, postId) => {
+      // Don't refetch - trust the optimistic update
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'saved'] });
+    },
+    onError: (error, postId) => {
+      console.error('Failed to save post:', error);
+      // Revert optimistic update on error
+      queryClient.setQueriesData(
+        { queryKey: ['broadcasts', 'feed'] },
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((post: any) => 
+                post.id === postId ? { ...post, isSaved: false } : post
+              ) || []
+            }))
+          };
+        }
+      );
+    },
+    retry: false
+  });
+};
+
+/**
+ * Hook for unsaving posts
+ */
+export const useUnsavePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => unsavePost(postId),
+    onMutate: async (postId) => {
+      // Optimistically update to unsaved state immediately
+      queryClient.setQueriesData(
+        { queryKey: ['broadcasts', 'feed'] },
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((post: any) => 
+                post.id === postId ? { ...post, isSaved: false } : post
+              ) || []
+            }))
+          };
+        }
+      );
+    },
+    onSuccess: (response, postId) => {
+      // Don't refetch - trust the optimistic update
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'saved'] });
+    },
+    onError: (error, postId) => {
+      console.error('Failed to unsave post:', error);
+      // Revert optimistic update on error
+      queryClient.setQueriesData(
+        { queryKey: ['broadcasts', 'feed'] },
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((post: any) => 
+                post.id === postId ? { ...post, isSaved: true } : post
+              ) || []
+            }))
+          };
+        }
+      );
+    },
+    retry: false
+  });
+};
+
+/**
+ * Hook for fetching saved posts
+ */
+export const useSavedPosts = (params: { page?: number; limit?: number; enabled?: boolean } = {}) => {
+  const { enabled = true, ...queryParams } = params;
+  return useInfiniteQuery({
+    queryKey: ['broadcasts', 'saved', queryParams],
+    queryFn: ({ pageParam = 1 }) => getSavedPosts({ ...queryParams, page: pageParam as number }),
+    initialPageParam: 1,
+    enabled,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage?.hasNextPage) {
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 15, // 15 minutes
+    refetchOnWindowFocus: false,
     retry: false
   });
 };

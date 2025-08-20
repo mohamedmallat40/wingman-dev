@@ -3,12 +3,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button, Chip } from '@heroui/react';
+import { addToast } from '@heroui/toast';
 import { Icon } from '@iconify/react';
 // Removed framer-motion for better performance
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import { useBroadcastFeed, useUpvote } from '../../hooks';
+import { useBroadcastFeed, useSavedPosts, useSavePost, useUnsavePost, useUpvote } from '../../hooks';
 import { useBroadcastStore } from '../../store/useBroadcastStore';
 import { BroadcastPost } from '../../types';
 import PostCard from '../cards/PostCard';
@@ -16,13 +17,17 @@ import BroadcastFeedSkeleton from '../states/BroadcastFeedSkeleton';
 
 interface BroadcastFeedProps {
   selectedTopic?: string | null;
+  currentView?: 'all' | 'saved';
   onEditPost?: (post: BroadcastPost) => void;
+  onViewChange?: (view: 'all' | 'saved') => void;
   className?: string;
 }
 
 const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
   selectedTopic,
+  currentView = 'all',
   onEditPost,
+  onViewChange,
   className = ''
 }) => {
   const t = useTranslations('broadcasts');
@@ -31,6 +36,8 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
 
   // Hooks for API operations
   const { toggleUpvote, isLoading: isUpvoting } = useUpvote();
+  const savePost = useSavePost();
+  const unsavePost = useUnsavePost();
 
   // Real-time connection
 
@@ -45,7 +52,16 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
     };
   }, [selectedTopic]);
 
-  // Fetch feed with infinite scroll
+  // Fetch feeds conditionally based on current view
+  const regularFeed = useBroadcastFeed(feedParams);
+  const savedFeed = useSavedPosts({ 
+    limit: 10, 
+    enabled: currentView === 'saved'
+  });
+
+  // Use the appropriate feed based on current view
+  const activeFeed = currentView === 'saved' ? savedFeed : regularFeed;
+
   const {
     data: feedData,
     fetchNextPage,
@@ -53,7 +69,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
     isFetchingNextPage,
     isLoading,
     error
-  } = useBroadcastFeed(feedParams);
+  } = activeFeed;
 
   // Flatten posts from all pages
   const posts = useMemo(() => {
@@ -78,9 +94,46 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
     [toggleUpvote]
   );
 
-  const handleBookmark = useCallback(() => {
-    // Bookmark functionality implementation
-  }, []);
+  const handleSave = useCallback(
+    (postId: string, isCurrentlySaved: boolean) => {
+      if (isCurrentlySaved) {
+        unsavePost.mutate(postId, {
+          onSuccess: () => {
+            addToast({
+              title: t('post.actions.unsave'),
+              description: 'Post removed from saved',
+              color: 'default'
+            });
+          },
+          onError: () => {
+            addToast({
+              title: 'Error',
+              description: 'Failed to unsave post',
+              color: 'danger'
+            });
+          }
+        });
+      } else {
+        savePost.mutate(postId, {
+          onSuccess: () => {
+            addToast({
+              title: t('post.actions.save'),
+              description: 'Post saved for later',
+              color: 'success'
+            });
+          },
+          onError: () => {
+            addToast({
+              title: 'Error',
+              description: 'Failed to save post',
+              color: 'danger'
+            });
+          }
+        });
+      }
+    },
+    [savePost, unsavePost, t]
+  );
 
   const handleShare = useCallback(() => {
     // Share functionality implementation  
@@ -114,19 +167,37 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
   if (posts.length === 0) {
     return (
       <div className={`flex flex-col items-center justify-center py-16 text-center ${className}`}>
-        <div className='bg-primary/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full'>
-          <Icon icon='solar:satellite-linear' className='text-primary h-8 w-8' />
+        <div className={`mb-6 flex h-20 w-20 items-center justify-center rounded-full ${
+          currentView === 'saved' ? 'bg-default-100' : 'bg-primary/10'
+        }`}>
+          <Icon 
+            icon={currentView === 'saved' ? 'solar:archive-linear' : 'solar:satellite-linear'} 
+            className={`h-8 w-8 ${
+              currentView === 'saved' ? 'text-default-400' : 'text-primary'
+            }`} 
+          />
         </div>
-        <h3 className='text-foreground mb-2 text-xl font-semibold'>{t('feed.emptyFeed.title')}</h3>
+        <h3 className='text-foreground mb-2 text-xl font-semibold'>
+          {currentView === 'saved' ? 'No saved posts yet' : t('feed.emptyFeed.title')}
+        </h3>
         <p className='text-foreground-500 mb-6 max-w-md leading-relaxed'>
-          {t('feed.emptyFeed.description')}
+          {currentView === 'saved' 
+            ? 'Save broadcasts to read them later. Look for the archive button on any post.'
+            : t('feed.emptyFeed.description')
+          }
         </p>
         <Button
           color='primary'
-          startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
-          onPress={() => window.location.reload()}
+          startContent={<Icon 
+            icon={currentView === 'saved' ? 'solar:satellite-linear' : 'solar:refresh-linear'} 
+            className='h-4 w-4' 
+          />}
+          onPress={() => currentView === 'saved' 
+            ? onViewChange?.('all')
+            : window.location.reload()
+          }
         >
-          {t('feed.refreshFeed')}
+          {currentView === 'saved' ? 'Browse Broadcasts' : t('feed.refreshFeed')}
         </Button>
       </div>
     );
@@ -146,10 +217,10 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
           >
             <PostCard
               post={post}
-              onBookmark={handleBookmark}
               onComment={() => handlePostClick(post.id)}
               onShare={handleShare}
               onUpvote={handlePostUpvote}
+              onSave={handleSave}
               onClick={() => handlePostClick(post.id)}
               onEdit={onEditPost}
               isLoading={isUpvoting}
