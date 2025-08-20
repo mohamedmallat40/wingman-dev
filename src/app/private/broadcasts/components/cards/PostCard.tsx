@@ -610,10 +610,10 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => onSave(post.id, localIsSaved)}
-                  className={`h-9 w-9 rounded-[12px] transition-all duration-200 ${
+                  className={`h-9 w-9 rounded-[12px] transition-all duration-200 hover:scale-110 active:scale-95 ${
                     localIsSaved
-                      ? 'bg-warning/10 text-warning border-warning/20 hover:bg-warning/20'
-                      : 'hover:bg-default-100'
+                      ? 'bg-warning/10 text-warning border-warning/20 hover:bg-warning/20 hover:shadow-sm'
+                      : 'hover:bg-default-100 hover:shadow-sm'
                   }`}
                   aria-label={`${localIsSaved ? 'Remove from saved' : 'Save'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 />
