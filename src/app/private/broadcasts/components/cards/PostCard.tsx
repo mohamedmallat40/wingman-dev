@@ -263,7 +263,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   {safeOwner.userName && (
                     <span className='text-foreground-500 text-xs sm:text-sm'>@{safeOwner.userName}</span>
                   )}
-                  <span className='text-foreground-400 text-xs sm:text-sm'>��</span>
+                  <span className='text-foreground-400 text-xs sm:text-sm'>·</span>
                   <time
                     className='text-foreground-500 text-xs sm:text-sm'
                     dateTime={safeCreatedAt}
@@ -570,16 +570,18 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
-                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  className={`h-8 sm:h-9 min-w-0 px-2 sm:px-3 py-1.5 sm:py-2 font-medium rounded-[8px] sm:rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
                     showComments
                       ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:shadow-sm'
                       : 'hover:bg-default-100 hover:shadow-sm'
                   }`}
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
+                  <span className='hidden sm:inline'>
+                    {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
+                  </span>
                   {(post.replyCount || post.commentsCount || 0) > 0 && (
-                    <span className='text-foreground-500 ml-1 text-xs'>
+                    <span className='text-foreground-500 ml-0 sm:ml-1 text-xs'>
                       ({formatCount(post.replyCount || post.commentsCount || 0)})
                     </span>
                   )}
