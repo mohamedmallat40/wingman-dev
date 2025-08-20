@@ -33,9 +33,10 @@ export const useBroadcastFeed = (params: Omit<FeedParams, 'page'> = {}) => {
       }
       return undefined;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 15, // 15 minutes
+    staleTime: 1000 * 60 * 10, // 10 minutes - longer stale time
+    gcTime: 1000 * 60 * 30, // 30 minutes - longer cache time
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     retry: false
   });
 };
@@ -203,9 +204,10 @@ export const useSavedPosts = (params: { page?: number; limit?: number; enabled?:
       }
       return undefined;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 15, // 15 minutes
+    staleTime: 1000 * 60 * 10, // 10 minutes - longer stale time
+    gcTime: 1000 * 60 * 30, // 30 minutes - longer cache time
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     retry: false
   });
 };

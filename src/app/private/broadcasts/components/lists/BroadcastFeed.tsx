@@ -40,15 +40,9 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
 
   // Real-time connection
 
-  // Feed query parameters
+  // Feed query parameters - optimize memoization
   const feedParams = useMemo(() => {
-    const topics = [];
-    if (selectedTopic) topics.push(selectedTopic);
-
-
-    return {
-      topics: topics.length > 0 ? topics : undefined
-    };
+    return selectedTopic ? { topics: [selectedTopic] } : {};
   }, [selectedTopic]);
 
   // Fetch feeds conditionally based on current view
@@ -70,11 +64,11 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
     error
   } = activeFeed;
 
-  // Flatten posts from all pages
+  // Flatten posts from all pages - optimized memoization
   const posts = useMemo(() => {
-    if (!feedData?.pages) return [];
+    if (!feedData?.pages?.length) return [];
     return feedData.pages.flatMap((page: any) => page?.data || []);
-  }, [feedData]);
+  }, [feedData?.pages]);
 
   // Simplified approach - no virtual scrolling for now
 

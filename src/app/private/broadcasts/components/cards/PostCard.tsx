@@ -223,7 +223,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
         <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
 
         <Card
-          className={`border-divider/30 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:-translate-y-1 ${className}`}
+          className={`border-divider/30 shadow-sm transition-shadow duration-200 hover:shadow-md ${className}`}
           role='article'
           aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
         >
@@ -433,7 +433,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                                 className="cursor-pointer hover:scale-[1.02] transition-transform object-cover"
                                 fill={true}
                                 onClick={() => handleImageClick(index)}
-                                priority={index === 0}
+                                priority={false}
+                              loading="lazy"
                               />
                             </div>
                           ))}
@@ -540,7 +541,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => onUpvote(post.id, post.isUpvoted === true)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium transition-all duration-200 hover:scale-105'
+                  className='h-9 min-w-0 px-4 py-2 font-medium'
                   aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
@@ -563,7 +564,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium transition-all duration-200 hover:scale-105'
+                  className='h-9 min-w-0 px-4 py-2 font-medium'
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
@@ -581,7 +582,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     <Icon icon='solar:share-linear' className='h-4 w-4' aria-hidden='true' />
                   }
                   onPress={() => setShareModalOpen(true)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium transition-all duration-200 hover:scale-105'
+                  className='h-9 min-w-0 px-4 py-2 font-medium'
                   aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {t('post.actions.share')}
@@ -623,6 +624,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
       prevPost.id === nextPost.id &&
       prevPost.upvotes === nextPost.upvotes &&
       prevPost.isUpvoted === nextPost.isUpvoted &&
+      prevPost.isSaved === nextPost.isSaved &&
       prevPost.replyCount === nextPost.replyCount &&
       prevPost.commentsCount === nextPost.commentsCount &&
       prevPost.title === nextPost.title &&
