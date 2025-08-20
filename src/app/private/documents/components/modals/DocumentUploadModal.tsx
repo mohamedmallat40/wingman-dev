@@ -475,13 +475,13 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
       onClose={handleClose}
       size='2xl'
       scrollBehavior='inside'
-      backdrop='blur'
+      backdrop='opaque'
       isDismissable={!isUploading}
       hideCloseButton
       classNames={{
         wrapper: 'p-4 sm:p-6',
-        base: 'bg-background/95 dark:bg-content1/95 backdrop-blur-md border-0',
-        backdrop: 'bg-gradient-to-br from-black/40 via-black/30 to-black/40 backdrop-blur-lg'
+        base: 'bg-background dark:bg-content1 border-0',
+        backdrop: 'bg-black/50'
       }}
       motionProps={{
         variants: {
