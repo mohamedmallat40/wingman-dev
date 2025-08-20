@@ -372,11 +372,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             </div>
           </CardHeader>
 
-          <CardBody className='pt-0 pb-6'>
+          <CardBody className='pt-0 pb-4 sm:pb-6'>
             {/* Post Title */}
             {safeTitle && (
               <h2
-                className='text-foreground mb-4 text-xl leading-tight font-bold tracking-tight'
+                className='text-foreground mb-3 sm:mb-4 text-lg sm:text-xl leading-tight font-bold tracking-tight'
                 id={`post-title-${post.id}`}
               >
                 {safeTitle}
@@ -384,7 +384,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             )}
 
             {/* Post Content */}
-            <div className='text-foreground-700 mb-5 leading-relaxed text-base'>
+            <div className='text-foreground-700 mb-4 sm:mb-5 leading-relaxed text-sm sm:text-base'>
               {displayContent}
               {shouldTruncate && (
                 <Button
@@ -503,7 +503,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Skills */}
             {safeSkills.length > 0 && (
-              <div className='mb-5 flex flex-wrap gap-2'>
+              <div className='mb-4 sm:mb-5 flex flex-wrap gap-1.5 sm:gap-2'>
                 {safeSkills.slice(0, 5).map((skill) => (
                   <Chip
                     key={skill.id}
@@ -522,7 +522,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
               </div>
             )}
 
-            <Divider className='mb-5' />
+            <Divider className='mb-4 sm:mb-5' />
 
             {/* Engagement Actions */}
             <div className='flex items-center justify-between pt-1'>
