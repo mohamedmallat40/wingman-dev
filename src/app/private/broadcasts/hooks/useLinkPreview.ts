@@ -73,7 +73,7 @@ export const useLinkPreview = (content: string): UseLinkPreviewReturn => {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       processUrls(content);
-    }, 500); // 500ms debounce
+    }, 800); // Increased debounce to 800ms for better performance
 
     return () => clearTimeout(timeoutId);
   }, [content, processUrls]);
