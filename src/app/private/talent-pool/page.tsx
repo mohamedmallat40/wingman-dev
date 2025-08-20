@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
 
+import { EditTeamModal } from '../teams/[id]/components/modals/edit-team-modal';
 import { TalentFiltersPanel } from './components/filters';
 import {
   AgencyListContainer,
@@ -27,7 +28,6 @@ import {
 import { useFilterMemoization } from './hooks/useFilterMemoization';
 // Import custom hooks
 import { useTalentPoolState } from './hooks/useTalentPoolState';
-import { type TalentType } from './types';
 
 const TalentPoolPage: React.FC = () => {
   // ============================================================================
@@ -37,6 +37,7 @@ const TalentPoolPage: React.FC = () => {
   const router = useRouter();
   const talentPoolState = useTalentPoolState();
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const {
     activeTab,
     searchQuery,
@@ -81,7 +82,7 @@ const TalentPoolPage: React.FC = () => {
   }, []);
 
   const handleCreateTeam = useCallback(() => {
-    // In real app: open create team modal or navigate to create team page
+    setIsEditModalOpen(true);
   }, []);
 
   const handleInviteUser = useCallback(() => {
@@ -136,7 +137,7 @@ const TalentPoolPage: React.FC = () => {
   );
 
   const renderActiveTabContent = () => {
-    const commonProps = {
+    const commonProperties = {
       filters,
       searchQuery,
       onViewProfile: handleViewProfile,
@@ -144,13 +145,20 @@ const TalentPoolPage: React.FC = () => {
     };
 
     switch (activeTab) {
-      case 'freelancers':
+      case 'freelancers': {
         return (
-          <FreelancerListContainer {...commonProps} onCountChange={handleFreelancerCountChange} />
+          <FreelancerListContainer
+            {...commonProperties}
+            onCountChange={handleFreelancerCountChange}
+          />
         );
-      case 'agencies':
-        return <AgencyListContainer {...commonProps} onCountChange={handleAgencyCountChange} />;
-      case 'teams':
+      }
+      case 'agencies': {
+        return (
+          <AgencyListContainer {...commonProperties} onCountChange={handleAgencyCountChange} />
+        );
+      }
+      case 'teams': {
         return (
           <TeamListContainer
             filters={filters}
@@ -160,8 +168,10 @@ const TalentPoolPage: React.FC = () => {
             onCountChange={handleTeamCountChange}
           />
         );
-      default:
+      }
+      default: {
         return null;
+      }
     }
   };
 
@@ -178,14 +188,19 @@ const TalentPoolPage: React.FC = () => {
   };
 
   // Action items with handlers
-  const actionItems = ACTION_ITEMS.map((item) => ({
+  const actionItems = ACTION_ITEMS.filter((item) => {
+    if (item.key === 'create-team') {
+      return activeTab === 'teams';
+    }
+    return true;
+  }).map((item) => ({
     ...item,
     onClick:
       item.key === 'create-team'
         ? handleCreateTeam
-        : item.key === 'invite'
-          ? handleInviteUser
-          : () => console.log(`${item.label} clicked`)
+        : () => {
+            console.log(`${item.label} clicked`);
+          }
   }));
 
   return (
@@ -205,7 +220,9 @@ const TalentPoolPage: React.FC = () => {
               startContent={
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
-              onPress={() => action.onClick?.()}
+              onPress={() => {
+                action.onClick();
+              }}
               className='transition-all duration-200 hover:shadow-md'
             >
               {action.label}
@@ -262,6 +279,13 @@ const TalentPoolPage: React.FC = () => {
         isOpen={isInviteModalOpen}
         onClose={handleInviteModalClose}
         onInvite={handleInviteSubmit}
+      />
+      <EditTeamModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+        }}
+        onSave={handleCreateTeam}
       />
     </DashboardLayout>
   );

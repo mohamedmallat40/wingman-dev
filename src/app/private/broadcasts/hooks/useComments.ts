@@ -227,7 +227,14 @@ export const useComments = ({
         const updateCommentRecursive = (comments: readonly Comment[]): readonly Comment[] => {
           return comments.map((comment) => {
             if (comment.id === id) {
-              return updatedComment;
+              // Preserve original owner data if the updated comment doesn't have complete owner info
+              return {
+                ...updatedComment,
+                owner: updatedComment.owner || comment.owner,
+                // Preserve other important fields that might be missing from the update response
+                createdAt: updatedComment.createdAt || comment.createdAt,
+                authorId: updatedComment.authorId || comment.authorId
+              };
             }
             if (comment.replies) {
               return {

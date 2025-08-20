@@ -139,10 +139,9 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
         {posts.map((post, index) => (
           <div
             key={post.id}
-            className="transition-all duration-300 ease-out opacity-0 animate-in fade-in slide-in-from-bottom-2"
+            className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out"
             style={{
-              animationDelay: `${index * 50}ms`,
-              animationFillMode: 'forwards'
+              animationDelay: `${index * 100}ms`
             }}
           >
             <PostCard

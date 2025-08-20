@@ -25,23 +25,25 @@ export const getComments = async (postId: string, params: { page?: number; limit
  * Create a new comment
  */
 export const createComment = async (commentData: CreateCommentData) => {
-  const response = await wingManApi.post(API_ROUTES.comments.create, commentData);
+  // Extract postId from commentData to construct the correct endpoint
+  const postId = commentData.postId;
+  const response = await wingManApi.post(API_ROUTES.comments.create(postId), commentData);
   return response.data;
 };
 
 /**
- * Update an existing comment
+ * Update an existing comment/reply
  */
-export const updateComment = async (commentId: string, commentData: UpdateCommentData) => {
-  const response = await wingManApi.put(API_ROUTES.comments.update(commentId), commentData);
+export const updateComment = async (replyId: string, commentData: UpdateCommentData) => {
+  const response = await wingManApi.patch(API_ROUTES.comments.update(replyId), commentData);
   return response.data;
 };
 
 /**
- * Delete a comment
+ * Delete a comment/reply
  */
-export const deleteComment = async (commentId: string) => {
-  const response = await wingManApi.delete(API_ROUTES.comments.delete(commentId));
+export const deleteComment = async (replyId: string) => {
+  const response = await wingManApi.delete(API_ROUTES.comments.delete(replyId));
   return response.data;
 };
 

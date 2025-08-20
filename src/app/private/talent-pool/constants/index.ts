@@ -66,7 +66,7 @@ interface ActionItemConfig {
 }
 
 export const ACTION_ITEMS: ActionItemConfig[] = [
-  {
+  /* {
     key: 'invite',
     label: 'Invite',
     icon: 'solar:user-plus-linear',
@@ -74,7 +74,7 @@ export const ACTION_ITEMS: ActionItemConfig[] = [
     variant: 'solid',
     priority: 'primary',
     tooltip: 'Invite new talent'
-  },
+  }, */
   {
     key: 'create-team',
     label: 'Create Team',

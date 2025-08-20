@@ -77,27 +77,44 @@ export default function TopicSidebar({
 
   // Update subcasts when API data comes in
   useEffect(() => {
-    console.log('TopicsData received:', topicsData);
-    if (topicsData && Array.isArray(topicsData)) {
-      // Transform API topics to match Subcast interface
-      const transformedTopics: Subcast[] = topicsData.map((topic: any) => ({
-        id: topic.id,
-        name: topic.title, // API uses 'title' not 'name'
-        description: topic.description,
-        icon: topic.icon,
-        followerCount: topic.followerCount || 0,
-        postCount: topic.broadcastCount || 0,
-        isFollowing: topic.isFollowed || false,
-        color: topic.color || '#3B82F6',
-        isVerified: true, // Default to verified
-        trending: false, // Default to not trending
-        tags: [], // Default empty tags
-        key: topic.key // Store the key field if needed
-      }));
-      console.log('Transformed topics:', transformedTopics);
-      setSubcasts(transformedTopics);
+    if (topicsData) {
+      if (Array.isArray(topicsData)) {
+        // Transform API topics to match Subcast interface
+        const transformedTopics: Subcast[] = topicsData.map((topic: any) => ({
+          id: topic.id,
+          name: topic.title || topic.name, // API uses 'title' or 'name'
+          description: topic.description || 'No description available',
+          icon: topic.icon || 'solar:satellite-linear',
+          followerCount: topic.followerCount || 0,
+          postCount: topic.broadcastCount || topic.postCount || 0,
+          isFollowing: topic.isFollowed || topic.isFollowing || false,
+          color: topic.color || '#3B82F6',
+          isVerified: true, // Default to verified
+          trending: false, // Default to not trending
+          tags: [], // Default empty tags
+          key: topic.key // Store the key field if needed
+        }));
+        setSubcasts(transformedTopics);
+      } else if (topicsData.data && Array.isArray(topicsData.data)) {
+        // Handle nested data structure
+        const transformedTopics: Subcast[] = topicsData.data.map((topic: any) => ({
+          id: topic.id,
+          name: topic.title || topic.name,
+          description: topic.description || 'No description available',
+          icon: topic.icon || 'solar:satellite-linear',
+          followerCount: topic.followerCount || 0,
+          postCount: topic.broadcastCount || topic.postCount || 0,
+          isFollowing: topic.isFollowed || topic.isFollowing || false,
+          color: topic.color || '#3B82F6',
+          isVerified: true,
+          trending: false,
+          tags: [],
+          key: topic.key
+        }));
+        setSubcasts(transformedTopics);
+      }
     }
-  }, [topicsData]);
+  }, [topicsData, topicsLoading, topicsError]);
 
   // Filter subcasts
   const filteredSubcasts = useMemo(() => {
@@ -320,10 +337,9 @@ export default function TopicSidebar({
             {filteredSubcasts.map((subcast, index) => (
               <div
                 key={subcast.id}
-                className='relative my-3 opacity-0 -translate-x-4 animate-in fade-in slide-in-from-left-2 duration-300'
+                className='relative my-3 animate-in fade-in slide-in-from-left-1 duration-300'
                 style={{
-                  animationDelay: `${index * 50}ms`,
-                  animationFillMode: 'forwards',
+                  animationDelay: `${index * 100}ms`,
                   overflow: 'visible'
                 }}
               >

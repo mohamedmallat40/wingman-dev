@@ -169,7 +169,7 @@ const HeroTabs: React.FC<HeroTabsProperties> = ({
                                     <span className='text-default-500 text-xs'>
                                       {config.description}
                                     </span>
-                                    {count !== undefined && !isLoading && (
+                                    {count > 0 && count !== undefined && !isLoading && (
                                       <span className='bg-default-100 text-default-700 rounded-full px-2 py-0.5 text-xs font-medium'>
                                         {count}
                                       </span>

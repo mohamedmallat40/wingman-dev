@@ -21,10 +21,12 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
   }
 
   const url = `${API_ROUTES.broadcasts.feed}?${queryParams}`;
-  const response = await wingManApi.get(url);
+  
+  try {
+    const response = await wingManApi.get(url);
 
-  // Handle different response structures
-  const responseData = response.data;
+    // Handle different response structures
+    const responseData = response.data;
 
   // If response is directly an array, wrap it in pagination structure
   if (Array.isArray(responseData)) {
@@ -50,14 +52,17 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
     };
   }
 
-  // Fallback: return empty structure
-  return {
-    data: [],
-    currentPage: page,
-    hasNextPage: false,
-    totalPages: 1,
-    totalItems: 0
-  };
+    // Fallback: return empty structure
+    return {
+      data: [],
+      currentPage: page,
+      hasNextPage: false,
+      totalPages: 1,
+      totalItems: 0
+    };
+  } catch (error) {
+    throw error;
+  }
 };
 
 /**
@@ -141,8 +146,12 @@ export const removeUpvote = async (postId: string) => {
  * Get all topics (categories/channels)
  */
 export const getTopics = async () => {
-  const response = await wingManApi.get(API_ROUTES.broadcasts.topics);
-  return response.data;
+  try {
+    const response = await wingManApi.get(API_ROUTES.broadcasts.topics);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 /**

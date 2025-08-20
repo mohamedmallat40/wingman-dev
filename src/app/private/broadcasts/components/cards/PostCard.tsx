@@ -412,15 +412,16 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                       {images.length > 0 && (
                         <div className="space-y-2">
                           {images.slice(0, 4).map((filename, index) => (
-                            <OptimizedImage
-                              key={filename}
-                              src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
-                              alt={`${safeTitle} - Image ${index + 1}`}
-                              className="w-full rounded-lg cursor-pointer hover:scale-[1.02] transition-transform"
-                              style={{ maxHeight: '360px' }}
-                              onClick={() => handleImageClick(index)}
-                              priority={index === 0}
-                            />
+                            <div key={filename} className="relative w-full h-64 overflow-hidden rounded-lg">
+                              <OptimizedImage
+                                src={`https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${filename}`}
+                                alt={`${safeTitle} - Image ${index + 1}`}
+                                className="cursor-pointer hover:scale-[1.02] transition-transform object-cover"
+                                fill={true}
+                                onClick={() => handleImageClick(index)}
+                                priority={index === 0}
+                              />
+                            </div>
                           ))}
                         </div>
                       )}

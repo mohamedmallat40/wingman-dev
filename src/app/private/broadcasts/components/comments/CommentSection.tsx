@@ -60,7 +60,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       // If we have initial comments, just mark as loaded to prevent duplicate fetching
       loadedPostRef.current = postId;
     }
-  }, [postId, loadInitialComments, initialComments.length]);
+  }, [postId, initialComments.length]); // Removed loadInitialComments from dependencies to prevent double calls
 
   // UI state management
   const { uiState, actions: uiActions } = useCommentUI();
@@ -116,13 +116,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle reply submission
   const handleReply = useCallback(
-    async (parentId: string, content: string, mentions?: string[]) => {
+    async (parentId: string, content: string, taggedUsers?: string[]) => {
       try {
         await createComment({
-          content,
+          response: content, // API expects 'response' field
           postId,
           parentId,
-          mentions
+          taggedUsers
         });
         uiActions.setReplying(parentId, false);
         uiActions.setReplyInput(parentId, '');
@@ -135,9 +135,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle comment edit
   const handleEdit = useCallback(
-    async (commentId: string, content: string, mentions?: string[]) => {
+    async (commentId: string, content: string, taggedUsers?: string[]) => {
       try {
-        await updateComment(commentId, { content, mentions });
+        await updateComment(commentId, { response: content, taggedUsers }); // API expects 'response' field
         uiActions.setEditing(commentId, false);
         uiActions.setEditInput(commentId, '');
       } catch (error) {
@@ -149,12 +149,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle new comment submission
   const handleNewComment = useCallback(
-    async (content: string, mentions?: string[]) => {
+    async (content: string, taggedUsers?: string[]) => {
       try {
         await createComment({
-          content,
+          response: content, // API expects 'response' field
           postId,
-          mentions
+          taggedUsers
         });
       } catch (error) {
         console.error('Failed to create comment:', error);
@@ -235,10 +235,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           {comments.map((comment, index) => (
             <div
               key={comment.id}
-              className="opacity-0 animate-in fade-in duration-300"
+              className="animate-in fade-in slide-in-from-top-1 duration-300"
               style={{
-                animationDelay: `${index * 100}ms`,
-                animationFillMode: 'forwards'
+                animationDelay: `${index * 100}ms`
               }}
             >
               <CommentItem

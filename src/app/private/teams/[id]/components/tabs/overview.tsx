@@ -25,6 +25,7 @@ const getAvailabilityColor = (status: string) => {
   return AVAILABILITY_COLORS[status as keyof typeof AVAILABILITY_COLORS];
 };
 export const TeamOverviewTab: React.FC<TeamOverviewTabProperties> = ({ team, onViewProfile }) => {
+  
   const t = useTranslations();
   return (
     <div className='space-y-6'>

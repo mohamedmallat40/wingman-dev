@@ -76,6 +76,36 @@ const OptimizedImage = memo<OptimizedImageProps>(({
 
   // Render with Next.js Image or fallback to regular img
   if (useNextImage) {
+    // When using fill, don't add extra wrapper div
+    if (fill) {
+      return (
+        <>
+          {isLoading && (
+            <div className={`absolute inset-0 flex items-center justify-center bg-default-100 z-10`}>
+              <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full"></div>
+            </div>
+          )}
+          
+          <Image
+            src={src}
+            alt={alt}
+            className={`${className} ${isLoading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+            onClick={onClick}
+            priority={priority}
+            fill={fill}
+            sizes={sizes}
+            style={style}
+            onLoad={handleLoad}
+            onError={handleError}
+            quality={85}
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R/Huf/Z"
+          />
+        </>
+      );
+    }
+
+    // For non-fill images, keep the wrapper
     return (
       <div className={`relative overflow-hidden ${isLoading ? 'animate-pulse bg-default-200' : ''}`}>
         {isLoading && (

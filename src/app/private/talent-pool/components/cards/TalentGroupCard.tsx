@@ -2,138 +2,152 @@
 
 import React from 'react';
 
+import type { Tool } from '../../types';
+
 import { Avatar, Button, Card, CardBody, CardHeader, Chip, Divider } from '@heroui/react';
 import { Icon } from '@iconify/react';
+import useUserStore from '@root/modules/auth/store/use-user-store';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import { getImageUrl } from '@/lib/utils/utilities';
 
-import { type TeamCardProperties, type Tool } from '../../types';
+import { type Group } from '../../types';
+import { mapUserType } from '../../utils/talent-utilities';
 
-const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam }) => {
-  const { id, groupName, color, members, tools, owner, connections } = group;
+interface GroupCardProperties {
+  group: Group;
+  onViewTeam: (teamId: string) => void;
+  activeTab: string;
+}
+
+const GroupCard: React.FC<GroupCardProperties> = ({ group, onViewTeam, activeTab }) => {
+  const t = useTranslations();
+  const { id, groupName, color, members, tools, owner, connections, type } = group;
+  const { user } = useUserStore();
 
   const displayTools = tools.slice(0, 4);
   const hasMoreTools = tools.length > 4;
-  const connectionsCount = connections?.length || 0;
+  const connectionsCount = connections.length || 0;
+
+  // Determine team type chip properties
+  const getTeamTypeChip = () => {
+    const isSharedWithMe =
+      user?.id && owner.id !== user.id && connections.some((conn) => conn.id === user.id);
+
+    let chipColor: 'primary' | 'danger' | 'warning' | 'success' = 'primary';
+    let chipText = '';
+
+    if (isSharedWithMe) {
+      chipColor = 'warning';
+      chipText = t('talentPool.tabs.sharedWithMe');
+    } else if (type === 'public') {
+      chipText = t('talentPool.tabs.publicGroups');
+    }
+
+    return (
+      <Chip size='sm' color={chipColor} variant='flat' className='mb-4'>
+        {chipText}
+      </Chip>
+    );
+  };
 
   return (
     <motion.div
-      whileHover={{ y: -6, scale: 1.02 }}
-      transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
       className='h-full w-full'
     >
-      <Card className='from-background via-background/95 to-background relative h-full w-full max-w-[600px] overflow-hidden border-0 bg-gradient-to-br shadow-lg transition-all duration-300 hover:shadow-2xl'>
-        <div className='bg-primary-100/30 absolute top-0 right-0 h-32 w-32 translate-x-1/2 -translate-y-1/2 transform rounded-full blur-2xl filter'></div>
-        <div className='bg-secondary-100/30 absolute bottom-0 left-0 h-32 w-32 -translate-x-1/2 translate-y-1/2 transform rounded-full blur-2xl filter'></div>
-        <CardHeader className='relative flex flex-col items-start gap-4 px-6 pt-6 pb-6'>
-          <div className='flex w-full items-center justify-between'>
-            <div className='relative'>
-              <div
-                className='ring-primary-100 flex h-20 w-20 items-center justify-center rounded-full text-xl font-bold text-white shadow-lg ring-4 ring-offset-2'
-                style={{
-                  backgroundColor: color || '#6366f1'
-                }}
-              >
-                {groupName.charAt(0).toUpperCase()}
-              </div>
-              <div className='bg-primary-500 border-background absolute -right-2 -bottom-2 rounded-full border-2 px-2 py-1'>
-                <div className='flex items-center gap-1'>
-                  <Icon icon='solar:users-group-rounded-bold' className='h-3 w-3 text-white' />
-                  <span className='text-xs font-bold text-white'>{members}</span>
+      <Card className='border-default-200 bg-background/60 hover:border-default-300 dark:bg-background/80 h-full w-full max-w-[600px] border backdrop-blur-sm transition-all duration-200 hover:shadow-md'>
+        <CardHeader className='flex flex-col items-start gap-4 p-6'>
+          {/* Type Chip - Only show on 'all' tab */}
+          {activeTab === 'all' && (
+            <div className='flex w-full justify-end'>{getTeamTypeChip()}</div>
+          )}
+
+          {/* Header with Avatar and Action Button */}
+          <div className='flex w-full items-start justify-between'>
+            <div className='flex items-center gap-4'>
+              <div className='relative'>
+                <div
+                  className='flex h-14 w-14 items-center justify-center rounded-xl text-lg font-semibold text-white shadow-sm'
+                  style={{ backgroundColor: color || '#6366f1' }}
+                >
+                  {groupName.charAt(0).toUpperCase()}
+                </div>
+                <div className='bg-primary absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full text-white shadow-sm'>
+                  <span className='text-xs font-medium'>{members}</span>
                 </div>
               </div>
-            </div>
 
-            <div className='flex gap-2'>
-              <Button
-                className='bg-primary-500 hover:bg-primary-600 text-white shadow-lg hover:shadow-xl'
-                radius='full'
-                size='sm'
-                startContent={<Icon icon='solar:login-bold' className='h-4 w-4' />}
-                onPress={() => onJoinTeam?.(id)}
-              >
-                Join Team
-              </Button>
-
-              <Button
-                className='border-primary-200 text-primary-600 hover:bg-primary-50'
-                radius='full'
-                size='sm'
-                variant='bordered'
-                isIconOnly
-                onPress={() => onViewTeam?.(id)}
-              >
-                <Icon icon='solar:eye-bold' className='h-4 w-4' />
-              </Button>
-            </div>
-          </div>
-
-          <div className='flex w-full flex-col gap-2'>
-            <div className='flex items-center justify-between'>
-              <h2 className='text-foreground text-xl font-bold'>{groupName}</h2>
-              <div className='bg-default-100 flex items-center gap-1 rounded-full px-2 py-1'>
-                <Icon
-                  icon='solar:users-group-rounded-linear'
-                  className='text-default-600 h-3 w-3'
-                />
-                <span className='text-default-600 text-xs font-medium'>
-                  {members} member{members !== 1 ? 's' : ''}
-                </span>
+              <div>
+                <h2 className='text-foreground text-xl font-semibold'>{groupName}</h2>
+                <p className='text-default-500 mt-1 text-sm'>
+                  {members} {t('talentPool.cards.membersCount')} • {connectionsCount}{' '}
+                  {connectionsCount === 1 ? 'connection' : 'connections'}
+                </p>
               </div>
             </div>
 
-            <p className='text-small text-default-500 font-medium'>
-              Team •{' '}
-              {connectionsCount > 0 ? `${connectionsCount} connections` : 'No connections yet'}
-            </p>
+            <Button
+              className='text-default-600 hover:text-foreground'
+              radius='lg'
+              size='sm'
+              variant='light'
+              isIconOnly
+              onPress={() => {
+                onViewTeam(id);
+              }}
+            >
+              <Icon icon='solar:eye-bold' className='h-4 w-4' />
+            </Button>
           </div>
         </CardHeader>
 
-        <CardBody className='relative z-10 gap-4 px-6 pt-0 pb-6'>
-          {/* Team Owner Section */}
-          <div className='border-default-200 bg-background/60 rounded-xl border p-4 shadow-sm backdrop-blur-sm'>
-            <h3 className='text-medium mb-3 flex items-center gap-2 font-semibold'>
-              <Icon icon='solar:crown-linear' className='text-primary h-4 w-4' />
-              Team Owner
-            </h3>
-            <div className='flex items-center gap-3'>
-              <Avatar
-                src={owner.profileImage ? getImageUrl(owner.profileImage) : undefined}
-                className='ring-primary-100 h-12 w-12 ring-4 ring-offset-2'
-                name={`${owner.firstName} ${owner.lastName}`}
-              />
-              <div className='flex flex-col'>
-                <p className='text-medium text-foreground font-bold'>
-                  {owner.firstName} {owner.lastName}
-                </p>
-                <p className='text-small text-default-500'>{owner.profession || 'Team Lead'}</p>
-              </div>
+        <CardBody className='gap-4 px-6 pt-0 pb-6'>
+          {/* Owner Section */}
+          <div className='border-default-200/50 bg-default-50/50 flex items-center gap-3 rounded-lg border p-3'>
+            <Avatar
+              src={owner?.profileImage ? getImageUrl(owner?.profileImage) : undefined}
+              className='h-8 w-8'
+              name={`${owner?.firstName} ${owner?.lastName}`}
+            />
+            <div className='min-w-0 flex-1'>
+              <p className='text-foreground truncate text-sm font-medium'>
+                {owner?.firstName} {owner?.lastName}
+              </p>
+              <p className='text-default-500 truncate text-xs'>
+                {mapUserType(owner?.profession, t)}
+              </p>
             </div>
+            <Icon icon='solar:crown-linear' className='text-primary h-4 w-4 flex-shrink-0' />
           </div>
 
           {/* Tools Section */}
           {displayTools.length > 0 && (
-            <div className='border-default-200 bg-background/60 rounded-xl border p-4 shadow-sm backdrop-blur-sm'>
-              <h3 className='text-medium mb-3 flex items-center gap-2 font-semibold'>
-                <Icon icon='solar:document-text-linear' className='text-primary h-4 w-4' />
-                Tools & Technologies
-              </h3>
+            <div>
+              <div className='mb-2 flex items-center gap-2'>
+                <Icon icon='solar:document-text-linear' className='text-default-600 h-4 w-4' />
+                <span className='text-foreground text-sm font-medium'>{t('talentPool.cards.tools')}</span>
+              </div>
               <div className='flex flex-wrap gap-2'>
                 {displayTools.map((tool: Tool, index: number) => (
                   <Chip
                     key={`${tool.name}-${index}`}
                     variant='flat'
                     size='sm'
-                    className='cursor-pointer transition-transform hover:scale-105'
-                    color='primary'
+                    className='bg-default-100 text-default-700 hover:bg-default-200 transition-colors'
                   >
                     {tool.name}
                   </Chip>
                 ))}
                 {hasMoreTools && (
-                  <Chip variant='bordered' size='sm' className='border-dashed'>
-                    +{tools.length - 4} more
+                  <Chip
+                    variant='bordered'
+                    size='sm'
+                    className='border-default-300 text-default-500 border-dashed'
+                  >
+                    +{tools.length - 4}
                   </Chip>
                 )}
               </div>
@@ -142,43 +156,30 @@ const GroupCard: React.FC<TeamCardProperties> = ({ group, onViewTeam, onJoinTeam
 
           <Divider className='my-2' />
 
-          {/* Stats Section */}
+          {/* Stats Grid */}
           <div className='grid grid-cols-3 gap-4'>
             <div className='text-center'>
-              <div className='mb-1 flex items-center justify-center'>
-                <Icon icon='solar:users-group-rounded-linear' className='text-primary h-4 w-4' />
+              <div className='text-default-600 flex items-center justify-center gap-1'>
+                <Icon icon='solar:users-group-rounded-linear' className='h-3 w-3' />
+                <span className='text-sm font-medium'>{members}</span>
               </div>
-              <p className='text-small text-default-700 font-bold'>{members}</p>
-              <p className='text-tiny text-default-400'>Members</p>
+              <p className='text-default-400 mt-1 text-xs'>{t('talentPool.cards.members')}</p>
             </div>
 
             <div className='text-center'>
-              <div className='mb-1 flex items-center justify-center'>
-                <Icon icon='solar:document-text-linear' className='text-primary h-4 w-4' />
+              <div className='text-default-600 flex items-center justify-center gap-1'>
+                <Icon icon='solar:document-text-linear' className='h-3 w-3' />
+                <span className='text-sm font-medium'>{tools.length}</span>
               </div>
-              <p className='text-small text-default-700 font-bold'>{tools.length}</p>
-              <p className='text-tiny text-default-400'>Tools</p>
+              <p className='text-default-400 mt-1 text-xs'>{t('talentPool.cards.tools')}</p>
             </div>
 
             <div className='text-center'>
-              <div className='mb-1 flex items-center justify-center'>
-                <Icon icon='solar:link-linear' className='text-primary h-4 w-4' />
+              <div className='text-default-600 flex items-center justify-center gap-1'>
+                <Icon icon='solar:link-linear' className='h-3 w-3' />
+                <span className='text-sm font-medium'>{connectionsCount}</span>
               </div>
-              <p className='text-small text-default-700 font-bold'>{connectionsCount}</p>
-              <p className='text-tiny text-default-400'>Connections</p>
-            </div>
-          </div>
-
-          {/* Join Action Section */}
-          <div className='from-primary-50 to-secondary-50 border-primary-200 rounded-xl border bg-gradient-to-r p-4'>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-2'>
-                <Icon icon='solar:users-group-rounded-linear' className='text-primary h-4 w-4' />
-                <span className='text-medium text-primary font-bold'>Join Team</span>
-              </div>
-              <div className='text-right'>
-                <p className='text-small text-primary'>Collaborate & grow together</p>
-              </div>
+              <p className='text-default-400 mt-1 text-xs'>Connections</p>
             </div>
           </div>
         </CardBody>
