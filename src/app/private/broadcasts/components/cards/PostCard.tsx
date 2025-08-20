@@ -223,7 +223,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
         <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
 
         <Card
-          className={`border-divider/30 shadow-sm transition-shadow duration-200 hover:shadow-md ${className}`}
+          className={`border-default-200/50 bg-content1/80 backdrop-blur-xl rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)] transition-all duration-300 hover:border-primary/20 ${className}`}
           role='article'
           aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
         >
@@ -231,7 +231,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             <div className='flex w-full items-start gap-4'>
               {/* Author Avatar */}
               <div className='relative'>
-                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/15 ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/30">
+                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/10 ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/25">
                   {safeOwner.profileImage ? (
                     <OptimizedImage
                       src={getImageUrl(safeOwner.profileImage)}
@@ -248,8 +248,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   )}
                 </div>
                 {safeOwner.isMailVerified && (
-                  <div className='bg-primary absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white'>
-                    <Icon icon='solar:verified-check-bold' className='h-3 w-3 text-white' />
+                  <div className='bg-success absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background shadow-sm'>
+                    <Icon icon='solar:shield-check-bold' className='h-3 w-3 text-white' />
                   </div>
                 )}
               </div>
@@ -278,8 +278,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     size='sm'
                     color={postTypeColor as any}
                     variant='flat'
-                    startContent={<Icon icon={postIcon} className='h-3 w-3' />}
-                    className='font-medium'
+                    startContent={<Icon icon='solar:chat-dots-linear' className='h-3 w-3' />}
+                    className='font-medium bg-primary/10 text-primary border-primary/20'
                   >
                     {t('post.actions.broadcast')}
                   </Chip>
