@@ -145,7 +145,8 @@ export default function BroadcastsPage() {
                     : 'hover:bg-default-200/50'
                 }`}
               >
-                All Posts
+                <span className='hidden sm:inline'>All Posts</span>
+                <span className='sm:hidden'>All</span>
               </Button>
               <Button
                 size='sm'
@@ -159,7 +160,7 @@ export default function BroadcastsPage() {
                     : 'hover:bg-default-200/50'
                 }`}
               >
-                Saved
+                <span className='hidden sm:inline'>Saved</span>
               </Button>
             </div>
 
