@@ -479,7 +479,7 @@ export default function TopicSidebar({
                           <div className='flex items-center gap-3'>
                             <div className='flex items-center gap-1'>
                               <Icon
-                                icon='solar:users-group-rounded-linear'
+                                icon='solar:users-group-two-rounded-linear'
                                 className='text-foreground-400 h-3 w-3'
                               />
                               <span className='text-foreground-500 text-xs font-medium'>
@@ -488,7 +488,7 @@ export default function TopicSidebar({
                             </div>
                             <div className='flex items-center gap-1'>
                               <Icon
-                                icon='solar:document-text-linear'
+                                icon='solar:chat-dots-linear'
                                 className='text-foreground-400 h-3 w-3'
                               />
                               <span className='text-foreground-500 text-xs font-medium'>
