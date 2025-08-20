@@ -179,7 +179,7 @@ export default function BroadcastsPage() {
           </div>
         }
       >
-        <div className='mx-auto flex w-full gap-6 px-4 sm:px-6 lg:gap-8 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
+        <div className='mx-auto flex w-full gap-3 px-2 sm:gap-6 sm:px-4 lg:gap-8 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
           {/* Left Sidebar */}
           <div className='hidden w-80 flex-shrink-0 lg:block'>
             <div className='sticky top-6 space-y-6'>
@@ -193,7 +193,7 @@ export default function BroadcastsPage() {
 
           {/* Main Feed */}
           <div className='min-w-0 flex-1'>
-            <div className='space-y-8 py-4 sm:py-6'>
+            <div className='space-y-4 py-2 sm:space-y-8 sm:py-4 lg:py-6'>
               <BroadcastFeed 
                 selectedTopic={currentView === 'all' ? activeTopic : null}
                 currentView={currentView}
