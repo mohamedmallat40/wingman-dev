@@ -3,9 +3,9 @@
 import { useState } from 'react';
 
 import { addToast } from '@heroui/react';
-import { handleOAuth } from '@root/modules/auth/services/auth.service';
-import useUserStore from '@root/modules/auth/store/use-user-store';
-import { type IUserProfile } from '@root/modules/profile/types';
+import { handleOAuth } from '../services/auth.service';
+import useUserStore from '../store/use-user-store';
+import { type IUserProfile } from '../../profile/types';
 import { useRouter } from 'next/navigation';
 
 interface OAuthResponse {
