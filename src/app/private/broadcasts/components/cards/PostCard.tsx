@@ -526,7 +526,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Engagement Actions */}
             <div className='flex items-center justify-between pt-1'>
-              <div className='flex items-center gap-1'>
+              <div className='flex items-center gap-1 sm:gap-2'>
                 <Button
                   size='sm'
                   variant={post.isUpvoted === true ? 'flat' : 'light'}
