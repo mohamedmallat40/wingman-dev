@@ -218,15 +218,15 @@ export default function PageHeader({
       {/* Simplified Background */}
       <div className='bg-primary/3 absolute inset-0 opacity-50' />
 
-      <div className='relative py-8 sm:py-10 lg:py-12'>
-        <div className='mx-auto w-full px-4 sm:px-6 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
+      <div className='relative py-4 sm:py-8 lg:py-10'>
+        <div className='mx-auto w-full px-2 sm:px-4 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
           {/* Enhanced Breadcrumbs */}
           {breadcrumbs && breadcrumbs.length > 0 && (
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1, duration: 0.4 }}
-              className='mb-6'
+              className='mb-3 sm:mb-6'
             >
               <Breadcrumbs
                 size='sm'
