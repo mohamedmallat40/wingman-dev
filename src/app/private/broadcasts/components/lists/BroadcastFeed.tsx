@@ -125,19 +125,19 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
   if (error) {
     return (
       <div className={`flex flex-col items-center justify-center py-20 text-center ${className}`}>
-        <div className='bg-danger/10 mb-8 flex h-24 w-24 items-center justify-center rounded-full shadow-lg'>
-          <Icon icon='solar:danger-circle-linear' className='text-danger h-10 w-10' />
+        <div className='bg-danger/10 mb-8 flex h-24 w-24 items-center justify-center rounded-[20px] shadow-[0px_8px_30px_rgba(239,68,68,0.1)] border border-danger/20 backdrop-blur-xl'>
+          <Icon icon='solar:info-circle-linear' className='text-danger h-10 w-10' />
         </div>
-        <h3 className='text-foreground mb-3 text-2xl font-bold'>{t('feed.error.title')}</h3>
+        <h3 className='text-foreground mb-3 text-2xl font-bold tracking-tight'>{t('feed.error.title')}</h3>
         <p className='text-foreground-500 mb-8 max-w-md text-base leading-relaxed'>
           {t('feed.error.description')}
         </p>
         <Button
           color='primary'
           size='lg'
-          startContent={<Icon icon='solar:refresh-linear' className='h-5 w-5' />}
+          startContent={<Icon icon='solar:refresh-circle-linear' className='h-5 w-5' />}
           onPress={() => window.location.reload()}
-          className='h-12 px-8 font-semibold shadow-md hover:shadow-lg transition-all duration-300'
+          className='h-12 px-8 font-semibold rounded-[16px] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] hover:shadow-[0px_12px_24px_rgba(59,130,246,0.25)] transition-all duration-300'
         >
           {t('feed.retry')}
         </Button>
