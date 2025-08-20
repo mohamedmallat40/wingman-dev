@@ -18,15 +18,15 @@ const BroadcastFeedSkeleton: React.FC<BroadcastFeedSkeletonProps> = ({
       {/* Header Skeleton */}
       <div className='flex items-center justify-between'>
         <div className='space-y-2'>
-          <Skeleton className='h-8 w-48 rounded-lg' />
-          <Skeleton className='h-4 w-32 rounded-lg' />
+          <Skeleton className='h-8 w-48 rounded-[12px]' />
+          <Skeleton className='h-4 w-32 rounded-[8px]' />
         </div>
-        <Skeleton className='h-8 w-24 rounded-full' />
+        <Skeleton className='h-8 w-24 rounded-[16px]' />
       </div>
 
       {/* Post Skeletons */}
       {Array.from({ length: count }).map((_, index) => (
-        <Card key={index} className='border-divider/50 shadow-sm'>
+        <Card key={index} className='border-default-200/50 bg-content1/80 backdrop-blur-xl rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)]'>
           <CardHeader className='pb-3'>
             <div className='flex w-full items-start gap-3'>
               {/* Avatar */}
@@ -62,7 +62,7 @@ const BroadcastFeedSkeleton: React.FC<BroadcastFeedSkeletonProps> = ({
             </div>
 
             {/* Media */}
-            {index % 2 === 0 && <Skeleton className='h-48 w-full rounded-lg' />}
+            {index % 2 === 0 && <Skeleton className='h-48 w-full rounded-[16px]' />}
 
             {/* Tags */}
             <div className='flex gap-2'>
