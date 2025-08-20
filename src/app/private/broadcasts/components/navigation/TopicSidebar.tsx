@@ -365,12 +365,12 @@ export default function TopicSidebar({
                         {/* Icon with badges */}
                         <div className='relative flex-shrink-0'>
                           <div
-                            className={`rounded-lg p-2 ${
+                            className={`rounded-[12px] p-2.5 border ${
                               selectedSubcast === subcast.id
-                                ? 'bg-primary/30'
+                                ? 'bg-primary/20 border-primary/30'
                                 : subcast.isFollowing
-                                  ? 'bg-primary/20'
-                                  : 'bg-opacity-10'
+                                  ? 'bg-primary/15 border-primary/25'
+                                  : 'bg-opacity-10 border-default-200/50'
                             }`}
                             style={{
                               backgroundColor:
