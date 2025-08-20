@@ -279,12 +279,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         {/* Empty state */}
         {!isLoading && comments.length === 0 && !error && (
           <div className='py-12 text-center'>
-            <Icon
-              icon='solar:chat-round-dots-linear'
-              className='text-default-300 mx-auto mb-4 h-12 w-12'
-            />
-            <h4 className='text-default-500 mb-2 text-base font-medium'>No comments yet</h4>
-            <p className='text-default-400 text-sm'>Be the first to share what you think!</p>
+            <div className='bg-primary/5 border-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[16px] border'>
+              <Icon
+                icon='solar:chat-dots-linear'
+                className='text-primary h-8 w-8'
+              />
+            </div>
+            <h4 className='text-foreground mb-2 text-base font-semibold tracking-tight'>No comments yet</h4>
+            <p className='text-foreground-500 text-sm leading-relaxed'>Be the first to share what you think!</p>
           </div>
         )}
 
