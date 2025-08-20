@@ -152,11 +152,10 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{
-                duration: 0.4,
-                delay: index * 0.05,
+                duration: 0.3,
+                delay: Math.min(index * 0.02, 0.1),
                 ease: 'easeOut'
               }}
-              layoutId={post.id}
             >
               <PostCard
                 post={post}
