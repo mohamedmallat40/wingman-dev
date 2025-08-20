@@ -171,7 +171,7 @@ export default function BroadcastsPage() {
                 startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
                 onPress={handleCreatePost}
                 isLoading={false}
-                className='h-9 px-4 font-medium shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200'
+                className='h-8 sm:h-9 px-2 sm:px-4 font-medium shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200'
               >
                 {t('feed.createPost')}
               </Button>
