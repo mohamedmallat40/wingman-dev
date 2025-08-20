@@ -16,7 +16,7 @@ import {
 } from '@heroui/navbar';
 import { Popover, PopoverContent, PopoverTrigger } from '@heroui/popover';
 import { Tooltip } from '@heroui/tooltip';
-import { Icon } from '@iconify/react/dist/iconify.js';
+import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 
