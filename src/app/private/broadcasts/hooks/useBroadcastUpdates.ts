@@ -56,60 +56,41 @@ export const useBroadcastUpdates = () => {
   // Update upvote count for a specific post
   const updateUpvoteCount = useCallback(
     (postId: string, increment: number = 1, isUpvoted: boolean) => {
-      queryClient.setQueriesData({ queryKey: ['broadcasts'] }, (old: any) => {
-        if (!old) return old;
+      // Only update specific feed queries to reduce performance impact
+      queryClient.setQueriesData({ queryKey: ['broadcasts', 'feed'] }, (old: any) => {
+        if (!old?.pages) return old;
 
-        // Handle paginated response structure
-        if (old.pages) {
-          return {
-            ...old,
-            pages: old.pages.map((page: any) => ({
-              ...page,
-              data: page.data?.map((post: BroadcastPost) =>
-                post.id === postId
-                  ? {
-                      ...post,
-                      upvotes: Math.max(0, (post.upvotes || 0) + increment),
-                      isUpvoted: isUpvoted
-                    }
-                  : post
-              )
-            }))
-          };
-        }
+        let hasChanges = false;
+        const updatedPages = old.pages.map((page: any) => {
+          if (!page.data) return page;
 
-        // Handle direct data array
-        if (old.data && Array.isArray(old.data)) {
-          return {
-            ...old,
-            data: old.data.map((post: BroadcastPost) =>
-              post.id === postId
-                ? {
-                    ...post,
-                    upvotes: Math.max(0, (post.upvotes || 0) + increment),
-                    isUpvoted: isUpvoted
-                  }
-                : post
-            )
-          };
-        }
+          const updatedData = page.data.map((post: BroadcastPost) => {
+            if (post.id === postId) {
+              hasChanges = true;
+              return {
+                ...post,
+                upvotes: Math.max(0, (post.upvotes || 0) + increment),
+                isUpvoted: isUpvoted
+              };
+            }
+            return post;
+          });
 
-        return old;
+          return { ...page, data: updatedData };
+        });
+
+        return hasChanges ? { ...old, pages: updatedPages } : old;
       });
 
-      // Also update single post queries
-      queryClient.setQueriesData(
-        { queryKey: ['broadcast', postId] },
-        (old: BroadcastPost | undefined) => {
-          if (!old) return old;
-
-          return {
-            ...old,
-            upvotes: Math.max(0, (old.upvotes || 0) + increment),
-            isUpvoted: isUpvoted
-          };
-        }
-      );
+      // Update single post query more specifically
+      queryClient.setQueryData(['broadcasts', 'post', postId], (old: BroadcastPost | undefined) => {
+        if (!old) return old;
+        return {
+          ...old,
+          upvotes: Math.max(0, (old.upvotes || 0) + increment),
+          isUpvoted: isUpvoted
+        };
+      });
     },
     [queryClient]
   );
