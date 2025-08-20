@@ -62,7 +62,7 @@ const BroadcastFeedSkeleton: React.FC<BroadcastFeedSkeletonProps> = ({
             </div>
 
             {/* Media */}
-            {index % 2 === 0 && <Skeleton className='h-48 w-full rounded-lg' />}
+            {index % 2 === 0 && <Skeleton className='h-48 w-full rounded-[16px]' />}
 
             {/* Tags */}
             <div className='flex gap-2'>
