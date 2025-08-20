@@ -274,13 +274,13 @@ export default function TopicSidebar({
       <div className='bg-content1/80 backdrop-blur-xl border-default-200/50 h-full rounded-[20px] border shadow-[0px_8px_30px_rgba(0,0,0,0.08)] p-6'>
         {/* Header */}
         <div className='mb-6'>
-          <div className='mb-3 flex items-center gap-2'>
-            <div className='bg-primary/10 rounded-full p-2'>
-              <Icon icon='solar:satellite-linear' className='text-primary h-4 w-4' />
+          <div className='mb-4 flex items-center gap-3'>
+            <div className='bg-primary/10 rounded-[12px] p-2.5 border border-primary/20'>
+              <Icon icon='solar:chat-dots-linear' className='text-primary h-5 w-5' />
             </div>
             <div>
-              <h2 className='text-foreground font-semibold'>{t('topics.title')}</h2>
-              <p className='text-foreground-500 text-xs'>
+              <h2 className='text-foreground font-bold text-lg tracking-tight'>{t('topics.title')}</h2>
+              <p className='text-foreground-500 text-sm font-medium'>
                 {t('topics.followingCount', { count: followingCount })}
               </p>
             </div>
