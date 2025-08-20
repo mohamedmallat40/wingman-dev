@@ -11,10 +11,7 @@ import wingManApi from '@/lib/axios';
 export const getBroadcastFeed = async (params: FeedParams = {}) => {
   const { page = 1, limit = 10, topics } = params;
 
-  const queryParams = new URLSearchParams({
-    page: page.toString(),
-    limit: limit.toString()
-  });
+  const queryParams = new URLSearchParams();
 
   // Add multiple topics as separate query parameters
   if (topics && topics.length > 0) {
@@ -23,10 +20,13 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
     });
   }
 
-  const response = await wingManApi.get(`${API_ROUTES.broadcasts.feed}?${queryParams}`);
+  const url = `${API_ROUTES.broadcasts.feed}?${queryParams}`;
+  
+  try {
+    const response = await wingManApi.get(url);
 
-  // Handle different response structures
-  const responseData = response.data;
+    // Handle different response structures
+    const responseData = response.data;
 
   // If response is directly an array, wrap it in pagination structure
   if (Array.isArray(responseData)) {
@@ -52,14 +52,17 @@ export const getBroadcastFeed = async (params: FeedParams = {}) => {
     };
   }
 
-  // Fallback: return empty structure
-  return {
-    data: [],
-    currentPage: page,
-    hasNextPage: false,
-    totalPages: 1,
-    totalItems: 0
-  };
+    // Fallback: return empty structure
+    return {
+      data: [],
+      currentPage: page,
+      hasNextPage: false,
+      totalPages: 1,
+      totalItems: 0
+    };
+  } catch (error) {
+    throw error;
+  }
 };
 
 /**
@@ -137,14 +140,76 @@ export const removeUpvote = async (postId: string) => {
   return response.data;
 };
 
+/**
+ * Save a broadcast post
+ */
+export const savePost = async (postId: string) => {
+  const response = await wingManApi.post(API_ROUTES.broadcasts.save(postId));
+  return response.data;
+};
+
+/**
+ * Unsave a broadcast post
+ */
+export const unsavePost = async (postId: string) => {
+  const response = await wingManApi.delete(API_ROUTES.broadcasts.save(postId));
+  return response.data;
+};
+
+/**
+ * Get saved broadcasts
+ */
+export const getSavedPosts = async (params: { page?: number; limit?: number } = {}) => {
+  const { page = 1, limit = 10 } = params;
+  
+  const queryParams = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString()
+  });
+
+  const url = `${API_ROUTES.broadcasts.saved}?${queryParams}`;
+  const response = await wingManApi.get(url);
+  
+  const responseData = response.data;
+
+  // If response is directly an array, wrap it in pagination structure
+  if (Array.isArray(responseData)) {
+    return {
+      data: responseData,
+      currentPage: page,
+      hasNextPage: responseData.length === limit, // Assume more pages if we got full limit
+      totalPages: Math.ceil((responseData.length + (page - 1) * limit) / limit),
+      totalItems: responseData.length + (page - 1) * limit
+    };
+  }
+
+  // If response has data property, use it
+  if (responseData.data && Array.isArray(responseData.data)) {
+    return {
+      data: responseData.data,
+      currentPage: responseData.currentPage || page,
+      hasNextPage: responseData.hasNextPage || responseData.data.length === limit,
+      totalPages: responseData.totalPages || Math.ceil((responseData.data.length + (page - 1) * limit) / limit),
+      totalItems: responseData.totalItems || responseData.data.length + (page - 1) * limit
+    };
+  }
+
+  // Fallback: assume it's in the right format
+  return responseData;
+};
+
 // ===== TOPICS API =====
 
 /**
  * Get all topics (categories/channels)
  */
 export const getTopics = async () => {
-  const response = await wingManApi.get(API_ROUTES.broadcasts.topics);
-  return response.data;
+  try {
+    const response = await wingManApi.get(API_ROUTES.broadcasts.topics);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 /**

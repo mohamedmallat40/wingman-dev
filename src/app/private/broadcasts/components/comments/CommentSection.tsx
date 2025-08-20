@@ -6,7 +6,7 @@ import type { Comment, CommentAction, CommentSectionProps } from '../../types/co
 
 import { Button, Card, CardBody, Divider, Skeleton, Spinner } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { AnimatePresence, motion } from 'framer-motion';
+// Removed framer-motion for better performance
 import { useTranslations } from 'next-intl';
 
 import { useComments } from '../../hooks/useComments';
@@ -51,13 +51,16 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   // Track if we've loaded comments for this post to prevent duplicates
   const loadedPostRef = useRef<string | null>(null);
 
-  // Load comments when component mounts - only once per post
+  // Load comments when component mounts - only once per post and only if no initial comments
   useEffect(() => {
-    if (loadedPostRef.current !== postId) {
+    if (loadedPostRef.current !== postId && initialComments.length === 0) {
       loadedPostRef.current = postId;
       loadInitialComments();
+    } else if (loadedPostRef.current !== postId) {
+      // If we have initial comments, just mark as loaded to prevent duplicate fetching
+      loadedPostRef.current = postId;
     }
-  }, [postId, loadInitialComments]);
+  }, [postId, initialComments.length]); // Removed loadInitialComments from dependencies to prevent double calls
 
   // UI state management
   const { uiState, actions: uiActions } = useCommentUI();
@@ -113,13 +116,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle reply submission
   const handleReply = useCallback(
-    async (parentId: string, content: string, mentions?: string[]) => {
+    async (parentId: string, content: string, taggedUsers?: string[]) => {
       try {
         await createComment({
-          content,
+          response: content, // API expects 'response' field
           postId,
           parentId,
-          mentions
+          taggedUsers
         });
         uiActions.setReplying(parentId, false);
         uiActions.setReplyInput(parentId, '');
@@ -132,9 +135,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle comment edit
   const handleEdit = useCallback(
-    async (commentId: string, content: string, mentions?: string[]) => {
+    async (commentId: string, content: string, taggedUsers?: string[]) => {
       try {
-        await updateComment(commentId, { content, mentions });
+        await updateComment(commentId, { response: content, taggedUsers }); // API expects 'response' field
         uiActions.setEditing(commentId, false);
         uiActions.setEditInput(commentId, '');
       } catch (error) {
@@ -146,12 +149,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle new comment submission
   const handleNewComment = useCallback(
-    async (content: string, mentions?: string[]) => {
+    async (content: string, taggedUsers?: string[]) => {
       try {
         await createComment({
-          content,
+          response: content, // API expects 'response' field
           postId,
-          mentions
+          taggedUsers
         });
       } catch (error) {
         console.error('Failed to create comment:', error);
@@ -228,10 +231,16 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         )}
 
         {/* Comments */}
-        <AnimatePresence mode='popLayout'>
-          {comments.map((comment) => (
-            <CommentItem
+        <div>
+          {comments.map((comment, index) => (
+            <div
               key={comment.id}
+              className="animate-in fade-in slide-in-from-top-1 duration-300"
+              style={{
+                animationDelay: `${index * 100}ms`
+              }}
+            >
+              <CommentItem
               comment={comment}
               onAction={handleCommentAction}
               onReply={handleReply}
@@ -240,9 +249,10 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               currentDepth={0}
               enableMentions={enableMentions}
               enableRichText={enableRichText}
-            />
+              />
+            </div>
           ))}
-        </AnimatePresence>
+        </div>
 
         {/* Load more trigger */}
         {hasMore && (

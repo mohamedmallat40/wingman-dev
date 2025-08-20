@@ -13,4 +13,4 @@ export { useComments } from '../../hooks/useComments';
 export { useCommentUI } from '../../hooks/useCommentUI';
 
 // Export services
-export { commentService } from '../../services/commentService';
+export * from '../../services/commentService';
