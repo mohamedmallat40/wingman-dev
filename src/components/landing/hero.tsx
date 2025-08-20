@@ -16,10 +16,11 @@ export default function Hero() {
     <section className='relative z-10 mx-auto flex max-w-7xl flex-col items-center justify-center gap-12 px-2 pt-32 pb-20 sm:px-4 xl:px-6 xl:pt-40 xl:pb-32'>
       {/* Main Headline */}
       <motion.header
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
         className='text-center'
+        style={{ willChange: 'transform' }}
       >
         <h1 className='mb-6 text-4xl leading-tight font-bold tracking-[0.02em] sm:text-5xl lg:text-6xl xl:text-7xl'>
           Find vetted{' '}
