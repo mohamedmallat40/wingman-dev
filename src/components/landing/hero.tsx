@@ -33,10 +33,11 @@ export default function Hero() {
 
       {/* Subtitle */}
       <motion.p
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
+        transition={{ delay: 0.15, duration: 0.4 }}
         className='text-default-600 max-w-4xl text-center text-lg leading-relaxed lg:text-xl'
+        style={{ willChange: 'transform' }}
       >
         Connect with 650+ pre-screened digital experts across the Benelux. From e-commerce
         specialists to marketing automation experts - find your perfect match with dedicated Success
