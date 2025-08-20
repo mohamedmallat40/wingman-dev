@@ -15,6 +15,7 @@ interface CategoriesPreferencesProperties {
   setIsLoading: (loading: boolean) => void;
   userData?: IUserProfile;
   setUserData: (data: IUserProfile) => void;
+  updateUserData: (data: Partial<IUserProfile>) => void;
 }
 
 interface Category {
@@ -34,7 +35,8 @@ export default function CategoriesPreferencesStep({
   onPrevious,
   isLoading,
   setIsLoading,
-  userData
+  userData,
+  updateUserData
 }: Readonly<CategoriesPreferencesProperties>) {
   const t = useTranslations();
   const [currentStep, setCurrentStep] = useState<'categories' | 'notifications'>('categories');
@@ -100,8 +102,8 @@ export default function CategoriesPreferencesStep({
 
     fetchCategories();
 
-    setSelectedCategories(userData?.categories.map((category) => category.id) || []);
-  }, []);
+    setSelectedCategories(userData?.categories?.map((category) => category.id) || []);
+  }, [userData]);
 
   // Fetch notification preferences when moving to notifications step
   useEffect(() => {
@@ -141,9 +143,10 @@ export default function CategoriesPreferencesStep({
     setIsLoading(true);
     setCategoryError('');
 
-    await wingManApi.patch('/users/me', {
+    const response = await wingManApi.patch('/users/me', {
       categories: selectedCategories
     });
+    updateUserData({...userData, ...response.data });
     setIsLoading(false);
     setCurrentStep('notifications');
   };

@@ -15,26 +15,27 @@ import OnboardingFlow from './onboarding/page';
 type TRootLayout = PropsWithChildren;
 
 export default function PrivateLayout({ children }: Readonly<TRootLayout>) {
-  const { user: userData } = useUserStore();
+  const { user } = useUserStore();
 
   const router = useRouter();
 
   useEffect(() => {
-    if (userData) {
+    if (user) {
       const currentPath = globalThis.location.pathname;
 
-      if (!userData.stepper && currentPath !== '/private/onboarding') {
+      if (!user.stepper && currentPath !== '/private/onboarding') {
         router.replace('/private/onboarding');
-      } else if (userData.stepper && currentPath === '/private/onboarding') {
+      } else if (user.stepper && currentPath === '/private/onboarding') {
         router.replace('/private/dashboard');
       }
     }
-  }, [userData, router]);
+    console.log(user);
+  }, [user, router]);
 
   return (
     <AuthGuard>
       <div className='flex h-screen w-full flex-col'>
-        {userData?.stepper ? <PrivateNavBar /> : null}
+        {user?.stepper ? <PrivateNavBar /> : null}
         <main className='scroll-hidden flex-1'>{children}</main>
       </div>
     </AuthGuard>

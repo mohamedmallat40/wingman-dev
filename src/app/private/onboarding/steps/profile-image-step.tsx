@@ -21,6 +21,7 @@ interface ProfileImageStepProperties {
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   userData: IUserProfile | null;
+  updateUserData: (data: Partial<IUserProfile>) => void;
 }
 
 export default function ProfileImageStep({
@@ -28,7 +29,8 @@ export default function ProfileImageStep({
   onPrevious,
   isLoading,
   setIsLoading,
-  userData
+  userData,
+  updateUserData
 }: Readonly<ProfileImageStepProperties>) {
   const t = useTranslations('setup.profileImage');
 
@@ -119,6 +121,8 @@ export default function ProfileImageStep({
     const response = await wingManApi.patch('/users/me', {
       profileImage
     });
+    updateUserData({ ...userData, ...response.data });
+
 
     if (!response.data) {
       throw new Error('Failed to update profile');
@@ -246,31 +250,6 @@ export default function ProfileImageStep({
             </div>
           )}
         </div>
-
-        {/* Enhanced file info with better styling */}
-        {selectedFile && (
-          <div className='bg-muted/50 border-border rounded-xl border p-4'>
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center space-x-3'>
-                <div className='bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg'>
-                  <ImageIcon className='text-primary h-5 w-5' />
-                </div>
-                <div>
-                  <p className='text-foreground font-medium'>{selectedFile.name}</p>
-                  <p className='text-muted-foreground text-sm'>
-                    {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={removeFile}
-                className='text-muted-foreground hover:text-destructive p-1 transition-colors'
-              >
-                <X className='h-5 w-5' />
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Enhanced navigation with better button styling */}

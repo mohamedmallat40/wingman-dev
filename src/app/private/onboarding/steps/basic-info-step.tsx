@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 
+import useUserStore from '@root/modules/auth/store/use-user-store';
 import { type IUserProfile } from '@root/modules/profile/types';
 // Country utilities
 import countries from 'i18n-iso-countries';
@@ -37,6 +38,7 @@ interface BasicInfoStepProperties {
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
   userData: IUserProfile | null;
+  updateUserData: (data: Partial<IUserProfile>) => void;
 }
 
 interface TimeZone {
@@ -164,7 +166,8 @@ export default function BasicInfoStep({
   onPrevious,
   isLoading,
   setIsLoading,
-  userData
+  userData,
+  updateUserData
 }: Readonly<BasicInfoStepProperties>) {
   const t = useTranslations();
 
@@ -202,6 +205,7 @@ export default function BasicInfoStep({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const { setUser } = useUserStore();
 
   // Refs for dropdowns
   const skillsDropdownRef = useRef<HTMLDivElement>(null);
@@ -470,6 +474,7 @@ export default function BasicInfoStep({
       if (formData.profileWebsite) patchData.profileWebsite = formData.profileWebsite;
 
       const response = await wingManApi.patch('/users/me', patchData);
+      updateUserData({ ...userData, ...response.data });
       if (response.status >= 200 && response.status < 300) {
         onNext();
       }
@@ -542,51 +547,51 @@ export default function BasicInfoStep({
   }
 
   return (
-    <div className='rounded-lg border border-gray-200 bg-white p-8 shadow-sm transition-colors dark:border-gray-700 dark:bg-gray-900'>
-      <div className='mb-8'>
+    <div className='max-w-10xl mx-auto rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition-colors lg:p-8 dark:border-gray-700 dark:bg-gray-900'>
+      <div className='mb-5'>
         <h2 className='mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100'>
           {t('setup.basicInfo.title')}
         </h2>
         <p className='text-gray-600 dark:text-gray-400'>{t('setup.basicInfo.description')}</p>
       </div>
 
-      <div className='space-y-8'>
-        {/* Required Fields Section */}
-        <div className='space-y-6'>
+      <div className='space-y-6'>
+        {/* About Me - Full Width */}
+        <div>
+          <label className='mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300'>
+            {t('setup.basicInfo.fields.aboutMe.label')} *
+          </label>
+          <textarea
+            rows={3}
+            value={formData.aboutMe}
+            onChange={(event) => {
+              handleInputChange('aboutMe', event.target.value);
+            }}
+            className={`w-full resize-none rounded-lg border bg-white p-3 text-gray-900 placeholder-gray-500 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 ${
+              errors.aboutMe
+                ? 'border-red-300 dark:border-red-600'
+                : 'border-gray-300 dark:border-gray-600'
+            }`}
+            placeholder={t('setup.basicInfo.fields.aboutMe.placeholder')}
+          />
+          {errors.aboutMe && (
+            <p className='mt-1 text-sm text-red-600 dark:text-red-400'>{errors.aboutMe}</p>
+          )}
+          <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
+            {t('setup.basicInfo.fields.aboutMe.characterCount', {
+              current: formData.aboutMe.length,
+              max: 500
+            })}
+          </p>
+        </div>
+
+        {/* Required Fields Section - 3 columns on lg+ */}
+        <div className='space-y-4'>
           <h3 className='text-lg font-semibold text-gray-900 dark:text-gray-100'>
             Required Information
           </h3>
 
-          {/* About Me */}
-          <div>
-            <label className='mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300'>
-              {t('setup.basicInfo.fields.aboutMe.label')} *
-            </label>
-            <textarea
-              rows={4}
-              value={formData.aboutMe}
-              onChange={(event) => {
-                handleInputChange('aboutMe', event.target.value);
-              }}
-              className={`w-full resize-none rounded-lg border bg-white p-3 text-gray-900 placeholder-gray-500 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400 ${
-                errors.aboutMe
-                  ? 'border-red-300 dark:border-red-600'
-                  : 'border-gray-300 dark:border-gray-600'
-              }`}
-              placeholder={t('setup.basicInfo.fields.aboutMe.placeholder')}
-            />
-            {errors.aboutMe && (
-              <p className='mt-1 text-sm text-red-600 dark:text-red-400'>{errors.aboutMe}</p>
-            )}
-            <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
-              {t('setup.basicInfo.fields.aboutMe.characterCount', {
-                current: formData.aboutMe.length,
-                max: 500
-              })}
-            </p>
-          </div>
-
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
             {/* Payment Type */}
             <div>
               <label className='mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300'>
@@ -633,11 +638,6 @@ export default function BasicInfoStep({
               />
               {getRateError() && (
                 <p className='mt-1 text-sm text-red-600 dark:text-red-400'>{getRateError()}</p>
-              )}
-              {formData.paymentType !== 'PROJECT' && (
-                <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
-                  {t('setup.basicInfo.fields.rate.minimumNote')}
-                </p>
               )}
             </div>
 
@@ -743,128 +743,128 @@ export default function BasicInfoStep({
               </select>
             </div>
           </div>
+        </div>
 
-          {/* Skills - Searchable Select */}
-          <div>
-            <label className='mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300'>
-              {t('setup.basicInfo.fields.skills.label')} * (
-              {t('setup.basicInfo.fields.skills.minimum')})
-            </label>
+        {/* Skills - Full Width for better interaction */}
+        <div>
+          <label className='mb-3 block text-sm font-medium text-gray-700 dark:text-gray-300'>
+            {t('setup.basicInfo.fields.skills.label')} * (
+            {t('setup.basicInfo.fields.skills.minimum')})
+          </label>
 
-            {/* Selected Skills Display */}
-            {formData.skills.length > 0 && (
-              <div className='mb-3'>
-                <div className='flex flex-wrap gap-2'>
-                  {formData.skills.map((skill) => (
-                    <span
-                      key={skill.id}
-                      className='inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+          {/* Selected Skills Display */}
+          {formData.skills.length > 0 && (
+            <div className='mb-3'>
+              <div className='flex flex-wrap gap-2'>
+                {formData.skills.map((skill) => (
+                  <span
+                    key={skill.id}
+                    className='inline-flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                  >
+                    {skill.key}
+                    <button
+                      type='button'
+                      onClick={() => {
+                        handleSkillRemove(skill.id);
+                      }}
+                      className='ml-1 hover:text-blue-900 dark:hover:text-blue-100'
                     >
-                      {skill.key}
-                      <button
-                        type='button'
-                        onClick={() => {
-                          handleSkillRemove(skill.id);
-                        }}
-                        className='ml-1 hover:text-blue-900 dark:hover:text-blue-100'
-                      >
-                        <X className='h-3 w-3' />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-                <p className='mt-2 text-sm text-gray-600 dark:text-gray-400'>
-                  {t('setup.basicInfo.fields.skills.selectedCount', {
-                    count: formData.skills.length
-                  })}
-                </p>
+                      <X className='h-3 w-3' />
+                    </button>
+                  </span>
+                ))}
               </div>
-            )}
-
-            {/* Skills Dropdown */}
-            <div ref={skillsDropdownRef} className='relative'>
-              <div
-                className={`w-full rounded-lg border bg-white transition-colors dark:bg-gray-800 ${
-                  errors.skills
-                    ? 'border-red-300 dark:border-red-600'
-                    : 'border-gray-300 dark:border-gray-600'
-                }`}
-              >
-                {/* Search Input */}
-                <div className='relative'>
-                  <Search className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
-                  <input
-                    type='text'
-                    value={skillSearch}
-                    onChange={(event) => {
-                      setSkillSearch(event.target.value);
-                    }}
-                    onFocus={() => {
-                      setIsSkillsDropdownOpen(true);
-                    }}
-                    placeholder={t('setup.basicInfo.fields.skills.placeholder')}
-                    className='w-full rounded-lg border-0 bg-transparent py-3 pr-10 pl-10 text-gray-900 placeholder-gray-500 focus:ring-0 focus:outline-none dark:text-gray-100 dark:placeholder-gray-400'
-                  />
-                  <ChevronDown
-                    className={`absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform text-gray-400 transition-transform ${
-                      isSkillsDropdownOpen ? 'rotate-180' : ''
-                    }`}
-                  />
-                </div>
-
-                {/* Dropdown */}
-                {isSkillsDropdownOpen && (
-                  <div className='absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800'>
-                    {filteredSkills.length > 0 ? (
-                      <div className='py-1'>
-                        {filteredSkills
-                          .filter((skill) => !formData.skills.some((s) => s.id === skill.id))
-                          .map((skill) => (
-                            <button
-                              key={skill.id}
-                              type='button'
-                              onClick={() => {
-                                handleSkillSelect(skill.id);
-                              }}
-                              className='w-full px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-100 dark:hover:bg-gray-700 dark:focus:bg-gray-700'
-                            >
-                              <div className='flex flex-col'>
-                                <span>{skill.key}</span>
-                              </div>
-                            </button>
-                          ))}
-
-                        {filteredSkills.filter(
-                          (skill) => !formData.skills.some((s) => s.id === skill.id)
-                        ).length === 0 && (
-                          <div className='px-4 py-2 text-sm text-gray-500 dark:text-gray-400'>
-                            {t('setup.basicInfo.fields.skills.allSelected')}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div className='px-4 py-8 text-center text-gray-500 dark:text-gray-400'>
-                        <Search className='mx-auto mb-2 h-6 w-6 opacity-50' />
-                        <p className='text-sm'>
-                          {t('setup.basicInfo.fields.skills.noSkillsFound', {
-                            search: skillSearch
-                          })}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              <p className='mt-2 text-sm text-gray-600 dark:text-gray-400'>
+                {t('setup.basicInfo.fields.skills.selectedCount', {
+                  count: formData.skills.length
+                })}
+              </p>
             </div>
+          )}
 
-            {errors.skills && (
-              <p className='mt-2 text-sm text-red-600 dark:text-red-400'>{errors.skills}</p>
-            )}
+          {/* Skills Dropdown */}
+          <div ref={skillsDropdownRef} className='relative'>
+            <div
+              className={`w-full rounded-lg border bg-white transition-colors dark:bg-gray-800 ${
+                errors.skills
+                  ? 'border-red-300 dark:border-red-600'
+                  : 'border-gray-300 dark:border-gray-600'
+              }`}
+            >
+              {/* Search Input */}
+              <div className='relative'>
+                <Search className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
+                <input
+                  type='text'
+                  value={skillSearch}
+                  onChange={(event) => {
+                    setSkillSearch(event.target.value);
+                  }}
+                  onFocus={() => {
+                    setIsSkillsDropdownOpen(true);
+                  }}
+                  placeholder={t('setup.basicInfo.fields.skills.placeholder')}
+                  className='w-full rounded-lg border-0 bg-transparent py-3 pr-10 pl-10 text-gray-900 placeholder-gray-500 focus:ring-0 focus:outline-none dark:text-gray-100 dark:placeholder-gray-400'
+                />
+                <ChevronDown
+                  className={`absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 transform text-gray-400 transition-transform ${
+                    isSkillsDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </div>
+
+              {/* Dropdown */}
+              {isSkillsDropdownOpen && (
+                <div className='absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-600 dark:bg-gray-800'>
+                  {filteredSkills.length > 0 ? (
+                    <div className='py-1'>
+                      {filteredSkills
+                        .filter((skill) => !formData.skills.some((s) => s.id === skill.id))
+                        .map((skill) => (
+                          <button
+                            key={skill.id}
+                            type='button'
+                            onClick={() => {
+                              handleSkillSelect(skill.id);
+                            }}
+                            className='w-full px-4 py-2 text-left text-sm text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-100 dark:hover:bg-gray-700 dark:focus:bg-gray-700'
+                          >
+                            <div className='flex flex-col'>
+                              <span>{skill.key}</span>
+                            </div>
+                          </button>
+                        ))}
+
+                      {filteredSkills.filter(
+                        (skill) => !formData.skills.some((s) => s.id === skill.id)
+                      ).length === 0 && (
+                        <div className='px-4 py-2 text-sm text-gray-500 dark:text-gray-400'>
+                          {t('setup.basicInfo.fields.skills.allSelected')}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className='px-4 py-8 text-center text-gray-500 dark:text-gray-400'>
+                      <Search className='mx-auto mb-2 h-6 w-6 opacity-50' />
+                      <p className='text-sm'>
+                        {t('setup.basicInfo.fields.skills.noSkillsFound', {
+                          search: skillSearch
+                        })}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
+
+          {errors.skills && (
+            <p className='mt-2 text-sm text-red-600 dark:text-red-400'>{errors.skills}</p>
+          )}
         </div>
 
         {/* Optional Fields Section */}
-        <div className='space-y-6 border-t border-gray-200 pt-8 dark:border-gray-700'>
+        <div className='space-y-4 border-t border-gray-200 pt-6 dark:border-gray-700'>
           <div className='mb-4'>
             <h3 className='mb-2 text-lg font-semibold text-gray-900 dark:text-gray-100'>
               Optional Information
@@ -874,7 +874,7 @@ export default function BasicInfoStep({
             </p>
           </div>
 
-          <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
             {/* Time Zone */}
             <div>
               <label className='mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300'>
@@ -1007,18 +1007,15 @@ export default function BasicInfoStep({
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Contact Options */}
-          <div>
-            <label className='mb-3 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300'>
-              <User className='mr-2 h-4 w-4' />
-              You can find me online via
-            </label>
-
-            <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-              {/* LinkedIn Profile */}
-              <div>
+            {/* Contact Options - Taking up remaining space */}
+            <div className='lg:col-span-1'>
+              <label className='mb-2 flex items-center text-sm font-medium text-gray-700 dark:text-gray-300'>
+                <User className='mr-2 h-4 w-4' />
+                Find me online
+              </label>
+              <div className='space-y-3'>
+                {/* LinkedIn Profile */}
                 <div className='relative'>
                   <Link className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
                   <input
@@ -1027,14 +1024,11 @@ export default function BasicInfoStep({
                     onChange={(event) => {
                       handleInputChange('linkedinProfile', event.target.value);
                     }}
-                    placeholder='LinkedIn profile URL'
-                    className='w-full rounded-lg border border-gray-300 bg-white py-3 pr-3 pl-10 text-gray-900 placeholder-gray-500 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400'
+                    placeholder='LinkedIn URL'
+                    className='w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 pl-10 text-sm text-gray-900 placeholder-gray-500 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400'
                   />
                 </div>
-              </div>
-
-              {/* Profile Website */}
-              <div>
+                {/* Profile Website */}
                 <div className='relative'>
                   <Globe className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400' />
                   <input
@@ -1043,8 +1037,8 @@ export default function BasicInfoStep({
                     onChange={(event) => {
                       handleInputChange('profileWebsite', event.target.value);
                     }}
-                    placeholder='Personal website or portfolio'
-                    className='w-full rounded-lg border border-gray-300 bg-white py-3 pr-3 pl-10 text-gray-900 placeholder-gray-500 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400'
+                    placeholder='Portfolio/Website'
+                    className='w-full rounded-lg border border-gray-300 bg-white py-2 pr-3 pl-10 text-sm text-gray-900 placeholder-gray-500 transition-colors focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-400'
                   />
                 </div>
               </div>
@@ -1054,7 +1048,7 @@ export default function BasicInfoStep({
       </div>
 
       {/* Navigation Buttons */}
-      <div className='mt-8 flex items-center justify-between border-t border-gray-200 pt-6 dark:border-gray-700'>
+      <div className='mt-6 flex items-center justify-between border-t border-gray-200 pt-6 dark:border-gray-700'>
         <button
           onClick={onPrevious}
           className='inline-flex items-center space-x-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200'

@@ -73,14 +73,13 @@ export default function OnboardingFlow() {
     setIsLoading(true);
     try {
       const userResponse = await wingManApi.patch('/users/me', { stepper: true });
-      setUser(() => ({ ...userResponse.data }));
+      setUser({ ...userResponse.data, stepper: true });
       addToast({
         title: 'Onboarding Complete',
         description: 'You have successfully completed the onboarding process.',
         color: 'success'
       });
       router.push('/private/dashboard');
-      console.log('Onboarding completed successfully');
     } catch (error) {
       console.error('Error completing onboarding:', error);
     } finally {
@@ -101,6 +100,9 @@ export default function OnboardingFlow() {
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             userData={userData}
+            updateUserData={(data) => {
+              setUserData({ ...data });
+            }}
           />
         );
       }
@@ -112,6 +114,9 @@ export default function OnboardingFlow() {
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             userData={userData}
+            updateUserData={(data) => {
+              setUserData({ ...data });
+            }}
           />
         );
       }
@@ -124,6 +129,9 @@ export default function OnboardingFlow() {
             setIsLoading={setIsLoading}
             userData={userData}
             onComplete={handleComplete}
+            updateUserData={(data) => {
+              setUserData({ ...data });
+            }}
           />
         );
       }
@@ -175,9 +183,9 @@ export default function OnboardingFlow() {
                         className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
                           isCompleted
                             ? 'bg-primary text-primary-foreground shadow-lg'
-                            : (isCurrent
+                            : isCurrent
                               ? 'bg-accent text-accent-foreground ring-accent/20 shadow-md ring-2'
-                              : 'bg-muted text-muted-foreground')
+                              : 'bg-muted text-muted-foreground'
                         }`}
                       >
                         {isCompleted ? <Check className='h-5 w-5' /> : index + 1}
@@ -214,7 +222,7 @@ export default function OnboardingFlow() {
 
       {/* Enhanced step content with better spacing and animations */}
       <div className='flex flex-1 items-start justify-center p-4 sm:p-6 lg:p-8'>
-        <div className='w-full max-w-4xl'>
+        <div className='w-full max-w-6xl'>
           <div className='animate-in fade-in-50 slide-in-from-bottom-4 duration-500'>
             {getStepComponent()}
           </div>
