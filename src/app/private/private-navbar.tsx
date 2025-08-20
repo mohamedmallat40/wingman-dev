@@ -413,7 +413,7 @@ export default function PrivateNavBar() {
           >
             {/* Preferences Card */}
             <div className='mb-6'>
-              <div className='from-default-100/60 to-default-50/30 border-divider/30 shadow-medium rounded-xl border bg-gradient-to-r p-4 backdrop-blur-sm'>
+              <div className='bg-default-100/40 border-divider/30 shadow-medium rounded-xl border p-4'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <div className='bg-primary/20 shadow-small flex h-8 w-8 items-center justify-center rounded-xl'>
