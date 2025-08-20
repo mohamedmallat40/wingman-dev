@@ -541,10 +541,10 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => onUpvote(post.id, post.isUpvoted === true)}
-                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 ${
+                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
                     post.isUpvoted === true
-                      ? 'bg-success/10 text-success border-success/20 hover:bg-success/20'
-                      : 'hover:bg-default-100'
+                      ? 'bg-success/10 text-success border-success/20 hover:bg-success/20 hover:shadow-sm'
+                      : 'hover:bg-default-100 hover:shadow-sm'
                   }`}
                   aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
