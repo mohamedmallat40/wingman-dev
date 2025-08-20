@@ -205,7 +205,7 @@ export default function BroadcastsPage() {
 
           {/* Right Sidebar */}
           <div className='hidden w-80 flex-shrink-0 xl:block'>
-            <div className='sticky top-6 space-y-6'>
+            <div className='sticky top-6 space-y-4'>
               {/* Quick Actions */}
               <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm'>
                 <h3 className='text-foreground mb-4 flex items-center gap-2 text-sm font-semibold'>
