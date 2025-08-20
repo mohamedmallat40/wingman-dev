@@ -396,11 +396,11 @@ export default function PrivateNavBar() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: 0.3 }}
-            className='border-divider/50 mt-6 border-t pt-6'
+            className='border-divider/50 mt-4 border-t pt-4'
           >
             {/* Preferences Card */}
-            <div className='mb-6'>
-              <div className='bg-default-100/40 border-divider/30 shadow-medium rounded-xl border p-4'>
+            <div className='mb-4'>
+              <div className='bg-default-100/40 border-divider/30 shadow-medium rounded-lg border p-3'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <div className='bg-primary/20 shadow-small flex h-8 w-8 items-center justify-center rounded-xl'>
@@ -429,8 +429,8 @@ export default function PrivateNavBar() {
             </div>
 
             {/* User Profile Card */}
-            <div className='pb-6'>
-              <div className='bg-default-100/40 border-divider/30 shadow-medium rounded-xl border p-4'>
+            <div className='pb-4'>
+              <div className='bg-default-100/40 border-divider/30 shadow-medium rounded-lg border p-3'>
                 <div className='flex items-center justify-between'>
                   <div className='flex items-center gap-3'>
                     <div className='bg-primary/20 shadow-small flex h-8 w-8 items-center justify-center rounded-xl'>
