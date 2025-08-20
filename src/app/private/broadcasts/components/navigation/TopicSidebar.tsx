@@ -318,7 +318,7 @@ export default function TopicSidebar({
             endContent={
               searchQuery && (
                 <Button isIconOnly size='sm' variant='light' onPress={() => setSearchQuery('')}>
-                  <Icon icon='solar:close-circle-linear' className='h-3 w-3' />
+                  <Icon icon='solar:close-circle-linear' className='h-4 w-4' />
                 </Button>
               )
             }
