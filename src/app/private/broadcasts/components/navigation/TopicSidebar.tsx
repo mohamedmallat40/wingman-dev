@@ -271,9 +271,9 @@ export default function TopicSidebar({
 
   return (
     <div className={`flex h-full flex-col ${className}`}>
-      <div className='bg-content1 border-default-200 h-full rounded-lg border p-4'>
+      <div className='bg-content1/80 backdrop-blur-xl border-default-200/50 h-full rounded-[20px] border shadow-[0px_8px_30px_rgba(0,0,0,0.08)] p-6'>
         {/* Header */}
-        <div className='mb-4'>
+        <div className='mb-6'>
           <div className='mb-3 flex items-center gap-2'>
             <div className='bg-primary/10 rounded-full p-2'>
               <Icon icon='solar:satellite-linear' className='text-primary h-4 w-4' />
