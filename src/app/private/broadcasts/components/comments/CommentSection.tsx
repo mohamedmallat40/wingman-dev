@@ -181,21 +181,24 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
     if (isRealError) {
       return (
-        <Card className={`border-danger/20 ${className}`}>
+        <Card className={`border-danger/20 bg-danger/5 rounded-[16px] backdrop-blur-sm ${className}`}>
           <CardBody className='py-8'>
             <div className='text-center'>
-              <Icon
-                icon='solar:chat-round-unread-linear'
-                className='text-danger mx-auto mb-4 h-12 w-12'
-              />
-              <h3 className='text-danger mb-2 text-lg font-semibold'>{t('error.title')}</h3>
-              <p className='text-foreground-500 mb-4 text-sm'>{t('error.description')}</p>
+              <div className='bg-danger/10 border-danger/20 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[16px] border'>
+                <Icon
+                  icon='solar:info-circle-linear'
+                  className='text-danger h-8 w-8'
+                />
+              </div>
+              <h3 className='text-danger mb-2 text-lg font-semibold tracking-tight'>{t('error.title')}</h3>
+              <p className='text-foreground-500 mb-4 text-sm leading-relaxed'>{t('error.description')}</p>
               <Button
                 color='danger'
                 variant='flat'
                 size='sm'
                 onPress={refresh}
-                startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
+                startContent={<Icon icon='solar:refresh-circle-linear' className='h-4 w-4' />}
+                className='rounded-[12px] font-medium'
               >
                 {t('error.retry')}
               </Button>
