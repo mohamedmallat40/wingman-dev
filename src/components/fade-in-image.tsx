@@ -27,27 +27,10 @@ export const FadeInImage = (properties: ImgHTMLAttributes<HTMLImageElement>) => 
       <m.div
         animate={animationControls}
         initial='hidden'
-        transition={{ duration: 0.5, ease: 'easeOut' }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
         variants={animationVariants}
+        style={{ willChange: isLoaded ? 'auto' : 'opacity' }}
       >
-        {/**
-         * If using in a nextjs project, use next/image instead of <img>.
-         * The props type should be the same as next/image.
-         *
-         * ```tsx
-         * import type {ImageProps} from "next/image";
-         * import Image from "next/image";
-         *
-         * export const FadeInImage = (props: ImageProps) => {
-         *
-         *   // existing code...
-         *
-         *   <Image {...props} onLoad={() => setIsLoaded(true)} />
-         *
-         *   // existing code...
-         * }
-         * ```
-         */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           {...properties}
@@ -55,6 +38,13 @@ export const FadeInImage = (properties: ImgHTMLAttributes<HTMLImageElement>) => 
             setIsLoaded(true);
           }}
           alt=''
+          loading="lazy"
+          decoding="async"
+          style={{
+            ...properties.style,
+            transform: 'translateZ(0)', // Enable hardware acceleration
+            backfaceVisibility: 'hidden'
+          }}
         />
       </m.div>
     </LazyMotion>
