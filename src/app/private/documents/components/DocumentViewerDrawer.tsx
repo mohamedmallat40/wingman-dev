@@ -251,15 +251,15 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
           isOpen={isOpen}
           onClose={onClose}
           size='5xl'
-          backdrop='blur'
+          backdrop='opaque'
           classNames={{
-            backdrop: 'backdrop-blur-md bg-background/60',
+            backdrop: 'bg-background/80',
             wrapper: 'w-full max-w-none',
             base: 'w-full max-w-none data-[placement=right]:sm:max-w-5xl'
           }}
         >
           <DrawerContent>
-            <DrawerHeader className='border-default-200/50 bg-content1/50 border-b backdrop-blur-md'>
+            <DrawerHeader className='border-default-200/50 bg-content1 border-b'>
               <div className='flex w-full items-center'>
                 <div className='flex items-center gap-3'>
                   <div className='bg-primary/10 rounded-lg p-2'>

@@ -223,7 +223,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
         <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
 
         <Card
-          className={`border-divider/30 shadow-sm transition-shadow duration-200 hover:shadow-md ${className}`}
+          className={`border-default-200/50 bg-content1/80 backdrop-blur-xl rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)] transition-all duration-300 hover:border-primary/20 ${className}`}
           role='article'
           aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
         >
@@ -231,7 +231,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             <div className='flex w-full items-start gap-4'>
               {/* Author Avatar */}
               <div className='relative'>
-                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/15 ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/30">
+                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/10 ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/25">
                   {safeOwner.profileImage ? (
                     <OptimizedImage
                       src={getImageUrl(safeOwner.profileImage)}
@@ -248,8 +248,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   )}
                 </div>
                 {safeOwner.isMailVerified && (
-                  <div className='bg-primary absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white'>
-                    <Icon icon='solar:verified-check-bold' className='h-3 w-3 text-white' />
+                  <div className='bg-success absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background shadow-sm'>
+                    <Icon icon='solar:shield-check-bold' className='h-3 w-3 text-white' />
                   </div>
                 )}
               </div>
@@ -278,8 +278,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     size='sm'
                     color={postTypeColor as any}
                     variant='flat'
-                    startContent={<Icon icon={postIcon} className='h-3 w-3' />}
-                    className='font-medium'
+                    startContent={<Icon icon='solar:chat-dots-linear' className='h-3 w-3' />}
+                    className='font-medium bg-primary/10 text-primary border-primary/20'
                   >
                     {t('post.actions.broadcast')}
                   </Chip>
@@ -401,9 +401,9 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             {/* Link Previews */}
             {linkPreviews.length > 0 && (
               <div className='mb-5 w-full space-y-3'>
-                {linkPreviews.map((linkMetadata) => (
+                {linkPreviews.map((linkMetadata, index) => (
                   <LinkPreview
-                    key={linkMetadata.url}
+                    key={`${post.id}-${linkMetadata.url}-${index}`}
                     metadata={linkMetadata}
                     showRemoveButton={false}
                     compact={false}
@@ -489,7 +489,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                                 color='primary'
                                 className='ml-3'
                               >
-                                <Icon icon='solar:download-linear' className='h-4 w-4' />
+                                <Icon icon='solar:download-minimalistic-linear' className='h-4 w-4' />
                               </Button>
                             </div>
                           ))}
@@ -526,7 +526,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Engagement Actions */}
             <div className='flex items-center justify-between pt-1'>
-              <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-1'>
                 <Button
                   size='sm'
                   variant={post.isUpvoted === true ? 'flat' : 'light'}
@@ -534,14 +534,18 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   startContent={
                     <Icon
                       icon={
-                        post.isUpvoted === true ? 'solar:arrow-up-bold' : 'solar:arrow-up-linear'
+                        post.isUpvoted === true ? 'solar:like-bold' : 'solar:like-linear'
                       }
                       className='h-4 w-4'
                       aria-hidden='true'
                     />
                   }
                   onPress={() => onUpvote(post.id, post.isUpvoted === true)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium'
+                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
+                    post.isUpvoted === true
+                      ? 'bg-success/10 text-success border-success/20 hover:bg-success/20 hover:shadow-sm'
+                      : 'hover:bg-default-100 hover:shadow-sm'
+                  }`}
                   aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
@@ -558,13 +562,17 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   color={showComments ? 'primary' : 'default'}
                   startContent={
                     <Icon
-                      icon={showComments ? 'solar:chat-round-dots-bold' : 'solar:chat-round-linear'}
+                      icon={showComments ? 'solar:chat-round-dots-bold' : 'solar:chat-round-dots-linear'}
                       className='h-4 w-4'
                       aria-hidden='true'
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium'
+                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
+                    showComments
+                      ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:shadow-sm'
+                      : 'hover:bg-default-100 hover:shadow-sm'
+                  }`}
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
@@ -579,21 +587,43 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   size='sm'
                   variant='light'
                   startContent={
-                    <Icon icon='solar:share-linear' className='h-4 w-4' aria-hidden='true' />
+                    <Icon icon='solar:export-linear' className='h-4 w-4' aria-hidden='true' />
                   }
                   onPress={() => setShareModalOpen(true)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium'
+                  className='h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:bg-default-100 hover:shadow-sm hover:scale-105 active:scale-95'
                   aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {t('post.actions.share')}
                 </Button>
               </div>
 
-              <div className='text-foreground-400 flex items-center gap-4 text-sm'>
-                <span className='flex items-center gap-1'>
-                  <Icon icon='solar:calendar-linear' className='h-4 w-4' />
-                  {new Date(safeCreatedAt).toLocaleDateString()}
-                </span>
+              <div className='flex items-center gap-2'>
+                <Button
+                  size='sm'
+                  variant='light'
+                  isIconOnly
+                  startContent={
+                    <Icon
+                      icon={localIsSaved ? 'solar:bookmark-bold' : 'solar:bookmark-linear'}
+                      className={`h-4 w-4 ${localIsSaved ? 'text-warning' : ''}`}
+                      aria-hidden='true'
+                    />
+                  }
+                  onPress={() => onSave(post.id, localIsSaved)}
+                  className={`h-9 w-9 rounded-[12px] transition-all duration-200 hover:scale-110 active:scale-95 ${
+                    localIsSaved
+                      ? 'bg-warning/10 text-warning border-warning/20 hover:bg-warning/20 hover:shadow-sm'
+                      : 'hover:bg-default-100 hover:shadow-sm'
+                  }`}
+                  aria-label={`${localIsSaved ? 'Remove from saved' : 'Save'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
+                />
+
+                <div className='text-foreground-400 flex items-center gap-1 text-sm'>
+                  <Icon icon='solar:calendar-minimalistic-linear' className='h-4 w-4' />
+                  <time dateTime={safeCreatedAt} title={new Date(safeCreatedAt).toLocaleString()}>
+                    {new Date(safeCreatedAt).toLocaleDateString()}
+                  </time>
+                </div>
               </div>
             </div>
 

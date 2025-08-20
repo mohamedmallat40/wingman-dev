@@ -139,9 +139,9 @@ export default function BroadcastsPage() {
                 color={currentView === 'all' ? 'primary' : 'default'}
                 onPress={() => handleViewChange('all')}
                 startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
-                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 ${
-                  currentView === 'all' 
-                    ? 'shadow-sm' 
+                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  currentView === 'all'
+                    ? 'shadow-sm'
                     : 'hover:bg-default-200/50'
                 }`}
               >
@@ -153,9 +153,9 @@ export default function BroadcastsPage() {
                 color={currentView === 'saved' ? 'primary' : 'default'}
                 onPress={() => handleViewChange('saved')}
                 startContent={<Icon icon='solar:archive-linear' className='h-4 w-4' />}
-                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 ${
-                  currentView === 'saved' 
-                    ? 'shadow-sm' 
+                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  currentView === 'saved'
+                    ? 'shadow-sm'
                     : 'hover:bg-default-200/50'
                 }`}
               >
@@ -171,7 +171,7 @@ export default function BroadcastsPage() {
                 startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
                 onPress={handleCreatePost}
                 isLoading={false}
-                className='h-9 px-4 font-medium shadow-sm hover:shadow-md transition-all duration-200'
+                className='h-9 px-4 font-medium shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200'
               >
                 {t('feed.createPost')}
               </Button>
