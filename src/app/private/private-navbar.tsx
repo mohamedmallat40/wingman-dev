@@ -310,7 +310,7 @@ export default function PrivateNavBar() {
       </NavbarContent>
 
       {/* Enhanced Mobile Menu with Professional Spacing */}
-      <NavbarMenu className='bg-background border-divider/40 border-r pt-6 shadow-2xl'>
+      <NavbarMenu className='bg-background border-divider/40 border-r pt-4 shadow-2xl'>
         <div className='flex h-full flex-col px-4'>
           {/* Navigation Section */}
           <div className='flex-1'>
