@@ -263,7 +263,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   {safeOwner.userName && (
                     <span className='text-foreground-500 text-xs sm:text-sm'>@{safeOwner.userName}</span>
                   )}
-                  <span className='text-foreground-400 text-xs sm:text-sm'>·</span>
+                  <span className='text-foreground-400 text-xs sm:text-sm'>��</span>
                   <time
                     className='text-foreground-500 text-xs sm:text-sm'
                     dateTime={safeCreatedAt}
@@ -541,16 +541,18 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => onUpvote(post.id, post.isUpvoted === true)}
-                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  className={`h-8 sm:h-9 min-w-0 px-2 sm:px-3 py-1.5 sm:py-2 font-medium rounded-[8px] sm:rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
                     post.isUpvoted === true
                       ? 'bg-success/10 text-success border-success/20 hover:bg-success/20 hover:shadow-sm'
                       : 'hover:bg-default-100 hover:shadow-sm'
                   }`}
                   aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
+                  <span className='hidden sm:inline'>
+                    {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
+                  </span>
                   {(post.upvotes || 0) > 0 && (
-                    <span className='text-foreground-500 ml-1 text-xs'>
+                    <span className='text-foreground-500 ml-0 sm:ml-1 text-xs'>
                       ({formatCount(post.upvotes || 0)})
                     </span>
                   )}
