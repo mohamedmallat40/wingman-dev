@@ -175,7 +175,7 @@ export default function PrivateNavBar() {
 
         {/* Tablet Navigation - Icon Only with Enhanced Spacing */}
         <NavbarContent className='hidden w-full max-w-none gap-2 lg:flex xl:hidden' justify='start'>
-          <div className='from-default-100/30 to-default-50/20 border-divider/20 shadow-small flex h-11 items-center gap-2 rounded-xl border bg-gradient-to-r px-3 backdrop-blur-md'>
+          <div className='bg-default-100/30 border-divider/30 flex h-11 items-center gap-2 rounded-xl border px-3'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
