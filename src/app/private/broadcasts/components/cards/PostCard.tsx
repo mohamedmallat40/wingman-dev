@@ -489,7 +489,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                                 color='primary'
                                 className='ml-3'
                               >
-                                <Icon icon='solar:download-linear' className='h-4 w-4' />
+                                <Icon icon='solar:download-minimalistic-linear' className='h-4 w-4' />
                               </Button>
                             </div>
                           ))}
