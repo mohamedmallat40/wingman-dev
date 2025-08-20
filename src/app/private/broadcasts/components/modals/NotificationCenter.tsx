@@ -212,7 +212,7 @@ export default function NotificationCenter({
 
       const randomUpdate = updates[Math.floor(Math.random() * updates.length)];
       setLiveUpdates((prev) => [randomUpdate, ...prev.slice(0, 9)].filter(Boolean));
-    }, 10000);
+    }, 30000); // Reduced frequency from 10s to 30s for better performance
 
     return () => clearInterval(interval);
   }, [isOpen]);
