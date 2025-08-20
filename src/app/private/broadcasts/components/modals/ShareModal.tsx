@@ -69,7 +69,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
         icon: 'skill-icons:linkedin',
         color: '#0077b5',
         shareUrl: (url, text) =>
-          `https://www.linkedin.com/feed/update/urn:li:share/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(post.title || 'Wingman Broadcast')}&summary=${encodeURIComponent(text)}`,
+          `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
         description: 'Share with your professional network'
       },
       {
