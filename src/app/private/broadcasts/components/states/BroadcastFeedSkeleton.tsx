@@ -26,7 +26,7 @@ const BroadcastFeedSkeleton: React.FC<BroadcastFeedSkeletonProps> = ({
 
       {/* Post Skeletons */}
       {Array.from({ length: count }).map((_, index) => (
-        <Card key={index} className='border-divider/50 shadow-sm'>
+        <Card key={index} className='border-default-200/50 bg-content1/80 backdrop-blur-xl rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)]'>
           <CardHeader className='pb-3'>
             <div className='flex w-full items-start gap-3'>
               {/* Avatar */}
