@@ -260,7 +260,7 @@ export default function PageHeader({
               >
                 {/* Enhanced Icon */}
                 {icon && (
-                  <div className='bg-primary/15 ring-primary/25 ring-offset-background/50 flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg ring-2 ring-offset-2 lg:h-16 lg:w-16'>
+                  <div className='bg-primary/15 border-primary/25 flex h-14 w-14 items-center justify-center rounded-2xl shadow-lg border-2 lg:h-16 lg:w-16'>
                     <Icon icon={icon} className='text-primary h-7 w-7 lg:h-8 lg:w-8' />
                   </div>
                 )}
