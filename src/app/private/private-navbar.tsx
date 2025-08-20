@@ -311,10 +311,10 @@ export default function PrivateNavBar() {
 
       {/* Enhanced Mobile Menu with Professional Spacing */}
       <NavbarMenu className='bg-background border-divider/40 border-r pt-4 shadow-2xl'>
-        <div className='flex h-full flex-col px-4'>
+        <div className='flex h-full flex-col px-3'>
           {/* Navigation Section */}
           <div className='flex-1'>
-            <div className='mb-6 px-2'>
+            <div className='mb-4 px-2'>
               <p className='text-foreground-600 text-sm font-semibold tracking-wide uppercase'>
                 Navigation
               </p>
@@ -339,7 +339,7 @@ export default function PrivateNavBar() {
                         }}
                       >
                         <button
-                          className={`group flex w-full items-center gap-4 rounded-xl p-4 transition-all duration-200 ${
+                          className={`group flex w-full items-center gap-3 rounded-lg p-3 transition-all duration-200 ${
                             isActive
                               ? 'from-primary/15 to-primary/5 text-primary border-primary/25 shadow-medium border bg-gradient-to-r'
                               : 'text-foreground hover:from-default-100/60 hover:to-default-50/30 hover:shadow-medium hover:border-divider/40 hover:border hover:bg-gradient-to-r active:scale-[0.98]'
@@ -350,7 +350,7 @@ export default function PrivateNavBar() {
                           }}
                         >
                           <motion.div
-                            className={`rounded-xl p-3 transition-all duration-200 ${
+                            className={`rounded-lg p-2.5 transition-all duration-200 ${
                               isActive
                                 ? 'bg-primary/20 shadow-medium'
                                 : 'bg-default-100/70 group-hover:bg-primary/15'
@@ -360,7 +360,7 @@ export default function PrivateNavBar() {
                           >
                             <Icon
                               icon={item.icon}
-                              className={`text-xl transition-colors ${isActive ? 'text-primary' : 'text-foreground-600 group-hover:text-primary'}`}
+                              className={`text-lg transition-colors ${isActive ? 'text-primary' : 'text-foreground-600 group-hover:text-primary'}`}
                             />
                           </motion.div>
                           <div className='flex flex-1 flex-col gap-1'>
