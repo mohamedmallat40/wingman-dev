@@ -22,16 +22,10 @@ export default function PublicLayout({ children }: Readonly<TRootLayout>) {
   return (
     <PublicGuard>
       <div className='relative flex h-full w-full flex-col'>
-        {/* Background Elements - Fixed position to cover entire viewport including navbar */}
+        {/* Background Elements - Optimized for performance */}
         <div className='pointer-events-none fixed top-0 right-0 bottom-0 left-0 z-0 h-screen min-h-screen w-screen overflow-hidden'>
-          {/* Base Background Layer */}
-          <div className='from-background via-background to-background absolute -top-10 -right-10 -bottom-10 -left-10 h-[calc(100vh+80px)] w-[calc(100vw+80px)] bg-gradient-to-br' />
-
-          {/* Primary Gradient Background */}
-          <div className='from-primary/8 to-secondary/8 absolute -top-10 -right-10 -bottom-10 -left-10 h-[calc(100vh+80px)] w-[calc(100vw+80px)] bg-gradient-to-br via-transparent' />
-
-          {/* Secondary Gradient Overlay */}
-          <div className='via-primary/3 absolute -top-10 -right-10 -bottom-10 -left-10 h-[calc(100vh+80px)] w-[calc(100vw+80px)] bg-gradient-to-tr from-transparent to-transparent' />
+          {/* Simplified Background Layer */}
+          <div className='from-background via-primary/4 to-secondary/4 absolute inset-0 h-full w-full bg-gradient-to-br will-change-transform' />
 
           {/* Optimized Static Gradient Orbs */}
           <div className='bg-primary/8 absolute -top-10 -left-10 h-80 w-80 rounded-full blur-2xl' />
