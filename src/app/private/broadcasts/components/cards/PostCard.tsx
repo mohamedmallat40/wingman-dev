@@ -401,9 +401,9 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             {/* Link Previews */}
             {linkPreviews.length > 0 && (
               <div className='mb-5 w-full space-y-3'>
-                {linkPreviews.map((linkMetadata) => (
+                {linkPreviews.map((linkMetadata, index) => (
                   <LinkPreview
-                    key={linkMetadata.url}
+                    key={`${post.id}-${linkMetadata.url}-${index}`}
                     metadata={linkMetadata}
                     showRemoveButton={false}
                     compact={false}

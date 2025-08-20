@@ -15,7 +15,7 @@ export const useLinkPreviewForPost = (
   // Memoize the combined text to prevent unnecessary re-processing
   const combinedText = useMemo(() => {
     const contentText = content || '';
-    const linkText = dedicatedLink || '';
+    const linkText = dedicatedLink?.trim() || '';
     
     // Only combine if there's a dedicated link and it's not already in content
     if (linkText && !contentText.includes(linkText)) {

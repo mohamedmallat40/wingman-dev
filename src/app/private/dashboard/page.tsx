@@ -197,23 +197,12 @@ const DashboardPage = () => {
         </div>
 
         {/* Stats Grid */}
-        <div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className='mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4'
-        >
+        <div className='mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4'>
           {statsData.map((stat, index) => {
             const variant = colorVariants[stat.color as keyof typeof colorVariants];
 
             return (
-              <div
-                key={stat.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + index * 0.1, duration: 0.4 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-              >
+              <div key={stat.title}>
                 <Card className='dark:bg-background/90 border-default-200/50 rounded-[20px] border bg-white/90 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)]'>
                   <CardBody className='p-6'>
                     <div className='mb-4 flex items-center justify-between'>

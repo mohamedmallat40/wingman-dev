@@ -31,7 +31,7 @@ export const useLinkPreview = (content: string): UseLinkPreviewReturn => {
       }
 
       // Remove duplicates and filter out already processed URLs
-      const uniqueUrls = [...new Set(urls)];
+      const uniqueUrls = [...new Set(urls.map(url => url.trim()))];
 
       setLinkPreviews((currentPreviews) => {
         const currentUrls = currentPreviews.map((preview) => preview.url);
@@ -52,7 +52,15 @@ export const useLinkPreview = (content: string): UseLinkPreviewReturn => {
 
             setLinkPreviews((prev) => {
               const filtered = prev.filter((preview) => uniqueUrls.includes(preview.url));
-              return [...filtered, ...validMetadata];
+              const combined = [...filtered, ...validMetadata];
+              
+              // Final deduplication by URL to ensure no duplicates
+              const deduplicatedMap = new Map();
+              combined.forEach(metadata => {
+                deduplicatedMap.set(metadata.url, metadata);
+              });
+              
+              return Array.from(deduplicatedMap.values());
             });
           })
           .catch((error) => {
