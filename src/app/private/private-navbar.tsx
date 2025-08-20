@@ -75,7 +75,7 @@ export default function PrivateNavBar() {
 
   return (
     <Navbar
-      className='border-divider/40 shadow-small bg-background/95 supports-[backdrop-filter]:bg-background/70 w-full max-w-full border-b backdrop-blur-xl'
+      className='border-divider/40 shadow-small bg-background w-full max-w-full border-b'
       isBordered
       maxWidth='full'
       position='sticky'
