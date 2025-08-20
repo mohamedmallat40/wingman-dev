@@ -273,13 +273,13 @@ export default function TopicSidebar({
     <div className={`flex h-full flex-col ${className}`}>
       <div className='bg-content1/80 backdrop-blur-xl border-default-200/50 h-full rounded-[20px] border shadow-[0px_8px_30px_rgba(0,0,0,0.08)] p-6'>
         {/* Header */}
-        <div className='mb-6'>
-          <div className='mb-4 flex items-center gap-3'>
+        <div className='mb-4'>
+          <div className='mb-3 flex items-center gap-2'>
             <div className='bg-primary/10 rounded-[12px] p-2.5 border border-primary/20'>
               <Icon icon='solar:chat-dots-linear' className='text-primary h-5 w-5' />
             </div>
             <div>
-              <h2 className='text-foreground font-bold text-lg tracking-tight'>{t('topics.title')}</h2>
+              <h2 className='text-foreground font-bold text-base tracking-tight'>{t('topics.title')}</h2>
               <p className='text-foreground-500 text-sm font-medium'>
                 {t('topics.followingCount', { count: followingCount })}
               </p>
@@ -293,7 +293,7 @@ export default function TopicSidebar({
           onSelectionChange={(key) => setActiveTab(key as string)}
           size='sm'
           variant='underlined'
-          className='mb-4'
+          className='mb-3'
           classNames={{
             tabList: 'w-full',
             tab: 'px-2 py-1 text-xs text-foreground',
@@ -307,7 +307,7 @@ export default function TopicSidebar({
         </Tabs>
 
         {/* Search */}
-        <div className='mb-4'>
+        <div className='mb-3'>
           <Input
             placeholder={t('topics.searchPlaceholder')}
             value={searchQuery}
@@ -333,7 +333,7 @@ export default function TopicSidebar({
 
         {/* Topics List */}
         <div className='mt-4 flex-1 overflow-x-visible overflow-y-auto'>
-          <div className='space-y-6 px-1 pt-6 pb-4'>
+          <div className='space-y-3 px-1 pt-3 pb-2'>
             {filteredSubcasts.map((subcast, index) => (
               <div
                 key={subcast.id}
