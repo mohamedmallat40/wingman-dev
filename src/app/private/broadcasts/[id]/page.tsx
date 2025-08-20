@@ -187,9 +187,44 @@ const PostDetailPage: React.FC = () => {
     );
   }
 
+  // Generate structured data for SEO
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title || 'Wingman Broadcast',
+    description: post.description || 'Professional networking content on Wingman',
+    author: {
+      '@type': 'Person',
+      name: `${post.owner?.firstName || ''} ${post.owner?.lastName || ''}`.trim()
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Wingman',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/logo.png`
+      }
+    },
+    datePublished: post.createdAt,
+    dateModified: post.updatedAt || post.createdAt,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/private/broadcasts/${post.id}`
+    },
+    image: post.attachments?.[0]
+      ? `https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${post.attachments[0]}`
+      : `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/images/wingman-og-default.jpg`,
+    keywords: post.topics?.map((topic) => topic.title).join(', ') || 'Wingman, Professional Networking'
+  };
+
   // Success state
   return (
-    <DashboardLayout
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <DashboardLayout
       pageTitle={post.title}
       pageDescription={`Broadcast post by ${post.owner?.firstName} ${post.owner?.lastName}`}
       pageIcon='solar:broadcast-linear'
@@ -261,7 +296,8 @@ const PostDetailPage: React.FC = () => {
       {post && (
         <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
       )}
-    </DashboardLayout>
+      </DashboardLayout>
+    </>
   );
 };
 
