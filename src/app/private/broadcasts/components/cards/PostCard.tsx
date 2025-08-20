@@ -526,7 +526,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Engagement Actions */}
             <div className='flex items-center justify-between pt-1'>
-              <div className='flex items-center gap-2'>
+              <div className='flex items-center gap-1'>
                 <Button
                   size='sm'
                   variant={post.isUpvoted === true ? 'flat' : 'light'}
@@ -534,14 +534,18 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   startContent={
                     <Icon
                       icon={
-                        post.isUpvoted === true ? 'solar:arrow-up-bold' : 'solar:arrow-up-linear'
+                        post.isUpvoted === true ? 'solar:like-bold' : 'solar:like-linear'
                       }
                       className='h-4 w-4'
                       aria-hidden='true'
                     />
                   }
                   onPress={() => onUpvote(post.id, post.isUpvoted === true)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium'
+                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 ${
+                    post.isUpvoted === true
+                      ? 'bg-success/10 text-success border-success/20 hover:bg-success/20'
+                      : 'hover:bg-default-100'
+                  }`}
                   aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
@@ -558,13 +562,17 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   color={showComments ? 'primary' : 'default'}
                   startContent={
                     <Icon
-                      icon={showComments ? 'solar:chat-round-dots-bold' : 'solar:chat-round-linear'}
+                      icon={showComments ? 'solar:chat-round-dots-bold' : 'solar:chat-round-dots-linear'}
                       className='h-4 w-4'
                       aria-hidden='true'
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium'
+                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 ${
+                    showComments
+                      ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20'
+                      : 'hover:bg-default-100'
+                  }`}
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
@@ -579,10 +587,10 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   size='sm'
                   variant='light'
                   startContent={
-                    <Icon icon='solar:share-linear' className='h-4 w-4' aria-hidden='true' />
+                    <Icon icon='solar:export-linear' className='h-4 w-4' aria-hidden='true' />
                   }
                   onPress={() => setShareModalOpen(true)}
-                  className='h-9 min-w-0 px-4 py-2 font-medium'
+                  className='h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:bg-default-100'
                   aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {t('post.actions.share')}
