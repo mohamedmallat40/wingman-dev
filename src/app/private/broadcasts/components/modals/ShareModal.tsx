@@ -180,7 +180,17 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
   }, []);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size='2xl' scrollBehavior='inside'>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size='2xl'
+      scrollBehavior='inside'
+      backdrop='opaque'
+      classNames={{
+        base: 'bg-background dark:bg-content1',
+        backdrop: 'bg-black/50'
+      }}
+    >
       <ModalContent>
         <ModalHeader className='flex flex-col gap-1 pb-4'>
           <div className='flex items-center gap-3'>
@@ -194,31 +204,34 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
           </div>
         </ModalHeader>
 
-        <ModalBody className='gap-6'>
+        <ModalBody className='gap-4 px-6 py-4'>
           {/* Post Preview */}
-          <Card className='border-divider/50'>
+          <Card className='border-default-200/50 bg-default-50/50 dark:bg-default-100/20'>
             <CardBody className='p-4'>
               <div className='flex items-start gap-3'>
-                <div className='from-primary to-secondary flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br'>
-                  <Icon icon='solar:broadcast-bold' className='h-5 w-5 text-white' />
+                <div className='from-primary to-secondary flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br shadow-lg'>
+                  <Icon icon='solar:broadcast-bold' className='h-6 w-6 text-white' />
                 </div>
                 <div className='min-w-0 flex-1'>
-                  <h3 className='text-foreground line-clamp-2 font-semibold'>
+                  <h3 className='text-foreground line-clamp-2 font-bold text-lg'>
                     {post.title || t('fallbacks.untitledPost')}
                   </h3>
                   {post.description && (
-                    <p className='text-foreground-600 mt-1 line-clamp-2 text-sm'>
+                    <p className='text-foreground-600 mt-2 line-clamp-2 text-sm leading-relaxed'>
                       {post.description}
                     </p>
                   )}
-                  <div className='mt-2 flex items-center gap-2'>
-                    <span className='text-foreground-500 text-xs'>
-                      by {post.owner?.firstName} {post.owner?.lastName}
-                    </span>
+                  <div className='mt-3 flex items-center gap-2 flex-wrap'>
+                    <div className='flex items-center gap-1'>
+                      <Icon icon='solar:user-linear' className='h-3 w-3 text-foreground-400' />
+                      <span className='text-foreground-500 text-xs font-medium'>
+                        {post.owner?.firstName} {post.owner?.lastName}
+                      </span>
+                    </div>
                     {post.topics && post.topics.length > 0 && (
                       <>
                         <span className='text-foreground-300'>•</span>
-                        <Chip size='sm' variant='flat' className='h-5'>
+                        <Chip size='sm' variant='flat' color='primary' className='h-5 text-xs'>
                           {post.topics[0]?.title}
                         </Chip>
                       </>
@@ -231,13 +244,19 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
 
           {/* Copy Link Section */}
           <div className='space-y-3'>
-            <h3 className='text-foreground text-sm font-semibold'>{t('copyLink.title')}</h3>
+            <div className='flex items-center gap-2'>
+              <Icon icon='solar:link-bold' className='text-primary h-4 w-4' />
+              <h3 className='text-foreground text-sm font-bold'>{t('copyLink.title')}</h3>
+            </div>
             <div className='flex gap-2'>
               <Input
                 value={shareUrl}
                 isReadOnly
                 variant='bordered'
                 className='flex-1'
+                classNames={{
+                  inputWrapper: 'border-default-200 hover:border-primary focus:border-primary bg-default-50'
+                }}
                 startContent={
                   <Icon icon='solar:link-linear' className='text-foreground-400 h-4 w-4' />
                 }
@@ -246,6 +265,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
                 color={copySuccess ? 'success' : 'primary'}
                 variant={copySuccess ? 'flat' : 'solid'}
                 onPress={handleCopyLink}
+                size='lg'
+                className={copySuccess ? 'bg-success/10 text-success' : ''}
                 startContent={
                   <Icon
                     icon={copySuccess ? 'solar:check-circle-bold' : 'solar:copy-linear'}
@@ -281,25 +302,28 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
 
           {/* Social Media Platforms */}
           <div className='space-y-4'>
-            <h3 className='text-foreground text-sm font-semibold'>{t('socialMedia.title')}</h3>
+            <div className='flex items-center gap-2'>
+              <Icon icon='solar:share-circle-bold' className='text-primary h-4 w-4' />
+              <h3 className='text-foreground text-sm font-bold'>{t('socialMedia.title')}</h3>
+            </div>
             <div className='grid grid-cols-1 gap-3 sm:grid-cols-2'>
               {platforms.map((platform) => (
                 <Button
                   key={platform.id}
                   variant='bordered'
-                  className='h-auto justify-start p-4'
+                  className='h-auto justify-start p-4 hover:bg-default-50 hover:border-primary/50 transition-all duration-200'
                   onPress={() => handleSocialShare(platform)}
                 >
                   <div className='flex w-full items-center gap-3'>
                     <div
-                      className='flex h-8 w-8 items-center justify-center rounded-full text-white'
+                      className='flex h-10 w-10 items-center justify-center rounded-xl text-white shadow-md'
                       style={{ backgroundColor: platform.color }}
                     >
-                      <Icon icon={platform.icon} className='h-4 w-4' />
+                      <Icon icon={platform.icon} className='h-5 w-5' />
                     </div>
                     <div className='flex-1 text-left'>
-                      <p className='text-sm font-medium'>{platform.name}</p>
-                      <p className='text-foreground-500 text-xs'>{platform.description}</p>
+                      <p className='text-sm font-semibold'>{platform.name}</p>
+                      <p className='text-foreground-500 text-xs leading-relaxed'>{platform.description}</p>
                     </div>
                     <Icon
                       icon='solar:external-link-linear'
@@ -312,12 +336,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
           </div>
 
           {/* Share Statistics */}
-          <div className='bg-default-50 rounded-lg p-4'>
+          <div className='bg-primary/5 border border-primary/20 rounded-xl p-4'>
             <div className='mb-2 flex items-center gap-2'>
-              <Icon icon='solar:chart-linear' className='text-foreground-500 h-4 w-4' />
-              <h4 className='text-foreground-700 text-sm font-medium'>{t('analytics.title')}</h4>
+              <Icon icon='solar:chart-2-bold' className='text-primary h-4 w-4' />
+              <h4 className='text-foreground text-sm font-semibold'>{t('analytics.title')}</h4>
             </div>
-            <p className='text-foreground-500 text-xs'>{t('analytics.description')}</p>
+            <p className='text-foreground-600 text-xs leading-relaxed'>{t('analytics.description')}</p>
           </div>
         </ModalBody>
 
