@@ -20,7 +20,6 @@ export default function BroadcastsPage() {
   const tNav = useTranslations('navigation');
 
   const {
-    filters,
     ui,
     setTopic,
     openContentCreator,
@@ -44,7 +43,7 @@ export default function BroadcastsPage() {
   }, [activeTopic, topics, selectedTopicData]);
 
   const handleTopicToggle = (topicId: string) => {
-    // Handle topic toggle logic here
+    // Topic toggle functionality can be implemented here
   };
 
   const handleTopicSelect = (topicId: string | null, topicData?: any) => {
@@ -58,7 +57,7 @@ export default function BroadcastsPage() {
   };
 
   const handleSaveDraft = (draftData: Partial<BroadcastPost>) => {
-    // Handle draft saving logic here
+    // Draft saving functionality can be implemented here
   };
 
   const handleEditPost = (post: BroadcastPost) => {
@@ -131,16 +130,20 @@ export default function BroadcastsPage() {
         ]}
         pageDescription={pageDescription}
         headerActions={
-          <div className='flex items-center gap-2'>
+          <div className='flex items-center gap-3'>
             {/* View Toggle Buttons */}
-            <div className='flex items-center gap-1 rounded-lg bg-default-100 p-1'>
+            <div className='flex items-center gap-0.5 rounded-xl bg-default-100 p-1 shadow-sm'>
               <Button
                 size='sm'
                 variant={currentView === 'all' ? 'solid' : 'light'}
                 color={currentView === 'all' ? 'primary' : 'default'}
                 onPress={() => handleViewChange('all')}
                 startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
-                className='h-8 min-w-0 px-3'
+                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 ${
+                  currentView === 'all' 
+                    ? 'shadow-sm' 
+                    : 'hover:bg-default-200/50'
+                }`}
               >
                 All Posts
               </Button>
@@ -150,7 +153,11 @@ export default function BroadcastsPage() {
                 color={currentView === 'saved' ? 'primary' : 'default'}
                 onPress={() => handleViewChange('saved')}
                 startContent={<Icon icon='solar:archive-linear' className='h-4 w-4' />}
-                className='h-8 min-w-0 px-3'
+                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 ${
+                  currentView === 'saved' 
+                    ? 'shadow-sm' 
+                    : 'hover:bg-default-200/50'
+                }`}
               >
                 Saved
               </Button>
@@ -164,6 +171,7 @@ export default function BroadcastsPage() {
                 startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
                 onPress={handleCreatePost}
                 isLoading={false}
+                className='h-9 px-4 font-medium shadow-sm hover:shadow-md transition-all duration-200'
               >
                 {t('feed.createPost')}
               </Button>
@@ -171,10 +179,10 @@ export default function BroadcastsPage() {
           </div>
         }
       >
-        <div className='mx-auto flex w-full gap-6 xl:w-[90%] 2xl:w-[80%]'>
-          {/* Sidebar */}
-          <div className='hidden w-80 flex-shrink-0 overflow-visible lg:block'>
-            <div className='sticky top-4 space-y-4 overflow-visible'>
+        <div className='mx-auto flex w-full gap-6 px-4 sm:px-6 lg:gap-8 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
+          {/* Left Sidebar */}
+          <div className='hidden w-80 flex-shrink-0 lg:block'>
+            <div className='sticky top-6 space-y-6'>
               <TopicSidebar
                 onSubcastToggle={handleTopicToggle}
                 onSubcastSelect={handleTopicSelect}
@@ -183,8 +191,9 @@ export default function BroadcastsPage() {
             </div>
           </div>
 
+          {/* Main Feed */}
           <div className='min-w-0 flex-1'>
-            <div className='space-y-6 py-6'>
+            <div className='space-y-8 py-4 sm:py-6'>
               <BroadcastFeed 
                 selectedTopic={currentView === 'all' ? activeTopic : null}
                 currentView={currentView}
@@ -194,23 +203,25 @@ export default function BroadcastsPage() {
             </div>
           </div>
 
-          <div className='hidden w-64 flex-shrink-0 xl:block'>
-            <div className='sticky top-4 space-y-4'>
+          {/* Right Sidebar */}
+          <div className='hidden w-80 flex-shrink-0 xl:block'>
+            <div className='sticky top-6 space-y-6'>
               {/* Quick Actions */}
-              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
-                <h3 className='text-foreground mb-3 text-sm font-semibold'>
+              <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm'>
+                <h3 className='text-foreground mb-4 flex items-center gap-2 text-sm font-semibold'>
+                  <Icon icon='solar:widget-4-linear' className='h-4 w-4 text-primary' />
                   {t('sidebar.quickActions')}
                 </h3>
-                <div className='space-y-2'>
+                <div className='space-y-3'>
                   <Button
-                    variant='light'
+                    variant='flat'
                     size='sm'
                     fullWidth
                     startContent={
-                      <Icon icon='solar:pen-new-square-linear' className='h-4 w-4 text-primary-600' />
+                      <Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />
                     }
                     onPress={handleCreatePost}
-                    className='justify-start hover:bg-primary-50 text-primary-700'
+                    className='justify-start h-10 bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200'
                   >
                     {t('feed.createPost')}
                   </Button>
@@ -219,9 +230,10 @@ export default function BroadcastsPage() {
                     size='sm'
                     fullWidth
                     startContent={
-                      <Icon icon='solar:bookmark-linear' className='h-4 w-4 text-default-500' />
+                      <Icon icon='solar:archive-linear' className='h-4 w-4' />
                     }
-                    className='justify-start hover:bg-default-100'
+                    onPress={() => handleViewChange('saved')}
+                    className='justify-start h-10 hover:bg-default-100 transition-all duration-200'
                   >
                     {t('sidebar.savedPosts')}
                   </Button>
@@ -230,9 +242,9 @@ export default function BroadcastsPage() {
                     size='sm'
                     fullWidth
                     startContent={
-                      <Icon icon='solar:users-group-rounded-linear' className='h-4 w-4 text-default-500' />
+                      <Icon icon='solar:users-group-rounded-linear' className='h-4 w-4' />
                     }
-                    className='justify-start hover:bg-default-100'
+                    className='justify-start h-10 hover:bg-default-100 transition-all duration-200'
                   >
                     {t('sidebar.following')}
                   </Button>
@@ -240,26 +252,32 @@ export default function BroadcastsPage() {
               </div>
 
               {/* Trending Topics */}
-              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
-                <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
+              <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm'>
+                <h3 className='text-foreground mb-4 flex items-center gap-2 text-sm font-semibold'>
                   <Icon icon='solar:fire-linear' className='text-warning h-4 w-4' />
                   {t('sidebar.trending')}
                 </h3>
-                <div className='space-y-2'>
-                  <div className='text-foreground-500 text-sm text-center py-4'>
-                    Coming Soon
+                <div className='flex items-center justify-center py-8'>
+                  <div className='text-center'>
+                    <Icon icon='solar:hourglass-line-linear' className='h-8 w-8 text-default-400 mx-auto mb-2' />
+                    <p className='text-foreground-500 text-sm font-medium'>Coming Soon</p>
+                    <p className='text-foreground-400 text-xs mt-1'>Trending topics will appear here</p>
                   </div>
                 </div>
               </div>
 
               {/* Active Users */}
-              <div className='bg-content1 border-default-200 rounded-lg border p-4'>
-                <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
+              <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm'>
+                <h3 className='text-foreground mb-4 flex items-center gap-2 text-sm font-semibold'>
                   <div className='bg-success h-2 w-2 animate-pulse rounded-full' />
                   {t('sidebar.activeNow')}
                 </h3>
-                <div className='text-foreground-500 text-sm text-center py-4'>
-                  Coming Soon
+                <div className='flex items-center justify-center py-8'>
+                  <div className='text-center'>
+                    <Icon icon='solar:users-group-rounded-linear' className='h-8 w-8 text-default-400 mx-auto mb-2' />
+                    <p className='text-foreground-500 text-sm font-medium'>Coming Soon</p>
+                    <p className='text-foreground-400 text-xs mt-1'>Active users will appear here</p>
+                  </div>
                 </div>
               </div>
             </div>

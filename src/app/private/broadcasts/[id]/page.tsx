@@ -206,7 +206,7 @@ const PostDetailPage: React.FC = () => {
         </Button>
       }
     >
-      <div className='mx-auto max-w-4xl px-4 py-6'>
+      <div className='mx-auto w-full px-4 py-6 sm:px-6 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
         {/* Post Detail Card */}
         <Card className='shadow-lg'>
           <CardBody className='p-0'>
@@ -237,10 +237,10 @@ const PostDetailPage: React.FC = () => {
               variant='flat'
               color='default'
               size='sm'
-              startContent={<Icon icon='solar:bookmark-linear' className='h-4 w-4' />}
-              onPress={() => handleBookmark(post.id)}
+              startContent={<Icon icon='solar:archive-linear' className='h-4 w-4' />}
+              onPress={() => handleSave(post.id, post.isSaved || false)}
             >
-              {t('post.actions.bookmark')}
+              {post.isSaved ? t('post.actions.unsave') : t('post.actions.save')}
             </Button>
           </div>
 

@@ -137,7 +137,7 @@ const SavedBroadcastsPage: React.FC = () => {
 
   return (
     <DashboardLayout title={t('saved.title')} description={t('saved.description')}>
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]">
         {/* Header */}
         <Card className="mb-6">
           <CardHeader className="flex items-center gap-3">

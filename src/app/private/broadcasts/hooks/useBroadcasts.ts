@@ -114,7 +114,6 @@ export const useSavePost = () => {
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'saved'] });
     },
     onError: (error, postId) => {
-      console.error('Failed to save post:', error);
       // Revert optimistic update on error
       queryClient.setQueriesData(
         { queryKey: ['broadcasts', 'feed'] },
@@ -167,7 +166,6 @@ export const useUnsavePost = () => {
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'saved'] });
     },
     onError: (error, postId) => {
-      console.error('Failed to unsave post:', error);
       // Revert optimistic update on error
       queryClient.setQueriesData(
         { queryKey: ['broadcasts', 'feed'] },
@@ -240,7 +238,6 @@ export const useUpdatePost = () => {
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
     onError: (error) => {
-      console.error('Failed to update post:', error);
     },
     retry: 1
   });
@@ -260,7 +257,6 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
     onError: (error) => {
-      console.error('Failed to delete post:', error);
     },
     retry: false
   });
@@ -308,7 +304,6 @@ export const useFollowTopic = () => {
     },
     onError: (error) => {
       // Error handling can be done in the UI
-      console.error('Failed to follow topic:', error);
     },
     retry: 1
   });
@@ -340,7 +335,6 @@ export const useUnfollowTopic = () => {
     },
     onError: (error) => {
       // Error handling can be done in the UI
-      console.error('Failed to unfollow topic:', error);
     },
     retry: 1
   });

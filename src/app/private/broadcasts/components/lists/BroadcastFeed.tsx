@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { Button, Chip } from '@heroui/react';
+import { Button } from '@heroui/react';
 import { addToast } from '@heroui/toast';
 import { Icon } from '@iconify/react';
-// Removed framer-motion for better performance
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
@@ -32,7 +31,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
 }) => {
   const t = useTranslations('broadcasts');
   const router = useRouter();
-  const { filters, setSelectedPost } = useBroadcastStore();
+  const { setSelectedPost } = useBroadcastStore();
 
   // Hooks for API operations
   const { toggleUpvote, isLoading: isUpvoting } = useUpvote();
@@ -136,7 +135,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
   );
 
   const handleShare = useCallback(() => {
-    // Share functionality implementation  
+    // Share functionality can be implemented here
   }, []);
 
   if (isLoading) {
@@ -145,18 +144,20 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
 
   if (error) {
     return (
-      <div className={`flex flex-col items-center justify-center py-16 text-center ${className}`}>
-        <div className='bg-danger/10 mb-6 flex h-20 w-20 items-center justify-center rounded-full'>
-          <Icon icon='solar:danger-circle-linear' className='text-danger h-8 w-8' />
+      <div className={`flex flex-col items-center justify-center py-20 text-center ${className}`}>
+        <div className='bg-danger/10 mb-8 flex h-24 w-24 items-center justify-center rounded-full shadow-lg'>
+          <Icon icon='solar:danger-circle-linear' className='text-danger h-10 w-10' />
         </div>
-        <h3 className='text-foreground mb-2 text-xl font-semibold'>{t('feed.error.title')}</h3>
-        <p className='text-foreground-500 mb-6 max-w-md leading-relaxed'>
+        <h3 className='text-foreground mb-3 text-2xl font-bold'>{t('feed.error.title')}</h3>
+        <p className='text-foreground-500 mb-8 max-w-md text-base leading-relaxed'>
           {t('feed.error.description')}
         </p>
         <Button
           color='primary'
-          startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
+          size='lg'
+          startContent={<Icon icon='solar:refresh-linear' className='h-5 w-5' />}
           onPress={() => window.location.reload()}
+          className='h-12 px-8 font-semibold shadow-md hover:shadow-lg transition-all duration-300'
         >
           {t('feed.retry')}
         </Button>
@@ -166,21 +167,21 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
 
   if (posts.length === 0) {
     return (
-      <div className={`flex flex-col items-center justify-center py-16 text-center ${className}`}>
-        <div className={`mb-6 flex h-20 w-20 items-center justify-center rounded-full ${
+      <div className={`flex flex-col items-center justify-center py-20 text-center ${className}`}>
+        <div className={`mb-8 flex h-24 w-24 items-center justify-center rounded-full shadow-lg ${
           currentView === 'saved' ? 'bg-default-100' : 'bg-primary/10'
         }`}>
           <Icon 
             icon={currentView === 'saved' ? 'solar:archive-linear' : 'solar:satellite-linear'} 
-            className={`h-8 w-8 ${
+            className={`h-10 w-10 ${
               currentView === 'saved' ? 'text-default-400' : 'text-primary'
             }`} 
           />
         </div>
-        <h3 className='text-foreground mb-2 text-xl font-semibold'>
+        <h3 className='text-foreground mb-3 text-2xl font-bold'>
           {currentView === 'saved' ? 'No saved posts yet' : t('feed.emptyFeed.title')}
         </h3>
-        <p className='text-foreground-500 mb-6 max-w-md leading-relaxed'>
+        <p className='text-foreground-500 mb-8 max-w-md text-base leading-relaxed'>
           {currentView === 'saved' 
             ? 'Save broadcasts to read them later. Look for the archive button on any post.'
             : t('feed.emptyFeed.description')
@@ -188,14 +189,16 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
         </p>
         <Button
           color='primary'
+          size='lg'
           startContent={<Icon 
             icon={currentView === 'saved' ? 'solar:satellite-linear' : 'solar:refresh-linear'} 
-            className='h-4 w-4' 
+            className='h-5 w-5' 
           />}
           onPress={() => currentView === 'saved' 
             ? onViewChange?.('all')
             : window.location.reload()
           }
+          className='h-12 px-8 font-semibold shadow-md hover:shadow-lg transition-all duration-300'
         >
           {currentView === 'saved' ? 'Browse Broadcasts' : t('feed.refreshFeed')}
         </Button>
@@ -205,15 +208,12 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
 
   return (
     <div className={className}>
-      {/* Regular Posts Feed */}
-      <div className='space-y-6'>
+      {/* Posts Feed */}
+      <div className='space-y-8'>
         {posts.map((post, index) => (
           <div
             key={post.id}
-            className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out"
-            style={{
-              animationDelay: `${index * 100}ms`
-            }}
+            className="opacity-100"
           >
             <PostCard
               post={post}
@@ -231,7 +231,7 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
 
       {/* Load More Button */}
       {hasNextPage && (
-        <div className='flex justify-center py-8'>
+        <div className='flex justify-center py-12'>
           <Button
             color='primary'
             variant='flat'
@@ -239,9 +239,9 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
             onPress={() => fetchNextPage()}
             isLoading={isFetchingNextPage}
             startContent={
-              !isFetchingNextPage && <Icon icon='solar:arrow-down-linear' className='h-4 w-4' />
+              !isFetchingNextPage && <Icon icon='solar:arrow-down-linear' className='h-5 w-5' />
             }
-            className='min-w-48'
+            className='min-w-48 h-12 px-8 font-semibold shadow-md hover:shadow-lg transition-all duration-300'
           >
             {isFetchingNextPage ? t('feed.loading') : t('feed.loadMore')}
           </Button>
@@ -249,8 +249,12 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
       )}
 
       {!hasNextPage && posts.length > 0 && (
-        <div className='flex justify-center py-8'>
-          <p className='text-foreground-500 text-sm'>{t('feed.noMorePosts')}</p>
+        <div className='flex justify-center py-12'>
+          <div className='text-center'>
+            <Icon icon='solar:check-circle-linear' className='h-8 w-8 text-success mx-auto mb-2' />
+            <p className='text-foreground-500 text-sm font-medium'>{t('feed.noMorePosts')}</p>
+            <p className='text-foreground-400 text-xs mt-1'>You've reached the end</p>
+          </div>
         </div>
       )}
     </div>

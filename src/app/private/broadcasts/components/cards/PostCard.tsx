@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { Avatar, Button, Card, CardBody, CardHeader, Chip, Divider, Tooltip } from '@heroui/react';
+import { Button, Card, CardBody, CardHeader, Chip, Divider, Tooltip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 import { useTranslations } from 'next-intl';
@@ -18,7 +18,6 @@ import { DeleteConfirmationModal } from '../modals/DeleteConfirmationModal';
 import { PostAttachmentModal } from '../modals/PostAttachmentModal';
 import { ShareModal } from '../modals/ShareModal';
 import { LinkPreview } from '../ui/LinkPreview';
-// import MediaGallery from '../ui/MediaGallery'; // Temporarily removed
 import OptimizedImage from '../ui/OptimizedImage';
 import OptimizedVideo from '../ui/OptimizedVideo';
 
@@ -224,15 +223,15 @@ const PostCard: React.FC<PostCardProps> = React.memo(
         <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
 
         <Card
-          className={`border-divider/50 shadow-sm transition-all duration-200 hover:shadow-md ${className}`}
+          className={`border-divider/30 shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:-translate-y-1 ${className}`}
           role='article'
           aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
         >
-          <CardHeader className='pb-3'>
-            <div className='flex w-full items-start gap-3'>
+          <CardHeader className='pb-4'>
+            <div className='flex w-full items-start gap-4'>
               {/* Author Avatar */}
               <div className='relative'>
-                <div className="relative w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/20 ring-offset-2 ring-offset-background">
+                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/15 ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/30">
                   {safeOwner.profileImage ? (
                     <OptimizedImage
                       src={getImageUrl(safeOwner.profileImage)}
@@ -243,7 +242,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                       priority={true}
                     />
                   ) : (
-                    <div className="w-full h-full bg-primary/10 flex items-center justify-center text-primary font-medium text-sm">
+                    <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
                       {`${safeOwner.firstName[0]}${safeOwner.lastName[0]}`}
                     </div>
                   )}
@@ -257,14 +256,14 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
               {/* Author Info & Post Metadata */}
               <div className='min-w-0 flex-1'>
-                <div className='flex flex-wrap items-center gap-2'>
-                  <h3 className='text-foreground truncate font-semibold'>
+                <div className='flex flex-wrap items-center gap-2 mb-1'>
+                  <h3 className='text-foreground truncate font-semibold text-base'>
                     {safeOwner.firstName} {safeOwner.lastName}
                   </h3>
                   {safeOwner.userName && (
-                    <span className='text-foreground-500'>@{safeOwner.userName}</span>
+                    <span className='text-foreground-500 text-sm'>@{safeOwner.userName}</span>
                   )}
-                  <span className='text-foreground-400'>·</span>
+                  <span className='text-foreground-400 text-sm'>·</span>
                   <time
                     className='text-foreground-500 text-sm'
                     dateTime={safeCreatedAt}
@@ -274,12 +273,13 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   </time>
                 </div>
 
-                <div className='mt-1 flex flex-wrap items-center gap-2'>
+                <div className='flex flex-wrap items-center gap-2'>
                   <Chip
                     size='sm'
                     color={postTypeColor as any}
                     variant='flat'
                     startContent={<Icon icon={postIcon} className='h-3 w-3' />}
+                    className='font-medium'
                   >
                     {t('post.actions.broadcast')}
                   </Chip>
@@ -300,7 +300,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                             backgroundColor: topic.color || '#6366f1',
                             color: 'white'
                           }}
-                          className='font-medium text-white'
+                          className='font-medium text-white shadow-sm'
                         >
                           {topic.title || t('fallbacks.untitledTopic')}
                         </Chip>
@@ -372,11 +372,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             </div>
           </CardHeader>
 
-          <CardBody className='pt-0'>
+          <CardBody className='pt-0 pb-6'>
             {/* Post Title */}
             {safeTitle && (
               <h2
-                className='text-foreground mb-3 text-lg leading-tight font-bold'
+                className='text-foreground mb-4 text-xl leading-tight font-bold tracking-tight'
                 id={`post-title-${post.id}`}
               >
                 {safeTitle}
@@ -384,14 +384,14 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             )}
 
             {/* Post Content */}
-            <div className='text-foreground-700 mb-4 leading-relaxed'>
+            <div className='text-foreground-700 mb-5 leading-relaxed text-base'>
               {displayContent}
               {shouldTruncate && (
                 <Button
                   size='sm'
                   variant='light'
                   onPress={() => setIsExpanded(!isExpanded)}
-                  className='text-primary ml-2 h-auto min-w-0 p-0 font-medium'
+                  className='text-primary ml-2 h-auto min-w-0 p-0 font-medium hover:text-primary-600 transition-colors'
                 >
                   {isExpanded ? t('content.expandText.showLess') : t('content.expandText.showMore')}
                 </Button>
@@ -400,7 +400,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Link Previews */}
             {linkPreviews.length > 0 && (
-              <div className='mb-4 w-full space-y-3'>
+              <div className='mb-5 w-full space-y-3'>
                 {linkPreviews.map((linkMetadata) => (
                   <LinkPreview
                     key={linkMetadata.url}
@@ -414,7 +414,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Attachments Content */}
             {safeAttachments.length > 0 && (
-              <div className='mb-4'>
+              <div className='mb-5'>
                 {(() => {
                   const images = imageAttachments;
                   const videos = videoAttachments;
@@ -502,7 +502,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Skills */}
             {safeSkills.length > 0 && (
-              <div className='mb-4 flex flex-wrap gap-2'>
+              <div className='mb-5 flex flex-wrap gap-2'>
                 {safeSkills.slice(0, 5).map((skill) => (
                   <Chip
                     key={skill.id}
@@ -521,11 +521,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(
               </div>
             )}
 
-            <Divider className='mb-4' />
+            <Divider className='mb-5' />
 
             {/* Engagement Actions */}
-            <div className='flex items-center justify-between'>
-              <div className='flex items-center gap-1'>
+            <div className='flex items-center justify-between pt-1'>
+              <div className='flex items-center gap-2'>
                 <Button
                   size='sm'
                   variant={post.isUpvoted === true ? 'flat' : 'light'}
@@ -540,7 +540,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => onUpvote(post.id, post.isUpvoted === true)}
-                  className='h-auto min-w-0 px-3 py-2 transition-all duration-200'
+                  className='h-9 min-w-0 px-4 py-2 font-medium transition-all duration-200 hover:scale-105'
                   aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
@@ -563,7 +563,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
-                  className='h-auto min-w-0 px-3 py-2 transition-all duration-200'
+                  className='h-9 min-w-0 px-4 py-2 font-medium transition-all duration-200 hover:scale-105'
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
@@ -581,7 +581,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     <Icon icon='solar:share-linear' className='h-4 w-4' aria-hidden='true' />
                   }
                   onPress={() => setShareModalOpen(true)}
-                  className='h-auto min-w-0 px-3 py-2'
+                  className='h-9 min-w-0 px-4 py-2 font-medium transition-all duration-200 hover:scale-105'
                   aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
                   {t('post.actions.share')}

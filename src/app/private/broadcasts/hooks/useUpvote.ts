@@ -73,7 +73,7 @@ export const useUpvote = () => {
           queryClient.setQueryData(queryKey, data);
         });
       }
-      console.error('Failed to upvote post:', err);
+      // Error handled by UI
     },
     onSettled: () => {
       setIsOptimisticUpdate(false);
@@ -144,7 +144,7 @@ export const useUpvote = () => {
           queryClient.setQueryData(queryKey, data);
         });
       }
-      console.error('Failed to remove upvote:', err);
+      // Error handled by UI
     },
     onSettled: () => {
       setIsOptimisticUpdate(false);

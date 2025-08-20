@@ -46,7 +46,7 @@ export const searchNetworkUsers = async (name: string, page = 1, limit = 10): Pr
     
     return [];
   } catch (error) {
-    console.error('Error searching network users:', error);
+    // Error handled by UI
     return [];
   }
 };

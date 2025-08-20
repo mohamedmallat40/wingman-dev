@@ -37,13 +37,13 @@ class LinkPreviewService {
 
       return metadata;
     } catch (error) {
-      console.error('Failed to fetch link metadata:', error);
+      // Error handled by UI
       return null;
     }
   }
 
   private async tryFetchRealMetadata(url: string): Promise<LinkMetadata | null> {
-    // TODO: In production, this would call your backend service
+    // Production implementation would call backend service
     // that can safely fetch meta tags from the URL
     //
     // Example backend call:
@@ -84,7 +84,7 @@ class LinkPreviewService {
 
       return metadata;
     } catch (error) {
-      console.error('Error generating metadata:', error);
+      // Error handled by UI
       return null;
     }
   }
