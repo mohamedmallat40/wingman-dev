@@ -213,7 +213,7 @@ export default function PageHeader({
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
-      className={`border-divider/50 bg-background/97 relative z-20 w-full border-b backdrop-blur-xl ${className}`}
+      className={`border-divider/50 bg-background relative z-20 w-full border-b ${className}`}
     >
       {/* Enhanced Background Gradient */}
       <div className='from-primary/6 via-primary/3 to-secondary/6 absolute inset-0 bg-gradient-to-r opacity-70' />
