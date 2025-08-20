@@ -18,10 +18,10 @@ const BroadcastFeedSkeleton: React.FC<BroadcastFeedSkeletonProps> = ({
       {/* Header Skeleton */}
       <div className='flex items-center justify-between'>
         <div className='space-y-2'>
-          <Skeleton className='h-8 w-48 rounded-lg' />
-          <Skeleton className='h-4 w-32 rounded-lg' />
+          <Skeleton className='h-8 w-48 rounded-[12px]' />
+          <Skeleton className='h-4 w-32 rounded-[8px]' />
         </div>
-        <Skeleton className='h-8 w-24 rounded-full' />
+        <Skeleton className='h-8 w-24 rounded-[16px]' />
       </div>
 
       {/* Post Skeletons */}
