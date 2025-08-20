@@ -344,12 +344,12 @@ export default function TopicSidebar({
                 }}
               >
                   <Card
-                    className={`relative w-full cursor-pointer border transition-all duration-200 hover:z-20 hover:-translate-y-1 hover:scale-105 min-h-[120px] ${
+                    className={`relative w-full cursor-pointer border transition-all duration-300 hover:z-20 hover:-translate-y-2 hover:scale-[1.02] min-h-[120px] rounded-[16px] backdrop-blur-sm ${
                       selectedSubcast === subcast.id
-                        ? 'border-primary bg-primary/10 ring-primary/20 shadow-md ring-2'
+                        ? 'border-primary/30 bg-primary/10 ring-primary/20 shadow-[0px_16px_40px_rgba(59,130,246,0.15)] ring-2'
                         : subcast.isFollowing
-                          ? 'border-primary/30 bg-primary/5 shadow-sm'
-                          : 'border-default-200 hover:border-primary/50 hover:bg-primary/5 hover:shadow-xl'
+                          ? 'border-primary/20 bg-primary/5 shadow-[0px_8px_30px_rgba(0,0,0,0.08)]'
+                          : 'border-default-200/50 hover:border-primary/30 hover:bg-primary/5 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)]'
                     }`}
                   >
                     <div 
