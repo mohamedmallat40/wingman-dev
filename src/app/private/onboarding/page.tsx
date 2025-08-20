@@ -2,37 +2,37 @@
 
 import React, { useEffect, useState } from 'react';
 
+import { addToast } from '@heroui/react';
+import useUserStore from '@root/modules/auth/store/use-user-store';
+import { type IUserProfile } from '@root/modules/profile/types';
 import { Check, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import wingManApi from '@/lib/axios';
 
 import BasicInfoStep from './steps/basic-info-step';
 import CategoriesPreferencesStep from './steps/categories-preferences';
-import NotificationStep from './steps/notification-step';
 import ProfileImageStep from './steps/profile-image-step';
 import WelcomeStep from './steps/welcome-step';
 
-const ONBOARDING_STEPS = [
-  'basicInfo',
-  'profileImage',
-  'categories',
-  'notifications'
-] as const;
+const ONBOARDING_STEPS = ['welcome', 'basicInfo', 'profileImage', 'categories'] as const;
 
 type OnboardingStep = (typeof ONBOARDING_STEPS)[number];
 
 const STEP_LABELS = {
+  welcome: 'Welcome',
   basicInfo: 'Basic Info',
   profileImage: 'Profile',
-  categories: 'Categories',
-  notifications: 'Notifications'
+  categories: 'categories and notifications'
 };
 
 export default function OnboardingFlow() {
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('welcome');
   const [isLoading, setIsLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState<IUserProfile | null>(null);
   const [isDataLoading, setIsDataLoading] = useState(true);
+  const { setUser } = useUserStore();
+  const router = useRouter();
 
   // Fetch user data on component mount
   useEffect(() => {
@@ -42,6 +42,8 @@ export default function OnboardingFlow() {
         const userResponse = await wingManApi.get('/users/me');
         if (userResponse.status >= 200 && userResponse.status < 300) {
           setUserData(userResponse.data);
+          // Update user store with fresh data
+          setUser(userResponse.data);
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
@@ -51,7 +53,7 @@ export default function OnboardingFlow() {
     };
 
     fetchUserData();
-  }, []);
+  }, [setUser]);
 
   const handleNext = () => {
     const currentIndex = ONBOARDING_STEPS.indexOf(currentStep);
@@ -70,8 +72,15 @@ export default function OnboardingFlow() {
   const handleComplete = async () => {
     setIsLoading(true);
     try {
-      // Update user stepper to true to mark onboarding as complete
-      await wingManApi.patch('/users/me', { stepper: true });
+      const userResponse = await wingManApi.patch('/users/me', { stepper: true });
+      setUser(() => ({ ...userResponse.data }));
+      addToast({
+        title: 'Onboarding Complete',
+        description: 'You have successfully completed the onboarding process.',
+        color: 'success'
+      });
+      router.push('/private/dashboard');
+      console.log('Onboarding completed successfully');
     } catch (error) {
       console.error('Error completing onboarding:', error);
     } finally {
@@ -114,15 +123,7 @@ export default function OnboardingFlow() {
             isLoading={isLoading}
             setIsLoading={setIsLoading}
             userData={userData}
-          />
-        );
-      }
-      case 'notifications': {
-        return (
-          <NotificationStep
             onComplete={handleComplete}
-            onPrevious={handlePrevious}
-            isLoading={isLoading}
           />
         );
       }
@@ -174,9 +175,9 @@ export default function OnboardingFlow() {
                         className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
                           isCompleted
                             ? 'bg-primary text-primary-foreground shadow-lg'
-                            : isCurrent
+                            : (isCurrent
                               ? 'bg-accent text-accent-foreground ring-accent/20 shadow-md ring-2'
-                              : 'bg-muted text-muted-foreground'
+                              : 'bg-muted text-muted-foreground')
                         }`}
                       >
                         {isCompleted ? <Check className='h-5 w-5' /> : index + 1}

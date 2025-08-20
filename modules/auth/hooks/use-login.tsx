@@ -47,7 +47,12 @@ const useLogin = () => {
     if (isSuccess) {
       onClose();
       localStorage.setItem('token', String(data.data?.token));
-      router.push('/private/dashboard');
+      
+      if (data.data.user.stepper) {
+        router.push('/private/dashboard');
+      } else {
+        router.push('/private/onboarding');
+      }
       setUser(data.data?.user);
     }
   }, [isSuccess, onClose]);

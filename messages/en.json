@@ -1178,5 +1178,160 @@
   },
   "ERRORS": {
     "USER_DOES_NOT_EXIST": "User Does Not Exist"
+  },
+
+  "setup": {
+    "categories": {
+      "title": "Choose your categories",
+      "description": "Select the categories that best match your expertise. This helps us show you relevant opportunities.",
+      "descriptionRequired": "You must select at least one category.",
+      "selectedCount": "{count, plural, one {# category} other {# categories}} selected",
+      "errorRequired": "Please select at least one category to continue.",
+      "loadingCategories": "Loading categories...",
+      "noCategoriesFound": "No categories found.",
+      "saving": "Saving..."
+    },
+    "notifications": {
+      "title": "Notification preferences",
+      "description": "Choose how you'd like to be notified about important updates. You can change these settings later.",
+      "loadingPreferences": "Loading notification preferences...",
+      "summaryMessage": "You're almost done! Your notification preferences will be saved.",
+      "types": {
+        "NEW_OPPORTUNITIES": {
+          "title": "New Opportunities",
+          "description": "Get notified when new job opportunities match your profile"
+        },
+        "APPLICATION_UPDATES": {
+          "title": "Application Updates",
+          "description": "Receive updates on your job applications"
+        },
+        "MESSAGES": {
+          "title": "Messages",
+          "description": "Get notified when you receive new messages"
+        },
+        "WEEKLY_DIGEST": {
+          "title": "Weekly Digest",
+          "description": "Receive a weekly summary of your activity"
+        }
+      },
+      "preferences": {
+        "email": "Email",
+        "web": "Web"
+      }
+    },
+    "actions": {
+      "back": "Back",
+      "continue": "Continue",
+      "completeSetup": "Complete Setup",
+      "completingSetup": "Completing Setup...",
+      "saving": "Saving..."
+    },
+     "welcome": {
+    "title": "Welcome to the Platform!",
+    "description": "Let's get you set up with a quick onboarding process. We'll help you complete your profile and customize your preferences.",
+    "getStarted": "Let's Get Started",
+    "timeRequired": "This will only take a few minutes",
+    "label":"Language"
+  },"profileImage": {
+    "title": "Add your profile picture",
+    "description": "Upload a professional photo to help clients recognize you. This step is optional.",
+    "altText": "Profile preview",
+    "dropHere": "Drop your photo here",
+    "uploadPrompt": "Drop your photo here",
+    "clickToBrowse": "or click to browse files",
+    "chooseFile": "Choose File",
+    "supportedFormats": "PNG, JPG, GIF up to 5MB",
+    "back": "Back",
+    "continue": "Continue",
+    "uploading": "Uploading...",
+    "uploadError": "Failed to upload image. Please try again.",
+    "validation": {
+      "imageTypeRequired": "Please select an image file",
+      "fileSizeTooLarge": "File size must be less than 5MB"
+    }
+  },
+    "basicInfo": {
+      "title": "Tell us about yourself",
+      "description": "This information will help us match you with the right opportunities.",
+      "loading": {
+        "loadingInfo": "Loading your information..."
+      },
+      "fields": {
+        "aboutMe": {
+          "label": "About Me",
+          "placeholder": "Write a short introduction about yourself...",
+          "characterCount": "{current}/{max} characters"
+        },
+        "paymentType": {
+          "label": "Payment Type",
+          "options": {
+            "hourly": "Hourly Based",
+            "daily": "Daily Based",
+            "project": "Project Based"
+          }
+        },
+        "hourlyRate": {
+          "label": "Hourly Rate (EUR)"
+        },
+        "dailyRate": {
+          "label": "Daily Rate (EUR)"
+        },
+        "projectRate": {
+          "label": "Rate (Not applicable for project-based)"
+        },
+        "rate": {
+          "label": "Rate (EUR)",
+          "placeholder": "Your rate in EUR",
+          "placeholderNotApplicable": "Not applicable",
+          "minimumNote": "Minimum 5 EUR required"
+        },
+        "workingTime": {
+          "label": "Working Time",
+          "options": {
+            "fullTime": "Full Time",
+            "partTime": "Part Time"
+          }
+        },
+        "experienceYears": {
+          "label": "Years of Experience",
+          "placeholder": "Years of experience"
+        },
+        "profession": {
+          "label": "Profession",
+          "options": {
+            "fullTimeFreelancer": "Full-time Freelancer",
+            "partTimeFreelancer": "Part-time Freelancer",
+            "contractor": "Contractor",
+            "student": "Student"
+          }
+        },
+        "availabilityStatus": {
+          "label": "Availability Status",
+          "options": {
+            "openForProjects": "Open for Projects",
+            "openForPartTime": "Open for Part-time",
+            "notAvailable": "Not Available"
+          }
+        },
+        "skills": {
+          "label": "Skills",
+          "minimum": "Select at least 3 skills",
+          "placeholder": "Search and select skills...",
+          "selectedCount": "Selected: {count} skills",
+          "allSelected": "All matching skills already selected",
+          "noSkillsFound": "No skills found matching \"{search}\""
+        }
+      },
+      "validation": {
+        "aboutMeMinLength": "About me must be at least 10 characters",
+        "aboutMeMaxLength": "About me must be less than 500 characters",
+        "experienceYearsMin": "Experience years must be 0 or greater",
+        "experienceYearsMax": "Experience years must be less than 50",
+        "skillsMinimum": "Please select at least three skills",
+        "hourlyRateMinimum": "Hourly rate must be at least 5 EUR",
+        "dailyRateMinimum": "Daily rate must be at least 5 EUR"
+      }
+    }
   }
+
 }

@@ -4,10 +4,10 @@ import React, { use, useCallback, useEffect, useState } from 'react';
 
 import { useUpload } from '@root/modules/documents/hooks/useUpload';
 import { ArrowLeft, ArrowRight, Camera, ImageIcon, Loader2, Upload, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 import wingManApi from '@/lib/axios';
-import { getBaseUrl } from '@/lib/utils/utilities';
 
 export interface UploadResponse {
   readonly fileName: string;
@@ -30,6 +30,8 @@ export default function ProfileImageStep({
   setIsLoading,
   userData
 }: Readonly<ProfileImageStepProperties>) {
+  const t = useTranslations('setup.profileImage');
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<string>('');
@@ -37,31 +39,36 @@ export default function ProfileImageStep({
 
   const upload = useUpload();
   useEffect(() => {
-    setPreviewUrl(
-      `https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${userData?.profileImage}`
-    );
+    if (userData?.profileImage) {
+      setPreviewUrl(
+        `https://eu2.contabostorage.com/a694c4e82ef342c1a1413e1459bf9cdb:wingman/public/${userData?.profileImage}`
+      );
+    }
   }, []);
 
-  const handleFileSelect = useCallback((file: File) => {
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setUploadError('Please select an image file');
-      return;
-    }
+  const handleFileSelect = useCallback(
+    (file: File) => {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setUploadError(t('validation.imageTypeRequired'));
+        return;
+      }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setUploadError('File size must be less than 5MB');
-      return;
-    }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setUploadError(t('validation.fileSizeTooLarge'));
+        return;
+      }
 
-    setUploadError('');
-    setSelectedFile(file);
+      setUploadError('');
+      setSelectedFile(file);
 
-    // Create preview URL
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-  }, []);
+      // Create preview URL
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    },
+    [t]
+  );
 
   const handleDrag = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -135,7 +142,7 @@ export default function ProfileImageStep({
       onNext();
     } catch (error) {
       console.error('Error uploading profile image:', error);
-      setUploadError('Failed to upload image. Please try again.');
+      setUploadError(t('uploadError'));
     } finally {
       setIsLoading(false);
     }
@@ -148,11 +155,9 @@ export default function ProfileImageStep({
         <div className='bg-primary/10 mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl'>
           <Camera className='text-primary h-8 w-8' />
         </div>
-        <h2 className='text-foreground mb-3 text-2xl font-bold sm:text-3xl'>
-          Add your profile picture
-        </h2>
+        <h2 className='text-foreground mb-3 text-2xl font-bold sm:text-3xl'>{t('title')}</h2>
         <p className='text-muted-foreground mx-auto max-w-md text-base sm:text-lg'>
-          Upload a professional photo to help clients recognize you. This step is optional.
+          {t('description')}
         </p>
       </div>
 
@@ -167,7 +172,7 @@ export default function ProfileImageStep({
                   width={32}
                   height={32}
                   src={previewUrl}
-                  alt='Profile preview'
+                  alt={t('altText')}
                   className='h-full w-full object-cover transition-transform group-hover:scale-105'
                 />
               </div>
@@ -220,17 +225,17 @@ export default function ProfileImageStep({
 
                 <div>
                   <p className='text-foreground mb-2 text-xl font-semibold'>
-                    {dragActive ? 'Drop your photo here' : 'Drop your photo here'}
+                    {dragActive ? t('dropHere') : t('uploadPrompt')}
                   </p>
-                  <p className='text-muted-foreground mb-6'>or click to browse files</p>
+                  <p className='text-muted-foreground mb-6'>{t('clickToBrowse')}</p>
 
                   <div className='bg-primary hover:bg-primary/90 text-primary-foreground inline-flex items-center space-x-3 rounded-xl px-6 py-3 font-medium shadow-lg transition-all hover:scale-105'>
                     <Upload className='h-5 w-5' />
-                    <span>Choose File</span>
+                    <span>{t('chooseFile')}</span>
                   </div>
                 </div>
 
-                <p className='text-muted-foreground text-sm'>PNG, JPG, GIF up to 5MB</p>
+                <p className='text-muted-foreground text-sm'>{t('supportedFormats')}</p>
               </div>
             </div>
           )}
@@ -275,7 +280,7 @@ export default function ProfileImageStep({
           className='text-muted-foreground hover:text-foreground hover:bg-muted/50 inline-flex items-center space-x-2 rounded-lg px-4 py-2 transition-colors'
         >
           <ArrowLeft className='h-4 w-4' />
-          <span>Back</span>
+          <span>{t('back')}</span>
         </button>
 
         <div className='flex items-center space-x-4'>
@@ -287,11 +292,11 @@ export default function ProfileImageStep({
             {isLoading ? (
               <>
                 <Loader2 className='h-4 w-4 animate-spin' />
-                <span>Uploading...</span>
+                <span>{t('uploading')}</span>
               </>
             ) : (
               <>
-                <span>Continue</span>
+                <span>{t('continue')}</span>
                 <ArrowRight className='h-4 w-4' />
               </>
             )}

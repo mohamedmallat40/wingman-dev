@@ -2,30 +2,11 @@
 
 import React, { useEffect, useState } from 'react';
 
-import { IUserProfile } from '@root/modules/profile/types';
-import { ArrowLeft, ArrowRight, Bell, Check, Globe, Loader2, Mail, Search } from 'lucide-react';
+import { type IUserProfile } from '@root/modules/profile/types';
+import { ArrowLeft, ArrowRight, Bell, Check, Globe, Loader2, Mail } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 import wingManApi from '@/lib/axios';
-
-// Define notification types
-const NOTIFICATION_TYPES = {
-  NEW_OPPORTUNITIES: {
-    title: 'New Opportunities',
-    description: 'Get notified when new job opportunities match your profile'
-  },
-  APPLICATION_UPDATES: {
-    title: 'Application Updates',
-    description: 'Receive updates on your job applications'
-  },
-  MESSAGES: {
-    title: 'Messages',
-    description: 'Get notified when you receive new messages'
-  },
-  WEEKLY_DIGEST: {
-    title: 'Weekly Digest',
-    description: 'Receive a weekly summary of your activity'
-  }
-};
 
 interface CategoriesPreferencesProperties {
   onComplete: () => void;
@@ -53,9 +34,9 @@ export default function CategoriesPreferencesStep({
   onPrevious,
   isLoading,
   setIsLoading,
-  userData,
-  setUserData
+  userData
 }: Readonly<CategoriesPreferencesProperties>) {
+  const t = useTranslations();
   const [currentStep, setCurrentStep] = useState<'categories' | 'notifications'>('categories');
 
   // Categories state
@@ -69,6 +50,39 @@ export default function CategoriesPreferencesStep({
     []
   );
   const [loadingPreferences, setLoadingPreferences] = useState(true);
+
+  // Define notification types with translations
+  const getNotificationTypeInfo = (type: string) => {
+    const typeKey = type as keyof typeof notificationTypes;
+    const notificationTypes = {
+      NEW_OPPORTUNITIES: {
+        title: t('setup.notifications.types.NEW_OPPORTUNITIES.title'),
+        description: t('setup.notifications.types.NEW_OPPORTUNITIES.description')
+      },
+      APPLICATION_UPDATES: {
+        title: t('setup.notifications.types.APPLICATION_UPDATES.title'),
+        description: t('setup.notifications.types.APPLICATION_UPDATES.description')
+      },
+      MESSAGES: {
+        title: t('setup.notifications.types.MESSAGES.title'),
+        description: t('setup.notifications.types.MESSAGES.description')
+      },
+      WEEKLY_DIGEST: {
+        title: t('setup.notifications.types.WEEKLY_DIGEST.title'),
+        description: t('setup.notifications.types.WEEKLY_DIGEST.description')
+      }
+    };
+
+    return (
+      notificationTypes[typeKey] || {
+        title: type
+          .replace('_', ' ')
+          .toLowerCase()
+          .replaceAll(/\b\w/g, (l) => l.toUpperCase()),
+        description: `Manage ${type.toLowerCase().replace('_', ' ')} notifications`
+      }
+    );
+  };
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -120,7 +134,7 @@ export default function CategoriesPreferencesStep({
   const handleCategoriesNext = async () => {
     // Validate at least one category is selected
     if (selectedCategories.length === 0) {
-      setCategoryError('Please select at least one category to continue.');
+      setCategoryError(t('setup.categories.errorRequired'));
       return;
     }
 
@@ -182,13 +196,12 @@ export default function CategoriesPreferencesStep({
       <div className='rounded-lg border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800'>
         <div className='mb-8'>
           <h2 className='mb-2 text-2xl font-bold text-gray-900 dark:text-white'>
-            Choose your categories
+            {t('setup.categories.title')}
           </h2>
           <p className='text-gray-600 dark:text-gray-300'>
-            Select the categories that best match your expertise. This helps us show you relevant
-            opportunities.{' '}
+            {t('setup.categories.description')}{' '}
             <span className='font-medium text-gray-900 dark:text-white'>
-              You must select at least one category.
+              {t('setup.categories.descriptionRequired')}
             </span>
           </p>
         </div>
@@ -197,7 +210,9 @@ export default function CategoriesPreferencesStep({
           <div className='flex items-center justify-center py-12'>
             <div className='text-center'>
               <Loader2 className='mx-auto mb-4 h-8 w-8 animate-spin text-blue-600' />
-              <p className='text-gray-600 dark:text-gray-300'>Loading categories...</p>
+              <p className='text-gray-600 dark:text-gray-300'>
+                {t('setup.categories.loadingCategories')}
+              </p>
             </div>
           </div>
         ) : (
@@ -213,8 +228,7 @@ export default function CategoriesPreferencesStep({
             {selectedCategories.length > 0 && (
               <div className='rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-400 dark:bg-blue-900/30'>
                 <p className='text-sm text-blue-700 dark:text-blue-300'>
-                  {selectedCategories.length}{' '}
-                  {selectedCategories.length === 1 ? 'category' : 'categories'} selected
+                  {t('setup.categories.selectedCount', { count: selectedCategories.length })}
                 </p>
               </div>
             )}
@@ -263,7 +277,9 @@ export default function CategoriesPreferencesStep({
                 ))
               ) : (
                 <div className='col-span-2 py-8 text-center'>
-                  <p className='text-gray-500 dark:text-gray-400'>No categories found.</p>
+                  <p className='text-gray-500 dark:text-gray-400'>
+                    {t('setup.categories.noCategoriesFound')}
+                  </p>
                 </div>
               )}
             </div>
@@ -277,7 +293,7 @@ export default function CategoriesPreferencesStep({
             className='inline-flex items-center space-x-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-300 dark:hover:text-white'
           >
             <ArrowLeft className='h-4 w-4' />
-            <span>Back</span>
+            <span>{t('setup.actions.back')}</span>
           </button>
 
           <button
@@ -288,11 +304,11 @@ export default function CategoriesPreferencesStep({
             {isLoading ? (
               <>
                 <Loader2 className='h-4 w-4 animate-spin' />
-                <span>Saving...</span>
+                <span>{t('setup.categories.saving')}</span>
               </>
             ) : (
               <>
-                <span>Continue</span>
+                <span>{t('setup.actions.continue')}</span>
                 <ArrowRight className='h-4 w-4' />
               </>
             )}
@@ -307,19 +323,18 @@ export default function CategoriesPreferencesStep({
     <div className='rounded-lg border border-gray-200 bg-white p-8 shadow-sm dark:border-gray-700 dark:bg-gray-800'>
       <div className='mb-8'>
         <h2 className='mb-2 text-2xl font-bold text-gray-900 dark:text-white'>
-          Notification preferences
+          {t('setup.notifications.title')}
         </h2>
-        <p className='text-gray-600 dark:text-gray-300'>
-          Choose how you'd like to be notified about important updates. You can change these
-          settings later.
-        </p>
+        <p className='text-gray-600 dark:text-gray-300'>{t('setup.notifications.description')}</p>
       </div>
 
       {loadingPreferences ? (
         <div className='flex items-center justify-center py-12'>
           <div className='text-center'>
             <Loader2 className='mx-auto mb-4 h-8 w-8 animate-spin text-blue-600' />
-            <p className='text-gray-600 dark:text-gray-300'>Loading notification preferences...</p>
+            <p className='text-gray-600 dark:text-gray-300'>
+              {t('setup.notifications.loadingPreferences')}
+            </p>
           </div>
         </div>
       ) : (
@@ -328,26 +343,22 @@ export default function CategoriesPreferencesStep({
             <div className='flex items-center space-x-4'>
               <div className='flex items-center space-x-2'>
                 <Mail className='h-5 w-5 text-gray-600 dark:text-gray-300' />
-                <span className='text-sm font-medium text-gray-700 dark:text-gray-200'>Email</span>
+                <span className='text-sm font-medium text-gray-700 dark:text-gray-200'>
+                  {t('setup.notifications.preferences.email')}
+                </span>
               </div>
               <div className='flex items-center space-x-2'>
                 <Globe className='h-5 w-5 text-gray-600 dark:text-gray-300' />
-                <span className='text-sm font-medium text-gray-700 dark:text-gray-200'>Web</span>
+                <span className='text-sm font-medium text-gray-700 dark:text-gray-200'>
+                  {t('setup.notifications.preferences.web')}
+                </span>
               </div>
             </div>
           </div>
 
           <div className='space-y-4'>
             {notificationPreferences.map((preference) => {
-              const typeInfo = NOTIFICATION_TYPES[
-                preference.type as keyof typeof NOTIFICATION_TYPES
-              ] || {
-                title: preference.type
-                  .replace('_', ' ')
-                  .toLowerCase()
-                  .replace(/\b\w/g, (l) => l.toUpperCase()),
-                description: `Manage ${preference.type.toLowerCase().replace('_', ' ')} notifications`
-              };
+              const typeInfo = getNotificationTypeInfo(preference.type);
 
               return (
                 <div
@@ -387,7 +398,9 @@ export default function CategoriesPreferencesStep({
                           </button>
                           <div className='flex items-center space-x-1'>
                             <Mail className='h-4 w-4 text-gray-500 dark:text-gray-400' />
-                            <span className='text-sm text-gray-700 dark:text-gray-200'>Email</span>
+                            <span className='text-sm text-gray-700 dark:text-gray-200'>
+                              {t('setup.notifications.preferences.email')}
+                            </span>
                           </div>
                         </div>
 
@@ -411,7 +424,9 @@ export default function CategoriesPreferencesStep({
                           </button>
                           <div className='flex items-center space-x-1'>
                             <Globe className='h-4 w-4 text-gray-500 dark:text-gray-400' />
-                            <span className='text-sm text-gray-700 dark:text-gray-200'>Web</span>
+                            <span className='text-sm text-gray-700 dark:text-gray-200'>
+                              {t('setup.notifications.preferences.web')}
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -427,7 +442,7 @@ export default function CategoriesPreferencesStep({
             <div className='flex items-center space-x-2'>
               <Check className='h-5 w-5 text-blue-600' />
               <p className='text-sm text-blue-700 dark:text-blue-300'>
-                You're almost done! Your notification preferences will be saved.
+                {t('setup.notifications.summaryMessage')}
               </p>
             </div>
           </div>
@@ -443,7 +458,7 @@ export default function CategoriesPreferencesStep({
           className='inline-flex items-center space-x-2 text-gray-600 transition-colors hover:text-gray-800 dark:text-gray-300 dark:hover:text-white'
         >
           <ArrowLeft className='h-4 w-4' />
-          <span>Back</span>
+          <span>{t('setup.actions.back')}</span>
         </button>
 
         <button
@@ -454,12 +469,12 @@ export default function CategoriesPreferencesStep({
           {isLoading ? (
             <>
               <Loader2 className='h-4 w-4 animate-spin' />
-              <span>Completing Setup...</span>
+              <span>{t('setup.actions.completingSetup')}</span>
             </>
           ) : (
             <>
               <Check className='h-4 w-4' />
-              <span>Complete Setup</span>
+              <span>{t('setup.actions.completeSetup')}</span>
             </>
           )}
         </button>
