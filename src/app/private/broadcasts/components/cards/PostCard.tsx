@@ -256,16 +256,16 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
               {/* Author Info & Post Metadata */}
               <div className='min-w-0 flex-1'>
-                <div className='flex flex-wrap items-center gap-2 mb-1'>
-                  <h3 className='text-foreground truncate font-semibold text-base'>
+                <div className='flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1'>
+                  <h3 className='text-foreground truncate font-semibold text-sm sm:text-base'>
                     {safeOwner.firstName} {safeOwner.lastName}
                   </h3>
                   {safeOwner.userName && (
-                    <span className='text-foreground-500 text-sm'>@{safeOwner.userName}</span>
+                    <span className='text-foreground-500 text-xs sm:text-sm'>@{safeOwner.userName}</span>
                   )}
-                  <span className='text-foreground-400 text-sm'>·</span>
+                  <span className='text-foreground-400 text-xs sm:text-sm'>·</span>
                   <time
-                    className='text-foreground-500 text-sm'
+                    className='text-foreground-500 text-xs sm:text-sm'
                     dateTime={safeCreatedAt}
                     title={new Date(safeCreatedAt).toLocaleString()}
                   >
@@ -273,7 +273,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   </time>
                 </div>
 
-                <div className='flex flex-wrap items-center gap-2'>
+                <div className='flex flex-wrap items-center gap-1.5 sm:gap-2'>
                   <Chip
                     size='sm'
                     color={postTypeColor as any}
