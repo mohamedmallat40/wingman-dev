@@ -89,41 +89,27 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
 
   const handleSave = useCallback(
     (postId: string, isCurrentlySaved: boolean) => {
-      if (isCurrentlySaved) {
-        unsavePost.mutate(postId, {
-          onSuccess: () => {
-            addToast({
-              title: t('post.actions.unsave'),
-              description: 'Post removed from saved',
-              color: 'default'
-            });
-          },
-          onError: () => {
-            addToast({
-              title: 'Error',
-              description: 'Failed to unsave post',
-              color: 'danger'
-            });
-          }
-        });
-      } else {
-        savePost.mutate(postId, {
-          onSuccess: () => {
-            addToast({
-              title: t('post.actions.save'),
-              description: 'Post saved for later',
-              color: 'success'
-            });
-          },
-          onError: () => {
-            addToast({
-              title: 'Error',
-              description: 'Failed to save post',
-              color: 'danger'
-            });
-          }
-        });
-      }
+      const mutation = isCurrentlySaved ? unsavePost : savePost;
+      const action = isCurrentlySaved ? 'unsave' : 'save';
+      const successMessage = isCurrentlySaved ? 'Post removed from saved' : 'Post saved for later';
+      const errorMessage = isCurrentlySaved ? 'Failed to unsave post' : 'Failed to save post';
+
+      mutation.mutate(postId, {
+        onSuccess: () => {
+          addToast({
+            title: t(`post.actions.${action}`),
+            description: successMessage,
+            color: isCurrentlySaved ? 'default' : 'success'
+          });
+        },
+        onError: () => {
+          addToast({
+            title: 'Error',
+            description: errorMessage,
+            color: 'danger'
+          });
+        }
+      });
     },
     [savePost, unsavePost, t]
   );
