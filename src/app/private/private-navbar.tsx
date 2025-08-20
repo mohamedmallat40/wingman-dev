@@ -117,7 +117,7 @@ export default function PrivateNavBar() {
 
         {/* Desktop Navigation - Enhanced Layout */}
         <NavbarContent className='hidden w-full max-w-none gap-2 xl:flex' justify='start'>
-          <div className='from-default-100/40 to-default-50/25 border-divider/25 shadow-small flex h-11 items-center gap-2 rounded-2xl border bg-gradient-to-r px-3 backdrop-blur-md'>
+          <div className='bg-default-100/30 border-divider/30 flex h-11 items-center gap-2 rounded-2xl border px-3'>
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
