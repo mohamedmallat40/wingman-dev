@@ -325,7 +325,7 @@ export default function TopicSidebar({
             size='sm'
             classNames={{
               inputWrapper:
-                'bg-default-100 dark:bg-default-50 border-default-300 hover:border-primary focus-within:border-primary'
+                'bg-default-100/50 dark:bg-default-50/50 border-default-200 hover:border-primary/50 focus-within:border-primary rounded-[12px] backdrop-blur-sm'
             }}
           />
         </div>
