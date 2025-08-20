@@ -223,15 +223,15 @@ const PostCard: React.FC<PostCardProps> = React.memo(
         <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
 
         <Card
-          className={`border-default-200/50 bg-content1/80 backdrop-blur-xl rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)] transition-all duration-300 hover:border-primary/20 ${className}`}
+          className={`border-default-200/50 bg-content1/80 rounded-[12px] sm:rounded-[20px] shadow-[0px_4px_16px_rgba(0,0,0,0.06)] sm:shadow-[0px_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0px_8px_24px_rgba(0,0,0,0.10)] sm:hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)] transition-all duration-300 hover:border-primary/20 ${className}`}
           role='article'
           aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
         >
-          <CardHeader className='pb-4'>
-            <div className='flex w-full items-start gap-4'>
+          <CardHeader className='pb-3 sm:pb-4'>
+            <div className='flex w-full items-start gap-3 sm:gap-4'>
               {/* Author Avatar */}
               <div className='relative'>
-                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/10 ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/25">
+                <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden ring-1 sm:ring-2 ring-primary/10 ring-offset-1 sm:ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/25">
                   {safeOwner.profileImage ? (
                     <OptimizedImage
                       src={getImageUrl(safeOwner.profileImage)}
@@ -248,8 +248,8 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   )}
                 </div>
                 {safeOwner.isMailVerified && (
-                  <div className='bg-success absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background shadow-sm'>
-                    <Icon icon='solar:shield-check-bold' className='h-3 w-3 text-white' />
+                  <div className='bg-success absolute -right-0.5 -bottom-0.5 sm:-right-1 sm:-bottom-1 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full border-1 sm:border-2 border-background shadow-sm'>
+                    <Icon icon='solar:shield-check-bold' className='h-2 w-2 sm:h-3 sm:w-3 text-white' />
                   </div>
                 )}
               </div>
