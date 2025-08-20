@@ -212,7 +212,7 @@ export default function BroadcastsPage() {
                   <Icon icon='solar:widget-4-linear' className='h-4 w-4 text-primary' />
                   {t('sidebar.quickActions')}
                 </h3>
-                <div className='space-y-3'>
+                <div className='space-y-2'>
                   <Button
                     variant='flat'
                     size='sm'
