@@ -44,7 +44,7 @@ export const useTeamDetails = (teamId: string): UseTeamDetailsReturn => {
   }, [fetchTeamDetails]);
 
   useEffect(() => {
-    fetchTeamDetails();
+    void fetchTeamDetails();
   }, [fetchTeamDetails]);
 
   return {

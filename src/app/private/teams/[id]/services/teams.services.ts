@@ -10,5 +10,13 @@ export const teamService = {
     } catch {
       throw new Error('Failed to fetch team details');
     }
+  },
+
+  deleteTeam: async (teamId: string): Promise<void> => {
+    try {
+      await wingManApi.delete(`/groups/group/${teamId}`);
+    } catch {
+      throw new Error('Failed to delete team');
+    }
   }
 };

@@ -7,6 +7,13 @@ export interface Group {
   tools: Tool[];
   owner: User;
   connections: Connection[];
+  skills: Skill[];
+  tagline: string;
+  archive: boolean;
+  icon: string;
+  createdAt: string;
+  invitations: User[];
+  type: boolean;
 }
 
 export interface Connection {
@@ -103,7 +110,7 @@ export enum Currency {
 
 export interface Skill {
   id: string;
-  name: string;
+  key: string;
   level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
 }
 

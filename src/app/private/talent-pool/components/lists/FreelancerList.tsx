@@ -277,7 +277,7 @@ const FreelancerList: React.FC<FreelancerListProperties> = ({
   }, [freelancers, searchQuery]);
 
   const filteredFreelancers = useMemo(() => {
-    let result = searchFilteredFreelancers;
+    const result = searchFilteredFreelancers;
     return result;
   }, [searchFilteredFreelancers]);
 
@@ -405,9 +405,9 @@ const FreelancerList: React.FC<FreelancerListProperties> = ({
               duration: 0.2,
               delay: isInitialLoad
                 ? index * 0.02
-                : index >= previousCount
+                : (index >= previousCount
                   ? (index - previousCount) * 0.02
-                  : 0
+                  : 0)
             }}
           >
             <TalentCard
