@@ -344,7 +344,7 @@ export default function TopicSidebar({
                 }}
               >
                   <Card
-                    className={`relative w-full cursor-pointer border transition-all duration-300 hover:z-20 hover:-translate-y-2 hover:scale-[1.02] min-h-[120px] rounded-[16px] backdrop-blur-sm ${
+                    className={`relative w-full cursor-pointer border transition-all duration-300 hover:z-20 hover:-translate-y-1 hover:scale-[1.01] min-h-[100px] rounded-[12px] ${
                       selectedSubcast === subcast.id
                         ? 'border-primary/30 bg-primary/10 ring-primary/20 shadow-[0px_16px_40px_rgba(59,130,246,0.15)] ring-2'
                         : subcast.isFollowing
