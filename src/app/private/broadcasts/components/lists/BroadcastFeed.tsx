@@ -193,7 +193,10 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
         {posts.map((post, index) => (
           <div
             key={post.id}
-            className="opacity-100"
+            className="opacity-100 animate-in fade-in slide-in-from-bottom-4 duration-500"
+            style={{
+              animationDelay: `${index * 100}ms`
+            }}
           >
             <PostCard
               post={post}
