@@ -233,7 +233,7 @@ export default function BroadcastsPage() {
                       <Icon icon='solar:archive-linear' className='h-4 w-4' />
                     }
                     onPress={() => handleViewChange('saved')}
-                    className='justify-start h-10 hover:bg-default-100 transition-all duration-200'
+                    className='justify-start h-9 hover:bg-default-100 transition-all duration-200'
                   >
                     {t('sidebar.savedPosts')}
                   </Button>
@@ -244,7 +244,7 @@ export default function BroadcastsPage() {
                     startContent={
                       <Icon icon='solar:users-group-rounded-linear' className='h-4 w-4' />
                     }
-                    className='justify-start h-10 hover:bg-default-100 transition-all duration-200'
+                    className='justify-start h-9 hover:bg-default-100 transition-all duration-200'
                   >
                     {t('sidebar.following')}
                   </Button>
