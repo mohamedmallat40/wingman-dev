@@ -66,17 +66,17 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
       {
         id: 'linkedin',
         name: 'LinkedIn',
-        icon: 'mdi:linkedin',
+        icon: 'skill-icons:linkedin',
         color: '#0077b5',
         shareUrl: (url, text) =>
-          `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+          `https://www.linkedin.com/feed/update/urn:li:share/?url=${encodeURIComponent(url)}&title=${encodeURIComponent(post.title || 'Wingman Broadcast')}&summary=${encodeURIComponent(text)}`,
         description: 'Share with your professional network'
       },
       {
         id: 'twitter',
-        name: 'Twitter/X',
-        icon: 'mdi:twitter',
-        color: '#1da1f2',
+        name: 'X (Twitter)',
+        icon: 'skill-icons:twitter',
+        color: '#000000',
         shareUrl: (url, text) =>
           `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
         description: 'Share with your followers'
@@ -84,10 +84,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
       {
         id: 'facebook',
         name: 'Facebook',
-        icon: 'mdi:facebook',
+        icon: 'skill-icons:facebook',
         color: '#1877f2',
         shareUrl: (url, text) =>
-          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
         description: 'Share on your timeline'
       },
       {
@@ -182,12 +182,16 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
   return (
     <Modal isOpen={isOpen} onClose={onClose} size='2xl' scrollBehavior='inside'>
       <ModalContent>
-        <ModalHeader className='flex flex-col gap-1'>
-          <div className='flex items-center gap-2'>
-            <Icon icon='solar:share-bold' className='text-primary h-5 w-5' />
-            <h2 className='text-xl font-semibold'>{t('title')}</h2>
+        <ModalHeader className='flex flex-col gap-1 pb-4'>
+          <div className='flex items-center gap-3'>
+            <div className='bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full'>
+              <Icon icon='solar:share-bold' className='text-primary h-5 w-5' />
+            </div>
+            <div>
+              <h2 className='text-xl font-bold tracking-tight'>{t('title')}</h2>
+              <p className='text-foreground-500 text-sm'>{t('subtitle')}</p>
+            </div>
           </div>
-          <p className='text-foreground-500 text-sm'>{t('subtitle')}</p>
         </ModalHeader>
 
         <ModalBody className='gap-6'>
