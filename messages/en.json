@@ -1185,7 +1185,10 @@
     }
   },
   "ERRORS": {
-    "USER_DOES_NOT_EXIST": "User Does Not Exist"
+    "USER_DOES_NOT_EXIST": "User Does Not Exist",
+    "unknown_error": "An unexpected error occurred",
+    "Network error occurred": "Network connection error"
+
   },
 
   "setup": {

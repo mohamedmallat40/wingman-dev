@@ -1235,7 +1235,10 @@
     }
   },
   "ERRORS": {
-    "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet"
+    "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet",
+    "unknown_error": "Er is een onverwachte fout opgetreden",
+    "Network error occurred": "Netwerkverbindingsfout"
+
   },
   "setup": {
     "categories": {

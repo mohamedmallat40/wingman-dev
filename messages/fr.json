@@ -1205,7 +1205,10 @@
     }
   },
   "ERRORS": {
-    "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas"
+    "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas",
+    "unknown_error": "Une erreur inattendue s'est produite",
+    "Network error occurred": "Erreur de connexion réseau"
+
   },
    "setup": {
     "welcome": {
