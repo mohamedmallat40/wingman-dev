@@ -4,7 +4,7 @@ import React from 'react';
 
 import { Avatar, Button, Card, CardBody, CardHeader, Chip, Progress } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { motion } from 'framer-motion';
+// Removed framer-motion for performance
 import { useTranslations } from 'next-intl';
 
 import DashboardLayout from '@/components/layouts/dashboard-layout';
@@ -182,9 +182,9 @@ const DashboardPage = () => {
         </div>
       }
     >
-      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
+      <div className='mx-auto w-full space-y-8 px-4 py-6 sm:px-6 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
         {/* Quick Actions */}
-        <motion.div
+        <div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6 }}
@@ -194,27 +194,16 @@ const DashboardPage = () => {
             {t('quickActions')}
           </h2>
           <QuickActions />
-        </motion.div>
+        </div>
 
         {/* Stats Grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className='mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4'
-        >
+        <div className='mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4'>
           {statsData.map((stat, index) => {
             const variant = colorVariants[stat.color as keyof typeof colorVariants];
 
             return (
-              <motion.div
-                key={stat.title}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + index * 0.1, duration: 0.4 }}
-                whileHover={{ y: -8, scale: 1.02 }}
-              >
-                <Card className='dark:bg-background/90 border-default-200/50 rounded-[20px] border bg-white/90 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl transition-all duration-300 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)]'>
+              <div key={stat.title}>
+                <Card className='dark:bg-background/90 border-default-200/50 rounded-[20px] border bg-white/90 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-sm transition-shadow duration-300 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)]'>
                   <CardBody className='p-6'>
                     <div className='mb-4 flex items-center justify-between'>
                       <div
@@ -244,15 +233,15 @@ const DashboardPage = () => {
                     <div className='text-default-600 text-sm'>{stat.title}</div>
                   </CardBody>
                 </Card>
-              </motion.div>
+              </div>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Main Content Grid */}
         <div className='grid gap-8 lg:grid-cols-3'>
           {/* Recent Projects */}
-          <motion.div
+          <div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
@@ -277,7 +266,7 @@ const DashboardPage = () => {
               <CardBody className='p-6 pt-0'>
                 <div className='space-y-4'>
                   {recentProjects.map((project, index) => (
-                    <motion.div
+                    <div
                       key={project.id}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -332,15 +321,15 @@ const DashboardPage = () => {
                         </span>
                         <span className='text-foreground font-semibold'>{project.budget}</span>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </CardBody>
             </Card>
-          </motion.div>
+          </div>
 
           {/* Recent Activity */}
-          <motion.div
+          <div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.9, duration: 0.6 }}
@@ -357,7 +346,7 @@ const DashboardPage = () => {
                     const variant = colorVariants[activity.color as keyof typeof colorVariants];
 
                     return (
-                      <motion.div
+                      <div
                         key={activity.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -376,17 +365,17 @@ const DashboardPage = () => {
                           <p className='text-default-600 mb-1 text-xs'>{activity.description}</p>
                           <p className='text-default-400 text-xs'>{activity.time}</p>
                         </div>
-                      </motion.div>
+                      </div>
                     );
                   })}
                 </div>
               </CardBody>
             </Card>
-          </motion.div>
+          </div>
         </div>
 
         {/* My Challenges Section */}
-        <motion.div
+        <div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.0, duration: 0.6 }}
@@ -417,7 +406,7 @@ const DashboardPage = () => {
             <CardBody className='p-6 pt-0'>
               <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
                 {myChallenges.map((challenge, index) => (
-                  <motion.div
+                  <div
                     key={challenge.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -478,12 +467,12 @@ const DashboardPage = () => {
                         className='max-w-full'
                       />
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </CardBody>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </DashboardLayout>
   );

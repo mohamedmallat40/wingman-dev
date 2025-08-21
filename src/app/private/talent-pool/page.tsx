@@ -188,7 +188,12 @@ const TalentPoolPage: React.FC = () => {
   };
 
   // Action items with handlers
-  const actionItems = ACTION_ITEMS.map((item) => ({
+  const actionItems = ACTION_ITEMS.filter((item) => {
+    if (item.key === 'create-team') {
+      return activeTab === 'teams';
+    }
+    return true;
+  }).map((item) => ({
     ...item,
     onClick:
       item.key === 'create-team'
@@ -216,7 +221,7 @@ const TalentPoolPage: React.FC = () => {
                 action.icon ? <Icon icon={action.icon} className='h-4 w-4' /> : undefined
               }
               onPress={() => {
-                action.onClick?.();
+                action.onClick();
               }}
               className='transition-all duration-200 hover:shadow-md'
             >
@@ -226,7 +231,7 @@ const TalentPoolPage: React.FC = () => {
         </div>
       }
     >
-      <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
+      <div className='mx-auto w-full space-y-8 px-4 py-6 sm:px-6 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
         {/* Enhanced Tabs Navigation with Integrated Search */}
         <div className='space-y-6'>
           <TalentPoolTabs

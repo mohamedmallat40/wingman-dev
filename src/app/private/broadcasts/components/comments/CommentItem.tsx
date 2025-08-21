@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 import type { CommentAction, CommentItemProps } from '../../types/comments';
 
@@ -8,12 +8,14 @@ import { Avatar, Button } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
 
 import { getImageUrl } from '@/lib/utils/utilities';
 
 import { useCommentUI } from '../../hooks/useCommentUI';
 import { useMentionFormatting, useSmartTimeFormat } from '../../utils/timeFormatting';
 import { CommentInput } from './CommentInput';
+import { DeleteConfirmModal } from './DeleteConfirmModal';
 
 export const CommentItem: React.FC<CommentItemProps> = ({
   comment,
@@ -27,9 +29,13 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   enableRichText = false
 }) => {
   const t = useTranslations('comments');
+  const { profile: currentUser } = useBasicProfile();
   const { uiState, actions: uiActions } = useCommentUI();
   const { formatTimeAgo } = useSmartTimeFormat();
   const { formatMentionsToHTML } = useMentionFormatting();
+  
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const commentUI = uiState[comment.id] || {
     isExpanded: false,
@@ -43,13 +49,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   const canReply = currentDepth < maxDepth;
   const hasReplies = comment.replies && comment.replies.length > 0;
   const isNested = currentDepth > 0;
+  const isOwner = currentUser?.id === comment.owner?.id;
 
   // Format content with mentions - safely handle undefined content
   const safeContent = comment.response || comment.content || '';
   const formattedContent = formatMentionsToHTML(safeContent);
 
   // Map API owner to our author format
-  const safeAuthor = comment.owner
+  const safeAuthor = comment.owner && comment.owner.firstName && comment.owner.lastName
     ? {
         id: comment.owner.id,
         username:
@@ -58,8 +65,15 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         displayName: `${comment.owner.firstName} ${comment.owner.lastName}`,
         avatarUrl: comment.owner.profileImage ? getImageUrl(comment.owner.profileImage) : null
       }
+    : currentUser && comment.owner?.id === currentUser.id
+    ? {
+        id: currentUser.id,
+        username: currentUser.userName || `${currentUser.firstName?.toLowerCase()}_${currentUser.lastName?.toLowerCase()}`,
+        displayName: `${currentUser.firstName} ${currentUser.lastName}`,
+        avatarUrl: currentUser.profileImage ? getImageUrl(currentUser.profileImage) : null
+      }
     : {
-        id: comment.authorId || 'unknown',
+        id: comment.authorId || comment.owner?.id || 'unknown',
         username: 'unknown',
         displayName: 'Unknown User',
         avatarUrl: null
@@ -70,7 +84,27 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   const repliesCount = comment.repliesCount || comment.replies?.length || 0;
 
   const handleAction = (action: CommentAction) => {
-    onAction(action, comment);
+    if (action === 'delete') {
+      setShowDeleteModal(true);
+    } else if (action === 'edit') {
+      // Set the edit input value to the current comment content and enable editing mode
+      uiActions.setEditInput(comment.id, safeContent);
+      uiActions.setEditing(comment.id, true);
+    } else {
+      onAction(action, comment);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      await onAction('delete', comment);
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const handleReplySubmit = (content: string, mentions?: string[]) => {
@@ -127,15 +161,17 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
       {/* Main Comment */}
       <div className={`flex gap-3 py-2`} style={{ marginLeft: `${currentDepth * 40}px` }}>
-        {/* Avatar */}
-        <Avatar
-          src={safeAuthor.avatarUrl || undefined}
-          name={safeAuthor.displayName}
-          size='sm'
-          className='h-8 w-8 flex-shrink-0'
-          showFallback
-          fallback={<Icon icon='solar:user-linear' className='text-default-500 h-4 w-4' />}
-        />
+        {/* Avatar - only show when not editing */}
+        {!commentUI.isEditing && (
+          <Avatar
+            src={safeAuthor.avatarUrl || undefined}
+            name={safeAuthor.displayName}
+            size='sm'
+            className='h-8 w-8 flex-shrink-0'
+            showFallback
+            fallback={<Icon icon='solar:user-linear' className='text-default-500 h-4 w-4' />}
+          />
+        )}
 
         {/* Content */}
         <div className='min-w-0 flex-1'>
@@ -192,19 +228,17 @@ export const CommentItem: React.FC<CommentItemProps> = ({
                 {isEdited && <span className='italic'>edited</span>}
               </div>
 
-              {/* Like/Actions Row */}
+              {/* Actions Row */}
               <div className='mt-2 flex items-center gap-4'>
-                <button
-                  onClick={() => handleAction('like')}
-                  className={`flex items-center gap-1 transition-colors ${
-                    comment.isLiked ? 'text-red-500' : 'text-default-500 hover:text-red-500'
-                  }`}
-                >
-                  <Icon
-                    icon={comment.isLiked ? 'solar:heart-bold' : 'solar:heart-linear'}
-                    className='h-4 w-4'
-                  />
-                </button>
+                {isOwner && (
+                  <button
+                    onClick={() => handleAction('delete')}
+                    className='text-default-500 hover:text-danger transition-colors'
+                    title='Delete comment'
+                  >
+                    <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
+                  </button>
+                )}
 
                 <button
                   onClick={() => uiActions.setReplying(comment.id, true)}
@@ -213,12 +247,15 @@ export const CommentItem: React.FC<CommentItemProps> = ({
                   <Icon icon='solar:chat-round-linear' className='h-4 w-4' />
                 </button>
 
-                <button
-                  onClick={() => handleAction('edit')}
-                  className='text-default-500 hover:text-default-700 transition-colors'
-                >
-                  <Icon icon='solar:pen-linear' className='h-4 w-4' />
-                </button>
+                {isOwner && (
+                  <button
+                    onClick={() => handleAction('edit')}
+                    className='text-default-500 hover:text-default-700 transition-colors'
+                    title='Edit comment'
+                  >
+                    <Icon icon='solar:pen-linear' className='h-4 w-4' />
+                  </button>
+                )}
               </div>
             </>
           )}
@@ -394,6 +431,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
+      />
     </div>
   );
 };

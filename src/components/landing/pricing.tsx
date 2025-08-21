@@ -136,7 +136,7 @@ export default function Pricing() {
                 </div>
               )}
               <Card
-                className={`bg-gradient-to-br backdrop-blur-xl ${plan.gradient} flex w-full flex-col rounded-[20px] border-2 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] transition-all duration-300 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)] ${plan.borderColor} ${
+                className={`bg-gradient-to-br backdrop-blur-xl ${plan.gradient} flex w-full flex-col rounded-[20px] border-2 shadow-[0px_8px_30px_rgba(0,0,0,0.08)] transition-shadow duration-300 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)] ${plan.borderColor} ${
                   plan.popular ? 'scale-105 shadow-[0px_20px_50px_rgba(59,130,246,0.15)]' : ''
                 }`}
               >

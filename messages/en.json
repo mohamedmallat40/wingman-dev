@@ -211,7 +211,11 @@
         "freelancers": "Individual professionals",
         "agencies": "Professional agencies",
         "teams": "Collaborative groups"
-      }
+      },
+      "allGroups": "All Teams",
+      "publicGroups": "Public Teams",
+      "privateGroups": "Private Teams",
+      "sharedWithMe": "Teams Shared With Me"
     },
     "search": {
       "button": "Search",
@@ -629,6 +633,10 @@
         "description": "Something went wrong while loading your broadcast feed. Please try again."
       }
     },
+    "saved": {
+      "title": "Saved Broadcasts",
+      "description": "Your saved broadcasts for later reading"
+    },
     "post": {
       "actions": {
         "like": "Like",
@@ -640,8 +648,8 @@
         "hideComments": "Hide Comments",
         "broadcast": "Broadcast",
         "share": "Share",
-        "bookmark": "Bookmark",
-        "unbookmark": "Remove bookmark",
+        "save": "Save",
+        "unsave": "Unsave",
         "edit": "Edit",
         "delete": "Delete",
         "viewPost": "View post",
@@ -877,8 +885,8 @@
     "tooltips": {
       "editPost": "Edit post",
       "deletePost": "Delete post",
-      "bookmark": "Bookmark",
-      "unbookmark": "Remove bookmark",
+      "save": "Save for later",
+      "unsave": "Remove from saved",
       "like": "Like this post",
       "unlike": "Unlike this post",
       "comment": "Comment on this post",

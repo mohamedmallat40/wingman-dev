@@ -6,11 +6,14 @@ import {
   deletePost,
   followTopic,
   getBroadcastFeed,
+  getSavedPosts,
   getTopics,
+  savePost,
   togglePostBookmark,
   togglePostLike,
   trackPostView,
   unfollowTopic,
+  unsavePost,
   updatePost
 } from '../services/broadcast.service';
 
@@ -30,9 +33,10 @@ export const useBroadcastFeed = (params: Omit<FeedParams, 'page'> = {}) => {
       }
       return undefined;
     },
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 15, // 15 minutes
+    staleTime: 1000 * 60 * 10, // 10 minutes - longer stale time
+    gcTime: 1000 * 60 * 30, // 30 minutes - longer cache time
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
     retry: false
   });
 };
@@ -48,8 +52,8 @@ export const useLikePost = () => {
   return useMutation({
     mutationFn: (postId: string) => togglePostLike(postId),
     onSuccess: (response, postId) => {
-      // Invalidate feed queries to refetch with updated like status
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
+      // Use optimistic updates instead of invalidation for better performance
+      // Only invalidate the specific post if needed
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
     onError: (error) => {
@@ -81,6 +85,134 @@ export const useBookmarkPost = () => {
 };
 
 /**
+ * Hook for saving posts
+ */
+export const useSavePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => savePost(postId),
+    onMutate: async (postId) => {
+      // Optimistically update to saved state immediately
+      queryClient.setQueriesData(
+        { queryKey: ['broadcasts', 'feed'] },
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((post: any) => 
+                post.id === postId ? { ...post, isSaved: true } : post
+              ) || []
+            }))
+          };
+        }
+      );
+    },
+    onSuccess: (response, postId) => {
+      // Don't refetch - trust the optimistic update
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'saved'] });
+    },
+    onError: (error, postId) => {
+      // Revert optimistic update on error
+      queryClient.setQueriesData(
+        { queryKey: ['broadcasts', 'feed'] },
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((post: any) => 
+                post.id === postId ? { ...post, isSaved: false } : post
+              ) || []
+            }))
+          };
+        }
+      );
+    },
+    retry: false
+  });
+};
+
+/**
+ * Hook for unsaving posts
+ */
+export const useUnsavePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (postId: string) => unsavePost(postId),
+    onMutate: async (postId) => {
+      // Optimistically update to unsaved state immediately
+      queryClient.setQueriesData(
+        { queryKey: ['broadcasts', 'feed'] },
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((post: any) => 
+                post.id === postId ? { ...post, isSaved: false } : post
+              ) || []
+            }))
+          };
+        }
+      );
+    },
+    onSuccess: (response, postId) => {
+      // Don't refetch - trust the optimistic update
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'saved'] });
+    },
+    onError: (error, postId) => {
+      // Revert optimistic update on error
+      queryClient.setQueriesData(
+        { queryKey: ['broadcasts', 'feed'] },
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            ...oldData,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              data: page.data?.map((post: any) => 
+                post.id === postId ? { ...post, isSaved: true } : post
+              ) || []
+            }))
+          };
+        }
+      );
+    },
+    retry: false
+  });
+};
+
+/**
+ * Hook for fetching saved posts
+ */
+export const useSavedPosts = (params: { page?: number; limit?: number; enabled?: boolean } = {}) => {
+  const { enabled = true, ...queryParams } = params;
+  return useInfiniteQuery({
+    queryKey: ['broadcasts', 'saved', queryParams],
+    queryFn: ({ pageParam = 1 }) => getSavedPosts({ ...queryParams, page: pageParam as number }),
+    initialPageParam: 1,
+    enabled,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage?.hasNextPage) {
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
+    staleTime: 1000 * 60 * 10, // 10 minutes - longer stale time
+    gcTime: 1000 * 60 * 30, // 30 minutes - longer cache time
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false
+  });
+};
+
+/**
  * Hook for tracking post views
  */
 export const useTrackPostView = () => {
@@ -103,11 +235,11 @@ export const useUpdatePost = () => {
     mutationFn: ({ postId, postData }: { postId: string; postData: CreatePostData }) =>
       updatePost(postId, postData),
     onSuccess: (response, { postId }) => {
-      // Only invalidate feed queries - no need to invalidate individual post query
+      // Invalidate both feed and specific post for content updates
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
+      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
     onError: (error) => {
-      console.error('Failed to update post:', error);
     },
     retry: 1
   });
@@ -127,7 +259,6 @@ export const useDeletePost = () => {
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'post', postId] });
     },
     onError: (error) => {
-      console.error('Failed to delete post:', error);
     },
     retry: false
   });
@@ -146,6 +277,52 @@ export const useTopics = () => {
     gcTime: 1000 * 60 * 30, // 30 minutes
     refetchOnWindowFocus: false,
     retry: 1
+  });
+};
+
+/**
+ * Hook for fetching followed topics
+ */
+export const useFollowedTopics = () => {
+  return useQuery({
+    queryKey: ['broadcasts', 'topics', 'followed'],
+    queryFn: () => getTopics(),
+    select: (data) => data?.filter((topic: any) => topic.isFollowed) || [],
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnWindowFocus: false,
+    retry: 1
+  });
+};
+
+/**
+ * Hook for fetching posts from followed topics
+ */
+export const useFollowingFeed = (params: Omit<FeedParams, 'page' | 'topics'> = {}) => {
+  const { data: followedTopics } = useFollowedTopics();
+  
+  const followedTopicIds = followedTopics?.map((topic: any) => topic.id) || [];
+  
+  return useInfiniteQuery({
+    queryKey: ['broadcasts', 'feed', 'following', followedTopicIds],
+    queryFn: ({ pageParam = 1 }) => getBroadcastFeed({ 
+      ...params, 
+      page: pageParam as number,
+      topics: followedTopicIds
+    }),
+    initialPageParam: 1,
+    enabled: followedTopicIds.length > 0,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage?.hasNextPage) {
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false
   });
 };
 
@@ -169,13 +346,12 @@ export const useFollowTopic = () => {
         );
       });
 
-      // Invalidate related queries
+      // Only invalidate topics query since we updated the cache optimistically
+      // Feed will automatically reflect changes due to the cache update
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'topics'] });
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
     },
     onError: (error) => {
       // Error handling can be done in the UI
-      console.error('Failed to follow topic:', error);
     },
     retry: 1
   });
@@ -201,13 +377,12 @@ export const useUnfollowTopic = () => {
         );
       });
 
-      // Invalidate related queries
+      // Only invalidate topics query since we updated the cache optimistically
+      // Feed will automatically reflect changes due to the cache update
       queryClient.invalidateQueries({ queryKey: ['broadcasts', 'topics'] });
-      queryClient.invalidateQueries({ queryKey: ['broadcasts', 'feed'] });
     },
     onError: (error) => {
       // Error handling can be done in the UI
-      console.error('Failed to unfollow topic:', error);
     },
     retry: 1
   });

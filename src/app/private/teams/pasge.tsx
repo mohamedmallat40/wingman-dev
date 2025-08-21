@@ -229,13 +229,13 @@ const TeamDetailsPage: React.FC = () => {
     >
       <div className='mx-auto w-full space-y-8 px-2 py-6 sm:px-4 md:px-6 xl:w-[70%] xl:px-0'>
         {/* Team Header */}
-        <TeamDetailsHeader
+        {/* <TeamDetailsHeader
           team={team}
           onBack={handleBack}
           onEdit={handleEditTeam}
           onJoin={handleJoinTeam}
           onConnectToOwner={handleConnectToOwner}
-        />
+        /> */}
 
         {/* Tabs Navigation */}
         <TeamDetailsTabs activeTab={activeTab} onTabChange={handleTabChange} team={team} />

@@ -190,22 +190,21 @@ const AgencyList: React.FC<AgencyListProperties> = ({
   }, [loadMore, hasNextPage, isLoadingMore, isLoading]);
 
   const searchFilteredAgencies = useMemo(() => {
-    return searchUtilities.searchAgencies(agencies, searchQuery || '') as User[];
-  }, [searchQuery]);
+    return searchUtilities.searchAgencies(agencies, searchQuery ?? '') as User[];
+  }, [agencies, searchQuery]);
 
   const filteredAgencies = useMemo(() => {
     const result = searchFilteredAgencies;
 
     return result;
-  }, [searchFilteredAgencies, filters]);
+  }, [searchFilteredAgencies]);
 
-  const handleRetry = () => {
-    fetchAgencies(1);
+  const handleRetry = async () => {
+    await fetchAgencies(1);
   };
 
-  const handleResetFilters = () => {
-    // This would typically be handled by parent component
-    fetchAgencies(1);
+  const handleResetFilters = async () => {
+    await fetchAgencies(1);
   };
 
   const handleViewProfile = (userId: string) => {

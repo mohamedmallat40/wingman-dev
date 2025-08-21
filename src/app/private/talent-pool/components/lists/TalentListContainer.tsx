@@ -9,22 +9,22 @@ import AgencyList from './AgencyList';
 import FreelancerList from './FreelancerList';
 import TeamList from './TeamList';
 
-interface CommonListProps {
+interface CommonListProperties {
   filters: TalentPoolFilters;
   searchQuery?: string;
   onViewProfile: (userId: string) => void;
   onConnect: (userId: string) => void;
 }
 
-interface FreelancerListProps extends CommonListProps {
+interface FreelancerListProperties extends CommonListProperties {
   onCountChange: (count: number) => void;
 }
 
-interface AgencyListProps extends CommonListProps {
+interface AgencyListProperties extends CommonListProperties {
   onCountChange: (count: number) => void;
 }
 
-interface TeamListProps {
+interface TeamListProperties {
   filters: TalentPoolFilters;
   searchQuery?: string;
   onViewTeam: (teamId: string) => void;
@@ -33,38 +33,44 @@ interface TeamListProps {
 }
 
 // Performance-optimized list components with memo() for efficient re-renders
-export const FreelancerListContainer = memo<FreelancerListProps>(
+export const FreelancerListContainer = memo<FreelancerListProperties>(
   FreelancerList,
-  (prevProps, nextProps) => {
+  (previousProperties, nextProperties) => {
     return (
-      JSON.stringify(prevProps.filters) === JSON.stringify(nextProps.filters) &&
-      prevProps.searchQuery === nextProps.searchQuery &&
-      prevProps.onViewProfile === nextProps.onViewProfile &&
-      prevProps.onConnect === nextProps.onConnect &&
-      prevProps.onCountChange === nextProps.onCountChange
+      JSON.stringify(previousProperties.filters) === JSON.stringify(nextProperties.filters) &&
+      previousProperties.searchQuery === nextProperties.searchQuery &&
+      previousProperties.onViewProfile === nextProperties.onViewProfile &&
+      previousProperties.onConnect === nextProperties.onConnect &&
+      previousProperties.onCountChange === nextProperties.onCountChange
     );
   }
 );
 
-export const AgencyListContainer = memo<AgencyListProps>(AgencyList, (prevProps, nextProps) => {
-  return (
-    JSON.stringify(prevProps.filters) === JSON.stringify(nextProps.filters) &&
-    prevProps.searchQuery === nextProps.searchQuery &&
-    prevProps.onViewProfile === nextProps.onViewProfile &&
-    prevProps.onConnect === nextProps.onConnect &&
-    prevProps.onCountChange === nextProps.onCountChange
-  );
-});
+export const AgencyListContainer = memo<AgencyListProperties>(
+  AgencyList,
+  (previousProperties, nextProperties) => {
+    return (
+      JSON.stringify(previousProperties.filters) === JSON.stringify(nextProperties.filters) &&
+      previousProperties.searchQuery === nextProperties.searchQuery &&
+      previousProperties.onViewProfile === nextProperties.onViewProfile &&
+      previousProperties.onConnect === nextProperties.onConnect &&
+      previousProperties.onCountChange === nextProperties.onCountChange
+    );
+  }
+);
 
-export const TeamListContainer = memo<TeamListProps>(TeamList, (prevProps, nextProps) => {
-  return (
-    JSON.stringify(prevProps.filters) === JSON.stringify(nextProps.filters) &&
-    prevProps.searchQuery === nextProps.searchQuery &&
-    prevProps.onViewTeam === nextProps.onViewTeam &&
-    prevProps.onJoinTeam === nextProps.onJoinTeam &&
-    prevProps.onCountChange === nextProps.onCountChange
-  );
-});
+export const TeamListContainer = memo<TeamListProperties>(
+  TeamList,
+  (previousProperties, nextProperties) => {
+    return (
+      JSON.stringify(previousProperties.filters) === JSON.stringify(nextProperties.filters) &&
+      previousProperties.searchQuery === nextProperties.searchQuery &&
+      previousProperties.onViewTeam === nextProperties.onViewTeam &&
+      previousProperties.onJoinTeam === nextProperties.onJoinTeam &&
+      previousProperties.onCountChange === nextProperties.onCountChange
+    );
+  }
+);
 // Set display names for better debugging
 FreelancerListContainer.displayName = 'FreelancerListContainer';
 AgencyListContainer.displayName = 'AgencyListContainer';

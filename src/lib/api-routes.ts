@@ -33,7 +33,8 @@ export const API_ROUTES = {
     delete: '/documents'
   },
   network: {
-    myNetwork: '/network/my-network'
+    myNetwork: '/network/my-network',
+    searchNetwork: '/network/my-network' // Same endpoint with query params
   },
   upload: {
     single: '/upload',
@@ -53,6 +54,16 @@ export const API_ROUTES = {
     feed: '/broadcast',
     trending: '/broadcasts/trending',
     search: '/broadcasts/search',
-    topics: '/broadcast/topics'
+    topics: '/broadcast/topics',
+    saved: '/broadcast/saved',
+    save: (id: string) => `/broadcast/${id}/save`
+  },
+  comments: {
+    byPost: (postId: string) => `/broadcast/${postId}/reply`,
+    create: (postId: string) => `/broadcast/${postId}/reply`,
+    update: (replyId: string) => `/broadcast/reply/${replyId}`,
+    delete: (replyId: string) => `/broadcast/reply/${replyId}`,
+    like: (commentId: string) => `/comments/${commentId}/like`,
+    replies: (commentId: string) => `/comments/${commentId}/replies`
   }
 };

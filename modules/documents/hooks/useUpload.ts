@@ -24,6 +24,10 @@ export const useUpload = () => {
     return await fetchPrivateDocument(fileName);
   };
 
+  const fetchDocumentForViewing = async (documentId: string) => {
+    return await fetchDocumentById(documentId);
+  };
+
   return {
     uploadFileSingle,
     deleteFile,

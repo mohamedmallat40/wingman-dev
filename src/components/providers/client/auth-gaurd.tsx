@@ -29,5 +29,7 @@ export default function AuthGuard({ children }: Readonly<{ children: React.React
       });
   }, [router, queryClient]);
 
-  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  // Always render children - redirect happens in useEffect
+  // This ensures server and client render the same thing
+  return <>{children}</>;
 }

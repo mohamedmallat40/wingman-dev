@@ -51,11 +51,10 @@ export default function DashboardLayout({
         {/* Content */}
         <div className='flex-1 overflow-auto'>
           <div className='relative min-h-full'>
-            {/* Background Pattern */}
+            {/* Simplified Background Pattern */}
             <div className='pointer-events-none absolute inset-0 overflow-hidden'>
-              <div className='bg-primary/5 absolute -top-4 -left-4 h-32 w-32 rounded-full blur-2xl' />
-              <div className='bg-secondary/5 absolute top-1/3 -right-4 h-24 w-24 rounded-full blur-2xl' />
-              <div className='bg-primary/3 absolute bottom-1/4 left-1/3 h-28 w-28 rounded-full blur-2xl' />
+              <div className='bg-primary/3 absolute -top-4 -left-4 h-32 w-32 rounded-full opacity-50' />
+              <div className='bg-secondary/3 absolute top-1/3 -right-4 h-24 w-24 rounded-full opacity-30' />
             </div>
 
             {/* Content */}

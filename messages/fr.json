@@ -211,7 +211,11 @@
         "freelancers": "Professionnels indépendants",
         "agencies": "Agences professionnelles",
         "teams": "Groupes collaboratifs"
-      }
+      },
+      "allGroups": "Tous les Groupes",
+      "publicGroups": "Groupes Publics",
+      "privateGroups": "Groupes Privés",
+      "sharedWithMe": "Groupes Partagés Avec Moi"
     },
     "search": {
       "button": "Rechercher",

@@ -6,7 +6,7 @@ import type { Comment, CommentAction, CommentSectionProps } from '../../types/co
 
 import { Button, Card, CardBody, Divider, Skeleton, Spinner } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import { AnimatePresence, motion } from 'framer-motion';
+// Removed framer-motion for better performance
 import { useTranslations } from 'next-intl';
 
 import { useComments } from '../../hooks/useComments';
@@ -51,13 +51,16 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   // Track if we've loaded comments for this post to prevent duplicates
   const loadedPostRef = useRef<string | null>(null);
 
-  // Load comments when component mounts - only once per post
+  // Load comments when component mounts - only once per post and only if no initial comments
   useEffect(() => {
-    if (loadedPostRef.current !== postId) {
+    if (loadedPostRef.current !== postId && initialComments.length === 0) {
       loadedPostRef.current = postId;
       loadInitialComments();
+    } else if (loadedPostRef.current !== postId) {
+      // If we have initial comments, just mark as loaded to prevent duplicate fetching
+      loadedPostRef.current = postId;
     }
-  }, [postId, loadInitialComments]);
+  }, [postId, initialComments.length]); // Removed loadInitialComments from dependencies to prevent double calls
 
   // UI state management
   const { uiState, actions: uiActions } = useCommentUI();
@@ -113,13 +116,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle reply submission
   const handleReply = useCallback(
-    async (parentId: string, content: string, mentions?: string[]) => {
+    async (parentId: string, content: string, taggedUsers?: string[]) => {
       try {
         await createComment({
-          content,
+          response: content, // API expects 'response' field
           postId,
           parentId,
-          mentions
+          taggedUsers
         });
         uiActions.setReplying(parentId, false);
         uiActions.setReplyInput(parentId, '');
@@ -132,9 +135,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle comment edit
   const handleEdit = useCallback(
-    async (commentId: string, content: string, mentions?: string[]) => {
+    async (commentId: string, content: string, taggedUsers?: string[]) => {
       try {
-        await updateComment(commentId, { content, mentions });
+        await updateComment(commentId, { response: content, taggedUsers }); // API expects 'response' field
         uiActions.setEditing(commentId, false);
         uiActions.setEditInput(commentId, '');
       } catch (error) {
@@ -146,12 +149,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   // Handle new comment submission
   const handleNewComment = useCallback(
-    async (content: string, mentions?: string[]) => {
+    async (content: string, taggedUsers?: string[]) => {
       try {
         await createComment({
-          content,
+          response: content, // API expects 'response' field
           postId,
-          mentions
+          taggedUsers
         });
       } catch (error) {
         console.error('Failed to create comment:', error);
@@ -178,21 +181,24 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
     if (isRealError) {
       return (
-        <Card className={`border-danger/20 ${className}`}>
+        <Card className={`border-danger/20 bg-danger/5 rounded-[16px] backdrop-blur-sm ${className}`}>
           <CardBody className='py-8'>
             <div className='text-center'>
-              <Icon
-                icon='solar:chat-round-unread-linear'
-                className='text-danger mx-auto mb-4 h-12 w-12'
-              />
-              <h3 className='text-danger mb-2 text-lg font-semibold'>{t('error.title')}</h3>
-              <p className='text-foreground-500 mb-4 text-sm'>{t('error.description')}</p>
+              <div className='bg-danger/10 border-danger/20 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[16px] border'>
+                <Icon
+                  icon='solar:info-circle-linear'
+                  className='text-danger h-8 w-8'
+                />
+              </div>
+              <h3 className='text-danger mb-2 text-lg font-semibold tracking-tight'>{t('error.title')}</h3>
+              <p className='text-foreground-500 mb-4 text-sm leading-relaxed'>{t('error.description')}</p>
               <Button
                 color='danger'
                 variant='flat'
                 size='sm'
                 onPress={refresh}
-                startContent={<Icon icon='solar:refresh-linear' className='h-4 w-4' />}
+                startContent={<Icon icon='solar:refresh-circle-linear' className='h-4 w-4' />}
+                className='rounded-[12px] font-medium'
               >
                 {t('error.retry')}
               </Button>
@@ -228,10 +234,16 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         )}
 
         {/* Comments */}
-        <AnimatePresence mode='popLayout'>
-          {comments.map((comment) => (
-            <CommentItem
+        <div>
+          {comments.map((comment, index) => (
+            <div
               key={comment.id}
+              className="animate-in fade-in slide-in-from-top-1 duration-300"
+              style={{
+                animationDelay: `${index * 100}ms`
+              }}
+            >
+              <CommentItem
               comment={comment}
               onAction={handleCommentAction}
               onReply={handleReply}
@@ -240,25 +252,30 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               currentDepth={0}
               enableMentions={enableMentions}
               enableRichText={enableRichText}
-            />
+              />
+            </div>
           ))}
-        </AnimatePresence>
+        </div>
 
         {/* Load more trigger */}
         {hasMore && (
           <div ref={loadMoreTriggerRef} className='py-4'>
             {isLoadingMore ? (
-              <div className='flex items-center justify-center gap-2'>
+              <div className='flex items-center justify-center gap-3'>
                 <div className='border-default-300 border-t-primary h-4 w-4 animate-spin rounded-full border-2'></div>
-                <span className='text-default-500 text-sm'>Loading more comments...</span>
+                <span className='text-foreground-500 text-sm font-medium'>Loading more comments...</span>
               </div>
             ) : (
-              <button
+              <Button
                 onClick={loadMore}
-                className='text-default-500 hover:text-default-700 w-full py-3 text-sm font-medium transition-colors'
+                variant='flat'
+                color='primary'
+                size='sm'
+                startContent={<Icon icon='solar:arrow-down-linear' className='h-4 w-4' />}
+                className='w-full rounded-[12px] font-medium'
               >
                 Load more comments
-              </button>
+              </Button>
             )}
           </div>
         )}
@@ -266,12 +283,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         {/* Empty state */}
         {!isLoading && comments.length === 0 && !error && (
           <div className='py-12 text-center'>
-            <Icon
-              icon='solar:chat-round-dots-linear'
-              className='text-default-300 mx-auto mb-4 h-12 w-12'
-            />
-            <h4 className='text-default-500 mb-2 text-base font-medium'>No comments yet</h4>
-            <p className='text-default-400 text-sm'>Be the first to share what you think!</p>
+            <div className='bg-primary/5 border-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[16px] border'>
+              <Icon
+                icon='solar:chat-dots-linear'
+                className='text-primary h-8 w-8'
+              />
+            </div>
+            <h4 className='text-foreground mb-2 text-base font-semibold tracking-tight'>No comments yet</h4>
+            <p className='text-foreground-500 text-sm leading-relaxed'>Be the first to share what you think!</p>
           </div>
         )}
 
