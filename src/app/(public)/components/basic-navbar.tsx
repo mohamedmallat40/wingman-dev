@@ -62,7 +62,8 @@ const BasicNavbar = ({ classNames = {}, ...props }) => {
     <motion.div
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: 'easeOut' }}
+      transition={{ duration: 0.4, ease: 'easeOut' }}
+      style={{ willChange: 'transform' }}
     >
       <Navbar
         {...props}
@@ -88,7 +89,7 @@ const BasicNavbar = ({ classNames = {}, ...props }) => {
             whileHover={{ scale: 1.02 }}
             transition={{ duration: 0.2 }}
           >
-            <div className='from-primary/15 to-primary/5 border-primary/20 group-hover:from-primary/25 group-hover:to-primary/10 flex h-12 w-12 items-center justify-center rounded-[16px] border bg-gradient-to-br shadow-[0px_4px_12px_rgba(59,130,246,0.15)] transition-all duration-300 group-hover:scale-110'>
+            <div className='from-primary/15 to-primary/5 border-primary/20 group-hover:from-primary/25 group-hover:to-primary/10 flex h-12 w-12 items-center justify-center rounded-[16px] border bg-gradient-to-br shadow-[0px_4px_12px_rgba(59,130,246,0.15)] transition-transform transition-colors duration-300 group-hover:scale-110'>
               <WingmanIcon className='text-primary h-7 w-7' />
             </div>
             <div className='hidden flex-col sm:flex'>

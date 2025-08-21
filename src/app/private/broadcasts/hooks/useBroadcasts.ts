@@ -281,6 +281,52 @@ export const useTopics = () => {
 };
 
 /**
+ * Hook for fetching followed topics
+ */
+export const useFollowedTopics = () => {
+  return useQuery({
+    queryKey: ['broadcasts', 'topics', 'followed'],
+    queryFn: () => getTopics(),
+    select: (data) => data?.filter((topic: any) => topic.isFollowed) || [],
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnWindowFocus: false,
+    retry: 1
+  });
+};
+
+/**
+ * Hook for fetching posts from followed topics
+ */
+export const useFollowingFeed = (params: Omit<FeedParams, 'page' | 'topics'> = {}) => {
+  const { data: followedTopics } = useFollowedTopics();
+  
+  const followedTopicIds = followedTopics?.map((topic: any) => topic.id) || [];
+  
+  return useInfiniteQuery({
+    queryKey: ['broadcasts', 'feed', 'following', followedTopicIds],
+    queryFn: ({ pageParam = 1 }) => getBroadcastFeed({ 
+      ...params, 
+      page: pageParam as number,
+      topics: followedTopicIds
+    }),
+    initialPageParam: 1,
+    enabled: followedTopicIds.length > 0,
+    getNextPageParam: (lastPage: any) => {
+      if (lastPage?.hasNextPage) {
+        return lastPage.currentPage + 1;
+      }
+      return undefined;
+    },
+    staleTime: 1000 * 60 * 10, // 10 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+    retry: false
+  });
+};
+
+/**
  * Hook for following a topic
  */
 export const useFollowTopic = () => {

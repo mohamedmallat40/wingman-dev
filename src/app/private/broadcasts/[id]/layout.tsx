@@ -53,6 +53,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `${title} - Wingman`,
       description: description.length > 160 ? `${description.substring(0, 157)}...` : description,
       authors: [{ name: author }],
+      robots: {
+        index: true,
+        follow: true
+      },
       openGraph: {
         title: `${title} - Wingman`,
         description: description.length > 160 ? `${description.substring(0, 157)}...` : description,
@@ -61,6 +65,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         type: 'article',
         publishedTime: post.createdAt,
         authors: [author],
+        tags: post.topics?.map((topic) => topic.title) || [],
         images: [
           {
             url: imageUrl,
@@ -85,7 +90,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         'article:published_time': post.createdAt,
         'article:author': author,
         'article:section': 'Broadcasts',
-        'article:tag': post.topics?.map((topic) => topic.title).join(', ') || 'Wingman'
+        'article:tag': post.topics?.map((topic) => topic.title).join(', ') || 'Wingman',
+        'og:image:width': '1200',
+        'og:image:height': '630',
+        'og:image:type': 'image/jpeg',
+        'twitter:image:width': '1200',
+        'twitter:image:height': '630'
       }
     };
   } catch (error) {

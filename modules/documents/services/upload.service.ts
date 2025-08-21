@@ -62,6 +62,59 @@ export const fetchPrivateDocument = async (fileName: string): Promise<string> =>
 };
 
 /**
+ * Fetch document by ID using the documents/id/download endpoint
+ * Returns blob URL for secure document preview
+ */
+export const fetchDocumentById = async (documentId: string): Promise<string> => {
+  try {
+    // Get the URL from the API (API responds with the direct link)
+    const urlResponse = await wingManApi.get(`/documents/${documentId}/download`);
+    
+    let fileUrl;
+    
+    // Check if API returned a direct URL string
+    if (typeof urlResponse.data === 'string' && urlResponse.data.startsWith('http')) {
+      fileUrl = urlResponse.data;
+    } else {
+      // If not a URL string, try blob approach
+      const blobResponse = await wingManApi.get(`/documents/${documentId}/download`, {
+        responseType: 'blob',
+        timeout: 15000,
+        headers: {
+          'Accept': 'application/pdf,image/*,*/*'
+        }
+      });
+      
+      if (blobResponse.data instanceof Blob && blobResponse.data.size > 50) {
+        const contentType = blobResponse.headers['content-type'] || 'application/octet-stream';
+        const blob = new Blob([blobResponse.data], { type: contentType });
+        return URL.createObjectURL(blob);
+      } else {
+        const text = await blobResponse.data.text();
+        if (text.startsWith('http')) {
+          fileUrl = text;
+        } else {
+          throw new Error('Invalid document response format');
+        }
+      }
+    }
+    
+    // Fetch the actual file from the URL
+    const fileResponse = await fetch(fileUrl);
+    
+    if (!fileResponse.ok) {
+      throw new Error(`Failed to fetch file: ${fileResponse.status}`);
+    }
+    
+    const blob = await fileResponse.blob();
+    return URL.createObjectURL(blob);
+    
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * Get MIME type from file extension
  */
 const getMimeTypeFromFileName = (fileName: string): string => {

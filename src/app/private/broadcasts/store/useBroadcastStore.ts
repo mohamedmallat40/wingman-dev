@@ -512,4 +512,32 @@ export const useBroadcastStore = create<BroadcastStore>()(
 
 // ===== SELECTORS =====
 
+// Optimized selectors to prevent unnecessary re-renders
+export const useFiltersSelector = () => useBroadcastStore((state) => state.filters);
+export const useUISelector = () => useBroadcastStore((state) => state.ui);
+export const useDraftsSelector = () => useBroadcastStore((state) => state.drafts);
+export const useRealtimeSelector = () => useBroadcastStore((state) => state.realtime);
+export const usePreferencesSelector = () => useBroadcastStore((state) => state.preferences);
 
+// Specific UI selectors for better performance
+export const useSidebarOpen = () => useBroadcastStore((state) => state.ui.sidebarOpen);
+export const useContentCreatorOpen = () => useBroadcastStore((state) => state.ui.contentCreatorOpen);
+export const useSelectedPost = () => useBroadcastStore((state) => state.ui.selectedPost);
+export const useViewMode = () => useBroadcastStore((state) => state.ui.viewMode);
+
+// Filter selectors
+export const useSelectedTopic = () => useBroadcastStore((state) => state.filters.topicId);
+export const useSearchQuery = () => useBroadcastStore((state) => state.filters.searchQuery);
+export const useActiveFilters = () => useBroadcastStore((state) => {
+  const { category, topicId, searchQuery, dateRange, postTypes, authors, tags } = state.filters;
+  return {
+    hasActiveFilters: !!(category || topicId || searchQuery || dateRange || postTypes.length || authors.length || tags.length),
+    category,
+    topicId,
+    searchQuery,
+    dateRange,
+    postTypes,
+    authors,
+    tags
+  };
+});

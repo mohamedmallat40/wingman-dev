@@ -5,9 +5,8 @@ import { useEffect, useState } from 'react';
 import { Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@heroui/modal';
 import { addToast, Button, Checkbox, Divider, Form, Input, Link } from '@heroui/react';
 import { Icon } from '@iconify/react';
-import useLogin from '@root/modules/auth/hooks/use-login';
-import useOAuth from '@root/modules/auth/hooks/use-oauth';
-import { AnimatePresence, motion } from 'framer-motion';
+import useLogin from '../../../../modules/auth/hooks/use-login';
+import useOAuth from '../../../../modules/auth/hooks/use-oauth';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
@@ -178,10 +177,10 @@ export function LoginModal({
 
   return (
     <Modal
-      backdrop='blur'
+      backdrop='opaque'
       classNames={{
         base: 'bg-background dark:bg-content1',
-        backdrop: 'bg-black/50 backdrop-blur-sm'
+        backdrop: 'bg-black/50'
       }}
       isOpen={isOpen}
       placement='center'
@@ -190,12 +189,7 @@ export function LoginModal({
     >
       <ModalContent className='w-full max-w-lg rounded-[24px] shadow-[0px_12px_24px_rgba(0,0,0,0.08)]'>
         <ModalHeader className='flex flex-col items-center pt-8 pb-6'>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className='text-center'
-          >
+          <div className='text-center'>
             <div className='mb-4'>
               <div className='bg-primary/10 mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-[24px]'>
                 <Icon
@@ -220,19 +214,14 @@ export function LoginModal({
                   : 'Enter your email to receive a reset link'
                 : 'Log in to your account to continue'}
             </p>
-          </motion.div>
+          </div>
         </ModalHeader>
 
         <ModalBody className='px-6'>
           {!showResetModal && (
             <>
               {/* Demo credentials hint */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-                className='bg-primary/5 border-primary/20 mb-6 rounded-[16px] border p-4'
-              >
+              <div className='bg-primary/5 border-primary/20 mb-6 rounded-[16px] border p-4'>
                 <div className='mb-2 flex items-center gap-2'>
                   <Icon icon='solar:info-circle-bold' className='text-primary h-4 w-4' />
                   <p className='text-primary text-sm font-bold tracking-[0.02em]'>Demo Login</p>
@@ -252,7 +241,7 @@ export function LoginModal({
                 >
                   Use Demo Credentials
                 </Button>
-              </motion.div>
+              </div>
             </>
           )}
 
@@ -261,12 +250,7 @@ export function LoginModal({
             <div className='flex flex-col gap-4'>
               {resetSent ? (
                 // Success state
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4 }}
-                  className='bg-success-50 border-success-200 rounded-[16px] border p-6 text-center'
-                >
+                <div className='bg-success-50 border-success-200 rounded-[16px] border p-6 text-center'>
                   <Icon
                     icon='solar:check-circle-bold'
                     className='text-success mx-auto mb-3 h-12 w-12'
@@ -275,14 +259,10 @@ export function LoginModal({
                   <p className='text-default-600 text-sm'>
                     Check your email and follow the instructions to reset your password.
                   </p>
-                </motion.div>
+                </div>
               ) : (
                 // Reset form
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
+                <div>
                   <Input
                     autoFocus
                     isRequired
@@ -307,15 +287,10 @@ export function LoginModal({
                     variant='bordered'
                     onValueChange={setResetEmail}
                   />
-                </motion.div>
+                </div>
               )}
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-                className='flex gap-3'
-              >
+              <div className='flex gap-3'>
                 <Button
                   className='border-default-300 hover:border-primary hover:bg-primary/5 h-12 rounded-[16px] font-medium tracking-[0.02em] transition-all duration-300'
                   variant='bordered'
@@ -333,7 +308,7 @@ export function LoginModal({
                     Send Reset Link
                   </Button>
                 )}
-              </motion.div>
+              </div>
             </div>
           ) : (
             // Login Form
@@ -343,29 +318,16 @@ export function LoginModal({
                 validationBehavior='native'
                 onSubmit={handleSubmit}
               >
-                <AnimatePresence>
-                  {error && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className='bg-danger-50 border-danger-200 mb-4 rounded-[16px] border p-4'
-                    >
-                      <div className='flex items-center gap-2'>
-                        <Icon icon='solar:danger-triangle-bold' className='text-danger h-4 w-4' />
-                        <p className='text-danger text-sm font-medium tracking-[0.02em]'>{error}</p>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {error && (
+                  <div className='bg-danger-50 border-danger-200 mb-4 rounded-[16px] border p-4'>
+                    <div className='flex items-center gap-2'>
+                      <Icon icon='solar:danger-triangle-bold' className='text-danger h-4 w-4' />
+                      <p className='text-danger text-sm font-medium tracking-[0.02em]'>{error}</p>
+                    </div>
+                  </div>
+                )}
 
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.4 }}
-                  className='w-full'
-                >
+                <div className='w-full'>
                   <Input
                     autoFocus
                     isRequired
@@ -391,13 +353,8 @@ export function LoginModal({
                     variant='bordered'
                     onValueChange={handleEmailChange}
                   />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.4 }}
-                  className='w-full'
-                >
+                </div>
+                <div className='w-full'>
                   <Input
                     isRequired
                     classNames={{
@@ -444,13 +401,8 @@ export function LoginModal({
                     variant='bordered'
                     onValueChange={setPassword}
                   />
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5, duration: 0.4 }}
-                  className='flex w-full items-center justify-between px-1 py-2'
-                >
+                </div>
+                <div className='flex w-full items-center justify-between px-1 py-2'>
                   <Checkbox
                     classNames={{
                       label: 'text-default-500 font-normal tracking-[0.02em]',
@@ -475,13 +427,8 @@ export function LoginModal({
                       Forgot password?
                     </Button>
                   </div>
-                </motion.div>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.4 }}
-                  className='flex w-full justify-center'
-                >
+                </div>
+                <div className='flex w-full justify-center'>
                   <Button
                     className='h-14 w-full max-w-md rounded-[16px] text-lg font-bold tracking-[0.02em] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] transition-all duration-300 hover:shadow-[0px_12px_24px_rgba(59,130,246,0.2)]'
                     color='primary'
@@ -496,28 +443,18 @@ export function LoginModal({
                   >
                     {mutation.isLoading ? 'Signing in...' : 'Sign In'}
                   </Button>
-                </motion.div>
+                </div>
               </Form>
 
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.7, duration: 0.4 }}
-                className='flex items-center gap-4 py-6'
-              >
+              <div className='flex items-center gap-4 py-6'>
                 <Divider className='bg-default-200 flex-1' />
                 <p className='text-default-500 shrink-0 text-sm font-medium tracking-[0.02em]'>
                   OR
                 </p>
                 <Divider className='bg-default-200 flex-1' />
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.8, duration: 0.4 }}
-                className='flex flex-col gap-3'
-              >
+              <div className='flex flex-col gap-3'>
                 <Button
                   className='border-default-300 hover:border-primary hover:bg-primary/5 h-12 rounded-[16px] font-medium tracking-[0.02em] transition-all duration-300'
                   fullWidth
@@ -538,19 +475,14 @@ export function LoginModal({
                 >
                   {isLinkedInLoading ? 'Connecting...' : 'Continue with LinkedIn'}
                 </Button>
-              </motion.div>
+              </div>
             </>
           )}
         </ModalBody>
 
         <ModalFooter className='justify-center pt-4 pb-8'>
           {!showResetModal && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.9, duration: 0.4 }}
-              className='text-default-500 text-center font-normal tracking-[0.02em]'
-            >
+            <p className='text-default-500 text-center font-normal tracking-[0.02em]'>
               Need to create an account?{' '}
               <Link
                 className='text-primary hover:text-primary/80 cursor-pointer font-bold tracking-[0.02em]'
@@ -564,7 +496,7 @@ export function LoginModal({
               >
                 Sign Up
               </Link>
-            </motion.p>
+            </p>
           )}
         </ModalFooter>
       </ModalContent>

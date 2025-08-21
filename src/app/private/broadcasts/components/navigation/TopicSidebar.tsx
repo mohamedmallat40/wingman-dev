@@ -271,16 +271,16 @@ export default function TopicSidebar({
 
   return (
     <div className={`flex h-full flex-col ${className}`}>
-      <div className='bg-content1 border-default-200 h-full rounded-lg border p-4'>
+      <div className='bg-content1/80 backdrop-blur-xl border-default-200/50 h-full rounded-[20px] border shadow-[0px_8px_30px_rgba(0,0,0,0.08)] p-6'>
         {/* Header */}
         <div className='mb-4'>
           <div className='mb-3 flex items-center gap-2'>
-            <div className='bg-primary/10 rounded-full p-2'>
-              <Icon icon='solar:satellite-linear' className='text-primary h-4 w-4' />
+            <div className='bg-primary/10 rounded-[12px] p-2.5 border border-primary/20'>
+              <Icon icon='solar:chat-dots-linear' className='text-primary h-5 w-5' />
             </div>
             <div>
-              <h2 className='text-foreground font-semibold'>{t('topics.title')}</h2>
-              <p className='text-foreground-500 text-xs'>
+              <h2 className='text-foreground font-bold text-base tracking-tight'>{t('topics.title')}</h2>
+              <p className='text-foreground-500 text-sm font-medium'>
                 {t('topics.followingCount', { count: followingCount })}
               </p>
             </div>
@@ -293,7 +293,7 @@ export default function TopicSidebar({
           onSelectionChange={(key) => setActiveTab(key as string)}
           size='sm'
           variant='underlined'
-          className='mb-4'
+          className='mb-3'
           classNames={{
             tabList: 'w-full',
             tab: 'px-2 py-1 text-xs text-foreground',
@@ -307,7 +307,7 @@ export default function TopicSidebar({
         </Tabs>
 
         {/* Search */}
-        <div className='mb-4'>
+        <div className='mb-3'>
           <Input
             placeholder={t('topics.searchPlaceholder')}
             value={searchQuery}
@@ -318,14 +318,14 @@ export default function TopicSidebar({
             endContent={
               searchQuery && (
                 <Button isIconOnly size='sm' variant='light' onPress={() => setSearchQuery('')}>
-                  <Icon icon='solar:close-circle-linear' className='h-3 w-3' />
+                  <Icon icon='solar:close-circle-linear' className='h-4 w-4' />
                 </Button>
               )
             }
             size='sm'
             classNames={{
               inputWrapper:
-                'bg-default-100 dark:bg-default-50 border-default-300 hover:border-primary focus-within:border-primary'
+                'bg-default-100/50 dark:bg-default-50/50 border-default-200 hover:border-primary/50 focus-within:border-primary rounded-[12px] backdrop-blur-sm'
             }}
           />
         </div>
@@ -333,7 +333,7 @@ export default function TopicSidebar({
 
         {/* Topics List */}
         <div className='mt-4 flex-1 overflow-x-visible overflow-y-auto'>
-          <div className='space-y-6 px-1 pt-6 pb-4'>
+          <div className='space-y-3 px-1 pt-3 pb-2'>
             {filteredSubcasts.map((subcast, index) => (
               <div
                 key={subcast.id}
@@ -344,12 +344,12 @@ export default function TopicSidebar({
                 }}
               >
                   <Card
-                    className={`relative w-full cursor-pointer border transition-all duration-200 hover:z-20 hover:-translate-y-1 hover:scale-105 min-h-[120px] ${
+                    className={`relative w-full cursor-pointer border transition-all duration-300 hover:z-20 hover:-translate-y-1 hover:scale-[1.01] min-h-[100px] rounded-[12px] ${
                       selectedSubcast === subcast.id
-                        ? 'border-primary bg-primary/10 ring-primary/20 shadow-md ring-2'
+                        ? 'border-primary/30 bg-primary/10 ring-primary/20 shadow-[0px_12px_24px_rgba(59,130,246,0.12)] ring-1'
                         : subcast.isFollowing
-                          ? 'border-primary/30 bg-primary/5 shadow-sm'
-                          : 'border-default-200 hover:border-primary/50 hover:bg-primary/5 hover:shadow-xl'
+                          ? 'border-primary/20 bg-primary/5 shadow-[0px_8px_30px_rgba(0,0,0,0.08)]'
+                          : 'border-default-200/50 hover:border-primary/30 hover:bg-primary/5 hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)]'
                     }`}
                   >
                     <div 
@@ -365,12 +365,12 @@ export default function TopicSidebar({
                         {/* Icon with badges */}
                         <div className='relative flex-shrink-0'>
                           <div
-                            className={`rounded-lg p-2 ${
+                            className={`rounded-[12px] p-2.5 border ${
                               selectedSubcast === subcast.id
-                                ? 'bg-primary/30'
+                                ? 'bg-primary/20 border-primary/30'
                                 : subcast.isFollowing
-                                  ? 'bg-primary/20'
-                                  : 'bg-opacity-10'
+                                  ? 'bg-primary/15 border-primary/25'
+                                  : 'bg-opacity-10 border-default-200/50'
                             }`}
                             style={{
                               backgroundColor:
@@ -460,8 +460,8 @@ export default function TopicSidebar({
                                     <Icon
                                       icon={
                                         subcast.isFollowing
-                                          ? 'solar:check-circle-bold'
-                                          : 'solar:add-circle-linear'
+                                          ? 'solar:heart-bold'
+                                          : 'solar:heart-linear'
                                       }
                                       className='h-4 w-4'
                                     />
@@ -479,7 +479,7 @@ export default function TopicSidebar({
                           <div className='flex items-center gap-3'>
                             <div className='flex items-center gap-1'>
                               <Icon
-                                icon='solar:users-group-rounded-linear'
+                                icon='solar:users-group-two-rounded-linear'
                                 className='text-foreground-400 h-3 w-3'
                               />
                               <span className='text-foreground-500 text-xs font-medium'>
@@ -488,7 +488,7 @@ export default function TopicSidebar({
                             </div>
                             <div className='flex items-center gap-1'>
                               <Icon
-                                icon='solar:document-text-linear'
+                                icon='solar:chat-dots-linear'
                                 className='text-foreground-400 h-3 w-3'
                               />
                               <span className='text-foreground-500 text-xs font-medium'>

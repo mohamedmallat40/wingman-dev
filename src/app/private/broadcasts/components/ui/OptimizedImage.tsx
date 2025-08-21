@@ -35,6 +35,21 @@ const OptimizedImage = memo<OptimizedImageProps>(({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [useNextImage, setUseNextImage] = useState(true);
+  
+  // Add timeout handling for slow Contabo storage
+  React.useEffect(() => {
+    if (!isLoading) return;
+    
+    const timeout = setTimeout(() => {
+      if (isLoading) {
+        console.warn(`Image timeout: ${src}`);
+        setIsLoading(false);
+        setHasError(true);
+      }
+    }, 15000); // 15 second timeout
+    
+    return () => clearTimeout(timeout);
+  }, [isLoading, src]);
 
   const handleLoad = (event: React.SyntheticEvent<HTMLImageElement>) => {
     setIsLoading(false);
