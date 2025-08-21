@@ -33,7 +33,7 @@ export default function BroadcastsPage() {
   const [selectedTopicData, setSelectedTopicData] = useState<any>(null);
   const [sidebarView, setSidebarView] = useState<'topics'>('topics');
   const [editingPost, setEditingPost] = useState<BroadcastPost | null>(null);
-  const [currentView, setCurrentView] = useState<'all' | 'saved'>('all');
+  const [currentView, setCurrentView] = useState<'all' | 'saved' | 'following'>('all');
 
   // Get the selected topic object (prefer selectedTopicData from sidebar, fallback to API topics)
   const selectedTopicObject = useMemo(() => {
@@ -83,10 +83,10 @@ export default function BroadcastsPage() {
     setTopic(null);
   };
 
-  const handleViewChange = (view: 'all' | 'saved') => {
+  const handleViewChange = (view: 'all' | 'saved' | 'following') => {
     setCurrentView(view);
-    // Clear topic filter when switching to saved view
-    if (view === 'saved') {
+    // Clear topic filter when switching to saved or following view
+    if (view === 'saved' || view === 'following') {
       handleClearTopicFilter();
     }
   };
@@ -94,18 +94,21 @@ export default function BroadcastsPage() {
   // Dynamic page title and description based on current view
   const pageTitle = useMemo(() => {
     if (currentView === 'saved') return 'Saved Posts';
+    if (currentView === 'following') return 'Following';
     if (selectedTopicObject) return selectedTopicObject.title || selectedTopicObject.name;
     return t('title');
   }, [currentView, selectedTopicObject, t]);
 
   const pageDescription = useMemo(() => {
-    if (currentView === 'saved') return 'Your saved broadcasts for later reading';
+    if (currentView === 'saved') return 'Your bookmarked broadcasts for easy access';
+    if (currentView === 'following') return 'Posts from topics you follow';
     if (selectedTopicObject) return selectedTopicObject.description;
     return t('description');
   }, [currentView, selectedTopicObject, t]);
 
   const pageIcon = useMemo(() => {
     if (currentView === 'saved') return 'solar:archive-bold';
+    if (currentView === 'following') return 'solar:users-group-rounded-bold';
     if (selectedTopicObject) return selectedTopicObject.icon;
     return 'solar:satellite-linear';
   }, [currentView, selectedTopicObject]);
@@ -124,6 +127,8 @@ export default function BroadcastsPage() {
           },
           ...(currentView === 'saved'
             ? [{ label: 'Saved Posts', icon: 'solar:archive-bold' }]
+            : currentView === 'following'
+            ? [{ label: 'Following', icon: 'solar:users-group-rounded-bold' }]
             : selectedTopicObject
             ? [{ label: selectedTopicObject.title || selectedTopicObject.name, icon: selectedTopicObject.icon }]
             : [])
@@ -131,55 +136,22 @@ export default function BroadcastsPage() {
         pageDescription={pageDescription}
         headerActions={
           <div className='flex items-center gap-3'>
-            {/* View Toggle Buttons */}
-            <div className='flex items-center gap-0.5 rounded-xl bg-default-100 p-1 shadow-sm'>
-              <Button
-                size='sm'
-                variant={currentView === 'all' ? 'solid' : 'light'}
-                color={currentView === 'all' ? 'primary' : 'default'}
-                onPress={() => handleViewChange('all')}
-                startContent={<Icon icon='solar:satellite-linear' className='h-4 w-4' />}
-                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
-                  currentView === 'all'
-                    ? 'shadow-sm'
-                    : 'hover:bg-default-200/50'
-                }`}
-              >
-                All Posts
-              </Button>
-              <Button
-                size='sm'
-                variant={currentView === 'saved' ? 'solid' : 'light'}
-                color={currentView === 'saved' ? 'primary' : 'default'}
-                onPress={() => handleViewChange('saved')}
-                startContent={<Icon icon='solar:archive-linear' className='h-4 w-4' />}
-                className={`h-9 min-w-0 px-4 font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
-                  currentView === 'saved'
-                    ? 'shadow-sm'
-                    : 'hover:bg-default-200/50'
-                }`}
-              >
-                Saved
-              </Button>
-            </div>
-
-            {/* Create Post Button - only show in all posts view */}
-            {currentView === 'all' && (
-              <Button
-                color='primary'
-                size='sm'
-                startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
-                onPress={handleCreatePost}
-                isLoading={false}
-                className='h-9 px-4 font-medium shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200'
-              >
-                {t('feed.createPost')}
-              </Button>
-            )}
+            {/* Create Post Button */}
+            <Button
+              color='primary'
+              size='sm'
+              startContent={<Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />}
+              onPress={handleCreatePost}
+              isLoading={false}
+              className='h-8 sm:h-9 px-2 sm:px-4 font-medium shadow-sm hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200'
+            >
+              <span className='hidden sm:inline'>{t('feed.createPost')}</span>
+              <span className='sm:hidden'>Post</span>
+            </Button>
           </div>
         }
       >
-        <div className='mx-auto flex w-full gap-6 px-4 sm:px-6 lg:gap-8 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
+        <div className='mx-auto flex w-full gap-3 px-2 sm:gap-6 sm:px-4 lg:gap-8 lg:px-8 xl:max-w-[85%] 2xl:max-w-[75%]'>
           {/* Left Sidebar */}
           <div className='hidden w-80 flex-shrink-0 lg:block'>
             <div className='sticky top-6 space-y-6'>
@@ -193,7 +165,7 @@ export default function BroadcastsPage() {
 
           {/* Main Feed */}
           <div className='min-w-0 flex-1'>
-            <div className='space-y-8 py-4 sm:py-6'>
+            <div className='space-y-4 py-2 sm:space-y-8 sm:py-4 lg:py-6'>
               <BroadcastFeed 
                 selectedTopic={currentView === 'all' ? activeTopic : null}
                 currentView={currentView}
@@ -205,14 +177,14 @@ export default function BroadcastsPage() {
 
           {/* Right Sidebar */}
           <div className='hidden w-80 flex-shrink-0 xl:block'>
-            <div className='sticky top-6 space-y-6'>
+            <div className='sticky top-6 space-y-4'>
               {/* Quick Actions */}
-              <div className='bg-content1 border-default-200 rounded-xl border p-5 shadow-sm'>
-                <h3 className='text-foreground mb-4 flex items-center gap-2 text-sm font-semibold'>
+              <div className='bg-content1 border-default-200 rounded-xl border p-4 shadow-sm'>
+                <h3 className='text-foreground mb-3 flex items-center gap-2 text-sm font-semibold'>
                   <Icon icon='solar:widget-4-linear' className='h-4 w-4 text-primary' />
                   {t('sidebar.quickActions')}
                 </h3>
-                <div className='space-y-3'>
+                <div className='space-y-2'>
                   <Button
                     variant='flat'
                     size='sm'
@@ -221,33 +193,80 @@ export default function BroadcastsPage() {
                       <Icon icon='solar:pen-new-square-linear' className='h-4 w-4' />
                     }
                     onPress={handleCreatePost}
-                    className='justify-start h-10 bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200'
+                    className='justify-start h-9 bg-primary/10 text-primary hover:bg-primary/20 transition-all duration-200'
                   >
                     {t('feed.createPost')}
                   </Button>
-                  <Button
-                    variant='light'
-                    size='sm'
-                    fullWidth
-                    startContent={
-                      <Icon icon='solar:archive-linear' className='h-4 w-4' />
-                    }
-                    onPress={() => handleViewChange('saved')}
-                    className='justify-start h-10 hover:bg-default-100 transition-all duration-200'
-                  >
-                    {t('sidebar.savedPosts')}
-                  </Button>
-                  <Button
-                    variant='light'
-                    size='sm'
-                    fullWidth
-                    startContent={
-                      <Icon icon='solar:users-group-rounded-linear' className='h-4 w-4' />
-                    }
-                    className='justify-start h-10 hover:bg-default-100 transition-all duration-200'
-                  >
-                    {t('sidebar.following')}
-                  </Button>
+                  
+                  {/* Enhanced View Toggle */}
+                  {currentView === 'saved' ? (
+                    <Button
+                      variant='flat'
+                      size='sm'
+                      fullWidth
+                      startContent={
+                        <Icon icon='solar:satellite-linear' className='h-4 w-4' />
+                      }
+                      onPress={() => handleViewChange('all')}
+                      className='justify-start h-9 bg-success/10 text-success hover:bg-success/20 transition-all duration-200'
+                    >
+                      <span className='flex items-center justify-between w-full'>
+                        <span>Back to All Posts</span>
+                        <Icon icon='solar:arrow-right-linear' className='h-3 w-3 opacity-60' />
+                      </span>
+                    </Button>
+                  ) : currentView === 'following' ? (
+                    <Button
+                      variant='flat'
+                      size='sm'
+                      fullWidth
+                      startContent={
+                        <Icon icon='solar:satellite-linear' className='h-4 w-4' />
+                      }
+                      onPress={() => handleViewChange('all')}
+                      className='justify-start h-9 bg-success/10 text-success hover:bg-success/20 transition-all duration-200'
+                    >
+                      <span className='flex items-center justify-between w-full'>
+                        <span>Back to All Posts</span>
+                        <Icon icon='solar:arrow-right-linear' className='h-3 w-3 opacity-60' />
+                      </span>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant='light'
+                      size='sm'
+                      fullWidth
+                      startContent={
+                        <Icon icon='solar:archive-linear' className='h-4 w-4' />
+                      }
+                      onPress={() => handleViewChange('saved')}
+                      className='justify-start h-9 hover:bg-default-100 transition-all duration-200'
+                    >
+                      <span className='flex items-center justify-between w-full'>
+                        <span>{t('sidebar.savedPosts')}</span>
+                        <Icon icon='solar:arrow-right-linear' className='h-3 w-3 opacity-60' />
+                      </span>
+                    </Button>
+                  )}
+                  
+                  {/* Following Toggle - Only show when not in following view */}
+                  {currentView !== 'following' && (
+                    <Button
+                      variant='light'
+                      size='sm'
+                      fullWidth
+                      startContent={
+                        <Icon icon='solar:users-group-rounded-linear' className='h-4 w-4' />
+                      }
+                      onPress={() => handleViewChange('following')}
+                      className='justify-start h-9 hover:bg-default-100 transition-all duration-200'
+                    >
+                      <span className='flex items-center justify-between w-full'>
+                        <span>{t('sidebar.following')}</span>
+                        <Icon icon='solar:arrow-right-linear' className='h-3 w-3 opacity-60' />
+                      </span>
+                    </Button>
+                  )}
                 </div>
               </div>
 

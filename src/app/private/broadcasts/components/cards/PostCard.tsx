@@ -223,15 +223,15 @@ const PostCard: React.FC<PostCardProps> = React.memo(
         <ShareModal isOpen={shareModalOpen} onClose={() => setShareModalOpen(false)} post={post} />
 
         <Card
-          className={`border-default-200/50 bg-content1/80 backdrop-blur-xl rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)] transition-all duration-300 hover:border-primary/20 ${className}`}
+          className={`border-default-200/50 bg-content1/80 rounded-[12px] sm:rounded-[20px] shadow-[0px_4px_16px_rgba(0,0,0,0.06)] sm:shadow-[0px_8px_30px_rgba(0,0,0,0.08)] hover:shadow-[0px_8px_24px_rgba(0,0,0,0.10)] sm:hover:shadow-[0px_16px_40px_rgba(0,0,0,0.12)] transition-all duration-300 hover:border-primary/20 ${className}`}
           role='article'
           aria-label={`Post by ${safeOwner.firstName} ${safeOwner.lastName}: ${safeTitle}`}
         >
-          <CardHeader className='pb-4'>
-            <div className='flex w-full items-start gap-4'>
+          <CardHeader className='pb-3 sm:pb-4'>
+            <div className='flex w-full items-start gap-3 sm:gap-4'>
               {/* Author Avatar */}
               <div className='relative'>
-                <div className="relative w-12 h-12 rounded-full overflow-hidden ring-2 ring-primary/10 ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/25">
+                <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden ring-1 sm:ring-2 ring-primary/10 ring-offset-1 sm:ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/25">
                   {safeOwner.profileImage ? (
                     <OptimizedImage
                       src={getImageUrl(safeOwner.profileImage)}
@@ -239,7 +239,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                       fill
                       className="object-cover"
                       sizes="40px"
-                      priority={true}
+                      priority={false}
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
@@ -248,24 +248,24 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   )}
                 </div>
                 {safeOwner.isMailVerified && (
-                  <div className='bg-success absolute -right-1 -bottom-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background shadow-sm'>
-                    <Icon icon='solar:shield-check-bold' className='h-3 w-3 text-white' />
+                  <div className='bg-success absolute -right-0.5 -bottom-0.5 sm:-right-1 sm:-bottom-1 flex h-4 w-4 sm:h-5 sm:w-5 items-center justify-center rounded-full border-1 sm:border-2 border-background shadow-sm'>
+                    <Icon icon='solar:shield-check-bold' className='h-2 w-2 sm:h-3 sm:w-3 text-white' />
                   </div>
                 )}
               </div>
 
               {/* Author Info & Post Metadata */}
               <div className='min-w-0 flex-1'>
-                <div className='flex flex-wrap items-center gap-2 mb-1'>
-                  <h3 className='text-foreground truncate font-semibold text-base'>
+                <div className='flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1'>
+                  <h3 className='text-foreground truncate font-semibold text-sm sm:text-base'>
                     {safeOwner.firstName} {safeOwner.lastName}
                   </h3>
                   {safeOwner.userName && (
-                    <span className='text-foreground-500 text-sm'>@{safeOwner.userName}</span>
+                    <span className='text-foreground-500 text-xs sm:text-sm'>@{safeOwner.userName}</span>
                   )}
-                  <span className='text-foreground-400 text-sm'>·</span>
+                  <span className='text-foreground-400 text-xs sm:text-sm'>·</span>
                   <time
-                    className='text-foreground-500 text-sm'
+                    className='text-foreground-500 text-xs sm:text-sm'
                     dateTime={safeCreatedAt}
                     title={new Date(safeCreatedAt).toLocaleString()}
                   >
@@ -273,7 +273,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                   </time>
                 </div>
 
-                <div className='flex flex-wrap items-center gap-2'>
+                <div className='flex flex-wrap items-center gap-1.5 sm:gap-2'>
                   <Chip
                     size='sm'
                     color={postTypeColor as any}
@@ -327,7 +327,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                         variant='light'
                         color='primary'
                         onPress={handleEditPost}
-                        className='min-w-unit-8 h-unit-8'
+                        className='min-w-unit-6 h-unit-6 sm:min-w-unit-8 sm:h-unit-8'
                       >
                         <Icon icon='solar:pen-linear' className='h-4 w-4' />
                       </Button>
@@ -339,7 +339,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                         variant='light'
                         color='danger'
                         onPress={handleDeletePost}
-                        className='min-w-unit-8 h-unit-8'
+                        className='min-w-unit-6 h-unit-6 sm:min-w-unit-8 sm:h-unit-8'
                       >
                         <Icon icon='solar:trash-bin-minimalistic-linear' className='h-4 w-4' />
                       </Button>
@@ -359,7 +359,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                         // Call the save function
                         onSave(post.id, localIsSaved);
                       }}
-                      className='min-w-unit-8 h-unit-8'
+                      className='min-w-unit-6 h-unit-6 sm:min-w-unit-8 sm:h-unit-8'
                     >
                       <Icon 
                         icon={localIsSaved ? 'solar:archive-bold' : 'solar:archive-linear'} 
@@ -372,11 +372,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             </div>
           </CardHeader>
 
-          <CardBody className='pt-0 pb-6'>
+          <CardBody className='pt-0 pb-4 sm:pb-6'>
             {/* Post Title */}
             {safeTitle && (
               <h2
-                className='text-foreground mb-4 text-xl leading-tight font-bold tracking-tight'
+                className='text-foreground mb-3 sm:mb-4 text-lg sm:text-xl leading-tight font-bold tracking-tight'
                 id={`post-title-${post.id}`}
               >
                 {safeTitle}
@@ -384,7 +384,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
             )}
 
             {/* Post Content */}
-            <div className='text-foreground-700 mb-5 leading-relaxed text-base'>
+            <div className='text-foreground-700 mb-4 sm:mb-5 leading-relaxed text-sm sm:text-base'>
               {displayContent}
               {shouldTruncate && (
                 <Button
@@ -503,7 +503,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Skills */}
             {safeSkills.length > 0 && (
-              <div className='mb-5 flex flex-wrap gap-2'>
+              <div className='mb-4 sm:mb-5 flex flex-wrap gap-1.5 sm:gap-2'>
                 {safeSkills.slice(0, 5).map((skill) => (
                   <Chip
                     key={skill.id}
@@ -522,11 +522,11 @@ const PostCard: React.FC<PostCardProps> = React.memo(
               </div>
             )}
 
-            <Divider className='mb-5' />
+            <Divider className='mb-4 sm:mb-5' />
 
             {/* Engagement Actions */}
             <div className='flex items-center justify-between pt-1'>
-              <div className='flex items-center gap-1'>
+              <div className='flex items-center gap-1 sm:gap-2'>
                 <Button
                   size='sm'
                   variant={post.isUpvoted === true ? 'flat' : 'light'}
@@ -541,16 +541,18 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => onUpvote(post.id, post.isUpvoted === true)}
-                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  className={`h-8 sm:h-9 min-w-0 px-2 sm:px-3 py-1.5 sm:py-2 font-medium rounded-[8px] sm:rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
                     post.isUpvoted === true
                       ? 'bg-success/10 text-success border-success/20 hover:bg-success/20 hover:shadow-sm'
                       : 'hover:bg-default-100 hover:shadow-sm'
                   }`}
                   aria-label={`${post.isUpvoted === true ? 'Remove upvote from' : 'Upvote'} post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
+                  <span className='hidden sm:inline'>
+                    {post.isUpvoted === true ? t('post.actions.upvoted') : t('post.actions.upvote')}
+                  </span>
                   {(post.upvotes || 0) > 0 && (
-                    <span className='text-foreground-500 ml-1 text-xs'>
+                    <span className='text-foreground-500 ml-0 sm:ml-1 text-xs'>
                       ({formatCount(post.upvotes || 0)})
                     </span>
                   )}
@@ -568,16 +570,18 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     />
                   }
                   onPress={() => setShowComments(!showComments)}
-                  className={`h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
+                  className={`h-8 sm:h-9 min-w-0 px-2 sm:px-3 py-1.5 sm:py-2 font-medium rounded-[8px] sm:rounded-[12px] transition-all duration-200 hover:scale-105 active:scale-95 ${
                     showComments
                       ? 'bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:shadow-sm'
                       : 'hover:bg-default-100 hover:shadow-sm'
                   }`}
                   aria-label={`${showComments ? 'Hide' : 'Show'} comments on post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
+                  <span className='hidden sm:inline'>
+                    {showComments ? t('post.actions.hideComments') : t('post.actions.comments')}
+                  </span>
                   {(post.replyCount || post.commentsCount || 0) > 0 && (
-                    <span className='text-foreground-500 ml-1 text-xs'>
+                    <span className='text-foreground-500 ml-0 sm:ml-1 text-xs'>
                       ({formatCount(post.replyCount || post.commentsCount || 0)})
                     </span>
                   )}
@@ -590,10 +594,12 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                     <Icon icon='solar:export-linear' className='h-4 w-4' aria-hidden='true' />
                   }
                   onPress={() => setShareModalOpen(true)}
-                  className='h-9 min-w-0 px-3 py-2 font-medium rounded-[12px] transition-all duration-200 hover:bg-default-100 hover:shadow-sm hover:scale-105 active:scale-95'
+                  className='h-8 sm:h-9 min-w-0 px-2 sm:px-3 py-1.5 sm:py-2 font-medium rounded-[8px] sm:rounded-[12px] transition-all duration-200 hover:bg-default-100 hover:shadow-sm hover:scale-105 active:scale-95'
                   aria-label={`Share post by ${safeOwner.firstName} ${safeOwner.lastName}`}
                 >
-                  {t('post.actions.share')}
+                  <span className='hidden sm:inline'>
+                    {t('post.actions.share')}
+                  </span>
                 </Button>
               </div>
 

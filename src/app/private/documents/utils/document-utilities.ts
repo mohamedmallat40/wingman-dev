@@ -226,25 +226,25 @@ export const getActiveFiltersCount = (filters: DocumentFilters): number => {
 };
 
 /**
- * Generate document preview URL - use private upload endpoint
+ * Generate document preview URL - use documents download endpoint
  */
 export const getDocumentPreviewUrl = (document: IDocument): string => {
-  if (!document.fileName) return '';
+  if (!document.id) return '';
 
-  // Use private upload endpoint for documents
-  const url = `${getBaseUrl()}/upload/private/${document.fileName}`;
-  console.log('Generated preview URL:', url, 'for fileName:', document.fileName);
+  // Use documents download endpoint for preview as well
+  const url = `${getBaseUrl()}/documents/${document.id}/download`;
+  console.log('Generated preview URL:', url, 'for document ID:', document.id);
   return url;
 };
 
 /**
- * Generate document download URL - use private upload endpoint
+ * Generate document download URL - use documents download endpoint
  */
 export const getDocumentDownloadUrl = (document: IDocument): string => {
-  if (!document.fileName) return '';
+  if (!document.id) return '';
 
-  // Use private upload endpoint for documents
-  return `${getBaseUrl()}/upload/private/${document.fileName}`;
+  // Use documents download endpoint with document ID
+  return `${getBaseUrl()}/documents/${document.id}/download`;
 };
 
 /**

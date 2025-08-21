@@ -36,7 +36,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
   const [secureBlobUrl, setSecureBlobUrl] = useState<string | null>(null);
   const [isLoadingSecure, setIsLoadingSecure] = useState(false);
 
-  const { fetchSecureDocument } = useUpload();
+  const { fetchSecureDocument, fetchDocumentForViewing } = useUpload();
 
   // Generate secure download URL for the download button
   const downloadUrl = useMemo(() => {
@@ -52,14 +52,20 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
   // Fetch secure document when needed
   useEffect(() => {
     const fetchSecureDocumentUrl = async () => {
-      if (!document?.fileName || !isOpen) return;
+      if (!document?.id || !isOpen) return;
 
       setIsLoadingSecure(true);
+      setImageLoadError(false);
+      
       try {
-        const blobUrl = await fetchSecureDocument(document.fileName);
-        setSecureBlobUrl(blobUrl);
+        const blobUrl = await fetchDocumentForViewing(document.id);
+        
+        if (blobUrl && blobUrl.startsWith('blob:')) {
+          setSecureBlobUrl(blobUrl);
+        } else {
+          setImageLoadError(true);
+        }
       } catch (error) {
-        console.error('Failed to fetch secure document:', error);
         setImageLoadError(true);
       } finally {
         setIsLoadingSecure(false);
@@ -74,7 +80,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
         URL.revokeObjectURL(secureBlobUrl);
       }
     };
-  }, [document?.fileName, isOpen]);
+  }, [document?.id, isOpen]);
 
   const isPDF = useMemo(() => {
     if (!document) return false;
@@ -107,7 +113,35 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
       );
     }
 
-    // Only use secure blob URL - no fallback to insecure URLs
+    // Show error state if loading failed
+    if (imageLoadError) {
+      return (
+        <div className='flex h-full items-center justify-center'>
+          <div className='text-center'>
+            <Icon
+              icon='solar:file-corrupted-linear'
+              className='text-danger mx-auto mb-4 h-16 w-16'
+            />
+            <h3 className='text-default-600 mb-2 text-lg font-semibold'>Failed to Load Document</h3>
+            <p className='text-default-500'>There was an error loading this document.</p>
+            {downloadUrl && (
+              <Button
+                color='primary'
+                variant='flat'
+                startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
+                className='mt-4'
+                as='a'
+                href={downloadUrl}
+                download={document?.documentName}
+              >
+                Download Instead
+              </Button>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     const displayUrl = secureBlobUrl;
 
     if (!displayUrl) {
@@ -120,6 +154,19 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
             />
             <h3 className='text-default-600 mb-2 text-lg font-semibold'>No Preview Available</h3>
             <p className='text-default-500'>This document cannot be previewed.</p>
+            {downloadUrl && (
+              <Button
+                color='primary'
+                variant='flat'
+                startContent={<Icon icon='solar:download-linear' className='h-4 w-4' />}
+                className='mt-4'
+                as='a'
+                href={downloadUrl}
+                download={document?.documentName}
+              >
+                Download File
+              </Button>
+            )}
           </div>
         </div>
       );
@@ -127,18 +174,26 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
 
     if (isPDF) {
       return (
-        <div className='bg-default-50 h-full w-full'>
+        <div className='bg-default-50 h-full w-full relative'>
           <iframe
             src={displayUrl}
             className='h-full w-full border-0'
             title={`Preview of ${document?.documentName || 'Document'}`}
-            onError={() => {
-              console.error('Failed to load PDF preview');
+            sandbox='allow-scripts allow-same-origin'
+            loading='lazy'
+            onError={(e) => {
+              const fallback = document.getElementById(`pdf-fallback-${document?.id}`);
+              const iframe = e.target as HTMLIFrameElement;
+              if (fallback && iframe) {
+                fallback.classList.remove('hidden');
+                iframe.style.display = 'none';
+              }
             }}
           />
+          
           {/* Fallback message if PDF fails to load */}
-          <div className='hidden' id={`pdf-fallback-${document?.id}`}>
-            <div className='flex h-full items-center justify-center'>
+          <div className='hidden absolute inset-0 z-10' id={`pdf-fallback-${document?.id}`}>
+            <div className='flex h-full items-center justify-center bg-default-50'>
               <div className='text-center'>
                 <Icon
                   icon='solar:file-text-outline'
@@ -209,8 +264,7 @@ export const DocumentViewerDrawer: React.FC<DocumentViewerDrawerProps> = ({
               // Open in new tab for full-screen view - use secure blob URL if available
               window.open(displayUrl, '_blank');
             }}
-            onError={(e) => {
-              console.error('Failed to load image. URL:', displayUrl, 'Error:', e.type);
+            onError={() => {
               setImageLoadError(true);
             }}
           />

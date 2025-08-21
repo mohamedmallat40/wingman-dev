@@ -8,7 +8,7 @@ import { Icon } from '@iconify/react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 
-import { useBroadcastFeed, useSavedPosts, useSavePost, useUnsavePost, useUpvote } from '../../hooks';
+import { useBroadcastFeed, useFollowingFeed, useSavedPosts, useSavePost, useUnsavePost, useUpvote } from '../../hooks';
 import { useBroadcastStore } from '../../store/useBroadcastStore';
 import { BroadcastPost } from '../../types';
 import PostCard from '../cards/PostCard';
@@ -16,9 +16,9 @@ import BroadcastFeedSkeleton from '../states/BroadcastFeedSkeleton';
 
 interface BroadcastFeedProps {
   selectedTopic?: string | null;
-  currentView?: 'all' | 'saved';
+  currentView?: 'all' | 'saved' | 'following';
   onEditPost?: (post: BroadcastPost) => void;
-  onViewChange?: (view: 'all' | 'saved') => void;
+  onViewChange?: (view: 'all' | 'saved' | 'following') => void;
   className?: string;
 }
 
@@ -51,9 +51,16 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
     limit: 10, 
     enabled: currentView === 'saved'
   });
+  const followingFeed = useFollowingFeed({
+    limit: 10
+  });
 
   // Use the appropriate feed based on current view
-  const activeFeed = currentView === 'saved' ? savedFeed : regularFeed;
+  const activeFeed = currentView === 'saved' 
+    ? savedFeed 
+    : currentView === 'following' 
+    ? followingFeed 
+    : regularFeed;
 
   const {
     data: feedData,
@@ -146,41 +153,65 @@ const BroadcastFeed: React.FC<BroadcastFeedProps> = ({
   }
 
   if (posts.length === 0) {
+    const getEmptyStateConfig = () => {
+      switch (currentView) {
+        case 'saved':
+          return {
+            icon: 'solar:bookmark-opened-linear',
+            title: 'No saved posts yet',
+            description: 'Save broadcasts to read them later. Look for the bookmark button on any post.',
+            bgColor: 'bg-warning/10',
+            iconColor: 'text-warning'
+          };
+        case 'following':
+          return {
+            icon: 'solar:users-group-rounded-linear',
+            title: 'No posts from followed topics',
+            description: 'Follow some topics to see their posts here. You can follow topics from the sidebar.',
+            bgColor: 'bg-success/10',
+            iconColor: 'text-success'
+          };
+        default:
+          return {
+            icon: 'solar:chat-dots-linear',
+            title: t('feed.emptyFeed.title'),
+            description: t('feed.emptyFeed.description'),
+            bgColor: 'bg-primary/10',
+            iconColor: 'text-primary'
+          };
+      }
+    };
+
+    const emptyState = getEmptyStateConfig();
+
     return (
       <div className={`flex flex-col items-center justify-center py-20 text-center ${className}`}>
-        <div className={`mb-8 flex h-24 w-24 items-center justify-center rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl border border-default-200/50 ${
-          currentView === 'saved' ? 'bg-warning/10' : 'bg-primary/10'
-        }`}>
+        <div className={`mb-8 flex h-24 w-24 items-center justify-center rounded-[20px] shadow-[0px_8px_30px_rgba(0,0,0,0.08)] backdrop-blur-xl border border-default-200/50 ${emptyState.bgColor}`}>
           <Icon
-            icon={currentView === 'saved' ? 'solar:bookmark-opened-linear' : 'solar:chat-dots-linear'}
-            className={`h-10 w-10 ${
-              currentView === 'saved' ? 'text-warning' : 'text-primary'
-            }`}
+            icon={emptyState.icon}
+            className={`h-10 w-10 ${emptyState.iconColor}`}
           />
         </div>
         <h3 className='text-foreground mb-3 text-2xl font-bold tracking-tight'>
-          {currentView === 'saved' ? 'No saved posts yet' : t('feed.emptyFeed.title')}
+          {emptyState.title}
         </h3>
         <p className='text-foreground-500 mb-8 max-w-md text-base leading-relaxed'>
-          {currentView === 'saved'
-            ? 'Save broadcasts to read them later. Look for the bookmark button on any post.'
-            : t('feed.emptyFeed.description')
-          }
+          {emptyState.description}
         </p>
         <Button
           color='primary'
           size='lg'
           startContent={<Icon
-            icon={currentView === 'saved' ? 'solar:chat-dots-linear' : 'solar:refresh-circle-linear'}
+            icon={currentView === 'following' ? 'solar:satellite-linear' : currentView === 'saved' ? 'solar:chat-dots-linear' : 'solar:refresh-circle-linear'}
             className='h-5 w-5'
           />}
-          onPress={() => currentView === 'saved'
+          onPress={() => currentView === 'saved' || currentView === 'following'
             ? onViewChange?.('all')
             : window.location.reload()
           }
           className='h-12 px-8 font-semibold rounded-[16px] shadow-[0px_8px_20px_rgba(59,130,246,0.15)] hover:shadow-[0px_12px_24px_rgba(59,130,246,0.25)] transition-all duration-300'
         >
-          {currentView === 'saved' ? 'Browse Broadcasts' : t('feed.refreshFeed')}
+          {currentView === 'following' ? 'Browse All Posts' : currentView === 'saved' ? 'Browse Broadcasts' : t('feed.refreshFeed')}
         </Button>
       </div>
     );
