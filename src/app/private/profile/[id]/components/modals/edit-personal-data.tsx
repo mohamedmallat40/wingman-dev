@@ -361,7 +361,7 @@ const EditPersonalDataModal: React.FC<EditPersonalDataModalProperties> = ({
       if (selectedFile) {
         setIsUploadingImage(true);
         try {
-          const uploadResponse = await upload.uploadeFileSingle(selectedFile);
+          const uploadResponse = await upload.uploadFileSingle(selectedFile);
           profileImageFilename = uploadResponse.fileName;
         } catch (error) {
           console.error('Image upload failed:', error);
