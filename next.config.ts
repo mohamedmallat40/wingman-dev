@@ -31,16 +31,16 @@ const nextConfig: NextConfig = {
     if (!isServer) {
       config.resolve.fallback = {
         ...config.resolve.fallback,
-        fs: false,
+        fs: false
       };
     }
-    
+
     // Tree shake framer-motion
     config.module.rules.push({
       test: /node_modules\/framer-motion/,
-      sideEffects: false,
+      sideEffects: false
     });
-    
+
     return config;
   },
 
@@ -82,15 +82,15 @@ const nextConfig: NextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     // Add timeout handling
     unoptimized: false,
-    loader: 'default',
+    loader: 'default'
   },
 
   turbopack: {
     rules: {
       '*.svg': {
         loaders: ['@svgr/webpack'],
-        as: '*.js',
-      },
+        as: '*.js'
+      }
     }
   }
 };
