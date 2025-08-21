@@ -1,4 +1,4 @@
-import { uploadFile, deleteUploadedFile, fetchPrivateDocument } from '@root/modules/documents/services/upload.service';
+import { uploadFile, deleteUploadedFile, fetchPrivateDocument, fetchDocumentById } from '@root/modules/documents/services/upload.service';
 
 export const useUpload = () => {
   const uploadeFileSingle = async (file: File) => {
@@ -15,9 +15,14 @@ export const useUpload = () => {
     return await fetchPrivateDocument(fileName);
   };
 
+  const fetchDocumentForViewing = async (documentId: string) => {
+    return await fetchDocumentById(documentId);
+  };
+
   return {
     uploadeFileSingle,
     deleteFile,
-    fetchSecureDocument
+    fetchSecureDocument,
+    fetchDocumentForViewing
   };
 };

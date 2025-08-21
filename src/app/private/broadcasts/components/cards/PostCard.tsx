@@ -239,7 +239,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                       fill
                       className="object-cover"
                       sizes="40px"
-                      priority={true}
+                      priority={false}
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm">

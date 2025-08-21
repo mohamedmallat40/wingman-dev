@@ -61,7 +61,7 @@ const extractErrorData = (error: AxiosError): ApiErrorResponse => {
   }
   return {
     status: data?.status ?? data?.statusCode ?? 'Error',
-    message: data?.message ?? 'unknown_error',
+    message: data?.message ?? 'Network error occurred',
     code: data?.code,
     details: data?.details
   };
@@ -93,7 +93,27 @@ const handleSuccessResponse = (response: AxiosResponse): AxiosResponse => respon
 
 const handleErrorResponse = async (error: AxiosError): Promise<never> => {
   const errorData = extractErrorData(error);
-  await showErrorToast(errorData);
+  
+  // Don't show toasts for certain scenarios
+  const shouldShowToast = (() => {
+    // Don't show for 401s (authentication issues) as they're usually handled by redirects
+    if (error.response?.status === 401) return false;
+    
+    // Don't show for 403s as they're handled by the redirect logic above
+    if (error.response?.status === 403) return false;
+    
+    // Don't show for network errors during page transitions
+    if (!error.response && error.code === 'ERR_CANCELED') return false;
+    
+    // Don't show if the request was aborted
+    if (error.message?.includes('aborted')) return false;
+    
+    return true;
+  })();
+
+  if (shouldShowToast) {
+    await showErrorToast(errorData);
+  }
 
   throw error;
 };

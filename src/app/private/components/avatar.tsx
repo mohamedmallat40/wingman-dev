@@ -7,7 +7,6 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/d
 import { Skeleton } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import useBasicProfile from '@root/modules/profile/hooks/use-basic-profile';
-import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
 import { getBaseUrl } from '@/lib/utils/utilities';
@@ -27,10 +26,8 @@ const Avatar = () => {
   return (
     <Dropdown placement='bottom-end'>
       <DropdownTrigger>
-        <motion.div
-          className='hover:bg-content2/50 hover:shadow-small flex cursor-pointer items-center gap-4 rounded-xl p-2 transition-all duration-200'
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <div
+          className='hover:bg-content2/50 hover:shadow-small flex cursor-pointer items-center gap-4 rounded-xl p-2 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]'
         >
           <div className='hidden min-w-0 flex-col items-end sm:flex'>
             <span className='text-foreground text-sm font-semibold tracking-tight capitalize'>
@@ -58,7 +55,7 @@ const Avatar = () => {
               </div>
             }
           />
-        </motion.div>
+        </div>
       </DropdownTrigger>
       <DropdownMenu
         aria-label='Profile Actions'

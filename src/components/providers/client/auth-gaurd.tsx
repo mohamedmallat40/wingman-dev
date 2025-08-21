@@ -26,5 +26,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     });
   }, [router, queryClient]);
 
+  // Always render children - redirect happens in useEffect
+  // This ensures server and client render the same thing
   return <>{children}</>;
 }

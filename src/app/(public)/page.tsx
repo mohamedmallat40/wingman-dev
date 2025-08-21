@@ -14,7 +14,6 @@ const page = () => {
   useEffect(() => {
     const hash = window.location.hash;
     if (hash) {
-      // Small delay to ensure the page is fully rendered
       setTimeout(() => {
         const element = document.querySelector(hash);
         if (element) {
@@ -28,13 +27,11 @@ const page = () => {
     <>
       <LandingPage />
 
-      {/* Login Modal for unauthenticated users */}
       <LoginModal
         isOpen={loginModal.isOpen}
         onOpenChange={loginModal.onOpenChange}
         onSwitchToRegister={() => {
           loginModal.onClose();
-          // Navigate to register using router
           window.location.href = '/register';
         }}
       />
