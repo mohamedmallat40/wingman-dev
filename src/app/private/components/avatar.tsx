@@ -50,8 +50,9 @@ const Avatar = () => {
             }
             showFallback
             fallback={
-              <div className='from-primary/20 to-secondary/20 flex h-full w-full items-center justify-center bg-gradient-to-br'>
-                <Icon icon='solar:user-bold' className='text-primary' width={18} />
+              <div className='from-primary/20 to-secondary/20 flex h-full w-full items-center justify-center bg-gradient-to-br text-primary font-semibold text-sm'>
+                {profile?.firstName?.charAt(0)?.toUpperCase() || ''}
+                {profile?.lastName?.charAt(0)?.toUpperCase() || ''}
               </div>
             }
           />
@@ -81,8 +82,9 @@ const Avatar = () => {
               className='ring-primary/20 ring-offset-background shadow-medium ring-2 ring-offset-1'
               showFallback
               fallback={
-                <div className='from-primary/20 to-secondary/20 flex h-full w-full items-center justify-center bg-gradient-to-br'>
-                  <Icon icon='solar:user-bold' className='text-primary' width={20} />
+                <div className='from-primary/20 to-secondary/20 flex h-full w-full items-center justify-center bg-gradient-to-br text-primary font-semibold'>
+                  {profile?.firstName?.charAt(0)?.toUpperCase() || ''}
+                  {profile?.lastName?.charAt(0)?.toUpperCase() || ''}
                 </div>
               }
             />

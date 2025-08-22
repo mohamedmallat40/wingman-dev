@@ -7,8 +7,8 @@ export const isValidUrl = (url: string): boolean => {
   return urlRegex.test(url);
 };
 
-// Test cases for validation
-export const testUrlValidation = () => {
+// Test cases for validation (development only)
+export const testUrlValidation = (): boolean => {
   const testCases = [
     { url: '', expected: true, description: 'Empty string should be valid' },
     { url: 'https://google.com', expected: true, description: 'Valid HTTPS URL' },
@@ -35,16 +35,6 @@ export const testUrlValidation = () => {
     { url: 'https://', expected: false, description: 'Incomplete URL should be invalid' }
   ];
 
-  console.log('Running URL validation tests...');
-
-  testCases.forEach(({ url, expected, description }) => {
-    const result = isValidUrl(url);
-    const status = result === expected ? '✅ PASS' : '❌ FAIL';
-    console.log(`${status}: ${description} - "${url}" -> ${result}`);
-  });
-
   const passed = testCases.filter(({ url, expected }) => isValidUrl(url) === expected).length;
-  console.log(`\nResults: ${passed}/${testCases.length} tests passed`);
-
   return passed === testCases.length;
 };

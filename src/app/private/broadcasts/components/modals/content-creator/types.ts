@@ -1,24 +1,33 @@
 import type { MediaFile } from '@/components/ui/file-upload/MediaUpload';
 import type { BroadcastPost } from '../../../types';
+import type { Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
+import type { User } from '@/types/user';
 
 import { z } from 'zod';
+import { VALIDATION_MESSAGES } from '../../../utils/validation-messages';
 
-// URL validation regex - more permissive to handle real-world URLs
+/**
+ * URL validation regex - more permissive to handle real-world URLs
+ * Supports both HTTP and HTTPS protocols with various URL patterns
+ */
 const urlRegex =
   /^https?:\/\/(?:[\w.-])+(?:\:[0-9]+)?(?:\/(?:[\w\/_@~!$&'()*+,;=:-])*(?:\?(?:[\w&=%@~!$'()*+,;:-])*)?(?:\#(?:[\w@~!$&'()*+,;=:-])*)?)?$/;
 
-// Enhanced schema with comprehensive validation
+/**
+ * Enhanced Zod schema for broadcast creation with comprehensive validation
+ * Includes validation for title, content, links, skills, topics, and other fields
+ */
 export const createBroadcastSchema = z.object({
   title: z
     .string()
-    .min(1, 'Title is required')
-    .min(10, 'Title must be at least 10 characters')
-    .max(200, 'Title cannot exceed 200 characters'),
+    .min(1, VALIDATION_MESSAGES.titleRequired)
+    .min(10, VALIDATION_MESSAGES.titleMinLength10)
+    .max(200, VALIDATION_MESSAGES.titleMaxLength),
   content: z
     .string()
-    .min(1, 'Content is required')
-    .min(20, 'Content must be at least 20 characters')
-    .max(10000, 'Content cannot exceed 10,000 characters'),
+    .min(1, VALIDATION_MESSAGES.contentRequired)
+    .min(20, VALIDATION_MESSAGES.contentMinLength20)
+    .max(10000, VALIDATION_MESSAGES.contentMaxLength),
   link: z
     .string()
     .optional()
@@ -28,16 +37,37 @@ export const createBroadcastSchema = z.object({
         return urlRegex.test(val);
       },
       {
-        message: 'Please enter a valid URL (must start with http:// or https://)'
+        message: VALIDATION_MESSAGES.invalidUrl
       }
     ),
-  skills: z.array(z.string()).max(10, 'Maximum 10 skills allowed'),
-  topics: z.array(z.string()).max(3, 'Maximum 3 topics allowed'),
+  skills: z
+    .array(z.string().min(1, VALIDATION_MESSAGES.skillEmpty))
+    .max(10, VALIDATION_MESSAGES.skillsMaxCount)
+    .optional()
+    .default([]),
+  topics: z
+    .array(z.string().min(1, VALIDATION_MESSAGES.topicEmpty))
+    .min(1, VALIDATION_MESSAGES.topicsRequired)
+    .max(3, VALIDATION_MESSAGES.topicsMaxCount),
+  taggedUsers: z
+    .array(z.string().uuid(VALIDATION_MESSAGES.invalidUserId))
+    .max(20, VALIDATION_MESSAGES.taggedUsersMaxCount)
+    .optional()
+    .default([]),
   visibility: z.enum(['public', 'private', 'followers']),
   allowComments: z.boolean(),
   allowSharing: z.boolean(),
-  scheduleDate: z.date().optional(),
-  thumbnailAlt: z.string().optional(),
+  scheduleDate: z
+    .date()
+    .refine(
+      (date) => !date || date > new Date(),
+      VALIDATION_MESSAGES.scheduleFutureDate
+    )
+    .optional(),
+  thumbnailAlt: z
+    .string()
+    .max(200, VALIDATION_MESSAGES.thumbnailAltMaxLength)
+    .optional(),
   contentWarning: z.boolean(),
   sensitive: z.boolean()
 });
@@ -53,18 +83,25 @@ export interface ContentCreatorProps {
   className?: string;
 }
 
-// Keep the old name as alias for backward compatibility
-export type EnhancedContentCreatorProps = ContentCreatorProps;
+
+export interface Topic {
+  id: string;
+  title: string;
+  description?: string;
+  icon?: string;
+}
 
 export interface ContentTabProps {
-  control: any;
-  errors: any;
-  availableTopics: any[];
+  control: Control<BroadcastFormData>;
+  errors: FieldErrors<BroadcastFormData>;
+  availableTopics: Topic[];
   topicsLoading: boolean;
   watchedContent: string;
   watchedLink: string;
   wordCount: number;
   readTime: number;
+  setValue?: UseFormSetValue<BroadcastFormData>;
+  watchedTaggedUsers?: string[];
 }
 
 export interface MediaTabProps {
@@ -74,7 +111,7 @@ export interface MediaTabProps {
 }
 
 export interface AdvancedTabProps {
-  control: any;
+  control: Control<BroadcastFormData>;
 }
 
 export interface PreviewSectionProps {
@@ -83,13 +120,13 @@ export interface PreviewSectionProps {
   watchedLink: string;
   watchedTopics: string[];
   watchedSkills: string[];
-  availableTopics: any[];
+  availableTopics: Topic[];
   mediaFiles: MediaFile[];
   setMediaFiles: (files: MediaFile[]) => void;
   wordCount: number;
   readTime: number;
   profileLoading: boolean;
-  currentUser: any;
+  currentUser: User | null;
 }
 
 export interface FooterActionsProps {
@@ -103,7 +140,7 @@ export interface FooterActionsProps {
   isUploading: boolean;
   isDirty: boolean;
   hasFormChanges?: boolean;
-  persistedFormData: any;
+  persistedFormData: BroadcastFormData;
   initialData?: Partial<BroadcastPost>;
   isEditMode?: boolean;
 }

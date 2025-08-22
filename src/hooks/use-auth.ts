@@ -3,23 +3,11 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export function useAuth() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(() => {
-    // Initialize with localStorage value immediately on client side
-    if (typeof window !== 'undefined') {
-      try {
-        const token = localStorage.getItem('token');
-        return !!token;
-      } catch {
-        return null;
-      }
-    }
-    return null;
-  });
+  // Always start with null on both server and client to prevent hydration mismatch
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   
-  const [isLoading, setIsLoading] = useState(() => {
-    // If we could check localStorage immediately, we're not loading
-    return typeof window === 'undefined';
-  });
+  // Always start loading as true to prevent hydration mismatch
+  const [isLoading, setIsLoading] = useState(true);
 
   const checkAuth = useCallback(() => {
     try {
@@ -44,13 +32,8 @@ export function useAuth() {
     // Only run on client side
     if (typeof window === 'undefined') return;
 
-    // Only check auth if we haven't already initialized it
-    if (isAuthenticated === null) {
-      checkAuth();
-    } else {
-      // We already have the auth state, just stop loading
-      setIsLoading(false);
-    }
+    // Always check auth on first render to initialize state
+    checkAuth();
 
     // Listen for storage changes (login/logout in other tabs)
     const handleStorageChange = (e: StorageEvent) => {
@@ -64,7 +47,7 @@ export function useAuth() {
     return () => {
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, [checkAuth, isAuthenticated]);
+  }, [checkAuth]);
 
   return {
     isAuthenticated,

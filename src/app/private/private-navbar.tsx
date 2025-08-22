@@ -35,13 +35,13 @@ const navItems = [
     description: 'Overview & Analytics',
     shortLabel: 'Dashboard'
   },
-  {
-    href: '/private/my-challenges',
-    label: 'My Challenges',
-    icon: 'solar:cup-star-linear',
-    description: 'Your Programming Challenges',
-    shortLabel: 'Challenges'
-  },
+  // {
+  //   href: '/private/my-challenges',
+  //   label: 'My Challenges',
+  //   icon: 'solar:cup-star-linear',
+  //   description: 'Your Programming Challenges',
+  //   shortLabel: 'Challenges'
+  // },
   {
     href: '/private/broadcasts',
     label: 'Broadcasts',

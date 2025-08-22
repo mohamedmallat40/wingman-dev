@@ -64,6 +64,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     handleSubmit,
     watch,
     getValues,
+    setValue,
     formState: { errors, isValid, isDirty },
     reset
   } = useForm<BroadcastFormData>({
@@ -74,6 +75,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
       link: '',
       skills: initialData?.skills?.map((skill) => skill.id) || [],
       topics: initialData?.topics?.map((topic) => topic.id) || [],
+      taggedUsers: initialData?.taggedUsers?.map((user) => user.id) || [],
       visibility: 'public',
       allowComments: true,
       allowSharing: true,
@@ -89,6 +91,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
   const watchedLink = watch('link');
   const watchedSkills = watch('skills');
   const watchedTopics = watch('topics');
+  const watchedTaggedUsers = watch('taggedUsers');
   const watchedVisibility = watch('visibility');
   const watchedAllowComments = watch('allowComments');
   const watchedAllowSharing = watch('allowSharing');
@@ -117,24 +120,28 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     const currentLink = watchedLink || '';
     const currentSkills = watchedSkills || [];
     const currentTopics = watchedTopics || [];
+    const currentTaggedUsers = watchedTaggedUsers || [];
 
     const initialTitle = initialData.title || '';
     const initialContent = initialData.description || '';
     const initialLink = initialData.link || '';
     const initialSkills = initialData.skills?.map((skill) => skill.id) || [];
     const initialTopics = initialData.topics?.map((topic) => topic.id) || [];
+    const initialTaggedUsers = initialData.taggedUsers?.map((user) => user.id) || [];
 
     // Compare text fields
     if (currentTitle !== initialTitle) return true;
     if (currentContent !== initialContent) return true;
     if (currentLink !== initialLink) return true;
 
-    // Compare arrays (skills and topics)
+    // Compare arrays (skills, topics, and tagged users)
     if (currentSkills.length !== initialSkills.length) return true;
     if (currentTopics.length !== initialTopics.length) return true;
+    if (currentTaggedUsers.length !== initialTaggedUsers.length) return true;
 
     if (!currentSkills.every((skill) => initialSkills.includes(skill))) return true;
     if (!currentTopics.every((topic) => initialTopics.includes(topic))) return true;
+    if (!currentTaggedUsers.every((user) => initialTaggedUsers.includes(user))) return true;
 
     // Compare media files
     const currentAttachmentCount = mediaFiles.length;
@@ -165,6 +172,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
     watchedLink,
     watchedSkills,
     watchedTopics,
+    watchedTaggedUsers,
     mediaFiles
   ]);
 
@@ -185,6 +193,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
           link: initialData.link || '',
           skills: initialData.skills?.map((skill) => skill.id) || [],
           topics: initialData.topics?.map((topic) => topic.id) || [],
+          taggedUsers: initialData.taggedUsers?.map((user) => user.id) || [],
           visibility: 'public',
           allowComments: true,
           allowSharing: true,
@@ -221,6 +230,7 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
           link: persistedFormData.link || '',
           skills: persistedFormData.skills || [],
           topics: persistedFormData.topics || [],
+          taggedUsers: persistedFormData.taggedUsers || [],
           visibility: persistedFormData.visibility || 'public',
           allowComments: persistedFormData.allowComments ?? true,
           allowSharing: persistedFormData.allowSharing ?? true,
@@ -245,7 +255,8 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
         link: data.link || undefined, // Include link if provided
         topics: data.topics || [], // Array of topic UUIDs
         skills: data.skills || [], // Array of skill UUIDs
-        attachments: [] as string[] // Array of filenames from successful uploads
+        attachments: [] as string[], // Array of filenames from successful uploads
+        taggedUsers: data.taggedUsers || [] // Array of tagged user UUIDs
       };
 
       // Add media filenames from uploaded files (includes both new uploads and existing files)
@@ -483,6 +494,8 @@ const ContentCreator: React.FC<ContentCreatorProps> = ({
                         watchedLink={watchedLink || ''}
                         wordCount={wordCount}
                         readTime={readTime}
+                        setValue={setValue}
+                        watchedTaggedUsers={watchedTaggedUsers}
                       />
                     </Tab>
 

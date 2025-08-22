@@ -707,7 +707,41 @@
         "close": "Sluiten",
         "fallbacks": {
           "untitledPost": "Naamloos Bericht"
-        }
+        },
+        "socialPlatforms": {
+          "linkedin": {
+            "name": "LinkedIn", 
+            "description": "Deel met je professionele netwerk"
+          },
+          "twitter": {
+            "name": "Twitter",
+            "description": "Deel met je volgers"
+          },
+          "facebook": {
+            "name": "Facebook",
+            "description": "Deel op je tijdlijn"
+          },
+          "whatsapp": {
+            "name": "WhatsApp",
+            "description": "Deel in chat of status"
+          },
+          "telegram": {
+            "name": "Telegram", 
+            "description": "Deel in Telegram"
+          },
+          "reddit": {
+            "name": "Reddit",
+            "description": "Indienen bij Reddit"
+          }
+        },
+        "notifications": {
+          "linkCopied": "Link Gekopieerd",
+          "copyFailed": "Kopiëren Mislukt", 
+          "shareFailed": "Delen Mislukt",
+          "shareSuccess": "Bericht succesvol gedeeld"
+        },
+        "fallbackTitle": "Bekijk deze uitzending",
+        "wingmanBroadcast": "Wingman Uitzending"
       }
     },
     "create": {
@@ -802,7 +836,21 @@
         "titleRequired": "Titel is verplicht",
         "contentRequired": "Inhoud is verplicht",
         "titleMinLength": "Titel moet minstens 3 karakters bevatten",
-        "contentMinLength": "Inhoud moet minstens 10 karakters bevatten"
+        "titleMinLength10": "Titel moet minstens 10 karakters bevatten",
+        "titleMaxLength": "Titel mag niet meer dan 200 karakters bevatten",
+        "contentMinLength": "Inhoud moet minstens 10 karakters bevatten",
+        "contentMinLength20": "Inhoud moet minstens 20 karakters bevatten", 
+        "contentMaxLength": "Inhoud mag niet meer dan 10.000 karakters bevatten",
+        "skillEmpty": "Vaardigheid mag niet leeg zijn",
+        "skillsMaxCount": "Maximaal 10 vaardigheden toegestaan",
+        "topicEmpty": "Onderwerp mag niet leeg zijn",
+        "topicsRequired": "Minstens één onderwerp is verplicht",
+        "topicsMaxCount": "Maximaal 3 onderwerpen toegestaan",
+        "invalidUserId": "Ongeldig gebruikers-ID",
+        "taggedUsersMaxCount": "Maximaal 20 gebruikers kunnen worden getagd",
+        "scheduleFutureDate": "Geplande datum moet in de toekomst liggen",
+        "thumbnailAltMaxLength": "Thumbnail alt-tekst mag niet meer dan 200 karakters bevatten",
+        "invalidUrl": "Voer een geldige URL in (moet beginnen met http:// of https://)"
       }
     },
     "topics": {
@@ -943,6 +991,8 @@
     "tooltips": {
       "editPost": "Bericht bewerken",
       "deletePost": "Bericht verwijderen",
+      "save": "Opslaan voor later",
+      "unsave": "Verwijderen uit opgeslagen",
       "bookmark": "Bladwijzer",
       "unbookmark": "Bladwijzer verwijderen",
       "like": "Dit bericht leuk vinden",
@@ -952,6 +1002,15 @@
       "moreOptions": "Meer opties",
       "follow": "Dit onderwerp volgen",
       "unfollow": "Dit onderwerp ontvolgen"
+    },
+    "feedHeader": {
+      "clearFilter": "Filter Wissen",
+      "showingPostsFrom": "Toont alleen berichten van {topic}",
+      "topicLabel": "Onderwerp",
+      "backToAllPosts": "Terug naar Alle Berichten",
+      "filteredBy": "Gefilterd op",
+      "clearTopicFilter": "Onderwerp filter wissen",
+      "viewingTopic": "Bekijken: {topic}"
     },
     "accessibility": {
       "close": "Sluiten",
@@ -970,7 +1029,19 @@
       "scheduleLater": "Later inplannen (optioneel)",
       "searchPosts": "Zoek berichten...",
       "selectCategory": "Selecteer categorie",
-      "selectTopic": "Selecteer onderwerp"
+      "selectTopic": "Selecteer onderwerp",
+      "addLink": "Voeg een link toe (optioneel) - bijv. https://example.com"
+    },
+    "ui": {
+      "textareaWithMentions": "Tekstgebied met mention ondersteuning",
+      "mentionSuggestions": "Mention suggesties",
+      "siteFavicon": "Site favicon",
+      "linkPreviewValidUrl": "Geldige URL - Link voorvertoning verschijnt in de voorvertoningssectie",
+      "linkPreviewEnterValid": "Voer een geldige URL in die begint met http:// of https://",
+      "userFallback": "Gebruiker",
+      "yourNameFallback": "Uw Naam",
+      "updatePost": "Bericht Bijwerken",
+      "publishPost": "Bericht Publiceren"
     },
     "fallbacks": {
       "untitledPost": "Naamloos Bericht",
