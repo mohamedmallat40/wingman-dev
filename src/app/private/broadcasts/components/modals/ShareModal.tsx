@@ -39,6 +39,7 @@ interface SocialPlatform {
 
 export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post }) => {
   const t = useTranslations('broadcasts.post.share');
+  const tSocial = useTranslations('broadcasts.post.share.socialPlatforms');
   const [copySuccess, setCopySuccess] = useState(false);
 
   // Generate the share URL for this post
@@ -49,7 +50,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
 
   // Generate optimized share text
   const shareText = useMemo(() => {
-    const title = post.title || 'Check out this broadcast';
+    const title = post.title || t('fallbackTitle');
     const description = post.description
       ? post.description.length > 100
         ? `${post.description.substring(0, 100)}...`
@@ -65,56 +66,56 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
     () => [
       {
         id: 'linkedin',
-        name: 'LinkedIn',
+        name: tSocial('linkedin.name'),
         icon: 'skill-icons:linkedin',
         color: '#0077b5',
         shareUrl: (url, text) =>
           `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-        description: 'Share with your professional network'
+        description: tSocial('linkedin.description')
       },
       {
         id: 'twitter',
-        name: 'X (Twitter)',
+        name: tSocial('twitter.name'),
         icon: 'skill-icons:twitter',
         color: '#000000',
         shareUrl: (url, text) =>
           `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
-        description: 'Share with your followers'
+        description: tSocial('twitter.description')
       },
       {
         id: 'facebook',
-        name: 'Facebook',
+        name: tSocial('facebook.name'),
         icon: 'skill-icons:facebook',
         color: '#1877f2',
         shareUrl: (url, text) =>
           `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
-        description: 'Share on your timeline'
+        description: tSocial('facebook.description')
       },
       {
         id: 'whatsapp',
-        name: 'WhatsApp',
+        name: tSocial('whatsapp.name'),
         icon: 'mdi:whatsapp',
         color: '#25d366',
         shareUrl: (url, text) => `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`,
-        description: 'Share in chat or status'
+        description: tSocial('whatsapp.description')
       },
       {
         id: 'telegram',
-        name: 'Telegram',
+        name: tSocial('telegram.name'),
         icon: 'mdi:telegram',
         color: '#0088cc',
         shareUrl: (url, text) =>
           `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
-        description: 'Share in Telegram'
+        description: tSocial('telegram.description')
       },
       {
         id: 'reddit',
-        name: 'Reddit',
+        name: tSocial('reddit.name'),
         icon: 'mdi:reddit',
         color: '#ff4500',
         shareUrl: (url, text) =>
           `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`,
-        description: 'Submit to Reddit'
+        description: tSocial('reddit.description')
       }
     ],
     []
@@ -126,7 +127,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
       await navigator.clipboard.writeText(shareUrl);
       setCopySuccess(true);
       addToast({
-        title: 'Link Copied',
+        title: t('notifications.linkCopied'),
         description: t('copySuccess'),
         color: 'success'
       });
@@ -136,7 +137,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
     } catch (error) {
       console.error('Failed to copy to clipboard:', error);
       addToast({
-        title: 'Copy Failed',
+        title: t('notifications.copyFailed'),
         description: t('copyError'),
         color: 'danger'
       });
@@ -157,7 +158,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
     if (navigator.share) {
       try {
         await navigator.share({
-          title: post.title || 'Wingman Broadcast',
+          title: post.title || t('wingmanBroadcast'),
           text: shareText,
           url: shareUrl
         });
@@ -165,7 +166,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ isOpen, onClose, post })
         if ((error as Error).name !== 'AbortError') {
           console.error('Native share failed:', error);
           addToast({
-            title: 'Share Failed',
+            title: t('notifications.shareFailed'),
             description: t('shareError'),
             color: 'danger'
           });

@@ -5,6 +5,7 @@ import React from 'react';
 import { Button, Card, CardBody, Image } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export interface LinkMetadata {
   url: string;
@@ -29,6 +30,8 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
   showRemoveButton = true,
   compact = false
 }) => {
+  const t = useTranslations('broadcasts.ui');
+  
   const handleClick = () => {
     window.open(metadata.url, '_blank', 'noopener,noreferrer');
   };
@@ -59,7 +62,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
             <div className='flex w-full items-center gap-3'>
               {metadata.favicon && (
                 <div className='flex-shrink-0 rounded-sm bg-white p-1 shadow-sm'>
-                  <Image src={metadata.favicon} alt='Site favicon' className='h-4 w-4' />
+                  <Image src={metadata.favicon} alt={t('siteFavicon')} className='h-4 w-4' />
                 </div>
               )}
               <div className='min-w-0 flex-1'>
@@ -140,7 +143,7 @@ export const LinkPreview: React.FC<LinkPreviewProps> = ({
                 <div className='flex items-center gap-2'>
                   {metadata.favicon && (
                     <div className='flex-shrink-0 rounded-sm bg-white p-1 shadow-sm'>
-                      <Image src={metadata.favicon} alt='Site favicon' className='h-4 w-4' />
+                      <Image src={metadata.favicon} alt={t('siteFavicon')} className='h-4 w-4' />
                     </div>
                   )}
                   <span className='text-foreground-600 truncate text-xs font-medium'>

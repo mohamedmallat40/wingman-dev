@@ -18,6 +18,7 @@ import { DeleteConfirmationModal } from '../modals/DeleteConfirmationModal';
 import { PostAttachmentModal } from '../modals/PostAttachmentModal';
 import { ShareModal } from '../modals/ShareModal';
 import { LinkPreview } from '../ui/LinkPreview';
+import { MentionRenderer } from '../ui/MentionRenderer';
 import OptimizedImage from '../ui/OptimizedImage';
 import OptimizedVideo from '../ui/OptimizedVideo';
 
@@ -86,11 +87,17 @@ const PostCard: React.FC<PostCardProps> = React.memo(
     const [shareModalOpen, setShareModalOpen] = useState(false);
     const [localIsSaved, setLocalIsSaved] = useState(post.isSaved || false);
     const [showComments, setShowComments] = useState(false);
+    const [avatarImageFailed, setAvatarImageFailed] = useState(false);
 
     // Update local state when post.isSaved changes
     useEffect(() => {
       setLocalIsSaved(post.isSaved || false);
     }, [post.isSaved]);
+
+    // Reset avatar failed state when owner changes
+    useEffect(() => {
+      setAvatarImageFailed(false);
+    }, [post.owner?.id, post.owner?.profileImage]);
 
     // Get current user profile
     const { profile: currentUser } = useBasicProfile();
@@ -110,6 +117,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
       safeOwner,
       safeTopics,
       safeSkills,
+      safeTaggedUsers,
       safeAttachments,
       safeCreatedAt,
       shouldTruncate,
@@ -128,6 +136,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
       };
       const safeTopics = post.topics || [];
       const safeSkills = post.skills || [];
+      const safeTaggedUsers = post.taggedUsers || [];
       const safeAttachments = post.attachments || post.media || [];
       const safeCreatedAt = post.createdAt || new Date().toISOString();
 
@@ -145,6 +154,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
         safeOwner,
         safeTopics,
         safeSkills,
+        safeTaggedUsers,
         safeAttachments,
         safeCreatedAt,
         shouldTruncate,
@@ -232,7 +242,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
               {/* Author Avatar */}
               <div className='relative'>
                 <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden ring-1 sm:ring-2 ring-primary/10 ring-offset-1 sm:ring-offset-2 ring-offset-background transition-all duration-200 hover:ring-primary/25">
-                  {safeOwner.profileImage ? (
+                  {safeOwner.profileImage && !avatarImageFailed ? (
                     <OptimizedImage
                       src={getImageUrl(safeOwner.profileImage)}
                       alt={`${safeOwner.firstName} ${safeOwner.lastName}`}
@@ -240,10 +250,12 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                       className="object-cover"
                       sizes="40px"
                       priority={false}
+                      onError={() => setAvatarImageFailed(true)}
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
-                      {`${safeOwner.firstName[0]}${safeOwner.lastName[0]}`}
+                      {safeOwner.firstName?.charAt(0)?.toUpperCase() || ''}
+                      {safeOwner.lastName?.charAt(0)?.toUpperCase() || ''}
                     </div>
                   )}
                 </div>
@@ -385,7 +397,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
 
             {/* Post Content */}
             <div className='text-foreground-700 mb-4 sm:mb-5 leading-relaxed text-sm sm:text-base'>
-              {displayContent}
+              <MentionRenderer content={displayContent} />
               {shouldTruncate && (
                 <Button
                   size='sm'
@@ -434,7 +446,6 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                                 fill={true}
                                 onClick={() => handleImageClick(index)}
                                 priority={false}
-                              loading="lazy"
                               />
                             </div>
                           ))}
@@ -521,6 +532,7 @@ const PostCard: React.FC<PostCardProps> = React.memo(
                 )}
               </div>
             )}
+
 
             <Divider className='mb-4 sm:mb-5' />
 

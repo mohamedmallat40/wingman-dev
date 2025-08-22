@@ -82,6 +82,7 @@ export interface BroadcastPost {
   owner: BroadcastOwner;
   attachments?: string[]; // Array of filenames (images, videos, files)
   media?: string[]; // Array of filenames (legacy field)
+  taggedUsers?: BroadcastOwner[]; // Array of tagged users with full profile data
   linkPreviews?: {
     url: string;
     title: string;
@@ -135,6 +136,7 @@ export interface CreatePostData {
   topics: string[]; // Array of topic UUIDs
   skills: string[]; // Array of skill UUIDs
   attachments: string[]; // Array of filenames from successful uploads
+  taggedUsers?: string[]; // Array of user UUIDs that are tagged in the post
 }
 
 export interface FeedParams {

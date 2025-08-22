@@ -7,6 +7,7 @@ import type { PreviewSectionProps } from './types';
 import { Avatar, Button, Card, CardBody, Chip } from '@heroui/react';
 import { Icon } from '@iconify/react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 import { getBaseUrl } from '@/lib/utils/utilities';
 
@@ -28,6 +29,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
   profileLoading,
   currentUser
 }) => {
+  const t = useTranslations('broadcasts.ui');
   const { linkPreviews } = useLinkPreview(watchedLink || '');
 
   return (
@@ -64,7 +66,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                         ? `${getBaseUrl()}/upload/${currentUser.profileImage}`
                         : undefined
                     }
-                    name={currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'User'}
+                    name={currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : t('userFallback')}
                     showFallback
                     className='ring-primary/20 ring-2'
                   />
@@ -73,7 +75,7 @@ export const PreviewSection: React.FC<PreviewSectionProps> = ({
                       <h4 className='text-foreground truncate font-semibold'>
                         {currentUser
                           ? `${currentUser.firstName} ${currentUser.lastName}`
-                          : 'Your Name'}
+                          : t('yourNameFallback')}
                       </h4>
                       <Icon
                         icon='solar:verified-check-bold'

@@ -25,6 +25,7 @@ export const FooterActions: React.FC<FooterActionsProps> = ({
   isEditMode
 }) => {
   const tCommon = useTranslations('common');
+  const tUi = useTranslations('broadcasts.ui');
 
   return (
     <motion.div
@@ -87,7 +88,7 @@ export const FooterActions: React.FC<FooterActionsProps> = ({
           }
           className='transition-all duration-300 hover:scale-105 hover:shadow-lg'
         >
-          {isEditMode ? 'Update Post' : 'Publish Post'}
+          {isEditMode ? tUi('updatePost') : tUi('publishPost')}
         </Button>
       </motion.div>
     </motion.div>

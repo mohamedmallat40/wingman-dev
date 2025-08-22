@@ -704,7 +704,41 @@
         "close": "Fermer",
         "fallbacks": {
           "untitledPost": "Post Sans Titre"
-        }
+        },
+        "socialPlatforms": {
+          "linkedin": {
+            "name": "LinkedIn", 
+            "description": "Partagez avec votre réseau professionnel"
+          },
+          "twitter": {
+            "name": "Twitter",
+            "description": "Partagez avec vos abonnés"
+          },
+          "facebook": {
+            "name": "Facebook",
+            "description": "Partagez sur votre timeline"
+          },
+          "whatsapp": {
+            "name": "WhatsApp",
+            "description": "Partagez dans le chat ou le statut"
+          },
+          "telegram": {
+            "name": "Telegram", 
+            "description": "Partagez dans Telegram"
+          },
+          "reddit": {
+            "name": "Reddit",
+            "description": "Soumettre à Reddit"
+          }
+        },
+        "notifications": {
+          "linkCopied": "Lien Copié",
+          "copyFailed": "Échec de la Copie", 
+          "shareFailed": "Échec du Partage",
+          "shareSuccess": "Post partagé avec succès"
+        },
+        "fallbackTitle": "Découvrez cette diffusion",
+        "wingmanBroadcast": "Diffusion Wingman"
       }
     },
     "create": {
@@ -799,7 +833,21 @@
         "titleRequired": "Le titre est requis",
         "contentRequired": "Le contenu est requis",
         "titleMinLength": "Le titre doit contenir au moins 3 caractères",
-        "contentMinLength": "Le contenu doit contenir au moins 10 caractères"
+        "titleMinLength10": "Le titre doit contenir au moins 10 caractères",
+        "titleMaxLength": "Le titre ne peut pas dépasser 200 caractères",
+        "contentMinLength": "Le contenu doit contenir au moins 10 caractères",
+        "contentMinLength20": "Le contenu doit contenir au moins 20 caractères", 
+        "contentMaxLength": "Le contenu ne peut pas dépasser 10 000 caractères",
+        "skillEmpty": "La compétence ne peut pas être vide",
+        "skillsMaxCount": "Maximum 10 compétences autorisées",
+        "topicEmpty": "Le sujet ne peut pas être vide",
+        "topicsRequired": "Au moins un sujet est requis",
+        "topicsMaxCount": "Maximum 3 sujets autorisés",
+        "invalidUserId": "ID utilisateur invalide",
+        "taggedUsersMaxCount": "Maximum 20 utilisateurs peuvent être taguées",
+        "scheduleFutureDate": "La date de programmation doit être dans le futur",
+        "thumbnailAltMaxLength": "Le texte alternatif de la vignette ne peut pas dépasser 200 caractères",
+        "invalidUrl": "Veuillez entrer une URL valide (doit commencer par http:// ou https://)"
       }
     },
     "topics": {
@@ -815,7 +863,11 @@
       "feedHeader": {
         "clearFilter": "Effacer le Filtre",
         "showingPostsFrom": "Affichage des posts de {topic} uniquement",
-        "topicLabel": "Sujet"
+        "topicLabel": "Sujet",
+        "backToAllPosts": "Retour à tous les posts",
+        "filteredBy": "Filtré par",
+        "clearTopicFilter": "Effacer le filtre de sujet",
+        "viewingTopic": "Visualisation : {topic}"
       }
     },
     "filters": {
@@ -913,6 +965,8 @@
     "tooltips": {
       "editPost": "Modifier le post",
       "deletePost": "Supprimer le post",
+      "save": "Sauvegarder pour plus tard",
+      "unsave": "Retirer des sauvegardés",
       "bookmark": "Signet",
       "unbookmark": "Supprimer le signet",
       "like": "Aimer ce post",
@@ -940,7 +994,19 @@
       "scheduleLater": "Programmer pour plus tard (optionnel)",
       "searchPosts": "Rechercher des posts...",
       "selectCategory": "Sélectionner une catégorie",
-      "selectTopic": "Sélectionner un sujet"
+      "selectTopic": "Sélectionner un sujet",
+      "addLink": "Ajouter un lien (optionnel) - ex : https://example.com"
+    },
+    "ui": {
+      "textareaWithMentions": "Zone de texte avec support de mention",
+      "mentionSuggestions": "Suggestions de mention",
+      "siteFavicon": "Favicon du site",
+      "linkPreviewValidUrl": "URL valide - L'aperçu du lien apparaîtra dans la section d'aperçu",
+      "linkPreviewEnterValid": "Entrez une URL valide commençant par http:// ou https://",
+      "userFallback": "Utilisateur",
+      "yourNameFallback": "Votre Nom",
+      "updatePost": "Mettre à jour le Post",
+      "publishPost": "Publier le Post"
     },
     "fallbacks": {
       "untitledPost": "Post Sans Titre",
@@ -1068,7 +1134,11 @@
       "feedHeader": {
         "clearFilter": "Effacer le Filtre",
         "showingPostsFrom": "Affichage des posts de {topic} uniquement",
-        "topicLabel": "Sujet"
+        "topicLabel": "Sujet",
+        "backToAllPosts": "Retour à tous les posts",
+        "filteredBy": "Filtré par",
+        "clearTopicFilter": "Effacer le filtre de sujet",
+        "viewingTopic": "Visualisation : {topic}"
       }
     },
     "filters": {
@@ -1208,5 +1278,161 @@
     "USER_DOES_NOT_EXIST": "L'utilisateur n'existe pas",
     "unknown_error": "Une erreur inattendue s'est produite",
     "Network error occurred": "Erreur de connexion réseau"
+
+  },
+   "setup": {
+    "welcome": {
+      "title": "Bienvenue sur la plateforme !",
+      "description": "Configurons votre compte avec un processus d'intégration rapide. Nous vous aiderons à compléter votre profil et à personnaliser vos préférences.",
+      "getStarted": "Commençons",
+      "timeRequired": "Cela ne prendra que quelques minutes",
+        "label": "Langue"  
+
+    },
+    "profileImage": {
+      "title": "Ajoutez votre photo de profil",
+      "description": "Téléchargez une photo professionnelle pour aider les clients à vous reconnaître. Cette étape est optionnelle.",
+      "altText": "Aperçu du profil",
+      "dropHere": "Déposez votre photo ici",
+      "uploadPrompt": "Déposez votre photo ici",
+      "clickToBrowse": "ou cliquez pour parcourir les fichiers",
+      "chooseFile": "Choisir un fichier",
+      "supportedFormats": "PNG, JPG, GIF jusqu'à 5 Mo",
+      "back": "Retour",
+      "continue": "Continuer",
+      "uploading": "Téléchargement...",
+      "uploadError": "Échec du téléchargement de l'image. Veuillez réessayer.",
+      "validation": {
+        "imageTypeRequired": "Veuillez sélectionner un fichier image",
+        "fileSizeTooLarge": "La taille du fichier doit être inférieure à 5 Mo"
+      }
+    },
+    "basicInfo": {
+      "title": "Parlez-nous de vous",
+      "description": "Ces informations nous aideront à vous faire correspondre aux bonnes opportunités.",
+      "loading": {
+        "loadingInfo": "Chargement de vos informations..."
+      },
+      "fields": {
+        "aboutMe": {
+          "label": "À propos de moi",
+          "placeholder": "Rédigez une courte présentation de vous-même...",
+          "characterCount": "{current}/{max} caractères"
+        },
+        "paymentType": {
+          "label": "Type de paiement",
+          "options": {
+            "hourly": "Basé sur le taux horaire",
+            "daily": "Basé sur le taux journalier",
+            "project": "Basé sur le projet"
+          }
+        },
+        "hourlyRate": {
+          "label": "Taux horaire (EUR)"
+        },
+        "dailyRate": {
+          "label": "Taux journalier (EUR)"
+        },
+        "projectRate": {
+          "label": "Taux (Non applicable pour les projets)"
+        },
+        "rate": {
+          "label": "Taux (EUR)",
+          "placeholder": "Votre taux en EUR",
+          "placeholderNotApplicable": "Non applicable",
+          "minimumNote": "Minimum 5 EUR requis"
+        },
+        "workingTime": {
+          "label": "Temps de travail",
+          "options": {
+            "fullTime": "Temps plein",
+            "partTime": "Temps partiel"
+          }
+        },
+        "experienceYears": {
+          "label": "Années d'expérience",
+          "placeholder": "Années d'expérience"
+        },
+        "profession": {
+          "label": "Profession",
+          "options": {
+            "fullTimeFreelancer": "Freelance temps plein",
+            "partTimeFreelancer": "Freelance temps partiel",
+            "contractor": "Contractant",
+            "student": "Étudiant"
+          }
+        },
+        "availabilityStatus": {
+          "label": "Statut de disponibilité",
+          "options": {
+            "openForProjects": "Ouvert aux projets",
+            "openForPartTime": "Ouvert au temps partiel",
+            "notAvailable": "Non disponible"
+          }
+        },
+        "skills": {
+          "label": "Compétences",
+          "minimum": "Sélectionnez au moins 3 compétences",
+          "placeholder": "Recherchez et sélectionnez des compétences...",
+          "selectedCount": "Sélectionnées : {count} compétences",
+          "allSelected": "Toutes les compétences correspondantes sont déjà sélectionnées",
+          "noSkillsFound": "Aucune compétence trouvée correspondant à \"{search}\""
+        }
+      },
+      "validation": {
+        "aboutMeMinLength": "À propos de moi doit contenir au moins 10 caractères",
+        "aboutMeMaxLength": "À propos de moi doit contenir moins de 500 caractères",
+        "experienceYearsMin": "Les années d'expérience doivent être de 0 ou plus",
+        "experienceYearsMax": "Les années d'expérience doivent être inférieures à 50",
+        "skillsMinimum": "Veuillez sélectionner au moins trois compétences",
+        "hourlyRateMinimum": "Le taux horaire doit être d'au moins 5 EUR",
+        "dailyRateMinimum": "Le taux journalier doit être d'au moins 5 EUR"
+      }
+    },
+    "categories": {
+      "title": "Choisissez vos catégories",
+      "description": "Sélectionnez les catégories qui correspondent le mieux à votre expertise. Cela nous aide à vous montrer les opportunités pertinentes.",
+      "descriptionRequired": "Vous devez sélectionner au moins une catégorie.",
+      "selectedCount": "{count, plural, one {# catégorie} other {# catégories}} sélectionnée(s)",
+      "errorRequired": "Veuillez sélectionner au moins une catégorie pour continuer.",
+      "loadingCategories": "Chargement des catégories...",
+      "noCategoriesFound": "Aucune catégorie trouvée.",
+      "saving": "Sauvegarde..."
+    },
+    "notifications": {
+      "title": "Préférences de notification",
+      "description": "Choisissez comment vous souhaitez être notifié des mises à jour importantes. Vous pourrez modifier ces paramètres plus tard.",
+      "loadingPreferences": "Chargement des préférences de notification...",
+      "summaryMessage": "Vous avez presque terminé ! Vos préférences de notification seront sauvegardées.",
+      "types": {
+        "NEW_OPPORTUNITIES": {
+          "title": "Nouvelles opportunités",
+          "description": "Être notifié lorsque de nouvelles opportunités d'emploi correspondent à votre profil"
+        },
+        "APPLICATION_UPDATES": {
+          "title": "Mises à jour des candidatures",
+          "description": "Recevoir des mises à jour sur vos candidatures d'emploi"
+        },
+        "MESSAGES": {
+          "title": "Messages",
+          "description": "Être notifié lorsque vous recevez de nouveaux messages"
+        },
+        "WEEKLY_DIGEST": {
+          "title": "Résumé hebdomadaire",
+          "description": "Recevoir un résumé hebdomadaire de votre activité"
+        }
+      },
+      "preferences": {
+        "email": "E-mail",
+        "web": "Web"
+      }
+    },
+    "actions": {
+      "back": "Retour",
+      "continue": "Continuer",
+      "completeSetup": "Terminer la configuration",
+      "completingSetup": "Finalisation de la configuration...",
+      "saving": "Sauvegarde..."
+    }
   }
 }

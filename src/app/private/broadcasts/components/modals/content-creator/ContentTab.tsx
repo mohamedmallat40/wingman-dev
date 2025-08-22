@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl';
 import { Controller } from 'react-hook-form';
 
 import { SkillsInput } from '@/app/private/broadcasts/components/ui/SkillsInput';
+import { MentionsTextarea } from '@/app/private/broadcasts/components/ui/MentionsTextarea';
 
 export const ContentTab: React.FC<ContentTabProps> = ({
   control,
@@ -20,7 +21,9 @@ export const ContentTab: React.FC<ContentTabProps> = ({
   watchedContent,
   watchedLink,
   wordCount,
-  readTime
+  readTime,
+  setValue,
+  watchedTaggedUsers = []
 }) => {
   const t = useTranslations('broadcasts');
 
@@ -165,7 +168,7 @@ export const ContentTab: React.FC<ContentTabProps> = ({
           render={({ field, fieldState }) => (
             <Input
               {...field}
-              placeholder='Add a link (optional) - e.g., https://example.com'
+              placeholder={t('placeholders.addLink')}
               startContent={
                 <Icon
                   icon='solar:link-broken-minimalistic-linear'
@@ -176,8 +179,8 @@ export const ContentTab: React.FC<ContentTabProps> = ({
               errorMessage={fieldState.error?.message}
               description={
                 field.value && !fieldState.error
-                  ? 'Valid URL - Link preview will appear in the preview section'
-                  : 'Enter a valid URL starting with http:// or https://'
+                  ? t('ui.linkPreviewValidUrl')
+                  : t('ui.linkPreviewEnterValid')
               }
               classNames={{
                 inputWrapper:
@@ -200,14 +203,24 @@ export const ContentTab: React.FC<ContentTabProps> = ({
           name='content'
           control={control}
           render={({ field, fieldState }) => (
-            <Textarea
-              {...field}
+            <MentionsTextarea
+              value={field.value || ''}
+              onChange={(value) => {
+                field.onChange(value);
+              }}
+              onTaggedUsersChange={(userIds) => {
+                // Update tagged users in the form when mentions are added
+                if (setValue) {
+                  setValue('taggedUsers', userIds);
+                }
+              }}
               placeholder={t('placeholders.shareThoughts')}
               minRows={10}
               maxRows={25}
               description={`${wordCount} words • ${readTime} min read`}
               isInvalid={!!fieldState.error}
               errorMessage={fieldState.error?.message}
+              enableMentions={true}
               classNames={{
                 inputWrapper:
                   'border-0 data-[hover=true]:border-0 group-data-[focus=true]:border-0 group-data-[focus=true]:ring-4 group-data-[focus=true]:ring-primary/10 rounded-md bg-default-100/50 dark:bg-default-50/50 p-4 transition-all duration-300 shadow-sm hover:shadow-md group-data-[focus=true]:shadow-lg',

@@ -99,8 +99,7 @@ const SavedBroadcastsPage: React.FC = () => {
   }, []);
 
   const handleEditPost = useCallback((post: BroadcastPost) => {
-    // Edit functionality - could navigate to edit page or open modal
-    console.log('Edit post:', post);
+    // TODO: Implement edit functionality - navigate to edit page or open modal
   }, []);
 
   if (isLoading) {

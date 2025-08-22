@@ -383,7 +383,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProperties> = ({
           let fileName = '';
           if (selectedFile) {
             try {
-              const uploadResponse = (await upload.uploadeFileSingle(
+              const uploadResponse = (await upload.uploadFileSingle(
                 selectedFile
               )) as UploadResponse;
               fileName = uploadResponse.fileName;

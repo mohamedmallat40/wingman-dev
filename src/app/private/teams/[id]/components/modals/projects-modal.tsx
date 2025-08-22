@@ -178,7 +178,7 @@ export const ProjectModal: React.FC<ProjectModalProperties> = ({
         setUploadProgress((previous) => Math.min(previous + 10, 90));
       }, 100);
 
-      const uploadResponse = (await upload.uploadeFileSingle(selectedFile)) as UploadResponse;
+      const uploadResponse = (await upload.uploadFileSingle(selectedFile)) as UploadResponse;
 
       clearInterval(progressInterval);
       setUploadProgress(100);

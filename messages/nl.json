@@ -707,7 +707,41 @@
         "close": "Sluiten",
         "fallbacks": {
           "untitledPost": "Naamloos Bericht"
-        }
+        },
+        "socialPlatforms": {
+          "linkedin": {
+            "name": "LinkedIn", 
+            "description": "Deel met je professionele netwerk"
+          },
+          "twitter": {
+            "name": "Twitter",
+            "description": "Deel met je volgers"
+          },
+          "facebook": {
+            "name": "Facebook",
+            "description": "Deel op je tijdlijn"
+          },
+          "whatsapp": {
+            "name": "WhatsApp",
+            "description": "Deel in chat of status"
+          },
+          "telegram": {
+            "name": "Telegram", 
+            "description": "Deel in Telegram"
+          },
+          "reddit": {
+            "name": "Reddit",
+            "description": "Indienen bij Reddit"
+          }
+        },
+        "notifications": {
+          "linkCopied": "Link Gekopieerd",
+          "copyFailed": "Kopiëren Mislukt", 
+          "shareFailed": "Delen Mislukt",
+          "shareSuccess": "Bericht succesvol gedeeld"
+        },
+        "fallbackTitle": "Bekijk deze uitzending",
+        "wingmanBroadcast": "Wingman Uitzending"
       }
     },
     "create": {
@@ -802,7 +836,21 @@
         "titleRequired": "Titel is verplicht",
         "contentRequired": "Inhoud is verplicht",
         "titleMinLength": "Titel moet minstens 3 karakters bevatten",
-        "contentMinLength": "Inhoud moet minstens 10 karakters bevatten"
+        "titleMinLength10": "Titel moet minstens 10 karakters bevatten",
+        "titleMaxLength": "Titel mag niet meer dan 200 karakters bevatten",
+        "contentMinLength": "Inhoud moet minstens 10 karakters bevatten",
+        "contentMinLength20": "Inhoud moet minstens 20 karakters bevatten", 
+        "contentMaxLength": "Inhoud mag niet meer dan 10.000 karakters bevatten",
+        "skillEmpty": "Vaardigheid mag niet leeg zijn",
+        "skillsMaxCount": "Maximaal 10 vaardigheden toegestaan",
+        "topicEmpty": "Onderwerp mag niet leeg zijn",
+        "topicsRequired": "Minstens één onderwerp is verplicht",
+        "topicsMaxCount": "Maximaal 3 onderwerpen toegestaan",
+        "invalidUserId": "Ongeldig gebruikers-ID",
+        "taggedUsersMaxCount": "Maximaal 20 gebruikers kunnen worden getagd",
+        "scheduleFutureDate": "Geplande datum moet in de toekomst liggen",
+        "thumbnailAltMaxLength": "Thumbnail alt-tekst mag niet meer dan 200 karakters bevatten",
+        "invalidUrl": "Voer een geldige URL in (moet beginnen met http:// of https://)"
       }
     },
     "topics": {
@@ -943,6 +991,8 @@
     "tooltips": {
       "editPost": "Bericht bewerken",
       "deletePost": "Bericht verwijderen",
+      "save": "Opslaan voor later",
+      "unsave": "Verwijderen uit opgeslagen",
       "bookmark": "Bladwijzer",
       "unbookmark": "Bladwijzer verwijderen",
       "like": "Dit bericht leuk vinden",
@@ -952,6 +1002,15 @@
       "moreOptions": "Meer opties",
       "follow": "Dit onderwerp volgen",
       "unfollow": "Dit onderwerp ontvolgen"
+    },
+    "feedHeader": {
+      "clearFilter": "Filter Wissen",
+      "showingPostsFrom": "Toont alleen berichten van {topic}",
+      "topicLabel": "Onderwerp",
+      "backToAllPosts": "Terug naar Alle Berichten",
+      "filteredBy": "Gefilterd op",
+      "clearTopicFilter": "Onderwerp filter wissen",
+      "viewingTopic": "Bekijken: {topic}"
     },
     "accessibility": {
       "close": "Sluiten",
@@ -970,7 +1029,19 @@
       "scheduleLater": "Later inplannen (optioneel)",
       "searchPosts": "Zoek berichten...",
       "selectCategory": "Selecteer categorie",
-      "selectTopic": "Selecteer onderwerp"
+      "selectTopic": "Selecteer onderwerp",
+      "addLink": "Voeg een link toe (optioneel) - bijv. https://example.com"
+    },
+    "ui": {
+      "textareaWithMentions": "Tekstgebied met mention ondersteuning",
+      "mentionSuggestions": "Mention suggesties",
+      "siteFavicon": "Site favicon",
+      "linkPreviewValidUrl": "Geldige URL - Link voorvertoning verschijnt in de voorvertoningssectie",
+      "linkPreviewEnterValid": "Voer een geldige URL in die begint met http:// of https://",
+      "userFallback": "Gebruiker",
+      "yourNameFallback": "Uw Naam",
+      "updatePost": "Bericht Bijwerken",
+      "publishPost": "Bericht Publiceren"
     },
     "fallbacks": {
       "untitledPost": "Naamloos Bericht",
@@ -1238,5 +1309,165 @@
     "USER_DOES_NOT_EXIST": "Gebruiker bestaat niet",
     "unknown_error": "Er is een onverwachte fout opgetreden",
     "Network error occurred": "Netwerkverbindingsfout"
+
+  },
+  "setup": {
+    "categories": {
+      "title": "Kies uw categorieën",
+      "description": "Selecteer de categorieën die het beste aansluiten bij uw expertise. Dit helpt ons u relevante kansen te tonen.",
+      "descriptionRequired": "U moet ten minste één categorie selecteren.",
+      "selectedCount": "{count, plural, one {# categorie} other {# categorieën}} geselecteerd",
+      "errorRequired": "Selecteer ten minste één categorie om door te gaan.",
+      "loadingCategories": "Categorieën laden...",
+      "noCategoriesFound": "Geen categorieën gevonden.",
+      "saving": "Opslaan..."
+    },
+    "notifications": {
+      "title": "Melding voorkeuren",
+      "description": "Kies hoe u wilt worden geïnformeerd over belangrijke updates. U kunt deze instellingen later wijzigen.",
+      "loadingPreferences": "Melding voorkeuren laden...",
+      "summaryMessage": "U bent er bijna! Uw melding voorkeuren worden opgeslagen.",
+      "types": {
+        "NEW_OPPORTUNITIES": {
+          "title": "Nieuwe Kansen",
+          "description": "Krijg een melding wanneer nieuwe vacatures overeenkomen met uw profiel"
+        },
+        "APPLICATION_UPDATES": {
+          "title": "Sollicitatie Updates",
+          "description": "Ontvang updates over uw sollicitaties"
+        },
+        "MESSAGES": {
+          "title": "Berichten",
+          "description": "Krijg een melding wanneer u nieuwe berichten ontvangt"
+        },
+        "WEEKLY_DIGEST": {
+          "title": "Wekelijks Overzicht",
+          "description": "Ontvang een wekelijkse samenvatting van uw activiteiten"
+        }
+      },
+      "preferences": {
+        "email": "E-mail",
+        "web": "Web"
+      }
+    },
+    "actions": {
+      "back": "Terug",
+      "continue": "Doorgaan",
+      "completeSetup": "Setup Voltooien",
+      "completingSetup": "Setup Voltooien...",
+      "saving": "Opslaan..."
+
+    },
+    "basicInfo": {
+      "title": "Vertel ons over jezelf",
+      "description": "Deze informatie helpt ons je te koppelen aan de juiste kansen.",
+      "loading": {
+        "loadingInfo": "Je informatie wordt geladen..."
+      },
+      "fields": {
+        "aboutMe": {
+          "label": "Over mij",
+          "placeholder": "Schrijf een korte introductie over jezelf...",
+          "characterCount": "{current}/{max} karakters"
+        },
+        "paymentType": {
+          "label": "Betalingstype",
+          "options": {
+            "hourly": "Per uur",
+            "daily": "Per dag",
+            "project": "Per project"
+          }
+        },
+        "hourlyRate": {
+          "label": "Uurtarief (EUR)"
+        },
+        "dailyRate": {
+          "label": "Dagtarief (EUR)"
+        },
+        "projectRate": {
+          "label": "Tarief (Niet van toepassing bij projectbasis)"
+        },
+        "rate": {
+          "label": "Tarief (EUR)",
+          "placeholder": "Je tarief in EUR",
+          "placeholderNotApplicable": "Niet van toepassing",
+          "minimumNote": "Minimaal 5 EUR vereist"
+        },
+        "workingTime": {
+          "label": "Werktijd",
+          "options": {
+            "fullTime": "Voltijd",
+            "partTime": "Deeltijd"
+          }
+        },
+        "experienceYears": {
+          "label": "Jaren ervaring",
+          "placeholder": "Jaren ervaring"
+        },
+        "profession": {
+          "label": "Beroep",
+          "options": {
+            "fullTimeFreelancer": "Voltijd freelancer",
+            "partTimeFreelancer": "Deeltijd freelancer",
+            "contractor": "Contractant",
+            "student": "Student"
+          }
+        },
+        "availabilityStatus": {
+          "label": "Beschikbaarheidsstatus",
+          "options": {
+            "openForProjects": "Beschikbaar voor projecten",
+            "openForPartTime": "Beschikbaar voor deeltijd",
+            "notAvailable": "Niet beschikbaar"
+          }
+        },
+        "skills": {
+          "label": "Vaardigheden",
+          "minimum": "Selecteer minimaal 3 vaardigheden",
+          "placeholder": "Zoek en selecteer vaardigheden...",
+          "selectedCount": "Geselecteerd: {count} vaardigheden",
+          "allSelected": "Alle overeenkomende vaardigheden zijn al geselecteerd",
+          "noSkillsFound": "Geen vaardigheden gevonden voor \"{search}\""
+        }
+      },
+      "validation": {
+        "aboutMeMinLength": "Over mij moet minimaal 10 karakters bevatten",
+        "aboutMeMaxLength": "Over mij moet minder dan 500 karakters bevatten",
+        "experienceYearsMin": "Ervaringsjaren moet 0 of hoger zijn",
+        "experienceYearsMax": "Ervaringsjaren moet minder dan 50 zijn",
+        "skillsMinimum": "Selecteer minimaal drie vaardigheden",
+        "hourlyRateMinimum": "Uurtarief moet minimaal 5 EUR zijn",
+        "dailyRateMinimum": "Dagtarief moet minimaal 5 EUR zijn"
+      }
+    
+    },
+     "welcome": {
+      "title": "Welkom op het Platform!",
+      "description": "Laten we je helpen met een snelle onboarding. We helpen je bij het voltooien van je profiel en het aanpassen van je voorkeuren.",
+      "getStarted": "Laten we beginnen",
+      "timeRequired": "Dit duurt slechts een paar minuten",
+        "label": "Taal"
+
+    },
+    "profileImage": {
+      "title": "Voeg je profielfoto toe",
+      "description": "Upload een professionele foto zodat klanten je kunnen herkennen. Deze stap is optioneel.",
+      "altText": "Profielvoorbeeld",
+      "dropHere": "Sleep je foto hierheen",
+      "uploadPrompt": "Sleep je foto hierheen",
+      "clickToBrowse": "of klik om bestanden te doorzoeken",
+      "chooseFile": "Bestand kiezen",
+      "supportedFormats": "PNG, JPG, GIF tot 5MB",
+      "back": "Terug",
+      "continue": "Doorgaan",
+      "uploading": "Uploaden...",
+      "uploadError": "Uploaden van afbeelding mislukt. Probeer het opnieuw.",
+      "validation": {
+        "imageTypeRequired": "Selecteer een afbeeldingsbestand",
+        "fileSizeTooLarge": "Bestandsgrootte moet kleiner zijn dan 5MB"
+      }
+    }
+  
   }
+
 }
